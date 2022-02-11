@@ -1,22 +1,23 @@
 import express, { Request, Response } from "express";
 import { body, param } from "express-validator";
-import { ReturnValidationErrors } from "../middleware";
+import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
 import _ from "lodash";
 import { EnsureAuthenticated } from "./auth";
 
 export const userRouter = express.Router();
+userRouter.use(RequiresData, EnsureAuthenticated);
 
 const db = new UserService();
 
-userRouter.get("/me", EnsureAuthenticated,
+userRouter.get("/me",
     async (req: Request, res: Response) => {
         let person = req.user;
         let me = await db.getByEmail(person.email);
         return res.json({ data: await db.makeDTO(Object.assign(req.user, me)) });
     });
 
-userRouter.get("/", EnsureAuthenticated,
+userRouter.get("/",
     async (req: Request, res: Response) => {
         let list = await db.getAll();
 
@@ -27,7 +28,7 @@ userRouter.get("/", EnsureAuthenticated,
         return res.json({ data: list });
     });
 
-userRouter.put("/:email", EnsureAuthenticated,
+userRouter.put("/:email",
     [param("email").notEmpty().isString()], ReturnValidationErrors,
     async (req: Request, res: Response) => {
         let { email } = req.params;
@@ -43,7 +44,7 @@ userRouter.put("/:email", EnsureAuthenticated,
         return res.json({ messages: [{ variant: "success", text: "User saved" }] });
     });
 
-userRouter.delete("/:id", EnsureAuthenticated,
+userRouter.delete("/:id",
     [param("id").notEmpty()], ReturnValidationErrors,
     async (req: Request, res: Response) => {
         let { id } = req.params;
