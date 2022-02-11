@@ -19,7 +19,6 @@ COPY --chown=node:node api ./
 
 RUN npm run build
 
-COPY api/src/data/mailcodes.json /home/node/app/dist/data/mailcodes.json
 WORKDIR /home/node/web
 ENV NODE_ENV=production
 RUN npm run build:docker
