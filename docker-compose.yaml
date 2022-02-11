@@ -6,3 +6,16 @@ services:
     restart: unless-stopped
     ports:
       - 3000:3000
+
+  mongodb:
+    image: mongo:5.0.6
+    restart: unless-stopped
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes: 
+      - mongo-data:/data/db
+      - ./dump:/dump
+
+volumes: 
+  mongo-data:
