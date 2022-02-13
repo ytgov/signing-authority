@@ -1,6 +1,7 @@
 
 export * from "./email-service";
 export * from "./user-service";
+export * from "./generic-service"
 
 export interface QueryStatement {
     field: string;

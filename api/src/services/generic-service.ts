@@ -1,4 +1,5 @@
-import { Collection, FilterQuery, ObjectId } from "mongodb";
+// import { Collection, FilterQuery, ObjectId } from "mongodb";
+import { Collection, ObjectId } from "mongodb";
 
 export class GenericService {
 
@@ -20,13 +21,13 @@ export class GenericService {
         return this.db.deleteOne({ _id: new ObjectId(id) });
     }
 
-    async deleteWhere(query: FilterQuery<any>): Promise<any> {
-        return this.db.deleteMany(query);
-    }
+    // async deleteWhere(query: FilterQuery<any>): Promise<any> {
+    //     return this.db.deleteMany(query);
+    // }
 
-    async getAll(query?: FilterQuery<any>, sort?: any): Promise<any[]> {
-        return this.db.find(query).sort(sort).toArray();
-    }
+    // async getAll(query?: FilterQuery<any>, sort?: any): Promise<any[]> {
+    //     return this.db.find(query).sort(sort).toArray();
+    // }
 
     async getById(id: string): Promise<any | null> {
         try {

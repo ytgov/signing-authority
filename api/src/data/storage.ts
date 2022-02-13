@@ -17,8 +17,9 @@ export class Storage {
 
         return new Promise((resolve, reject) => {
 
-            MongoClient.connect(MONGO_URL, { useUnifiedTopology: true, connectTimeoutMS: 3000, numberOfRetries: 2 })
-                .then(resp => {
+            // MongoClient.connect(MONGO_URL, { useUnifiedTopology: true, connectTimeoutMS: 3000, numberOfRetries: 2 })
+            MongoClient.connect(MONGO_URL)
+            .then(resp => {
                     this.mongoConnection = resp;
                     this.Subscriptions = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Subscriptions"));
                     this.isInitialized = true;
@@ -32,7 +33,7 @@ export class Storage {
         })
     }
 
-    isConnected() {
-        return this.mongoConnection.isConnected();
-    }
+//     isConnected() {
+//         return this.mongoConnection.isConnected();
+//     }
 }
