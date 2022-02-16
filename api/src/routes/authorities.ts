@@ -17,11 +17,11 @@ authoritiesRouter.post('/', async (req: Request, res: Response) => {
   return res.json({});
 });
 
-authoritiesRouter.get('/:account', async (req: Request, res: Response) => {
+authoritiesRouter.get('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
-  return res.json({});
+  return res.json({"params":req.params});
 });
-authoritiesRouter.post('/:account', async (req: Request, res: Response) => {
+authoritiesRouter.post('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
   // -----------
   let a:any = req.store as Storage
@@ -32,7 +32,7 @@ authoritiesRouter.post('/:account', async (req: Request, res: Response) => {
 
 authoritiesRouter.get('/:myAuthorities', async (req: Request, res: Response) => {
   //return a list of all the authorites assigned to my (YNET username)
-  return res.json({});
+ return res.json({"params":req.params});
 });
 
 
