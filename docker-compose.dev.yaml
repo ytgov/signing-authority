@@ -4,12 +4,14 @@ services:
   mongodb:
     image: mongo:5.0.6
     restart: unless-stopped
-    environment: 
+    environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
-    volumes: 
+    volumes:
       - mongo-data:/data/db
       - ./dump:/dump
+    ports:
+      - 27017:27017
 
-volumes: 
+volumes:
   mongo-data:

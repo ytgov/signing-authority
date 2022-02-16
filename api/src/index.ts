@@ -9,6 +9,7 @@ import { CreateMigrationRoutes } from "./data";
 
 //import { configureLocalAuthentication } from "./routes/auth-local";
 import { configureAuthentication } from "./routes/auth";
+import { RequiresData } from "./middleware";
 
 //runMigrations();
 
@@ -42,7 +43,8 @@ app.use(cors({
 CreateMigrationRoutes(app);
 configureAuthentication(app);
 
-app.get("/api/healthCheck", (req: Request, res: Response) => {
+app.get("/api/healthCheck", RequiresData, (req: Request, res: Response) => {
+// app.get("/api/healthCheck",  (req: Request, res: Response) => {
   doHealthCheck(req, res);
 });
 
