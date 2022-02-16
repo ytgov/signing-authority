@@ -23,6 +23,11 @@ export const AUTH_REDIRECT = process.env.AUTH_REDIRECT || "";
 
 export const APPLICATION_NAME = process.env.APPLICATION_NAME || "";
 
+export const MONGO_DB = process.env.MONGO_DB || "";
+export const MONGO_HOST = process.env.MONGO_HOST || "";
+export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}`
+
+
 export const DB_USER = process.env.DB_USER || "";
 export const DB_PASS = process.env.DB_PASS || "";
 export const DB_HOST = process.env.DB_HOST || "localhost";
