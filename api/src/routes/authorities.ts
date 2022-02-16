@@ -1,21 +1,42 @@
 import express, { Request, Response } from "express";
+import { Storage } from "../data";
+
 import { body, param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
 import _ from "lodash";
 import { EnsureAuthenticated } from "./auth";
 
-export const accountRouter = express.Router();
+export const authoritiesRouter = express.Router();
 // userRouter.use(RequiresData, EnsureAuthenticated);
 
-accountRouter.get('/:account',
+authoritiesRouter.post('/', async (req: Request, res: Response) => {
+  //post object {user: "YNETUsername", account: "full-accuont-code"}
+  //returns true and the value and type of approval
 
-async (req: Request, res: Response) => {
-  let list = await db.getAll();
-
-  for (let user of list) {
-      user = await db.makeDTO(user)
-  }
-
-  return res.json({ data: list });
+  return res.json({});
 });
+
+authoritiesRouter.get('/:account', async (req: Request, res: Response) => {
+  //return all the authorites assigned to the account
+  return res.json({});
+});
+authoritiesRouter.post('/:account', async (req: Request, res: Response) => {
+  //return all the authorites assigned to the account
+  // -----------
+  let a:any = req.store as Storage
+  // await a.Authorities.create({"thing":"the other thing"})
+  // -----------
+  return res.json({});
+});
+
+authoritiesRouter.get('/:myAuthorities', async (req: Request, res: Response) => {
+  //return a list of all the authorites assigned to my (YNET username)
+  return res.json({});
+});
+
+
+
+
+
+
