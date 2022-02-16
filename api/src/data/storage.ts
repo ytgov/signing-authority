@@ -9,7 +9,7 @@ let options:MongoClientOptions = {
 export class Storage {
     mongoConnection!: MongoClient;
     isInitialized: boolean = false;
-    Subscriptions!: GenericService;
+    Authorities!: GenericService;
     constructor() {
     }
     async ensureConnected(): Promise<string> {
@@ -20,7 +20,7 @@ export class Storage {
             .then(resp => {
                     this.mongoConnection = resp;
                     //Subscriptions are from the old project
-                    this.Subscriptions = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Subscriptions"));
+                    this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Subscriptions"));
                     this.isInitialized = true;
                     resolve("Connected");
                 })
