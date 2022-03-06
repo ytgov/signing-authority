@@ -36,6 +36,15 @@ const routes = [
     }
   },
   {
+    path: "/detail",
+    name: "Details",
+    component: () =>
+      import ("../views/AuthorityDetails.vue"),
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
     path: "/sign-in",
     name: "Login",
     component: Login
