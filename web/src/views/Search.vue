@@ -88,7 +88,7 @@
       ></application-list>
 
       <v-btn color="primary" class="mx-5" @click="createApplication"
-        >Create application</v-btn
+        >Create authority</v-btn
       >
     </v-navigation-drawer>
     <!-- <create-student-dialog ref="createAuthorityDialog"></create-student-dialog> -->
