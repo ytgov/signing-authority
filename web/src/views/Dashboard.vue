@@ -70,7 +70,7 @@
               color="primary"
               :to="`/authority/${item.student_id}`"
               title="View student record"
-              ><v-icon>mdi-school</v-icon></v-btn
+              ><v-icon>mdi-signature</v-icon></v-btn
             >
           </template>
         </v-data-table>
