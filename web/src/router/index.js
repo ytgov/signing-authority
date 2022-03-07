@@ -23,7 +23,25 @@ const routes = [
     name: "Dashboard",
     component: Dashboard,
     meta: {
-      requiresAuth: true
+      requiresAuth: false
+    }
+  },
+  {
+    path: "/search",
+    name: "Search",
+    component: () =>
+      import ("../views/Search.vue"),
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: "/detail",
+    name: "Details",
+    component: () =>
+      import ("../views/AuthorityDetails.vue"),
+    meta: {
+      requiresAuth: false
     }
   },
   {
