@@ -1,26 +1,31 @@
 import { MongoClient, MongoClientOptions, Collection, MongoCredentials } from "mongodb";
 import { MONGO_URL, MONGO_DB } from "../config";
-import { GenericService } from "../services";
+import { GenericService, UserService } from "../services";
 
-let options:MongoClientOptions = {
+let options: MongoClientOptions = {
     connectTimeoutMS: 3000,
-    retryWrites: true}
+    retryWrites: true
+}
 
 export class Storage {
     mongoConnection!: MongoClient;
     isInitialized: boolean = false;
     Authorities!: GenericService;
+    Users!: UserService;
+
     constructor() {
     }
+
     async ensureConnected(): Promise<string> {
         if (this.isInitialized)
             return Promise.resolve("connected");
         return new Promise((resolve, reject) => {
-             MongoClient.connect(MONGO_URL, options )
-            .then(resp => {
+            MongoClient.connect(MONGO_URL, options)
+                .then(resp => {
                     this.mongoConnection = resp;
                     //Subscriptions are from the old project
                     this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Subscriptions"));
+                    this.Users = new UserService(this.mongoConnection.db(MONGO_DB).collection("Users"));
                     this.isInitialized = true;
                     resolve("Connected");
                 })

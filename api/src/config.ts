@@ -27,26 +27,7 @@ export const MONGO_DB = process.env.MONGO_DB || "";
 export const MONGO_HOST = process.env.MONGO_HOST || "";
 export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}`
 
-
-export const DB_USER = process.env.DB_USER || "";
-export const DB_PASS = process.env.DB_PASS || "";
-export const DB_HOST = process.env.DB_HOST || "localhost";
-export const DB_PORT = parseInt(process.env.DB_PORT || "") || 1433;
-export const DB_NAME = process.env.DB_NAME || "";
-export const DB_CLIENT = process.env.DB_CLIENT || "mssql";
-
 export const API_GATEWAY_KEY = process.env.API_GATEWAY_KEY || "";
-
-export const DB_CONFIG = {
-  client: DB_CLIENT,
-  connection: {
-    server: DB_HOST,
-    user: DB_USER,
-    password: DB_PASS,
-    database: DB_NAME,
-    port: DB_PORT
-  }
-}
 
 export const MAIL_FROM = process.env.MAIL_FROM || "signing-authority@yukon.ca";
 export const MAIL_HOST = process.env.MAIL_HOST || "smtp.gov.yk.ca";

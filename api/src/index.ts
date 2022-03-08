@@ -4,8 +4,7 @@ import path from "path";
 import helmet from "helmet";
 import { API_PORT, FRONTEND_URL, APPLICATION_NAME } from './config';
 import { doHealthCheck } from "./utils/healthCheck";
-import {  userRouter, authoritiesRouter } from "./routes";
-import { CreateMigrationRoutes } from "./data";
+import { userRouter, authoritiesRouter } from "./routes";
 
 //import { configureLocalAuthentication } from "./routes/auth-local";
 import { configureAuthentication } from "./routes/auth";
@@ -40,11 +39,10 @@ app.use(cors({
   credentials: true
 }));
 
-CreateMigrationRoutes(app);
 configureAuthentication(app);
 
 app.get("/api/healthCheck", RequiresData, (req: Request, res: Response) => {
-// app.get("/api/healthCheck",  (req: Request, res: Response) => {
+  // app.get("/api/healthCheck",  (req: Request, res: Response) => {
   doHealthCheck(req, res);
 });
 

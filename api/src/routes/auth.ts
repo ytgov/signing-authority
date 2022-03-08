@@ -5,8 +5,7 @@ import { AUTH_REDIRECT, FRONTEND_URL } from "../config";
 import { UserService } from "../services";
 
 import { auth } from "express-openid-connect";
-
-const db = new UserService();
+import { RequiresData } from "../middleware";
 
 export function configureAuthentication(app: Express) {
 
@@ -31,8 +30,9 @@ export function configureAuthentication(app: Express) {
         }
     }));
 
-    app.use("/", async (req: Request, res: Response, next: NextFunction) => {
+    app.use("/", RequiresData, async (req: Request, res: Response, next: NextFunction) => {
         if (req.oidc.isAuthenticated()) {
+            const db = req.store.Users as UserService;
             let oidcUser = AuthUser.fromOpenId(req.oidc.user);
             //(req.session as any).user = oidcUser;
             //req.user = oidcUser;
@@ -46,6 +46,8 @@ export function configureAuthentication(app: Express) {
 
     app.get("/", async (req: Request, res: Response) => {
         if (req.oidc.isAuthenticated()) {
+            const db = req.store.Users as UserService;
+            
             let user = AuthUser.fromOpenId(req.oidc.user) as AuthUser;
             req.user = user;
 

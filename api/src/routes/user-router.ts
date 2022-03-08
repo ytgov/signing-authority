@@ -8,10 +8,9 @@ import { EnsureAuthenticated } from "./auth";
 export const userRouter = express.Router();
 userRouter.use(RequiresData, EnsureAuthenticated);
 
-const db = new UserService();
-
 userRouter.get("/me",
     async (req: Request, res: Response) => {
+        const db = req.store.Users as UserService;
         let person = req.user;
         let me = await db.getByEmail(person.email);
         return res.json({ data: await db.makeDTO(Object.assign(req.user, me)) });
@@ -19,6 +18,7 @@ userRouter.get("/me",
 
 userRouter.get("/",
     async (req: Request, res: Response) => {
+        const db = req.store.Users as UserService;
         let list = await db.getAll();
 
         for (let user of list) {
@@ -31,6 +31,7 @@ userRouter.get("/",
 userRouter.put("/:email",
     [param("email").notEmpty().isString()], ReturnValidationErrors,
     async (req: Request, res: Response) => {
+        const db = req.store.Users as UserService;
         let { email } = req.params;
         let { roles, status } = req.body;
 
@@ -47,6 +48,7 @@ userRouter.put("/:email",
 userRouter.delete("/:id",
     [param("id").notEmpty()], ReturnValidationErrors,
     async (req: Request, res: Response) => {
+        const db = req.store.Users as UserService;
         let { id } = req.params;
 
         //await db.disable(id);
@@ -59,6 +61,7 @@ userRouter.delete("/:id",
 // this will be removed when the application is deployed
 userRouter.get("/make-admin/:email/:key",
     async (req: Request, res: Response) => {
+        const db = req.store.Users as UserService;
         let user = await db.getByEmail(req.params.email);
 
         let { email, key } = req.params;

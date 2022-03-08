@@ -1,6 +1,5 @@
 // import { Collection, FilterQuery, ObjectId } from "mongodb";
 import { Collection, ObjectId, Filter } from "mongodb";
-import { API_GATEWAY_KEY } from "src/config";
 
 export class GenericService {
 
