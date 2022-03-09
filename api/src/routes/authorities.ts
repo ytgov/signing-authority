@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import { Storage } from "../data";
 
+import {uploadsRouter} from "./uploads"
+
 import { body, param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
@@ -9,11 +11,12 @@ import { EnsureAuthenticated } from "./auth";
 
 export const authoritiesRouter = express.Router();
 // userRouter.use(RequiresData, EnsureAuthenticated);
+authoritiesRouter.use('/uploads', uploadsRouter)
+
 
 authoritiesRouter.post('/', async (req: Request, res: Response) => {
   //post object {user: "YNETUsername", account: "full-accuont-code"}
   //returns true and the value and type of approval
-
   return res.json({});
 });
 
