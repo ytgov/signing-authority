@@ -14,11 +14,11 @@ export const authoritiesRouter = express.Router();
 authoritiesRouter.use('/uploads', uploadsRouter)
 
 
-authoritiesRouter.post('/', async (req: Request, res: Response) => {
+/* authoritiesRouter.post('/', async (req: Request, res: Response) => {
   //post object {user: "YNETUsername", account: "full-accuont-code"}
   //returns true and the value and type of approval
-  return res.json({});
-});
+  return res.json({"TESTING": "crap"});
+}); */
 
 authoritiesRouter.get('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account

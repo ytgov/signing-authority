@@ -1,40 +1,66 @@
 import express, { Request, Response } from "express";
-
-
-import {uploadFile} from "../services/upload-service"
+import { MongoClient } from "mongodb";
+import { MONGO_URL } from "../config";
+import { StoredFile } from "../data/models";
+import { MongoFileStore } from "../utils/mongo-file-store";
 
 export const uploadsRouter = express.Router();
-// userRouter.use(RequiresData, EnsureAuthenticated);
 
+uploadsRouter.get('/', async (req: Request, res: Response) => {
+  let client = await MongoClient.connect(`${MONGO_URL}`);
+  const fileStore = new MongoFileStore(client);
+  let files = await fileStore.getAllFiles();
+  return res.json({ data: files })
 
-
-uploadsRouter.post('/', uploadFile, async (req: Request, res: Response) => {
-  //let a:any = req.store as Storage
-  ///console.log (a.mongoConnection.s.url)
-  let filename = req.file
-  console.log("File:", req.file, "Body" ,req.body)
-  console.log(req.body.user)
-
-  return res.json({"file": filename?.originalname, "user": req.body.user});
 });
+
+uploadsRouter.get('/:id', async (req: Request, res: Response) => {
+  let { id } = req.params;
+  let client = await MongoClient.connect(`${MONGO_URL}`);
+  const fileStore = new MongoFileStore(client);
+  let file = await fileStore.getFile(id);
+  return res.json({ data: file })
+});
+
 
 uploadsRouter.post('/', async (req: Request, res: Response) => {
-  let a:any = req.store as Storage
+  //let a:any = req.store as Storage
+  ///console.log (a.mongoConnection.s.url)
+  let client = await MongoClient.connect(`${MONGO_URL}`);
 
-  //post object {user: "YNETUsername", account: "full-accuont-code"}
-  //returns true and the value and type of approval
+  const fileStore = new MongoFileStore(client);
 
-  return res.json({});
+  if (req.files) {
+    let file = req.files["file"];
+
+    if (Array.isArray(file))
+      file = file[0];
+
+    if (file) {
+      let storedFile: StoredFile = {
+        content: file.data,
+        fileSize: file.size,
+        filename: file.name,
+        mimeType: file.mimetype
+      }
+
+      let f = await fileStore.putFile(storedFile);
+
+      return res.json({ data: f.id })
+    }
+  }
+  res.status(500).send();
 });
+
 
 uploadsRouter.get('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
-  return res.json({"params":req.params});
+  return res.json({ "params": req.params });
 });
 uploadsRouter.post('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
   // -----------
-  let a:any = req.store as Storage
+  let a: any = req.store as Storage
   // await a.Authorities.create({"thing":"the other thing"})
   // -----------
   return res.json({});
@@ -42,11 +68,5 @@ uploadsRouter.post('/account/:account', async (req: Request, res: Response) => {
 
 uploadsRouter.get('/:myAuthorities', async (req: Request, res: Response) => {
   //return a list of all the authorites assigned to my (YNET username)
- return res.json({"params":req.params});
+  return res.json({ "params": req.params });
 });
-
-
-
-
-
-
