@@ -24,7 +24,7 @@ export class Storage {
                 .then(resp => {
                     this.mongoConnection = resp;
                     //Subscriptions are from the old project
-                    this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Subscriptions"));
+                    this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Authorities"));
                     this.Users = new UserService(this.mongoConnection.db(MONGO_DB).collection("Users"));
                     this.isInitialized = true;
                     resolve("Connected");
