@@ -28,6 +28,7 @@ export class MongoFileStore implements FileStore {
                 fileSize: doc.length,
                 filename: doc.filename,
                 content: Buffer.from(''),
+                uploadedBy: doc.metadata,
                 mimeType
             }
 
@@ -61,7 +62,7 @@ export class MongoFileStore implements FileStore {
 
     putFile(file: StoredFile): Promise<StoredFile> {
         let stream = Readable.from(file.content);
-        let mongoResponse = stream.pipe(this.bucket.openUploadStream(file.filename, { metadata: { mimeType: file.mimeType } }));
+        let mongoResponse = stream.pipe(this.bucket.openUploadStream(file.filename, { metadata: { mimeType: file.mimeType, uploadedBy: file.uploadedBy } }));
         file.id = mongoResponse.id.toString();
         return Promise.resolve(file);
     }
@@ -69,4 +70,27 @@ export class MongoFileStore implements FileStore {
     removeFile(key: string): Promise<any> {
         throw new Error("Method not implemented.");
     }
+
+    async uploadedBy(key: string): Promise<StoredFile> {
+        const cursor = this.bucket.find({ 'metadata.uploadedBy': key });
+
+        let storedFile: StoredFile = {
+            fileSize: 0,
+            filename: "",
+            content: Buffer.from(''),
+            mimeType: ""
+        }
+
+        await cursor.forEach(doc => {
+            let mimeType = doc.metadata ? doc.metadata.mimeType : "";
+
+            storedFile.id = doc._id.toString();
+            storedFile.fileSize = doc.length;
+            storedFile.filename = doc.filename;
+            storedFile.mimeType = mimeType
+        });
+
+        return Promise.resolve(storedFile)
+    }
+
 }
