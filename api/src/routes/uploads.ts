@@ -14,6 +14,16 @@ uploadsRouter.get('/', async (req: Request, res: Response) => {
 
 });
 
+uploadsRouter.get('/poster/:user', async (req: Request, res: Response) => {
+  //return all files uploaded by a given User
+  // RA: This should probably go to a "reporting" api endpoint
+  let { user } = req.params;
+  let client = await MongoClient.connect(`${MONGO_URL}`);
+  const fileStore = new MongoFileStore(client);
+  let file = await fileStore.uploadedBy(user);
+  return res.json({ data: file })
+});
+
 uploadsRouter.get('/:id', async (req: Request, res: Response) => {
   let { id } = req.params;
   let client = await MongoClient.connect(`${MONGO_URL}`);
@@ -29,7 +39,6 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
   let client = await MongoClient.connect(`${MONGO_URL}`);
 
   const fileStore = new MongoFileStore(client);
-
   if (req.files) {
     let file = req.files["file"];
 
@@ -41,7 +50,8 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
         content: file.data,
         fileSize: file.size,
         filename: file.name,
-        mimeType: file.mimetype
+        mimeType: file.mimetype,
+        uploadedBy: req.body.user
       }
 
       let f = await fileStore.putFile(storedFile);
@@ -53,20 +63,7 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
 });
 
 
-uploadsRouter.get('/account/:account', async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  return res.json({ "params": req.params });
-});
-uploadsRouter.post('/account/:account', async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  // -----------
-  let a: any = req.store as Storage
-  // await a.Authorities.create({"thing":"the other thing"})
-  // -----------
-  return res.json({});
-});
-
-uploadsRouter.get('/:myAuthorities', async (req: Request, res: Response) => {
+uploadsRouter.get('/myCard', async (req: Request, res: Response) => {
   //return a list of all the authorites assigned to my (YNET username)
   return res.json({ "params": req.params });
 });
