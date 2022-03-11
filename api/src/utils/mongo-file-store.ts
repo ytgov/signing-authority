@@ -44,20 +44,29 @@ export class MongoFileStore implements FileStore {
         let storedFile: StoredFile = {
             fileSize: 0,
             filename: "",
-            content: Buffer.from(''),
-            mimeType: ""
-        }
+            mimeType: "",
+            content: Buffer.from([])
+        };
 
         await cursor.forEach(doc => {
             let mimeType = doc.metadata ? doc.metadata.mimeType : "";
-
             storedFile.id = doc._id.toString();
             storedFile.fileSize = doc.length;
             storedFile.filename = doc.filename;
             storedFile.mimeType = mimeType
         });
 
-        return Promise.resolve(storedFile)
+        return new Promise((resolve, reject) => {
+            let download = this.bucket.openDownloadStream(new ObjectId(key));
+            let buffer = new Array();
+
+            download.on('end', async (en: Buffer) => {
+                storedFile.content = Buffer.concat(buffer)
+                resolve(storedFile)
+            }).on("data", (chunk: Buffer) => {
+                buffer.push(chunk);
+            });
+        });
     }
 
     putFile(file: StoredFile): Promise<StoredFile> {
@@ -77,7 +86,7 @@ export class MongoFileStore implements FileStore {
         let storedFile: StoredFile = {
             fileSize: 0,
             filename: "",
-            content: Buffer.from(''),
+            content: Buffer.from([]),
             mimeType: ""
         }
 

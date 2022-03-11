@@ -29,9 +29,22 @@ uploadsRouter.get('/:id', async (req: Request, res: Response) => {
   let client = await MongoClient.connect(`${MONGO_URL}`);
   const fileStore = new MongoFileStore(client);
   let file = await fileStore.getFile(id);
+  file.content = Buffer.from([]);
+
+  console.log(file)
+
   return res.json({ data: file })
 });
 
+uploadsRouter.get('/:id/file', async (req: Request, res: Response) => {
+  let { id } = req.params;
+  let client = await MongoClient.connect(`${MONGO_URL}`);
+  const fileStore = new MongoFileStore(client);
+  let file = await fileStore.getFile(id);
+
+  res.setHeader("Content-Disposition", "attachment; filename=" + file.filename);
+  return res.contentType(file.mimeType).send(file.content);
+});
 
 uploadsRouter.post('/', async (req: Request, res: Response) => {
   //let a:any = req.store as Storage
@@ -59,9 +72,9 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
       return res.json({ data: f.id })
     }
   }
+  
   res.status(500).send();
 });
-
 
 uploadsRouter.get('/myCard', async (req: Request, res: Response) => {
   //return a list of all the authorites assigned to my (YNET username)
