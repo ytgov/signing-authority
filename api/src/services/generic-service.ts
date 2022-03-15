@@ -1,7 +1,7 @@
 // import { Collection, FilterQuery, ObjectId } from "mongodb";
 import { Collection, ObjectId, Filter } from "mongodb";
 
-export class GenericService {
+export class GenericService<T> {
 
     private db: Collection;
 
@@ -9,12 +9,11 @@ export class GenericService {
         this.db = db;
     }
 
-    async create(item: any): Promise<any> {
-        console.log(item)
+    async create(item: T): Promise<any> {
         return this.db.insertOne(item);
     }
 
-    async update(id: string, item: any): Promise<any> {
+    async update(id: string, item: T): Promise<any> {
         return this.db.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: item });
     }
 
