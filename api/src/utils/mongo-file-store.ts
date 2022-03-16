@@ -49,7 +49,6 @@ export class MongoFileStore implements FileStore {
 
         await cursor.forEach(doc => {
             let mimeType = doc.metadata ? doc.metadata.mimeType : "";
-            storedFile.id = doc._id.toString();
             storedFile.fileSize = doc.length;
             storedFile.filename = doc.filename;
             storedFile.mimeType = mimeType
@@ -71,7 +70,7 @@ export class MongoFileStore implements FileStore {
     putFile(file: StoredFile): Promise<StoredFile> {
         let stream = Readable.from(file.content);
         let mongoResponse = stream.pipe(this.bucket.openUploadStream(file.filename, { metadata: { mimeType: file.mimeType, uploadedBy: file.uploadedBy } }));
-        file.id = mongoResponse.id.toString();
+        file._id = mongoResponse.id;
         return Promise.resolve(file);
     }
 
@@ -92,7 +91,7 @@ export class MongoFileStore implements FileStore {
         await cursor.forEach(doc => {
             let mimeType = doc.metadata ? doc.metadata.mimeType : "";
 
-            storedFile.id = doc._id.toString();
+            storedFile._id = doc._id;
             storedFile.fileSize = doc.length;
             storedFile.filename = doc.filename;
             storedFile.mimeType = mimeType

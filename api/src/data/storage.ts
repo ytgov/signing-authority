@@ -34,7 +34,7 @@ export class Storage {
                     //Subscriptions are from the old project
                     this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Authorities"));
                     this.Employees = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Employees"));
-                    this.Departments = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Department"));
+                    this.Departments = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Departments"));
                     this.Users = new UserService(this.mongoConnection.db(MONGO_DB).collection("Users"));
                     this.Files = new MongoFileStore(this.mongoConnection.db(MONGO_DB));
                     

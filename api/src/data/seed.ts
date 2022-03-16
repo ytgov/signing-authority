@@ -26,6 +26,11 @@ export async function Seed(storage: Storage) {
         await myDb.dropCollection("Employees");
     }
 
+    // remove all employees
+    if (collections.indexOf("Departments") >= 0) {
+        await myDb.dropCollection("Departments");
+    }
+
     let empDb = storage.Employees as GenericService<Employee>;
 
     // put in some employees
@@ -34,8 +39,8 @@ export async function Seed(storage: Storage) {
 
     let depDb = storage.Departments as GenericService<Department>;
     // put in some departments
-    let dep1 = await depDb.create({ name: "Justice", account_prefix: "15" });
-    let dep2 = await depDb.create({ name: "Highways and Public Works", account_prefix: "55" });
+    await depDb.create({ name: "Justice", account_prefix: "15" });
+    let dep1 = await depDb.create({ name: "Highways and Public Works", account_prefix: "55" });
     await depDb.create({ name: "Community Services", account_prefix: "12" });
     await depDb.create({ name: "Environment", account_prefix: "20" });
     await depDb.create({ name: "Health and Social Services", account_prefix: "33" });
@@ -44,7 +49,7 @@ export async function Seed(storage: Storage) {
 
     let auth1Lines = new Array<AuthorityLine>();
     auth1Lines.push({
-        account_mask: "55*15",
+        dept: "55", vote: "1", prog: "15", activity: "10", element: "**", allotment: "**", object: "****", ledger1: "", ledger2: "",
         s24_procure_goods_limit: 123,
         s24_procure_services_limit: 123,
         s24_procure_request_limit: 123,
@@ -59,9 +64,10 @@ export async function Seed(storage: Storage) {
         trust_limit: 123,
         s29_performance_limit: 123,
         s30_payment_limit: 123
-    })
+    });
+
     auth1Lines.push({
-        account_mask: "55*1530",
+        dept: "55", vote: "1", prog: "15", activity: "30", element: "**", allotment: "**", object: "****", ledger1: "", ledger2: "",
         s24_procure_goods_limit: 222,
         s24_procure_services_limit: 222,
         s24_procure_request_limit: 222,
@@ -76,10 +82,27 @@ export async function Seed(storage: Storage) {
         trust_limit: 222,
         s29_performance_limit: 222,
         s30_payment_limit: 222
-    })
+    });
+    auth1Lines.push({
+        dept: "55", vote: "1", prog: "15", activity: "**", element: "**", allotment: "02", object: "****", ledger1: "", ledger2: "",
+        s24_procure_goods_limit: 222,
+        s24_procure_services_limit: 222,
+        s24_procure_request_limit: 222,
+        s24_procure_assignment_limit: 222,
+        s23_procure_goods_limit: 222,
+        s23_procure_services_limit: 222,
+        s24_transfer_limit: 222,
+        s23_transfer_limit: 222,
+        s24_travel_limit: 222,
+        other_limit: 222,
+        loans_limit: 222,
+        trust_limit: 222,
+        s29_performance_limit: 222,
+        s30_payment_limit: 222
+    });
 
     let auth1 = await autDb.create({
-        department_id: dep1.insertedId, employee_id: emp1.insertedId, issue_date: new Date(), title: "Manager", program: "ICT", activated_by_memo: false, supervisor_name: "Ryan Agar",
-        employee_signed: false, supervisor_signed: false, supervisor_title: "Director, Marketing", authority_lines: auth1Lines
-    })
+        department_id: dep1.insertedId, employee_id: emp1.insertedId, issue_date: new Date(), title: "Manager", program: "ICT", supervisor_name: "Ryan Agar",
+        reviewed_by_department: true, employee_signed: false, supervisor_signed: false, supervisor_title: "Director, Marketing", authority_lines: auth1Lines
+    });
 }

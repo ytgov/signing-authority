@@ -65,7 +65,7 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
 
       let f = await fileStore.putFile(storedFile);
 
-      return res.json({ data: f.id })
+      return res.json({ data: f._id })
     }
   }
   

@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import auth from "./auth";
 import profile from "./profile";
+import employee from "./employee";
 
 Vue.use(Vuex);
 
@@ -18,5 +19,5 @@ export default new Vuex.Store({
       console.log("Initializing Store")
     },
   },
-  modules: { auth, profile }
+  modules: { auth, profile, employee }
 });

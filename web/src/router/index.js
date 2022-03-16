@@ -10,6 +10,8 @@ import Profile from "../views/Profile";
 import AdministrationHome from "../views/Administration/Home";
 import AdministrationUsers from "../views/Administration/Users";
 
+import EmployeeDetail from "../views/Employee/Detail";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -30,7 +32,7 @@ const routes = [
     path: "/search",
     name: "Search",
     component: () =>
-      import ("../views/Search.vue"),
+      import("../views/Search.vue"),
     meta: {
       requiresAuth: false
     }
@@ -39,7 +41,7 @@ const routes = [
     path: "/detail",
     name: "Details",
     component: () =>
-      import ("../views/AuthorityDetails.vue"),
+      import("../views/AuthorityDetails.vue"),
     meta: {
       requiresAuth: false
     }
@@ -79,7 +81,14 @@ const routes = [
       requiresAuth: true
     },
   },
-
+  {
+    path: "/employee/:id",
+    name: "EmployeeDetail",
+    component: EmployeeDetail,
+    meta: {
+      requiresAuth: true
+    },
+  },
   {
     path: "*",
     name: "Not Found",
