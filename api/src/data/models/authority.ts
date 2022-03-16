@@ -54,3 +54,4 @@ export interface Department {
     name: string;
     account_prefix: string;
 }
+

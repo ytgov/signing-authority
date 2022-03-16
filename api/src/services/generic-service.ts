@@ -1,5 +1,5 @@
 // import { Collection, FilterQuery, ObjectId } from "mongodb";
-import { Collection, ObjectId, Filter } from "mongodb";
+import { Collection, ObjectId, Filter, InsertOneResult, ModifyResult, DeleteResult, Document } from "mongodb";
 
 export class GenericService<T> {
 
@@ -9,15 +9,15 @@ export class GenericService<T> {
         this.db = db;
     }
 
-    async create(item: T): Promise<any> {
+    async create(item: T): Promise<InsertOneResult<T>> {
         return this.db.insertOne(item);
     }
 
-    async update(id: string, item: T): Promise<any> {
+    async update(id: string, item: T): Promise<ModifyResult<any>> {
         return this.db.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: item });
     }
 
-    async delete(id: string): Promise<any> {
+    async delete(id: string): Promise<DeleteResult> {
         return this.db.deleteOne({ _id: new ObjectId(id) });
     }
 
@@ -25,7 +25,7 @@ export class GenericService<T> {
         return this.db.find(query).sort(sort).toArray();
     }
 
-    async deleteWhere(query: Filter<any>): Promise<any> {
+    async deleteWhere(query: Filter<any>): Promise<DeleteResult> {
         return this.db.deleteMany(query);
     }
 
