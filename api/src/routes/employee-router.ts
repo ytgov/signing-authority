@@ -14,3 +14,14 @@ employeeRouter.get('/', async (req: Request, res: Response) => {
 
   return res.json({ data: await db.getAll({}) });
 });
+
+employeeRouter.post('/search', async (req: Request, res: Response) => {
+  //return all the authorites assigned to the account
+  let db = req.store.Employees as GenericService<Employee>;
+  let list = await db.getAll({});
+  for (let item of list) {
+    item.display_name = `${item.first_name} ${item.last_name}`
+  }
+
+  return res.json({ data: list });
+});

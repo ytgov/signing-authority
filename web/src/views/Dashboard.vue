@@ -55,7 +55,7 @@
           hide-default-footer
           :headers="[
             { text: '', value: 'action', width: '40px' },
-            { text: 'Name', value: 'name' },
+            { text: 'Name', value: 'display_name' },
             { text: 'Title', value: 'title' },
             { text: 'Department', value: 'department' },
           ]"
@@ -79,9 +79,7 @@
       <v-divider></v-divider>
 
       <v-card class="default my-4 mx-5" v-if="selectedAuthority">
-        <v-card-title
-          >Authority for {{selectedAuthority.name }}</v-card-title
-        >
+        <v-card-title>Authority for {{ selectedAuthority.name }}</v-card-title>
         <v-card-text>
           <div v-for="(app, i) of signingAuthorities" :key="i">
             <v-list-item
@@ -109,6 +107,9 @@
 </template>
 
 <script>
+import {EMPLOYEE_URL} from "../urls"
+import axios from "axios";
+
 export default {
   name: "Home",
   data: () => ({
@@ -129,29 +130,25 @@ export default {
       let cleanSearch = this.search.trim().toLowerCase();
       if (cleanSearch.length == 0) return;
       // hack to show search funtcion
-      this.searchResults = [{name: "Jane Smith"}, {name: "Alex Jones"}]
-      this.drawer=true
-      this.resultCount = this.searchResults.length
-      // axios
-      //   .post(`${STUDENT_SEARCH_URL}`, { terms: cleanSearch })
-      //   .then((resp) => {
-      //     this.searchResults = resp.data.data;
-      //     this.drawer = true;
-      //     this.resultCount = resp.data.meta.item_count;
-      //   })
-      //   .catch((err) => {
-      //     this.$emit("showError", err);
-      //   });
+      this.searchResults = [{ name: "Jane Smith" }, { name: "Alex Jones" }];
+      this.drawer = true;
+      this.resultCount = this.searchResults.length;
+
+      axios
+        .post(`${EMPLOYEE_URL}/search`, { terms: cleanSearch })
+        .then((resp) => {
+          this.searchResults = resp.data.data;
+          this.drawer = true;
+          this.resultCount = resp.data.meta.item_count;
+        })
+        .catch((err) => {
+          this.$emit("showError", err);
+        });
     },
     selectAuthority(item) {
       this.selectedAuthority = item;
-    //   axios
-    //     .get(`${STUDENT_URL}/${item.student_id}/applications`)
-    //     .then((resp) => {
-    //       this.studentApplications = resp.data.data;
-    //     })
-    //     .catch((err) => console.log(err));
-   },
+      this.$router.push(`/employee/${item._id}`);
+    },
   },
 };
 </script>
