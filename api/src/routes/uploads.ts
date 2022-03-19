@@ -1,12 +1,8 @@
 import express, { Request, Response } from "express";
-import { MongoClient } from "mongodb";
 import { FileStore } from "src/utils/file-store";
-import { MONGO_URL } from "../config";
 import { StoredFile } from "../data/models";
-import { MongoFileStore } from "../utils/mongo-file-store";
 
 export const uploadsRouter = express.Router();
-
 uploadsRouter.get('/', async (req: Request, res: Response) => {
   let fileStore = req.store.Files as FileStore;
   let files = await fileStore.getFiles({});
@@ -47,7 +43,7 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
   //let a:any = req.store as Storage
   ///console.log (a.mongoConnection.s.url)
   let fileStore = req.store.Files as FileStore;
-  
+
   if (req.files) {
     let file = req.files["file"];
 
@@ -68,7 +64,7 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
       return res.json({ data: f._id })
     }
   }
-  
+
   res.status(500).send();
 });
 
