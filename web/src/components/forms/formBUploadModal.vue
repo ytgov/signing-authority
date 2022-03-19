@@ -20,17 +20,16 @@
         </v-card-title>
 
         <v-card-text>
-        <div class="text-h3 ma-6 pa-6 text-center"> PDF Goes here </div>
-        <v-row
-          justify="center">
-
-          <v-col md="3">
-            <v-file-input
-              truncate-length="15"
-              label= "mySigningAuthorityFrom.pdf"
-          ></v-file-input>
-          </v-col>
-        </v-row>
+          <div class="text-h3 ma-6 pa-6 text-center"> PDF Goes here </div>
+          <v-row
+            justify="center">
+            <v-col md="3">
+              <v-file-input
+                truncate-length="15"
+                label= "mySigningAuthorityForm.pdf"
+              ></v-file-input>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-divider></v-divider>
 
@@ -55,10 +54,6 @@
     dialog: false
   }),
   methods: {
-    doSomething: function (){
-      alert ("HI! <wave>")
-      this.dialog = false;
-    }
 
   }
 }
