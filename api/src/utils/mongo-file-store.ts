@@ -27,7 +27,7 @@ export class MongoFileStore implements FileStore {
                 fileSize: doc.length,
                 filename: doc.filename,
                 content: Buffer.from(''),
-                uploadedBy: doc.metadata,
+                uploadedBy: doc.metadata?.uploadedBy,
                 mimeType
             }
 
@@ -77,27 +77,4 @@ export class MongoFileStore implements FileStore {
     removeFile(key: string): Promise<any> {
         return this.bucket.delete(new ObjectId(key));
     }
-
-    async uploadedBy(key: string): Promise<StoredFile> {
-        const cursor = this.bucket.find({ 'metadata.uploadedBy': key });
-
-        let storedFile: StoredFile = {
-            fileSize: 0,
-            filename: "",
-            content: Buffer.from([]),
-            mimeType: ""
-        }
-
-        await cursor.forEach(doc => {
-            let mimeType = doc.metadata ? doc.metadata.mimeType : "";
-
-            storedFile._id = doc._id;
-            storedFile.fileSize = doc.length;
-            storedFile.filename = doc.filename;
-            storedFile.mimeType = mimeType
-        });
-
-        return Promise.resolve(storedFile)
-    }
-
 }

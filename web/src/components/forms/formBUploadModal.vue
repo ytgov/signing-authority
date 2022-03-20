@@ -62,6 +62,7 @@
 </template>
 <script>
   import axios from "axios"
+  import {FORMB_UPLOAD_URL} from "../../urls"
   export default {
   name: "FormBUploadModal",
   data: () => ({
@@ -86,7 +87,7 @@
       let form = new FormData()
       form.append("user", "vueUser" )
       form.append("file", file )
-      axios.post("http://localhost:3000/api/authorities/uploads", form, {
+      axios.post(FORMB_UPLOAD_URL, form, {
       headers: {
         "Content-Type": "multipart/form-data"
       },
@@ -95,7 +96,7 @@
     })
     },
     getFile() {
-      axios.get("http://localhost:3000/api/authorities/uploads")
+      axios.get(FORMB_UPLOAD_URL)
       .then(response => {
         this.data = response.data
       })
