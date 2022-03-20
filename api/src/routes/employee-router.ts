@@ -4,7 +4,7 @@ import _, { join } from "lodash";
 import { EnsureAuthenticated } from "./auth";
 import { GenericService } from "../services";
 import { Authority, Department, Employee } from "../data/models";
-import { param } from "express-validator";
+import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
 
 export const employeeRouter = express.Router();
@@ -17,17 +17,29 @@ employeeRouter.get('/', async (req: Request, res: Response) => {
   return res.json({ data: await db.getAll({}) });
 });
 
-employeeRouter.post('/search', async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  let db = req.store.Employees as GenericService<Employee>;
-  let list = await db.getAll({});
+employeeRouter.post('/search',
+  [body("terms").notEmpty().trim()], ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    let { terms } = req.body;
+    //return all the authorites assigned to the account
 
-  for (let item of list) {
-    item.display_name = `${item.first_name} ${item.last_name}`;
-  }
+    let db = req.store.Employees as GenericService<Employee>;
+    let reg = new RegExp(terms, "i")
 
-  return res.json({ data: list });
-});
+    let list = await db.getAll({
+      $or: [
+        { "first_name": { $regex: reg } },
+        { "last_name": { $regex: reg } },
+        { "ynet_id": { $regex: reg } },
+        { "employee_id": { $regex: reg } }]
+    });
+
+    for (let item of list) {
+      item.display_name = `${item.first_name} ${item.last_name}`;
+    }
+
+    return res.json({ data: list });
+  });
 
 employeeRouter.get('/:id',
   [param("id").isMongoId()], ReturnValidationErrors,
