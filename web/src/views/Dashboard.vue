@@ -3,7 +3,7 @@
     <h1>Signing Authority App Home</h1>
     <p></p>
     <v-card class="mt-5" color="#fff2d5">
-      <v-card-title>Find a Signing Authority</v-card-title>
+      <v-card-title>Find an Employee</v-card-title>
       <v-card-text>
         <v-text-field
           dense
@@ -13,7 +13,7 @@
           append-icon="mdi-magnify"
           @click:append="doSearch"
           @keydown="searchKeyUp"
-          hint="Enter a Name, YNET ID or account code"
+          hint="Enter a Name, YNET ID or Employee ID"
           v-model="search"
         ></v-text-field>
         <router-link to="/search">Advanced search</router-link>
@@ -62,6 +62,7 @@
           :items="searchResults"
           :items-per-page="-1"
           @click:row="selectAuthority"
+          class="clickable-row"
         >
           <template v-slot:item.action="{ item }">
             <v-btn
