@@ -38,7 +38,7 @@ const routes = [
     }
   },
   {
-    path: "/detail",
+    path: "/form-b/:id",
     name: "Details",
     component: () =>
       import("../views/AuthorityDetails.vue"),

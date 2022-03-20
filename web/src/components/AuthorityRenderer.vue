@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card class="default mb-4" to="/detail">
+    <v-card class="default mb-4" :to="`/form-b/${authority._id}`">
       <v-card-text>
         <p>Department: {{ authority.department.name }}</p>
         <p>Program: {{ authority.program }}</p>
