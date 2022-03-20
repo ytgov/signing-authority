@@ -9,8 +9,8 @@ export interface Authority extends MongoEntity {
     title: string;
     issue_date: Date;
     expiry_date?: Date;
-    cancelled_date?: Date;
-    cancelled_reason?: string;
+    archive_date?: Date;
+    archive_reason?: string;
     supervisor_name: string;
     supervisor_title: string;
 
