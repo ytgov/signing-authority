@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, response, Response } from "express";
 import { Storage } from "../data";
 
 import { uploadsRouter } from "./uploads"
@@ -8,7 +8,8 @@ import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 import _ from "lodash";
 import { EnsureAuthenticated } from "./auth";
-import { Authority } from "src/data/models";
+import { Authority, Department, Employee } from "src/data/models";
+import { ObjectId } from "mongodb";
 
 export const authoritiesRouter = express.Router();
 // userRouter.use(RequiresData, EnsureAuthenticated);
@@ -20,6 +21,38 @@ authoritiesRouter.get("/", async (req: Request, res: Response) => {
   let list = await db.getAll({})
   res.json({ data: list })
 })
+
+authoritiesRouter.get("/:id",
+  [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let db = req.store.Authorities as GenericService<Authority>;
+    let depDb = req.store.Departments as GenericService<Department>;
+    let empDb = req.store.Employees as GenericService<Employee>;
+    let item = await db.getById(id);
+
+    if (item) {
+      item.department = await depDb.getOne({ _id: item.department_id });
+      item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
+
+      for (let line of item.authority_lines) {
+        line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`
+      }
+
+      return res.json({ data: item })
+    }
+
+    res.status(404).send();
+  });
+
+authoritiesRouter.put("/:id",
+  [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let db = req.store.Authorities as GenericService<Authority>;
+    let list = await db.getAll({})
+    res.json({ data: list })
+  })
 
 
 

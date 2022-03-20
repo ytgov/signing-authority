@@ -8,5 +8,6 @@ export const PROFILE_URL = `${config.apiBaseUrl}/api/user/me`;
 export const USER_URL = `${config.apiBaseUrl}/api/user`;
 
 export const EMPLOYEE_URL = `${config.apiBaseUrl}/api/employees`;
+export const AUTHORITY_URL = `${config.apiBaseUrl}/api/authorities`;
 
 export const FORMB_UPLOAD_URL = `${config.apiBaseUrl}/api/authorities/uploads`;
