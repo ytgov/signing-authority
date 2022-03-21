@@ -27,7 +27,8 @@
            </v-alert-text>
             </v-col>
           </v-row>
-          <div class="text-h3 ma-6 pa-6 text-center"> PDF Goes here </div>
+          <pdf-preview></pdf-preview>
+          <!-- <div class="text-h3 ma-6 pa-6 text-center"> PDF Goes here </div> -->
           <v-row
             justify="center">
             <v-col md="3">
@@ -63,7 +64,9 @@
 <script>
   import axios from "axios"
   import {FORMB_UPLOAD_URL} from "../../urls"
+  import pdfPreview from "./pdfPreview"
   export default {
+  components: { pdfPreview },
   name: "FormBUploadModal",
   data: () => ({
     dialog: false,
