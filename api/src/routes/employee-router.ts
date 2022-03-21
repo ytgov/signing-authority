@@ -6,6 +6,7 @@ import { GenericService } from "../services";
 import { Authority, Department, Employee } from "../data/models";
 import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
+import moment from "moment";
 
 export const employeeRouter = express.Router();
 employeeRouter.use(RequiresData, EnsureAuthenticated);
@@ -56,6 +57,9 @@ employeeRouter.get('/:id',
 
       for (let auth of item.authorities) {
         auth.department = await depDb.getOne({ _id: new ObjectId(auth.department_id) });
+
+        if (auth.issue_date)
+          auth.issue_date_display = moment(auth.issue_date).utc(false).format("YYYY-MM-DD");
       }
 
       return res.json({ data: item });

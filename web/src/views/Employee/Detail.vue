@@ -54,6 +54,27 @@
                   hide-details
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" sm="12">
+                <v-text-field
+                  v-model="employee.email"
+                  dense
+                  outlined
+                  background-color="white"
+                  label="Email"
+                  hide-details
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" sm="12">
+                <v-select
+                  v-model="employee.primary_department"
+                  dense
+                  outlined
+                  background-color="white"
+                  label="Primary department"
+                  hide-details
+                  :items="['Highways and Public Works', 'Justice','Community Services']"
+                ></v-select>
+              </v-col>
             </v-row>
             <v-btn color="primary" class="mb-0 mt-5" @click="saveEmployee">Save</v-btn>
           </v-card-text>

@@ -3,14 +3,44 @@
   <div>
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
 
+    <div class="float-right">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-2">
+            Actions <v-icon>mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+        <v-list dense>
+          <v-list-item @click="editClick">
+            <v-list-item-title>Edit</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="generateClick">
+            <v-list-item-title>Lock for Signatures</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="uploadClick">
+            <v-list-item-title>Upload Signed PDF</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="archiveClick">
+            <v-list-item-title>Archive</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item @click="archiveClick">
+            <v-list-item-title>Duplicate</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
     <h1>
-      Form B for {{ formB.employee.first_name }} {{ formB.employee.last_name }}
+      Form B for {{ formB.employee.first_name }}
+      {{ formB.employee.last_name }}
     </h1>
 
     <v-row>
       <v-col>
         <v-card class="default">
-          <v-card-title> Future Home of Viewing a Signing Auth</v-card-title>
           <v-card-text>
             <table
               border="0"
@@ -21,7 +51,32 @@
             >
               <thead>
                 <tr>
-                  <th rowspan="5"></th>
+                  <th
+                    rowspan="5"
+                    style="
+                      text-align: left;
+                      padding: 10px;
+                      vertical-align: top;
+                      height: 190px;
+                    "
+                  >
+                    <h3>Delegate:</h3>
+                    Public Officer Name:
+                    <strong>
+                      {{ formB.employee.first_name }}
+                      {{ formB.employee.last_name }}
+                    </strong>
+                    <br />
+
+                    Department:
+                    <strong>{{ formB.department.name }}</strong>
+                    <br />
+                    Program/Branch:
+                    <strong>{{ formB.program }}</strong>
+                    <br />
+                    Position title:
+                    <strong>{{ formB.title }}</strong>
+                  </th>
                   <th colspan="13">SPENDING AUTHORITY</th>
                   <th rowspan="3" class="rotate" style="height: 140px">
                     <div>
@@ -41,56 +96,98 @@
                   <th rowspan="2">S.29</th>
                 </tr>
                 <tr>
-                  <th colspan="4">S.24 Comitment</th>
+                  <th colspan="4">S.24 Commitment</th>
                   <th colspan="2" style="max-width: 80px">
                     S.23 Signing Contract
                   </th>
                 </tr>
                 <tr>
                   <th colspan="2" style="max-width: 80px">OWN PROCUREMENT</th>
-                  <th rowspan="2" class="rotate">
-                    <div>Request for goods</div>
+                  <th rowspan="3" class="rotate">
+                    <div>
+                      Request for goods<br />
+                      or services
+                    </div>
                   </th>
-                  <th rowspan="2" class="rotate"><div>Assignent Auth</div></th>
-                  <th rowspan="2" class="rotate"><div>Goods</div></th>
-                  <th rowspan="2" class="rotate"><div>Services</div></th>
-                  <th rowspan="2" class="rotate"><div>S.24 Commitment</div></th>
-                  <th rowspan="2" class="rotate">
-                    <div>S.23 Signing contract</div>
+                  <th rowspan="3" class="rotate">
+                    <div>Assignment <br />Authority</div>
                   </th>
-                  <th rowspan="2" class="rotate">
-                    <div>S.24 Travel auth</div>
+                  <th rowspan="3" class="rotate">
+                    <div class="mb-2">Goods</div>
                   </th>
-                  <th rowspan="2" class="rotate"><div>OTher contrat</div></th>
-                  <th rowspan="2" class="rotate"><div>Loans</div></th>
-                  <th rowspan="2" class="rotate"><div>Departmental</div></th>
-                  <th rowspan="2" class="rotate"><div>Cert of perform</div></th>
-                  <th rowspan="2" class="rotate">
-                    <div>Requesition for payment</div>
+                  <th rowspan="3" class="rotate">
+                    <div class="mb-2">Services</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div class="mb-2">S.24 Commitment</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div>S.23 Signing<br />contract</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div>S.24 Travel <br />authorization</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div>OTher contracts & <br />Expenditures **</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div>Loans & <br />Guarantees</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div class="mb-2">Departmental Use</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div>Certificate of <br />performance</div>
+                  </th>
+                  <th rowspan="3" class="rotate">
+                    <div>
+                      Requesition<br />
+                      for payment
+                    </div>
                   </th>
                 </tr>
                 <tr>
-                  <th class="rotate"><div>Goods</div></th>
-                  <th class="rotate"><div>Services</div></th>
+                  <th class="rotate" rowspan="2">
+                    <div class="mb-2">Goods</div>
+                  </th>
+                  <th class="rotate" rowspan="2">
+                    <div class="mb-2">Services</div>
+                  </th>
+                </tr>
+                <tr style="height: 30px">
+                  <th style="height: 30px">
+                    Area of Authority - General Ledger Coding
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
                 <tr v-for="(line, idx) of formB.authority_lines" :key="idx">
-                  <td>{{ line.account }}</td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
-                  <td style="width: 60px"></td>
+                  <td class="pl-3">{{ line.account }}</td>
+                  <td class="fb-value">{{ line.s24_procure_goods_limit }}</td>
+                  <td class="fb-value">
+                    {{ line.s24_procure_services_limit }}
+                  </td>
+                  <td class="fb-value">
+                    {{ line.s24_procure_request_limit }}
+                  </td>
+                  <td class="fb-value">
+                    {{ line.s24_procure_assignment_limit }}
+                  </td>
+                  <td class="fb-value">
+                    {{ line.s23_procure_goods_limit }}
+                  </td>
+                  <td class="fb-value">
+                    {{ line.s23_procure_services_limit }}
+                  </td>
+                  <td class="fb-value">{{ line.s24_transfer_limit }}</td>
+                  <td class="fb-value">{{ line.s23_transfer_limit }}</td>
+                  <td class="fb-value">{{ line.s24_travel_limit }}</td>
+                  <td class="fb-value">{{ line.other_limit }}</td>
+                  <td class="fb-value">{{ line.loans_limit }}</td>
+                  <td class="fb-value">{{ line.trust_limit }}</td>
+                  <td class="fb-value">{{ line.s29_performance_limit }}</td>
+                  <td class="fb-value">{{ line.s30_payment_limit }}</td>
                 </tr>
               </tbody>
             </table>
@@ -102,21 +199,11 @@
 
 -->
           </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" class="mx-5">
-              Create New Signing Auths</v-btn
-            >
-        <v-btn color="error" class="mr-5">Archive</v-btn>
-        <v-btn color="info" class="mr-5">Make changes</v-btn>
-
-            <v-btn color="primary" class="mx-5"> Create PDF </v-btn>
-            <v-spacer />
-            <v-btn color="secondary" class="mx-5"> Upload PDF </v-btn>
-            <v-btn color="secondary" class="mx-5"> View PDF </v-btn>
-          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
+
+    <v-dialog></v-dialog>
   </div>
 </template>
 
@@ -127,13 +214,16 @@
 .table th {
   text-align: center;
 }
+.table thead {
+  text-transform: uppercase;
+}
 .table th,
 .table td {
   border: 1px black solid;
 }
 
 .table th.rotate {
-  height: 170px;
+  height: 140px;
   white-space: nowrap;
   vertical-align: bottom;
   padding-bottom: 20px;
@@ -142,6 +232,10 @@
 .table th.rotate > div {
   transform: rotate(270deg);
   width: 58px;
+}
+.table .fb-value {
+  width: 60px;
+  text-align: center;
 }
 </style>
 
@@ -163,7 +257,9 @@ export default {
         text: `${this.formB.employee.first_name} ${this.formB.employee.last_name}`,
         to: `/employee/${this.formB.employee_id}`,
       });
-      b.push({ text: `Form B (${this.formB.department.name} - ${this.formB.program})` });
+      b.push({
+        text: `Form B (${this.formB.department.name} - ${this.formB.program})`,
+      });
       return b;
     },
   },
@@ -173,6 +269,11 @@ export default {
   },
   methods: {
     ...mapActions("authority", ["loadFormB"]),
+    editClick() {},
+    generateClick() {},
+    uploadClick() {},
+    archiveClick() {},
+    downloadClick() {},
   },
 };
 </script>

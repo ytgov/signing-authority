@@ -55,8 +55,8 @@
           hide-default-footer
           :headers="[
             { text: 'Name', value: 'display_name' },
-            { text: 'Title', value: 'title' },
-            { text: 'Department', value: 'department' },
+            { text: 'YNET Id', value: 'ynet_id' },
+            { text: 'Employee Id', value: 'employee_id' },
           ]"
           :items="searchResults"
           :items-per-page="-1"
