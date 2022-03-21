@@ -24,7 +24,10 @@
                   <th rowspan="5"></th>
                   <th colspan="13">SPENDING AUTHORITY</th>
                   <th rowspan="3" class="rotate" style="height: 140px">
-                    <div>PAYMENT<br> AUTHORITY s.30</div>
+                    <div>
+                      PAYMENT<br />
+                      AUTHORITY s.30
+                    </div>
                   </th>
                 </tr>
                 <tr>
@@ -32,7 +35,9 @@
                   <th rowspan="2" colspan="2" style="max-width: 80px">
                     TRANSFER PAYMENTS
                   </th>
-                  <th colspan="4" rowspan="2">OTHER:<br>S.24 COMMITMENT & <br>S.23 SIGNING CONTRACT</th>
+                  <th colspan="4" rowspan="2">
+                    OTHER:<br />S.24 COMMITMENT & <br />S.23 SIGNING CONTRACT
+                  </th>
                   <th rowspan="2">S.29</th>
                 </tr>
                 <tr>
@@ -101,6 +106,9 @@
             <v-btn color="primary" class="mx-5">
               Create New Signing Auths</v-btn
             >
+        <v-btn color="error" class="mr-5">Archive</v-btn>
+        <v-btn color="info" class="mr-5">Make changes</v-btn>
+
             <v-btn color="primary" class="mx-5"> Create PDF </v-btn>
             <v-spacer />
             <v-btn color="secondary" class="mx-5"> Upload PDF </v-btn>
@@ -155,7 +163,7 @@ export default {
         text: `${this.formB.employee.first_name} ${this.formB.employee.last_name}`,
         to: `/employee/${this.formB.employee_id}`,
       });
-      b.push({ text: `Form B (${this.formB.department.name} - )` });
+      b.push({ text: `Form B (${this.formB.department.name} - ${this.formB.program})` });
       return b;
     },
   },
