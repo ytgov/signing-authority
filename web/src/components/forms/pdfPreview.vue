@@ -1,7 +1,7 @@
 <template>
-  <container>
+  <v-container>
      <pdf :src=pdfURL></pdf>
-  </container>
+  </v-container>
 </template>
 <script>
 import pdf from 'vue-pdf'
@@ -16,9 +16,8 @@ export default {
         }
   },
 
-  data: () => {
+  data: () => ({
 
-  }
-
+  })
 }
 </script>
