@@ -11,9 +11,9 @@ export default {
   },
   props: {
     pdfURL: {
-            type: String,
-            default: '/Jager_Tamara_SC_2020_04_01.pdf'
-        }
+      type: String,
+      default: '/Jager_Tamara_SC_2020_04_01.pdf'
+    }
   },
 
   data: () => ({

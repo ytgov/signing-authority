@@ -22,27 +22,21 @@
         <v-card-text>
           <v-row>
             <v-col>
-           <v-alert-text>
-              {{message}}
-           </v-alert-text>
+               <v-snackbar v-model="visible" right :color="color">
+    <v-icon class="mr-3">mdi-error</v-icon>
+    SomeTest
+  </v-snackbar>
+           <notifications ref="notifier"></notifications>
             </v-col>
           </v-row>
           <pdf-preview></pdf-preview>
           <!-- <div class="text-h3 ma-6 pa-6 text-center"> PDF Goes here </div> -->
           <v-row
             justify="center">
-            <v-col md="3">
-              <v-file-input
-                truncate-length="15"
-                @change="selectFile"
-              ></v-file-input>
-
+            <v-col
+            md=5>
+              <upload-file> </upload-file>
             </v-col>
-   <v-btn
-              @click="upload()"
-              :disabled="!currentFile ? true : false"
-              color="primary"
-              class="mx-5"> Upload </v-btn>
           </v-row>
         </v-card-text>
         <v-divider></v-divider>
@@ -65,39 +59,19 @@
   import axios from "axios"
   import {FORMB_UPLOAD_URL} from "../../urls"
   import pdfPreview from "./pdfPreview"
+  import notifications from "../Notifications"
+  import uploadFile from "./uploadFormB.vue"
+
   export default {
-  components: { pdfPreview },
-  name: "FormBUploadModal",
+  components: {
+    pdfPreview,
+    notifications,
+    uploadFile, },
+  name: "showFormBModal",
   data: () => ({
-    dialog: false,
-    currentFile: undefined,
-    message: "",
-    data: {"data": "Empty"}
 
   }),
-  methods: {
-    selectFile: function (file){
-      console.log(file)
-      this.currentFile = file;
-    },
-    upload: function () {
-      console.log("Upload")
-      if (!this.currentFile) {
-        this.message = "Please select a file"
-        return
-      }
-      let file = this.currentFile
-      let form = new FormData()
-      form.append("user", "vueUser" )
-      form.append("file", file )
-      axios.post(FORMB_UPLOAD_URL, form, {
-      headers: {
-        "Content-Type": "multipart/form-data"
-      },
-    }).then( response => {
-      console.log( response)
-    })
-    },
+
     getFile() {
       axios.get(FORMB_UPLOAD_URL)
       .then(response => {
@@ -105,6 +79,5 @@
       })
   }
 
-  }
 }
 </script>

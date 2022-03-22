@@ -14,7 +14,7 @@
         <p>Last name: {{ employee.last_name }}</p>
         <p>YNET Id: {{ employee.ynet_id }}</p>
 
-        <form-b-upload-modal> </form-b-upload-modal>
+        <show-form-b-modal> </show-form-b-modal>
       </v-col>
 
       <v-col cols="12" sm="6">
@@ -30,17 +30,15 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import formBUploadModal from "../../components/forms/formBUploadModal.vue";
 import AuthorityRenderer from "../../components/AuthorityRenderer.vue";
+import showFormBModal from "../../components/forms/showFormBModal.vue"
 //import store from "../../store";
 
 export default {
-  components: { formBUploadModal, AuthorityRenderer },
-  name: "Login",
-  component: {
-    formBUploadModal,
-    AuthorityRenderer,
-  },
+  name: "EmployeeDetail",
+  components: {
+    showFormBModal,
+    AuthorityRenderer },
   computed: {
     ...mapGetters("employee", ["employee"]),
     breadcrumbs: function () {
