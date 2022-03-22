@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+
+  mongodb:
+    image: mongo:5.0.6
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - 27017:27017
+
+volumes:
+  mongo-data:

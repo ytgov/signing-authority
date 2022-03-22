@@ -1,0 +1,9 @@
+api/node_modules
+api/src/web
+api/*.db
+web/node_modules
+web/dist
+dist
+npm-debug.log
+node_modules
+docs
