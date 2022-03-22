@@ -20,7 +20,8 @@
           </v-list-item>
 
           <v-list-item @click="uploadClick">
-            <v-list-item-title>Upload Signed PDF</v-list-item-title>
+            <upload-form-modal></upload-form-modal>
+            <!-- <v-list-item-title>Upload Signed PDF</v-list-item-title> -->
           </v-list-item>
 
           <v-list-item @click="archiveClick">
@@ -242,12 +243,17 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import uploadFormModal from "../components/forms/uploadFormModal.vue"
 
 export default {
   name: "AuthorityDetails",
+  components: {
+    uploadFormModal
+  },
   data: () => ({
     id: "",
     authority: {},
+    showUpload: false
   }),
   computed: {
     ...mapGetters("authority", ["formB"]),
@@ -271,7 +277,9 @@ export default {
     ...mapActions("authority", ["loadFormB"]),
     editClick() {},
     generateClick() {},
-    uploadClick() {},
+    uploadClick() {
+      this.showUpload = true//show modal fup upload
+    },
     archiveClick() {},
     downloadClick() {},
   },

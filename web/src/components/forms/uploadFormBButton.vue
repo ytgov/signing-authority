@@ -1,16 +1,23 @@
 <template>
   <v-container>
     <notifications ref="notifier"></notifications>
+    <v-row>
+      <v-col
+       md="9">
     <v-file-input
       truncate-length="50"
       @change="selectFile"
     ></v-file-input>
+      </v-col>
 
+      <v-col>
     <v-btn
       @click="upload()"
       :disabled="!currentFile ? true : false"
       color="primary"
-      class="mx-5"> Upload </v-btn>
+      class=""> Upload </v-btn>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -57,8 +64,12 @@ export default {
       headers: {
         "Content-Type": "multipart/form-data"
       },
-    }).then( response => {
-       this.$refs.notifier.showAPIMessages(response.data);
+    }).then ( response => {
+       this.$refs.notifier.showAPIMessages(response.data)
+       if (response.status == 200){
+         //this should probably wait a second or two before returning
+         this.$emit('uploadComplete')
+       }
     })
     },
   },
