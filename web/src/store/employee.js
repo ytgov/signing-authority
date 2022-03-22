@@ -20,6 +20,25 @@ const actions = {
                 commit("setEmployee", {});
             });
     },
+    async saveEmployee(store) {
+        let employee = store.getters.employee;
+
+        let body = {
+            first_name: employee.first_name,
+            last_name: employee.last_name,
+            employee_id: employee.employee_id,
+            ynet_id: employee.ynet_id,
+            email: employee.email
+        };
+
+        return await axios.put(`${EMPLOYEE_URL}/${employee._id}`, body)
+            .then(resp => {
+                //commit("setEmployee", resp.data.data);
+                return resp.data.data
+            }).catch(() => {
+                store.commit("setEmployee", {});
+            });
+    },
 };
 
 const mutations = {

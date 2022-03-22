@@ -1,6 +1,6 @@
 <template>
   <v-container>
-     <pdf :src=pdfURL></pdf>
+    <pdf :src="pdfFile"></pdf>
   </v-container>
 </template>
 <script>
@@ -15,9 +15,5 @@ export default {
       default: '/Jager_Tamara_SC_2020_04_01.pdf'
     }
   },
-
-  data: () => ({
-
-  })
 }
 </script>

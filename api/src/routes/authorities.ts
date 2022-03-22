@@ -10,6 +10,7 @@ import _ from "lodash";
 import { EnsureAuthenticated } from "./auth";
 import { Authority, Department, Employee } from "src/data/models";
 import { ObjectId } from "mongodb";
+import moment from "moment";
 
 export const authoritiesRouter = express.Router();
 // userRouter.use(RequiresData, EnsureAuthenticated);
@@ -34,6 +35,9 @@ authoritiesRouter.get("/:id",
     if (item) {
       item.department = await depDb.getOne({ _id: item.department_id });
       item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
+
+      if (item.issue_date)
+        item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");
 
       for (let line of item.authority_lines) {
         line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`

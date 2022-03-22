@@ -25,6 +25,7 @@ export interface Authority extends MongoEntity {
     // used in DTO only
     department?: Department;
     employee?: Employee;
+    issue_date_display?: string;
 }
 
 export interface AuthorityLine {
