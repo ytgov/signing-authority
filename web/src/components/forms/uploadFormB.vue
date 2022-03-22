@@ -1,19 +1,17 @@
 <template>
-<v-container>
-   <notifications ref="notifier"></notifications>
+  <v-container>
+    <notifications ref="notifier"></notifications>
+    <v-file-input
+      truncate-length="50"
+      @change="selectFile"
+    ></v-file-input>
 
-  <v-file-input
-    truncate-length="50"
-    @change="selectFile"
-  ></v-file-input>
-
-   <v-btn
-    @click="upload()"
-    :disabled="!currentFile ? true : false"
-    color="primary"
-    class="mx-5"> Upload </v-btn>
-
-</v-container>
+    <v-btn
+      @click="upload()"
+      :disabled="!currentFile ? true : false"
+      color="primary"
+      class="mx-5"> Upload </v-btn>
+  </v-container>
 </template>
 <script>
 import {FORMB_UPLOAD_URL} from "../../urls"
@@ -39,9 +37,6 @@ export default {
     currentFile: undefined,
     message: "",
     data: {"data": "Empty"},
-
-
-
   }),
    methods: {
     selectFile: function (file){
