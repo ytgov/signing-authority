@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <pdf :src="pdfFile"></pdf>
+    <pdf :src="pdfURL"></pdf>
   </v-container>
 </template>
 <script>
