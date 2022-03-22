@@ -30,7 +30,7 @@
           <v-spacer></v-spacer>
           <v-col style="text-align: right" class="mb-0 pb-0">
             <pdf-preview-button
-              :pdfFile="pdfFile"
+              :pdfURL="pdfURL"
               class="mb-0"
             ></pdf-preview-button>
           </v-col>
@@ -50,7 +50,7 @@ export default {
   name: "AuthorityRenderer",
   props: ["authority"],
   data: () => ({
-    pdfFile: "/Jager_Tamara_SC_2020_04_01.pdf",
+    pdfURL: "/Jager_Tamara_SC_2020_04_01.pdf",
   }),
 };
 </script>
