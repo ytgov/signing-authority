@@ -29,6 +29,7 @@
             <v-col
             md=5>
             <upload-form-b-button
+            :authorityID="authorityID"
             @uploadComplete="dialog=false"></upload-form-b-button>
               <!-- <upload-file> </upload-file> -->
             </v-col>
@@ -53,6 +54,12 @@
 import UploadFormBButton from './uploadFormBButton.vue'
 export default {
   name:"uploadModal",
+  props: {
+    authorityID: {
+      type: String,
+      default: '000000000000'
+    }
+  },
   components:{
     UploadFormBButton
   },

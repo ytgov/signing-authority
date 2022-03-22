@@ -23,6 +23,7 @@
 <script>
 import {FORMB_UPLOAD_URL} from "../../urls"
 import axios from "axios"
+import { mapGetters, mapState } from 'vuex'
 import notifications from "../Notifications"
 export default {
   name:"uploadFile",
@@ -37,15 +38,30 @@ export default {
     fileType: {
       type: String,
       default: 'formB'
+    },
+    authorityID: {
+      type: String,
+      default: '000000000000'
     }
   },
   data: () => ({
     dialog: false,
     currentFile: undefined,
+    //uploadUser: "systemUser",
     message: "",
     data: {"data": "Empty"},
   }),
-   methods: {
+  computed: {
+    ...mapGetters("authority",
+      ["formB"
+    ]),
+    //RA - TODO: Clean up profile import
+    ...mapState('profile',[
+      "email",
+
+    ])
+  },
+  methods: {
     selectFile: function (file){
       console.log(file)
       this.currentFile = file;
@@ -58,7 +74,10 @@ export default {
       }
       let file = this.currentFile
       let form = new FormData()
-      form.append("user", "vueUser" )
+
+      form.append("user", this.email)
+
+      form.append("authorityId", this.formB._id)
       form.append("file", file )
       axios.post(FORMB_UPLOAD_URL, form, {
       headers: {
