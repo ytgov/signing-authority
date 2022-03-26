@@ -58,7 +58,7 @@ export default {
 
     },
     previewFile(item) {
-      let url = FORMB_UPLOAD_URL + item.id + "/file"
+      let url = FORMB_UPLOAD_URL +`/${item.id}/file`
       this.pdfURL = url
 
     },
