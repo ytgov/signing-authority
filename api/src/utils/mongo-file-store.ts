@@ -28,7 +28,8 @@ export class MongoFileStore implements FileStore {
                 filename: doc.filename,
                 content: Buffer.from(''),
                 uploadedBy: doc.metadata?.uploadedBy,
-                mimeType
+                mimeType,
+                uploadDate: doc.uploadDate
             }
 
             allFiles.push(file)
@@ -44,7 +45,7 @@ export class MongoFileStore implements FileStore {
             fileSize: 0,
             filename: "",
             mimeType: "",
-            content: Buffer.from([])
+            content: Buffer.from([]),
         };
 
         await cursor.forEach(doc => {
