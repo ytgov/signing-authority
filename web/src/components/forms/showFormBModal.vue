@@ -10,7 +10,9 @@
         </v-card-title>
 
         <v-card-text>
-          <pdf-preview></pdf-preview>
+          <pdf-preview
+          :pdfURL=pdfURL>
+          </pdf-preview>
           <!-- <div class="text-h3 ma-6 pa-6 text-center"> PDF Goes here </div> -->
           <v-row
             justify="center">

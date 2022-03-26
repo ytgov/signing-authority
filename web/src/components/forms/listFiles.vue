@@ -23,7 +23,7 @@
   </template>
 
   <template v-slot:item.uploadDate="{ item }">
-    {{prettyDate(item.ploadDate)}}
+    {{prettyDate(item.uploadDate)}}
   </template>
 
   </v-data-table>
