@@ -17,9 +17,21 @@
    >
 
   <template v-slot:item.filename="{ item }">
-     <span  @click="previewFile(item)">
-        {{ item.filename }}
-     </span>
+    <v-tooltip
+      bottom
+      color="#512A44">
+      <template v-slot:activator="{ on, attrs }">
+
+        <span
+          v-bind="attrs"
+          v-on="on" @click="previewFile(item)">
+           {{ item.filename }}
+         </span>
+
+      </template>
+     <span>Preview</span>
+   </v-tooltip>
+
   </template>
 
   <template v-slot:item.uploadDate="{ item }">
