@@ -15,8 +15,8 @@ uploadsRouter.get('/poster/:user', async (req: Request, res: Response) => {
   // RA: This should probably go to a "reporting" api endpoint
   let { user } = req.params;
   let fileStore = req.store.Files as FileStore;
-  let file = await fileStore.getFiles({"metadata.uploadedBy": user});
-  return res.json({ data: file })
+  let files = await fileStore.getFiles({"metadata.uploadedBy": user});
+  return res.json({ data: files })
 });
 
 uploadsRouter.get('/:id', async (req: Request, res: Response) => {
