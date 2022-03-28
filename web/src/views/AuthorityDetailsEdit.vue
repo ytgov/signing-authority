@@ -3,41 +3,7 @@
   <div>
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
 
-    <div class="float-right">
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-2">
-            Actions <v-icon>mdi-chevron-down</v-icon>
-          </v-btn>
-        </template>
-        <v-list dense>
-          <v-list-item @click="editClick">
-            <v-list-item-title>Edit</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item @click="generateClick">
-            <v-list-item-title>Lock for Signatures</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item @click="uploadClick">
-            <upload-form-modal></upload-form-modal>
-            <!-- <v-list-item-title>Upload Signed PDF</v-list-item-title> -->
-          </v-list-item>
-
-          <v-list-item @click="archiveClick">
-            <v-list-item-title>Archive</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item @click="archiveClick">
-            <v-list-item-title>Duplicate</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </div>
-    <h1>
-      Form B for {{ formB.employee.first_name }}
-      {{ formB.employee.last_name }}
-    </h1>
+    <h1>Form B for {{ employeeFullName }}</h1>
 
     <v-row>
       <v-col>
@@ -62,21 +28,40 @@
                     "
                   >
                     <h3>Delegate:</h3>
-                    Public Officer Name:
-                    <strong>
-                      {{ formB.employee.first_name }}
-                      {{ formB.employee.last_name }}
-                    </strong>
-                    <br />
 
-                    Department:
-                    <strong>{{ formB.department.name }}</strong>
-                    <br />
-                    Program/Branch:
-                    <strong>{{ formB.program }}</strong>
-                    <br />
-                    Position title:
-                    <strong>{{ formB.title }}</strong>
+                    <v-text-field
+                      v-model="employeeFullName"
+                      readonly
+                      dense
+                      outlined
+                      label="Public Officer Name"
+                      @change="itemChanged"
+                    ></v-text-field>
+
+                    <v-select
+                      :items="departments"
+                      dense
+                      outlined
+                      item-text="name"
+                      item-value="_id"
+                      v-model="formB.department_id"
+                      label="Department"
+                      @change="itemChanged"
+                    ></v-select>
+                    <v-text-field
+                      v-model="formB.program"
+                      dense
+                      outlined
+                      label="Program/Branch"
+                      @change="itemChanged"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="formB.title"
+                      dense
+                      outlined
+                      label="Position title"
+                      @change="itemChanged"
+                    ></v-text-field>
                   </th>
                   <th colspan="13">SPENDING AUTHORITY</th>
                   <th rowspan="3" class="rotate" style="height: 140px">
@@ -164,34 +149,147 @@
 
               <tbody>
                 <tr v-for="(line, idx) of formB.authority_lines" :key="idx">
-                  <td class="pl-3">{{ line.account }}</td>
-                  <td class="fb-value">{{ line.s24_procure_goods_limit }}</td>
-                  <td class="fb-value">
-                    {{ line.s24_procure_services_limit }}
+                  <td class="">
+                    <v-text-field
+                      v-model="line.account"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                      prepend-inner-icon="mdi-delete"
+                      @click:prepend-inner="removeLine(idx)"
+                    ></v-text-field>
                   </td>
                   <td class="fb-value">
-                    {{ line.s24_procure_request_limit }}
+                    <v-text-field
+                      v-model="line.s24_procure_goods_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
                   </td>
                   <td class="fb-value">
-                    {{ line.s24_procure_assignment_limit }}
+                    <v-text-field
+                      v-model="line.s24_procure_services_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
                   </td>
                   <td class="fb-value">
-                    {{ line.s23_procure_goods_limit }}
+                    <v-text-field
+                      v-model="line.s24_procure_request_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
                   </td>
                   <td class="fb-value">
-                    {{ line.s23_procure_services_limit }}
+                    <v-text-field
+                      v-model="line.s24_procure_assignment_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
                   </td>
-                  <td class="fb-value">{{ line.s24_transfer_limit }}</td>
-                  <td class="fb-value">{{ line.s23_transfer_limit }}</td>
-                  <td class="fb-value">{{ line.s24_travel_limit }}</td>
-                  <td class="fb-value">{{ line.other_limit }}</td>
-                  <td class="fb-value">{{ line.loans_limit }}</td>
-                  <td class="fb-value">{{ line.trust_limit }}</td>
-                  <td class="fb-value">{{ line.s29_performance_limit }}</td>
-                  <td class="fb-value">{{ line.s30_payment_limit }}</td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.s23_procure_goods_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.s23_procure_services_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.s24_transfer_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.s23_transfer_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.s24_travel_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.other_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.loans_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.trust_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.s29_performance_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
+                  <td class="fb-value">
+                    <v-text-field
+                      v-model="line.s30_payment_limit"
+                      dense
+                      filled
+                      hide-details
+                      @change="itemChanged"
+                    ></v-text-field>
+                  </td>
                 </tr>
               </tbody>
             </table>
+            <v-btn color="primary" @click="addLine">Add line</v-btn>
 
             <!--   <v-data-table style="font-size: .5rem !important"
             dense
@@ -243,13 +341,10 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import uploadFormModal from "../components/forms/uploadFormModal.vue";
 
 export default {
   name: "AuthorityDetails",
-  components: {
-    uploadFormModal,
-  },
+  components: {},
   data: () => ({
     id: "",
     authority: {},
@@ -257,6 +352,10 @@ export default {
   }),
   computed: {
     ...mapGetters("authority", ["formB"]),
+    ...mapGetters("department", ["departments"]),
+    employeeFullName: function () {
+      return `${this.formB.employee.first_name} ${this.formB.employee.last_name}`;
+    },
     breadcrumbs: function () {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
       b.push({
@@ -274,17 +373,17 @@ export default {
     this.id = this.$route.params.id;
   },
   methods: {
-    ...mapActions("authority", ["loadFormB"]),
-    editClick() {
-      //TODO: this should check the state to determine if changes are allowed
-      this.$router.push(`/form-b/${this.id}/edit`);
+    ...mapActions("authority", ["loadFormB", "saveFormB"]),
+    addLine() {
+      this.formB.authority_lines.push({});
     },
-    generateClick() {},
-    uploadClick() {
-      this.showUpload = true; //show modal fup upload
+    removeLine(idx) {
+      this.formB.authority_lines.splice(idx, 1);
+      this.saveFormB(this.formB);
     },
-    archiveClick() {},
-    downloadClick() {},
+    itemChanged() {
+      this.saveFormB(this.formB);
+    },
   },
 };
 </script>
