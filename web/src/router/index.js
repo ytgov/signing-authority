@@ -1,5 +1,16 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import Home from "../views/Home.vue";
+import Dashboard from "../views/Dashboard.vue";
+import NotFound from "../views/NotFound.vue";
+import Login from "../views/Login";
+import LoginComplete from "../views/LoginComplete";
+import Profile from "../views/Profile";
+
+import AdministrationHome from "../views/Administration/Home";
+import AdministrationUsers from "../views/Administration/Users";
+
+import EmployeeDetail from "../views/Employee/Detail";
 
 Vue.use(VueRouter);
 
@@ -7,12 +18,12 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: () => { import("../views/Home.vue") }
+    component: Home
   },
   {
     path: "/dashboard",
     name: "Dashboard",
-    component: () => { import("../views/Dashboard.vue") },
+    component: Dashboard,
     meta: { requiresAuth: false }
   },
   {
@@ -23,7 +34,7 @@ const routes = [
   },
   {
     path: "/form-b/:id",
-    name: "AuthorityDetails",
+    name: "Details",
     component: () => import("../views/AuthorityDetails.vue"),
     meta: { requiresAuth: false }
   },
@@ -36,42 +47,42 @@ const routes = [
   {
     path: "/sign-in",
     name: "Login",
-    component: () => { import("../views/Login") }
+    component: Login
   },
   {
     path: "/login-complete",
     name: "LoginComplete",
-    component: () => { "../views/LoginComplete" }
+    component: LoginComplete
   },
   {
     path: "/profile",
     name: "Profile",
-    component: () => { import("../views/Profile") },
+    component: Profile,
     meta: { requiresAuth: true }
   },
 
   {
     path: "/administration",
     name: "AdministrationHome",
-    component: () => { import("../views/Administration/Home") },
+    component: AdministrationHome,
     meta: { requiresAuth: true },
   },
   {
     path: "/administration/users",
     name: "AdminUsers",
-    component: () => { import("../views/Administration/Users") },
+    component: AdministrationUsers,
     meta: { requiresAuth: true },
   },
   {
     path: "/employee/:id",
     name: "EmployeeDetail",
-    component: () => { import("../views/Employee/Detail") },
+    component: EmployeeDetail,
     meta: { requiresAuth: true },
   },
   {
     path: "*",
     name: "Not Found",
-    component: () => { import("../views/NotFound.vue") }
+    component: NotFound
   }
 ];
 
