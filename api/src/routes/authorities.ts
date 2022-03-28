@@ -11,9 +11,18 @@ import { EnsureAuthenticated } from "./auth";
 import { Authority, Department, Employee } from "src/data/models";
 import { Auth, ObjectId } from "mongodb";
 import moment from "moment";
+import { generatePDF } from "../utils/pdf-generator";
+
+import { ExpressHandlebars } from "express-handlebars";
 
 export const authoritiesRouter = express.Router();
 // userRouter.use(RequiresData, EnsureAuthenticated);
+
+
+import fs from "fs"
+import path from "path"
+
+const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html")
 
 authoritiesRouter.use('/uploads', uploadsRouter)
 
@@ -31,6 +40,32 @@ authoritiesRouter.get("/:id",
 
     if (item)
       return res.json({ data: item });
+
+    res.status(404).send();
+  });
+
+authoritiesRouter.get("/:id/pdf",
+  [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let item = await loadSingleAuthority(req, id);
+
+    if (item) {
+
+
+
+
+      let t = new ExpressHandlebars();
+      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {})
+      let data = template(item);
+
+      let pdf = await generatePDF(data)
+      res.setHeader('Content-disposition', 'attachment; filename="FormB.pdf"');
+      res.setHeader('Content-type', 'application/pdf');
+      res.send(pdf);
+
+
+    }
 
     res.status(404).send();
   });
