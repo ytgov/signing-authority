@@ -294,7 +294,7 @@
                 </tr>
               </tbody>
             </table>
-            <v-btn color="primary" @click="addLine">Add line</v-btn>
+
 
             <!--   <v-data-table style="font-size: .5rem !important"
             dense
@@ -303,6 +303,11 @@
 
 -->
           </v-card-text>
+          <v-card-actions>
+             <v-btn color="primary" @click="addLine">Add line</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="#7A9A01" @click="close">Close</v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -393,6 +398,9 @@ export default {
     itemChanged() {
       this.saveFormB(this.formB);
     },
+    close(){
+      this.$router.push(`/form-b/${this.id}`)
+    }
   },
 };
 </script>
