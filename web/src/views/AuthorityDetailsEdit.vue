@@ -4,7 +4,12 @@
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
 
     <h1>Form B for {{ employeeFullName }}</h1>
-
+  <v-row>
+    <v-col>
+      <authority-metadata-card
+        :formB="formB" />
+    </v-col>
+  </v-row>
     <v-row>
       <v-col>
         <v-card class="default">
@@ -341,12 +346,16 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import AuthorityMetadataCard from '../components/authority/authorityMetadataCard.vue';
 
 export default {
   name: "AuthorityDetails",
-  components: {},
+  components: {
+     AuthorityMetadataCard,
+  },
   data: () => ({
     id: "",
+
     authority: {},
     showUpload: false,
   }),
