@@ -30,14 +30,16 @@ const routes = [
     name: "Details",
     component: () =>
       import("../views/AuthorityDetails.vue"),
-    meta: { requiresAuth: false }
-  },
-  {
-    path: "/form-b/:id/edit",
-    name: "AuthorityDetailsEdit",
-    component: () =>
-      import("../views/AuthorityDetailsEdit.vue"),
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false },
+    children: [
+      {
+        path: "edit",
+        name: "AuthorityDetailsEdit",
+        component: () =>
+          import("../views/AuthorityDetailsEdit.vue"),
+        meta: { requiresAuth: false }
+      }
+    ]
   },
   {
     path: "/sign-in",
