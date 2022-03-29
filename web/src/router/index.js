@@ -24,27 +24,25 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
-    meta: {
-      requiresAuth: false
-    }
+    meta: { requiresAuth: false }
   },
   {
     path: "/search",
     name: "Search",
-    component: () =>
-      import("../views/Search.vue"),
-    meta: {
-      requiresAuth: false
-    }
+    component: () => import("../views/Search.vue"),
+    meta: { requiresAuth: false }
   },
   {
     path: "/form-b/:id",
     name: "Details",
-    component: () =>
-      import("../views/AuthorityDetails.vue"),
-    meta: {
-      requiresAuth: false
-    }
+    component: () => import("../views/AuthorityDetails.vue"),
+    meta: { requiresAuth: false }
+  },
+  {
+    path: "/form-b/:id/edit",
+    name: "AuthorityDetailsEdit",
+    component: () => import("../views/AuthorityDetailsEdit.vue"),
+    meta: { requiresAuth: false }
   },
   {
     path: "/sign-in",
@@ -60,34 +58,26 @@ const routes = [
     path: "/profile",
     name: "Profile",
     component: Profile,
-    meta: {
-      requiresAuth: true
-    }
+    meta: { requiresAuth: true }
   },
 
   {
     path: "/administration",
     name: "AdministrationHome",
     component: AdministrationHome,
-    meta: {
-      requiresAuth: true
-    },
+    meta: { requiresAuth: true },
   },
   {
     path: "/administration/users",
     name: "AdminUsers",
     component: AdministrationUsers,
-    meta: {
-      requiresAuth: true
-    },
+    meta: { requiresAuth: true },
   },
   {
     path: "/employee/:id",
     name: "EmployeeDetail",
     component: EmployeeDetail,
-    meta: {
-      requiresAuth: true
-    },
+    meta: { requiresAuth: true },
   },
   {
     path: "*",

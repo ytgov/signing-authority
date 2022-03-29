@@ -28,7 +28,8 @@ const actions = {
             last_name: employee.last_name,
             employee_id: employee.employee_id,
             ynet_id: employee.ynet_id,
-            email: employee.email
+            email: employee.email,
+            primary_department: employee.primary_department
         };
 
         return await axios.put(`${EMPLOYEE_URL}/${employee._id}`, body)

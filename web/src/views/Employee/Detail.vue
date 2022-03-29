@@ -72,13 +72,21 @@
                   background-color="white"
                   label="Primary department"
                   hide-details
-                  :items="['Highways and Public Works', 'Justice','Community Services']"
+                  :items="[
+                    'Highways and Public Works',
+                    'Justice',
+                    'Community Services',
+                  ]"
                 ></v-select>
               </v-col>
             </v-row>
-            <v-btn color="primary" class="mb-0 mt-5" @click="saveEmployee">Save</v-btn>
+            <v-btn color="primary" class="mb-0 mt-5" @click="saveEmployee"
+              >Save</v-btn
+            >
           </v-card-text>
         </v-card>
+
+        <!--  <list-files></list-files> -->
       </v-col>
 
       <v-col cols="12" sm="6">
@@ -95,6 +103,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import AuthorityRenderer from "../../components/AuthorityRenderer.vue";
+//import ListFiles from "../../components/forms/listFiles.vue";
 
 export default {
   components: { AuthorityRenderer },

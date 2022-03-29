@@ -1,0 +1,388 @@
+<html>
+
+<head>
+    <style>
+        html,
+        body,
+        div,
+        span,
+        object,
+        iframe,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        blockquote,
+        pre,
+        abbr,
+        address,
+        cite,
+        code,
+        del,
+        dfn,
+        em,
+        img,
+        ins,
+        kbd,
+        q,
+        samp,
+        small,
+        strong,
+        sub,
+        sup,
+        var,
+        b,
+        i,
+        dl,
+        dt,
+        dd,
+        ol,
+        ul,
+        li,
+        fieldset,
+        form,
+        label,
+        legend,
+        table,
+        caption,
+        tbody,
+        tfoot,
+        thead,
+        tr,
+        th,
+        td,
+        article,
+        aside,
+        canvas,
+        details,
+        figcaption,
+        figure,
+        footer,
+        header,
+        hgroup,
+        menu,
+        nav,
+        section,
+        summary,
+        time,
+        mark,
+        audio,
+        video {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+            background: transparent;
+        }
+
+        @page {
+            size: letter landscape;
+        }
+
+        body {
+            padding: 30px;
+            line-height: 1;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+        }
+
+        .table {
+            border-collapse: collapse;
+        }
+
+        .table th {
+            text-align: center;
+        }
+
+        .table thead {
+            text-transform: uppercase;
+        }
+
+        .table th,
+        .table td {
+            border: 1px black solid;
+            font-size: 12px;
+        }
+
+        .table th.rotate {
+            height: 140px;
+            white-space: nowrap;
+            vertical-align: bottom;
+            padding-bottom: 20px;
+        }
+
+        .table th.rotate>div {
+            transform: rotate(270deg);
+            width: 48px;
+        }
+
+        .table .fb-value {
+            width: 50px;
+            text-align: center;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <table style="width: 100%;" border="0" cellspacing="0" cellpadding="0">
+        <tr style="height: 100px">
+            <td style="width: 180px;">
+                <img src="http://localhost:8080/finance-logo.png" style="height: 80px; width: 160px" />
+            </td>
+            <td style="width: 160px; font-size: 1.3rem; vertical-align: middle;">
+                Specimen Signature Card
+            </td>
+            <td style="vertical-align: bottom;">
+                <table style="border: 1px black solid; border-bottom: none;width: 100%;">
+                    <tr>
+                        <td>Issue Date: </td>
+                        <td colspan="3" style="border-bottom: 1px black solid">March 12, 2002</td>
+                    </tr>
+                    <tr style="border-bottom: 1px black solid;">
+                        <td style="width: 25%;border-bottom: 1px black solid;">Expiry Date:</td>
+                        <td style="width: 25%;border-bottom: 1px black solid;"></td>
+                        <td colspan="2" style="width: 25%;border-bottom: 1px black solid;">or <input type="checkbox" />
+                            Activated by Memo</td>
+                    </tr>
+                    <tr>
+                        <td>Date Cancelled:</td>
+                        <td colspan="3" style="border-bottom: 1px black solid"></td>
+                    </tr>
+                    <tr>
+                        <td>Reason Cancelled:</td>
+                        <td colspan="3"></td>
+                    </tr>
+                </table>
+
+            </td>
+            <td style="text-align: right; width: 160px;">
+                <h4 style="font-size: 1.1rem; margin-bottom: 10px;">FORM B</h4>
+                <p style="font-weight: 700">All values are in $000's</p>
+            </td>
+        </tr>
+    </table>
+
+
+    <table border="0" cellspacing="0" cellpadding="0" class="table"
+        style="background-color: white; width: 100%; text-align: left">
+        <thead>
+            <tr>
+                <td rowspan="5" style="
+                text-align: left;
+                padding: 10px;
+                vertical-align: top;
+                width: 400px;
+                height: 190px;">
+                    <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: 700;">Delegate:</h3>
+                    Public Officer Name:<br>
+                    <strong>
+                        {{ employee.first_name }}
+                        {{ employee.last_name }}
+                    </strong>
+                    <br /><br />
+
+                    Department:<br>
+                    <strong style="margin-top: 5px">{{ department.name }}</strong>
+                    <br /><br />
+                    Program/Branch:<br>
+                    <strong>{{ program }}</strong>
+                    <br /><br />
+                    Position title:<br>
+                    <strong>{{ title }}</strong>
+                </td>
+                <th colspan="13">SPENDING AUTHORITY</th>
+                <th rowspan="3" class="rotate" style="height: 140px">
+                    <div>
+                        PAYMENT<br />
+                        AUTHORITY s.30
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="6">PROCUREMENT</th>
+                <th rowspan="2" colspan="2" style="max-width: 80px">
+                    TRANSFER PAYMENTS
+                </th>
+                <th colspan="4" rowspan="2">
+                    OTHER:<br />S.24 COMMITMENT & <br />S.23 SIGNING CONTRACT
+                </th>
+                <th rowspan="2">S.29</th>
+            </tr>
+            <tr>
+                <th colspan="4">S.24 Commitment</th>
+                <th colspan="2" style="max-width: 80px">
+                    S.23 Signing Contract
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2" style="max-width: 80px">OWN PROCUREMENT</th>
+                <th rowspan="3" class="rotate">
+                    <div>
+                        Request for goods<br />
+                        or services
+                    </div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div>Assignment <br />Authority</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div class="mb-2">Goods</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div class="mb-2">Services</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div class="mb-2">S.24 Commitment</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div>S.23 Signing<br />contract</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div>S.24 Travel <br />authorization</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div>OTher contracts & <br />Expenditures **</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div>Loans & <br />Guarantees</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div class="mb-2">Departmental Use</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div>Certificate of <br />performance</div>
+                </th>
+                <th rowspan="3" class="rotate">
+                    <div>
+                        Requesition<br />
+                        for payment
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th class="rotate" rowspan="2">
+                    <div class="mb-2">Goods</div>
+                </th>
+                <th class="rotate" rowspan="2">
+                    <div class="mb-2">Services</div>
+                </th>
+            </tr>
+            <tr style="height: 30px">
+                <th style="height: 30px">
+                    Area of Authority - General Ledger Coding
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {{#each authority_lines}}
+            <tr>
+                <td class="pl-3">{{ account }}</td>
+                <td class="fb-value">{{ s24_procure_goods_limit }}</td>
+                <td class="fb-value">
+                    {{ s24_procure_services_limit }}
+                </td>
+                <td class="fb-value">
+                    {{ s24_procure_request_limit }}
+                </td>
+                <td class="fb-value">
+                    {{ s24_procure_assignment_limit }}
+                </td>
+                <td class="fb-value">
+                    {{ s23_procure_goods_limit }}
+                </td>
+                <td class="fb-value">
+                    {{ s23_procure_services_limit }}
+                </td>
+                <td class="fb-value">{{ s24_transfer_limit }}</td>
+                <td class="fb-value">{{ s23_transfer_limit }}</td>
+                <td class="fb-value">{{ s24_travel_limit }}</td>
+                <td class="fb-value">{{ other_limit }}</td>
+                <td class="fb-value">{{ loans_limit }}</td>
+                <td class="fb-value">{{ trust_limit }}</td>
+                <td class="fb-value">{{ s29_performance_limit }}</td>
+                <td class="fb-value">{{ s30_payment_limit }}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <table style="margin-top: 5px; width: 100%;" border="0" cellspacing="0" cellpadding="0">
+        <tr style="height: 62px">
+            <td style="width: 11%; vertical-align: top; font-size: 11px">
+                <p>* Examples:</p>
+            </td>
+            <td style="width: 22%; vertical-align: top; font-size: 11px">
+                <p>12X-01 (O&M and Capital, Treasury)</p>
+                <p>121-0101 (O&M, Administration)</p>
+                <p>128/129-020501 (Accrued Receivable/Liabilities)</p>
+            </td>
+            <td rowspan="2" style="width: 66%; vertical-align: top;">
+                <div style="border: 2px black solid; height: 100%">
+                    <div style="text-align: center; height: 50px; margin: 5px 0 10px 0">
+                        This is to certify that I am aware of and accept the
+                        responsibilities related to these delegated
+                        authorities.
+                    </div>
+                    <table style="width: 100%;margin: 0 0 0 5px;" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px;">
+                                <div style="border-top: 1px black solid; width: 80%">Date</div>
+                            </td>
+                            <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px;">
+                                <div style="border-top: 1px black solid; width: 80%">Delegate's Signature</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="font-size: 11px">
+                <p>For dollars: “NL” = No Limit (usually for senior Public Officers only)</p>
+                <p>** "Other Contracts & Expenditures” includes: reimbursements and
+                    other obligations.</p>
+            </td>
+        </tr>
+    </table>
+
+    <div style="margin: 10px 0px 5px 0px; border: 2px black solid;">
+        <table style="width: 100%;margin: 0 0 0 5px;" border="0" cellspacing="0" cellpadding="0">
+            <tr style="height: 45px">
+                <td style="vertical-align: bottom; padding-bottom: 3px;">
+                    <div style="border-top: 1px black solid; width: 80%">Supervisor's Name</div>
+                </td>
+                <td colspan="2" style="text-align: center;">
+                    This is to certify that the delegate's signature is that of the person appointed to
+                    the above position.
+                </td>
+            </tr>
+            <tr style="height: 45px">
+                <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px;">
+                    <div style="border-top: 1px black solid; width: 80%">Supervisor's Title</div>
+                </td>
+                <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px;">
+                    <div style="border-top: 1px black solid; width: 80%">Date</div>
+                </td>
+                <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px;">
+                    <div style="border-top: 1px black solid; width: 80%">Supervisor's Signature</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="text-align: center; font-size: 11px;">
+        <strong>Distribution:</strong> (1) ORIGINAL - forwarded as per departmental finance branch instructions (2)
+        SCANNED COPY - into
+        appropriate Dept. of Finance R:\Drive folder (per Instructions) Rev. 07/2012
+    </div>
+</body>
+
+</html>

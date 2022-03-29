@@ -12,7 +12,7 @@ departmentRouter.use(RequiresData, EnsureAuthenticated);
 departmentRouter.get('/', async (req: Request, res: Response) => {
   let db = req.store.Departments as GenericService<Department>;
 
-  return res.json({ data: await db.getAll({}) });
+  return res.json({ data: await db.getAll({}, "name") });
 });
 
 departmentRouter.get('/:id', async (req: Request, res: Response) => {
