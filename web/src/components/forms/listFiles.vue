@@ -18,7 +18,7 @@
 
   <template v-slot:item.filename="{ item }">
     <v-tooltip
-      bottom
+      top
       color="#512A44">
       <template v-slot:activator="{ on, attrs }">
 
