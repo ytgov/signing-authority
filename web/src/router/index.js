@@ -31,15 +31,22 @@ const routes = [
     component: () =>
       import("../views/AuthorityDetails.vue"),
     meta: { requiresAuth: false },
-    children: [
-      {
-        path: "edit",
+    // children: [
+    //   {
+    //     path: "edit2",
+    //     name: "AuthorityDetailsEdit",
+    //     component: () =>
+    //       import("../views/AuthorityDetailsEdit.vue"),
+    //     meta: { requiresAuth: false }
+    //   }
+    // ]
+  },
+  {
+        path: "/form-b/:id/edit",
         name: "AuthorityDetailsEdit",
         component: () =>
           import("../views/AuthorityDetailsEdit.vue"),
         meta: { requiresAuth: false }
-      }
-    ]
   },
   {
     path: "/sign-in",
