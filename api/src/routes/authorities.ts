@@ -22,8 +22,6 @@ export const authoritiesRouter = express.Router();
 import fs from "fs"
 import path from "path"
 
-const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html")
-
 authoritiesRouter.use('/uploads', uploadsRouter)
 
 authoritiesRouter.get("/", async (req: Request, res: Response) => {
@@ -52,6 +50,8 @@ authoritiesRouter.get("/:id/pdf",
 
     if (item) {
 
+
+      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html")
 
 
 

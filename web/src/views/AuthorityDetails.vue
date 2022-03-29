@@ -58,24 +58,24 @@
                       text-align: left;
                       padding: 10px;
                       vertical-align: top;
-                      height: 190px;
+                      
                     "
                   >
                     <h3>Delegate:</h3>
-                    Public Officer Name:
+                    Public Officer Name:<br>
                     <strong>
                       {{ formB.employee.first_name }}
                       {{ formB.employee.last_name }}
                     </strong>
-                    <br />
+                    <br /><br>
 
-                    Department:
+                    Department:<br>
                     <strong>{{ formB.department.name }}</strong>
-                    <br />
-                    Program/Branch:
+                    <br /><br>
+                    Program/Branch:<br>
                     <strong>{{ formB.program }}</strong>
-                    <br />
-                    Position title:
+                    <br /><br>
+                    Position title:<br>
                     <strong>{{ formB.title }}</strong>
                   </th>
                   <th colspan="13">SPENDING AUTHORITY</th>
@@ -242,6 +242,7 @@
 
 
 <script>
+import { AUTHORITY_URL } from "../urls";
 import { mapGetters, mapActions } from "vuex";
 import uploadFormModal from "../components/forms/uploadFormModal.vue";
 
@@ -274,12 +275,15 @@ export default {
     this.id = this.$route.params.id;
   },
   methods: {
-    ...mapActions("authority", ["loadFormB"]),
+    ...mapActions("authority", ["loadFormB", "downloadFormB"]),
     editClick() {
       //TODO: this should check the state to determine if changes are allowed
       this.$router.push(`/form-b/${this.id}/edit`);
     },
-    generateClick() {},
+    async generateClick() {
+      window.open(`${AUTHORITY_URL}/${this.id}/pdf`, "_blank");
+      //await this.downloadFormB(this.id);
+    },
     uploadClick() {
       this.showUpload = true; //show modal fup upload
     },

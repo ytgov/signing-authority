@@ -9,11 +9,15 @@
         <table class="mb-5">
           <tr>
             <td style="width: 120px">Position Title:</td>
-            <td><strong>{{ authority.title }}</strong></td>
+            <td>
+              <strong>{{ authority.title }}</strong>
+            </td>
           </tr>
           <tr>
             <td>Issue date:</td>
-            <td><strong>{{ authority.issue_date_display }}</strong></td>
+            <td>
+              <strong>{{ authority.issue_date_display }}</strong>
+            </td>
           </tr>
         </table>
 
@@ -44,13 +48,17 @@
 </template>
 
 <script>
+import { AUTHORITY_URL } from "../urls";
 import pdfPreviewButton from "./PDFPreviewButton.vue";
 export default {
   components: { pdfPreviewButton },
   name: "AuthorityRenderer",
   props: ["authority"],
-  data: () => ({
-    pdfURL: "/Jager_Tamara_SC_2020_04_01.pdf",
-  }),
+  data: () => ({}),
+  computed: {
+    pdfURL: function () {
+      return `${AUTHORITY_URL}/${this.authority._id}/pdf`;
+    },
+  },
 };
 </script>

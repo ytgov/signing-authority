@@ -12,7 +12,7 @@ const getters = {
 
 const actions = {
     async loadFormB({ commit }, id) {
-        return await axios.get(`${AUTHORITY_URL}/${id}`)
+        return axios.get(`${AUTHORITY_URL}/${id}`)
             .then(resp => {
                 commit("setFormB", resp.data.data);
                 return resp.data.data
@@ -27,7 +27,7 @@ const actions = {
         delete body.department;
         delete body._id;
 
-        return await axios.put(`${AUTHORITY_URL}/${item._id}`, body)
+        return axios.put(`${AUTHORITY_URL}/${item._id}`, body)
             .then(resp => {
                 commit("setFormB", resp.data.data);
                 return resp.data.data
@@ -36,6 +36,17 @@ const actions = {
                 commit("setFormB", {});
             });
     },
+    async downloadFormB(state, id) {
+        return axios.get(`${AUTHORITY_URL}/${id}/pdf`)
+            .then(resp => {
+                //commit("setFormB", resp.data.data);
+                console.log(resp)
+                return resp.data.data
+
+            }).catch(() => {
+                //commit("setFormB", {});
+            });
+    }
 };
 
 const mutations = {
