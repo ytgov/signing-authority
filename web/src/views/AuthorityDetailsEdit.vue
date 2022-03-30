@@ -4,13 +4,11 @@
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
 
     <h1>Form B for {{ employeeFullName }}</h1>
-  <v-row>
-    <v-col>
-      <authority-metadata-card
-        :formB="formB"
-        @close="close" />
-    </v-col>
-  </v-row>
+    <v-row>
+      <v-col>
+        <authority-metadata-card :formB="formB" @close="close" />
+      </v-col>
+    </v-row>
     <v-row>
       <v-col>
         <v-card class="default">
@@ -296,7 +294,6 @@
               </tbody>
             </table>
 
-
             <!--   <v-data-table style="font-size: .5rem !important"
             dense
             :headers="[{text:'Account', value:'account'}, {text: 'S23 Goods', value:'s24_procure_goods_limit'}]"
@@ -305,7 +302,7 @@
 -->
           </v-card-text>
           <v-card-actions>
-             <v-btn color="primary" @click="addLine">Add line</v-btn>
+            <v-btn color="primary" @click="addLine">Add line</v-btn>
             <v-spacer></v-spacer>
             <v-btn color="#7A9A01" @click="close">Close</v-btn>
           </v-card-actions>
@@ -352,12 +349,12 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import AuthorityMetadataCard from '../components/authority/authorityMetadataCard.vue';
+import AuthorityMetadataCard from "../components/authority/authorityMetadataCard.vue";
 
 export default {
   name: "AuthorityDetails",
   components: {
-     AuthorityMetadataCard,
+    AuthorityMetadataCard,
   },
   data: () => ({
     id: "",
@@ -379,7 +376,10 @@ export default {
       });
       b.push({
         text: `Form B (${this.formB.department.name} - ${this.formB.program})`,
+        to: `/form-b/${this.formB._id}`,
+        exact: true,
       });
+      b.push({ text: "Edit" });
       return b;
     },
   },
@@ -399,9 +399,9 @@ export default {
     itemChanged() {
       this.saveFormB(this.formB);
     },
-    close(){
-      this.$router.push(`/form-b/${this.id}`)
-    }
+    close() {
+      this.$router.push(`/form-b/${this.id}`);
+    },
   },
 };
 </script>
