@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
-
     <h1>
       {{ employee.first_name }} {{ employee.last_name }}
       <small> ({{ employee.ynet_id }})</small>
@@ -107,7 +106,7 @@
       <v-col cols="12" sm="6">
         <h3>Authorities:</h3>
 
-        <div v-for="(item, idx) of employee.authorities" :key="idx">
+        <div v-for="(item, idx) in employee.authorities" :key="idx">
           <AuthorityRenderer :authority="item"></AuthorityRenderer>
         </div>
       </v-col>
@@ -116,13 +115,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 import AuthorityRenderer from "../../components/authority/AuthorityRenderer.vue";
 //import ListFiles from "../../components/forms/listFiles.vue";
 
 export default {
   components: { AuthorityRenderer },
   computed: {
+    ...mapState("employee", ["authorities"]),
     ...mapGetters("employee", ["employee"]),
     breadcrumbs: function () {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
@@ -136,11 +136,16 @@ export default {
   data: () => ({}),
   async mounted() {
     this.loadEmployee(this.$route.params.id);
+    this.loadEmployeeAuthorities(this.$route.params.id);
   },
   methods: {
-    ...mapActions("employee", ["loadEmployee", "saveEmployee"]),
+    ...mapActions("employee", [
+      "loadEmployee",
+      "saveEmployee",
+      "loadEmployeeAuthorities"]),
 
     createNewAuthority(){
+      //magic happens here
       let authItem =  {
         department_id: "62352f6b508beda988972511",
         employee_id: "62352f6b508beda98897250e",
