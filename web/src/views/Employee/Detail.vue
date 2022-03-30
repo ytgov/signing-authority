@@ -6,7 +6,7 @@
       {{ employee.first_name }} {{ employee.last_name }}
       <small> ({{ employee.ynet_id }})</small>
     </h1>
-
+{{ employee}}
     <v-row>
       <v-col cols="12" sm="6">
         <h3>Employee Details</h3>
@@ -80,9 +80,25 @@
                 ></v-select>
               </v-col>
             </v-row>
-            <v-btn color="primary" class="mb-0 mt-5" @click="saveEmployee"
-              >Save</v-btn
-            >
+            <v-row>
+              <v-col>
+                <v-btn
+                  color="primary"
+                  class="mb-0 mt-5"
+                  @click="saveEmployee">
+                  Save
+                </v-btn>
+              </v-col>
+               <v-spacer></v-spacer>
+              <v-col>
+                <v-btn
+                  class="mb-0 mt-5 mr-0"
+                  color= "primary"
+                  @click="createNewAuthority()">
+                  Create New Authority
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
 
@@ -102,7 +118,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import AuthorityRenderer from "../../components/AuthorityRenderer.vue";
+import AuthorityRenderer from "../../components/authority/AuthorityRenderer.vue";
 //import ListFiles from "../../components/forms/listFiles.vue";
 
 export default {
@@ -124,6 +140,23 @@ export default {
   },
   methods: {
     ...mapActions("employee", ["loadEmployee", "saveEmployee"]),
+
+    createNewAuthority(){
+      let authItem =  {
+        department_id: "",
+        employee_id: this.employee.id,
+        issue_date: new Date(),
+        title: "",
+        program: "",
+        supervisor_name: "",
+        reviewed_by_department: false,
+        employee_signed: false,
+        supervisor_signed: false,
+        supervisor_title: "",
+        authority_lines: []
+      }
+      console.log(authItem)
+    }
   },
 };
 </script>
