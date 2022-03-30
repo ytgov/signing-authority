@@ -118,13 +118,11 @@ authoritiesRouter.put("/:id",
       const { id } = req.params;
       let db = req.store.Authorities as GenericService<Authority>;
 
-      // if (req.body.department_id)
-      //   req.body.department_id = new ObjectId(req.body.department_id);
+      if (req.body.department_id)
+        req.body.department_id = new ObjectId(req.body.department_id);
 
-      // if (req.body.employee_id)
-      //   req.body.employee_id = new ObjectId(req.body.employee_id);
-
-
+      if (req.body.employee_id)
+        req.body.employee_id = new ObjectId(req.body.employee_id);
 
       await db.create( req.body);
 
