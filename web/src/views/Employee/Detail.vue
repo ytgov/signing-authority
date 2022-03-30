@@ -6,7 +6,7 @@
       {{ employee.first_name }} {{ employee.last_name }}
       <small> ({{ employee.ynet_id }})</small>
     </h1>
-{{ employee}}
+    {{ employee}}
     <v-row>
       <v-col cols="12" sm="6">
         <h3>Employee Details</h3>
@@ -143,8 +143,8 @@ export default {
 
     createNewAuthority(){
       let authItem =  {
-        department_id: "",
-        employee_id: this.employee.id,
+        department_id: "62352f6b508beda988972511",
+        employee_id: "62352f6b508beda98897250e",
         issue_date: new Date(),
         title: "",
         program: "",
