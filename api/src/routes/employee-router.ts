@@ -89,3 +89,10 @@ employeeRouter.put('/:id',
 
     res.status(404).send();
   });
+
+  employeeRouter.get('/:id/authorities', async (req: Request, res: Response) => {
+    let { id } = req.params;
+    let db = req.store.Authorities as GenericService<Authority>;
+    let files = await db.getAll({"employee_id":id})
+    return res.json({ data: files })
+  });

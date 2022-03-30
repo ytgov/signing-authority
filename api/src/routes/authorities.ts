@@ -110,11 +110,24 @@ authoritiesRouter.put("/:id",
       line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
       line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
     }
+  });
 
-    await db.update(id, req.body);
+  authoritiesRouter.post("/",
+    ReturnValidationErrors,
+    async (req: Request, res: Response) => {
+      const { id } = req.params;
+      let db = req.store.Authorities as GenericService<Authority>;
 
-    let item = await loadSingleAuthority(req, id);
-    res.json({ data: item })
+      if (req.body.department_id)
+        req.body.department_id = new ObjectId(req.body.department_id);
+
+      if (req.body.employee_id)
+        req.body.employee_id = new ObjectId(req.body.employee_id);
+
+      await db.create( req.body);
+
+      let item = await loadSingleAuthority(req, id);
+      res.json({ data: item })
   });
 
 
