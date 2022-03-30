@@ -1,6 +1,12 @@
 <template>
   <v-card>
-  <v-toolbar color="#244C5A" dark><v-toolbar-title>Supervisor: {{formB.supervisor_name}}, {{formB.supervisor_title}}</v-toolbar-title></v-toolbar>
+  <!-- <v-toolbar color="#244C5A" dark>
+    <v-toolbar-title>
+      Supervisor: {{formB.supervisor_name}}, {{formB.supervisor_title}}
+    </v-toolbar-title>
+    <v-spacer></v-spacer>
+     <v-icon @click="$emit('close')">mdi-close</v-icon>
+  </v-toolbar> -->
     <v-card-text>
       <v-row>
         <v-col md="4">
@@ -54,6 +60,10 @@
         <v-spacer></v-spacer>
         <v-col
           md="4">
+          <div
+          class="mb-2">
+            <span class="text-subtitle-1"> <span class="font-weight-black">Supervisor:</span> {{formB.supervisor_name}}, {{formB.supervisor_title}} </span>
+          </div>
           <v-card>
            <v-toolbar dark color="#7A9A01"><v-toolbar-title>Review</v-toolbar-title></v-toolbar>
             <v-card-text>
@@ -64,12 +74,12 @@
               </v-checkbox>
               <v-checkbox
                 class= "my-0 py-0"
-                label="Reviewed by Supervisor"
+                label="Signed by Supervisor"
                 v-model= "formB.reviewed_by_supervisor">
               </v-checkbox>
               <v-checkbox
                 class= "my-0 py-0"
-                label="Reviewed by Employee"
+                label="Signed by Employee"
                 v-model="formB.employee_signed">
               </v-checkbox>
             </v-card-text>
@@ -97,9 +107,7 @@ export default {
       "For",
       "Cancelling"
     ],
-
   }),
-
 }
 </script>
 
