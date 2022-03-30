@@ -200,6 +200,12 @@
 
 -->
           </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :to="{ name: 'EmployeeDetail', params: { id: formB.employee._id }}"
+              color="#7A9A01" >Close</v-btn>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
