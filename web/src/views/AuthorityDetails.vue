@@ -58,7 +58,7 @@
                       text-align: left;
                       padding: 10px;
                       vertical-align: top;
-                      
+
                     "
                   >
                     <h3>Delegate:</h3>
@@ -208,37 +208,7 @@
   </div>
 </template>
 
-<style scoped>
-.table {
-  border-collapse: collapse;
-}
-.table th {
-  text-align: center;
-}
-.table thead {
-  text-transform: uppercase;
-}
-.table th,
-.table td {
-  border: 1px black solid;
-}
 
-.table th.rotate {
-  height: 140px;
-  white-space: nowrap;
-  vertical-align: bottom;
-  padding-bottom: 20px;
-}
-
-.table th.rotate > div {
-  transform: rotate(270deg);
-  width: 58px;
-}
-.table .fb-value {
-  width: 60px;
-  text-align: center;
-}
-</style>
 
 
 <script>
@@ -292,3 +262,34 @@ export default {
   },
 };
 </script>
+<style scoped>
+.table {
+  border-collapse: collapse;
+}
+.table th {
+  text-align: center;
+}
+.table thead {
+  text-transform: uppercase;
+}
+.table th,
+.table td {
+  border: 1px black solid;
+}
+
+.table th.rotate {
+  height: 140px;
+  white-space: nowrap;
+  vertical-align: bottom;
+  padding-bottom: 20px;
+}
+
+.table th.rotate > div {
+  transform: rotate(270deg);
+  width: 58px;
+}
+.table .fb-value {
+  width: 60px;
+  text-align: center;
+}
+</style>
