@@ -49,11 +49,7 @@ authoritiesRouter.get("/:id/pdf",
     let item = await loadSingleAuthority(req, id);
 
     if (item) {
-
-
       const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html")
-
-
 
       let t = new ExpressHandlebars();
       const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {})
@@ -63,8 +59,6 @@ authoritiesRouter.get("/:id/pdf",
       res.setHeader('Content-disposition', 'attachment; filename="FormB.pdf"');
       res.setHeader('Content-type', 'application/pdf');
       res.send(pdf);
-
-
     }
 
     res.status(404).send();
@@ -110,17 +104,18 @@ authoritiesRouter.put("/:id",
       line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
       line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
     }
+
+    await db.update(id, req.body);
+
+    let item = await loadSingleAuthority(req, id);
+    res.json({ data: item })
   });
 
-  authoritiesRouter.post("/",
-    ReturnValidationErrors,
-    async (req: Request, res: Response) => {
-      const { id } = req.params;
-      let db = req.store.Authorities as GenericService<Authority>;
+authoritiesRouter.post("/",
+  async (req: Request, res: Response) => {
+    let db = req.store.Authorities as GenericService<Authority>;
 
-      if (req.body.department_id)
-        req.body.department_id = new ObjectId(req.body.department_id);
-
+<<<<<<< HEAD
       if (req.body.employee_id)
         req.body.employee_id = new ObjectId(req.body.employee_id);
       console.log(req.body)
@@ -129,6 +124,17 @@ authoritiesRouter.put("/:id",
       let item = await loadSingleAuthority(req, id);
 
       res.json({ data: item })
+=======
+    if (req.body.department_id)
+      req.body.department_id = new ObjectId(req.body.department_id);
+
+    if (req.body.employee_id)
+      req.body.employee_id = new ObjectId(req.body.employee_id);
+
+    let created = await db.create(req.body);
+    let item = await loadSingleAuthority(req, created.insertedId.toString());
+    res.json({ data: item })
+>>>>>>> db42dd5a125bf899912f9f2074b2b2182e632bea
   });
 
 

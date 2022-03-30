@@ -39,6 +39,8 @@
       {{ formB.employee.last_name }}
     </h1>
 
+    <authority-metadata-card :formB="formB" @close="close" />
+
     <v-row>
       <v-col>
         <v-card class="default">
@@ -54,28 +56,23 @@
                 <tr>
                   <th
                     rowspan="5"
-                    style="
-                      text-align: left;
-                      padding: 10px;
-                      vertical-align: top;
-
-                    "
+                    style="text-align: left; padding: 10px; vertical-align: top"
                   >
                     <h3>Delegate:</h3>
-                    Public Officer Name:<br>
+                    Public Officer Name:<br />
                     <strong>
                       {{ formB.employee.first_name }}
                       {{ formB.employee.last_name }}
                     </strong>
-                    <br /><br>
+                    <br /><br />
 
-                    Department:<br>
+                    Department:<br />
                     <strong>{{ formB.department.name }}</strong>
-                    <br /><br>
-                    Program/Branch:<br>
+                    <br /><br />
+                    Program/Branch:<br />
                     <strong>{{ formB.program }}</strong>
-                    <br /><br>
-                    Position title:<br>
+                    <br /><br />
+                    Position title:<br />
                     <strong>{{ formB.title }}</strong>
                   </th>
                   <th colspan="13">SPENDING AUTHORITY</th>
@@ -203,8 +200,13 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              :to="{ name: 'EmployeeDetail', params: { id: formB.employee._id }}"
-              color="#7A9A01" >Close</v-btn>
+              :to="{
+                name: 'EmployeeDetail',
+                params: { id: formB.employee._id },
+              }"
+              color="#7A9A01"
+              >Close</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>
@@ -221,11 +223,13 @@
 import { AUTHORITY_URL } from "../urls";
 import { mapGetters, mapActions } from "vuex";
 import uploadFormModal from "../components/forms/uploadFormModal.vue";
+import AuthorityMetadataCard from "../components/authority/authorityMetadataCard.vue";
 
 export default {
   name: "AuthorityDetails",
   components: {
     uploadFormModal,
+    AuthorityMetadataCard,
   },
   data: () => ({
     id: "",
