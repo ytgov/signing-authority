@@ -6,7 +6,6 @@
       {{ employee.first_name }} {{ employee.last_name }}
       <small> ({{ employee.ynet_id }})</small>
     </h1>
-    {{ employee}}
     <v-row>
       <v-col cols="12" sm="6">
         <h3>Employee Details</h3>
