@@ -123,10 +123,11 @@ authoritiesRouter.put("/:id",
 
       if (req.body.employee_id)
         req.body.employee_id = new ObjectId(req.body.employee_id);
-
+      console.log(req.body)
       await db.create( req.body);
 
       let item = await loadSingleAuthority(req, id);
+
       res.json({ data: item })
   });
 
