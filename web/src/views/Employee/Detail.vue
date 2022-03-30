@@ -3,6 +3,7 @@
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
     <h1>
       {{ employee.first_name }} {{ employee.last_name }}
+
       <small> ({{ employee.ynet_id }})</small>
     </h1>
     <v-row>
@@ -70,11 +71,9 @@
                   background-color="white"
                   label="Primary department"
                   hide-details
-                  :items="[
-                    'Highways and Public Works',
-                    'Justice',
-                    'Community Services',
-                  ]"
+                  :items="departments"
+                  item-text="name"
+                  item-value="_id"
                 ></v-select>
               </v-col>
             </v-row>
@@ -122,7 +121,9 @@ import AuthorityRenderer from "../../components/authority/AuthorityRenderer.vue"
 export default {
   components: { AuthorityRenderer },
   computed: {
-    ...mapState("employee", ["authorities"]),
+    ...mapState('department',[
+      "departments"
+    ]),
     ...mapGetters("employee", ["employee"]),
     breadcrumbs: function () {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
@@ -136,19 +137,20 @@ export default {
   data: () => ({}),
   async mounted() {
     this.loadEmployee(this.$route.params.id);
-    this.loadEmployeeAuthorities(this.$route.params.id);
+
   },
   methods: {
     ...mapActions("employee", [
       "loadEmployee",
       "saveEmployee",
-      "loadEmployeeAuthorities"]),
+      ]),
 
     createNewAuthority(){
+      // axios.post(AUTHORITY_URL)
       //magic happens here
       let authItem =  {
-        department_id: "62352f6b508beda988972511",
-        employee_id: "62352f6b508beda98897250e",
+        department_id: "",
+        employee_id: this.employee_id,
         issue_date: new Date(),
         title: "",
         program: "",
