@@ -7,7 +7,8 @@
   <v-row>
     <v-col>
       <authority-metadata-card
-        :formB="formB" />
+        :formB="formB"
+        @close="close" />
     </v-col>
   </v-row>
     <v-row>
