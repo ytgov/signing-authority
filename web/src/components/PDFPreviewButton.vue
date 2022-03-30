@@ -2,7 +2,7 @@
   <div>
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" v-bind="attrs" v-on="on">Show preview</v-btn>
+        <v-btn color="primary" v-bind="attrs" v-on="on">Show Signature Card</v-btn>
       </template>
 
       <v-card>
