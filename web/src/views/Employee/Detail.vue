@@ -115,7 +115,9 @@
 
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
+import { AUTHORITY_URL} from "../../urls"
 import AuthorityRenderer from "../../components/authority/AuthorityRenderer.vue";
+import axios from "axios"
 //import ListFiles from "../../components/forms/listFiles.vue";
 
 export default {
@@ -146,11 +148,11 @@ export default {
       ]),
 
     createNewAuthority(){
-      // axios.post(AUTHORITY_URL)
-      //magic happens here
+
+
       let authItem =  {
-        department_id: "",
-        employee_id: this.employee_id,
+        department_id: this.employee.primary_department,
+        employee_id: this.employee._id,
         issue_date: new Date(),
         title: "",
         program: "",
@@ -161,7 +163,18 @@ export default {
         supervisor_title: "",
         authority_lines: []
       }
-      console.log(authItem)
+
+      axios.post(AUTHORITY_URL, authItem, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then ( response => {
+      //  this.$refs.notifier.showAPIMessages(response.data)
+       if (response.status == 200){
+         console.log("Create Successful")
+         this.loadEmployee(this.employee._id)
+       }
+    })
     }
   },
 };
