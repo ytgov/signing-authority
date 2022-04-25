@@ -1,0 +1,28 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: signing-authority-ingressroute
+  namespace: signing-authority
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      #match requests to this domain
+      match: Host(`signing-authorities.ynet.gov.yk.ca`)
+      services:
+        - name: web
+          port: 3000
+          weight: 10
+
+  tls:
+    secretName: signing-authority-tls-secret
+    #    domains:
+    #    - main: timberreporting.gov.yk.ca
+    #      sans:
+    #      - timberreporting.gov.yk.ca
+
+
