@@ -1,16 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-import Dashboard from "../views/Dashboard.vue";
-import NotFound from "../views/NotFound.vue";
-import Login from "../views/Login";
-import LoginComplete from "../views/LoginComplete";
-import Profile from "../views/Profile";
 
-import AdministrationHome from "../views/Administration/Home";
-import AdministrationUsers from "../views/Administration/Users";
-
-import EmployeeDetail from "../views/Employee/Detail";
 
 Vue.use(VueRouter);
 
@@ -18,81 +8,95 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    component: () =>
+      import("../views/Home.vue"),
   },
   {
     path: "/dashboard",
     name: "Dashboard",
-    component: Dashboard,
-    meta: {
-      requiresAuth: false
-    }
+    component: () =>
+      import ("../views/Dashboard.vue"),
+    meta: { requiresAuth: false }
   },
   {
     path: "/search",
     name: "Search",
     component: () =>
       import("../views/Search.vue"),
-    meta: {
-      requiresAuth: false
-    }
+    meta: { requiresAuth: false }
   },
   {
     path: "/form-b/:id",
     name: "Details",
     component: () =>
       import("../views/AuthorityDetails.vue"),
-    meta: {
-      requiresAuth: false
-    }
+    meta: { requiresAuth: false },
+    // children: [
+    //   {
+    //     path: "edit2",
+    //     name: "AuthorityDetailsEdit",
+    //     component: () =>
+    //       import("../views/AuthorityDetailsEdit.vue"),
+    //     meta: { requiresAuth: false }
+    //   }
+    // ]
+  },
+  {
+        path: "/form-b/:id/edit",
+        name: "AuthorityDetailsEdit",
+        component: () =>
+          import("../views/AuthorityDetailsEdit.vue"),
+        meta: { requiresAuth: false }
   },
   {
     path: "/sign-in",
     name: "Login",
-    component: Login
+    component: () =>
+      import ("../views/Login.vue"),
   },
   {
     path: "/login-complete",
     name: "LoginComplete",
-    component: LoginComplete
+    component: () =>
+      import("../views/LoginComplete.vue"),
   },
   {
     path: "/profile",
     name: "Profile",
-    component: Profile,
-    meta: {
-      requiresAuth: true
-    }
+    component: () =>
+      import("../views/Profile.vue"),
+    meta: { requiresAuth: true }
   },
 
   {
     path: "/administration",
     name: "AdministrationHome",
-    component: AdministrationHome,
-    meta: {
-      requiresAuth: true
-    },
+    component: () =>
+      import("../views/Administration/Home.vue"),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'users',
+        name: "AdminUsers",
+        component: () =>
+          import("../views/Administration/Users"),
+        meta: { requiresAuth: true },
+      }
+    ]
   },
-  {
-    path: "/administration/users",
-    name: "AdminUsers",
-    component: AdministrationUsers,
-    meta: {
-      requiresAuth: true
-    },
-  },
+
   {
     path: "/employee/:id",
     name: "EmployeeDetail",
-    component: EmployeeDetail,
-    meta: {
-      requiresAuth: true
-    },
+    component: () =>
+      import("../views/Employee/Detail"),
+    meta: { requiresAuth: true },
   },
   {
     path: "*",
     name: "Not Found",
-    component: NotFound
+    component: () =>
+      import("../views/NotFound.vue"),
   }
 ];
 

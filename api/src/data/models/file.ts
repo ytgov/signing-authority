@@ -6,4 +6,5 @@ export interface StoredFile extends MongoEntity {
     mimeType: string;
     content: Buffer;
     uploadedBy?: string; //the user who uploaded this file
+    uploadDate?: Date;
 }

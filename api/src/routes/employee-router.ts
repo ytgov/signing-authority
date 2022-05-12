@@ -67,3 +67,32 @@ employeeRouter.get('/:id',
 
     res.status(404).send();
   });
+
+employeeRouter.put('/:id',
+  [param("id").isMongoId()], ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    let empDb = req.store.Employees as GenericService<Employee>;
+
+
+    let { id } = req.params;
+    let { first_name, last_name, employee_id, ynet_id, primary_department } = req.body;
+    let item = await empDb.getOne({ _id: new ObjectId(id) });
+
+
+    if (item) {
+      let update = { first_name, last_name, employee_id, ynet_id, primary_department, email: item.email };
+      empDb.update(id, update);
+
+
+      return res.json({ data: item });
+    }
+
+    res.status(404).send();
+  });
+
+  employeeRouter.get('/:id/authorities', async (req: Request, res: Response) => {
+    let { id } = req.params;
+    let db = req.store.Authorities as GenericService<Authority>;
+    let files = await db.getAll({"employee_id":id})
+    return res.json({ data: files })
+  });

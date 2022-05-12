@@ -2,7 +2,8 @@ import { EMPLOYEE_URL } from "../urls";
 import axios from "axios";
 
 const state = {
-    employee: {}
+    employee: {},
+    authorities: []
 };
 
 const getters = {
@@ -20,6 +21,16 @@ const actions = {
                 commit("setEmployee", {});
             });
     },
+    async loadEmployeeAuthorities({ commit }, id) {
+        return await axios.get(`${EMPLOYEE_URL}/${id}/authorities`)
+            .then(resp => {
+                commit("setEmployeeAuthorities", resp.data.data);
+                return resp.data.data
+
+            }).catch(() => {
+                commit("setEmployeeAuthorities", {});
+            });
+    },
     async saveEmployee(store) {
         let employee = store.getters.employee;
 
@@ -28,7 +39,8 @@ const actions = {
             last_name: employee.last_name,
             employee_id: employee.employee_id,
             ynet_id: employee.ynet_id,
-            email: employee.email
+            email: employee.email,
+            primary_department: employee.primary_department
         };
 
         return await axios.put(`${EMPLOYEE_URL}/${employee._id}`, body)
@@ -44,6 +56,9 @@ const actions = {
 const mutations = {
     setEmployee(state, value) {
         state.employee = value;
+    },
+    setEmployeeAuthorities(state, value) {
+        state.authorities = value;
     },
 };
 

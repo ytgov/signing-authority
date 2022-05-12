@@ -20,7 +20,8 @@
           </v-list-item>
 
           <v-list-item @click="uploadClick">
-            <v-list-item-title>Upload Signed PDF</v-list-item-title>
+            <upload-form-modal></upload-form-modal>
+            <!-- <v-list-item-title>Upload Signed PDF</v-list-item-title> -->
           </v-list-item>
 
           <v-list-item @click="archiveClick">
@@ -38,6 +39,8 @@
       {{ formB.employee.last_name }}
     </h1>
 
+    <authority-metadata-card :formB="formB" @close="close" />
+
     <v-row>
       <v-col>
         <v-card class="default">
@@ -53,28 +56,23 @@
                 <tr>
                   <th
                     rowspan="5"
-                    style="
-                      text-align: left;
-                      padding: 10px;
-                      vertical-align: top;
-                      height: 190px;
-                    "
+                    style="text-align: left; padding: 10px; vertical-align: top"
                   >
                     <h3>Delegate:</h3>
-                    Public Officer Name:
+                    Public Officer Name:<br />
                     <strong>
                       {{ formB.employee.first_name }}
                       {{ formB.employee.last_name }}
                     </strong>
-                    <br />
+                    <br /><br />
 
-                    Department:
+                    Department:<br />
                     <strong>{{ formB.department.name }}</strong>
-                    <br />
-                    Program/Branch:
+                    <br /><br />
+                    Program/Branch:<br />
                     <strong>{{ formB.program }}</strong>
-                    <br />
-                    Position title:
+                    <br /><br />
+                    Position title:<br />
                     <strong>{{ formB.title }}</strong>
                   </th>
                   <th colspan="13">SPENDING AUTHORITY</th>
@@ -199,6 +197,17 @@
 
 -->
           </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              :to="{
+                name: 'EmployeeDetail',
+                params: { id: formB.employee._id },
+              }"
+              color="#7A9A01"
+              >Close</v-btn
+            >
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -207,6 +216,62 @@
   </div>
 </template>
 
+
+
+
+<script>
+import { AUTHORITY_URL } from "../urls";
+import { mapGetters, mapActions } from "vuex";
+import uploadFormModal from "../components/forms/uploadFormModal.vue";
+import AuthorityMetadataCard from "../components/authority/authorityMetadataCard.vue";
+
+export default {
+  name: "AuthorityDetails",
+  components: {
+    uploadFormModal,
+    AuthorityMetadataCard,
+  },
+  data: () => ({
+    id: "",
+    authority: {},
+    showUpload: false,
+  }),
+  computed: {
+    ...mapGetters("authority", ["formB"]),
+    breadcrumbs: function () {
+      let b = [{ text: "Dashboard", to: "/dashboard" }];
+      b.push({
+        text: `${this.formB.employee.first_name} ${this.formB.employee.last_name}`,
+        to: `/employee/${this.formB.employee_id}`,
+      });
+      b.push({
+        text: `Form B (${this.formB.department.name} - ${this.formB.program})`,
+      });
+      return b;
+    },
+  },
+  async mounted() {
+    this.loadFormB(this.$route.params.id);
+    this.id = this.$route.params.id;
+  },
+  methods: {
+    ...mapActions("authority", ["loadFormB", "downloadFormB"]),
+    editClick() {
+      //TODO: this should check the state to determine if changes are allowed
+      this.$router.push(`/form-b/${this.id}/edit`);
+    },
+    async generateClick() {
+      window.open(`${AUTHORITY_URL}/${this.id}/pdf`, "_blank");
+      //await this.downloadFormB(this.id);
+    },
+    uploadClick() {
+      this.showUpload = true; //show modal fup upload
+    },
+    archiveClick() {},
+    downloadClick() {},
+  },
+};
+</script>
 <style scoped>
 .table {
   border-collapse: collapse;
@@ -238,42 +303,3 @@
   text-align: center;
 }
 </style>
-
-
-<script>
-import { mapGetters, mapActions } from "vuex";
-
-export default {
-  name: "AuthorityDetails",
-  data: () => ({
-    id: "",
-    authority: {},
-  }),
-  computed: {
-    ...mapGetters("authority", ["formB"]),
-    breadcrumbs: function () {
-      let b = [{ text: "Dashboard", to: "/dashboard" }];
-      b.push({
-        text: `${this.formB.employee.first_name} ${this.formB.employee.last_name}`,
-        to: `/employee/${this.formB.employee_id}`,
-      });
-      b.push({
-        text: `Form B (${this.formB.department.name} - ${this.formB.program})`,
-      });
-      return b;
-    },
-  },
-  async mounted() {
-    this.loadFormB(this.$route.params.id);
-    this.id = this.$route.params.id;
-  },
-  methods: {
-    ...mapActions("authority", ["loadFormB"]),
-    editClick() {},
-    generateClick() {},
-    uploadClick() {},
-    archiveClick() {},
-    downloadClick() {},
-  },
-};
-</script>

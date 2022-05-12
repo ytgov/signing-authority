@@ -2,7 +2,7 @@
   <div>
     <v-dialog v-model="dialog">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" v-bind="attrs" v-on="on">Show preview</v-btn>
+        <v-btn color="primary" v-bind="attrs" v-on="on">Show Signature Card</v-btn>
       </template>
 
       <v-card>
@@ -13,8 +13,14 @@
         </v-card-title>
 
         <v-card-text>
-          <pdf-preview :pdfFile="pdfFile"></pdf-preview>
+          <pdf-preview :pdfURL="pdfURL"></pdf-preview>
         </v-card-text>
+        <v-card-actions>
+          <v-spacer> </v-spacer>
+          <v-btn
+          @click="dialog = false"
+          color="primary">Close</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -24,7 +30,7 @@
 import pdfPreview from "./forms/pdfPreview";
 
 export default {
-  props: ["pdfFile"],
+  props: ["pdfURL"],
   components: { pdfPreview },
   data: () => ({
     dialog: false,

@@ -5,6 +5,7 @@ import auth from "./auth";
 import profile from "./profile";
 import employee from "./employee";
 import authority from "./authority";
+import department from "./department";
 
 Vue.use(Vuex);
 
@@ -17,8 +18,9 @@ export default new Vuex.Store({
   },
   actions: {
     initialize() {
-      console.log("Initializing Store")
+      console.log("Initializing Store");
+      this.dispatch("department/loadDepartments");
     },
   },
-  modules: { auth, profile, employee, authority }
+  modules: { auth, profile, employee, authority, department }
 });
