@@ -3,7 +3,9 @@
     <h1>Signing Authority App Home</h1>
     <p></p>
     <v-card class="mt-5" color="#fff2d5">
-      <v-card-title>Find an Employee</v-card-title>
+      <v-card-title>Find an Employee <v-spacer />
+      <create-employee-modal /></v-card-title>
+
       <v-card-text>
         <v-text-field
           dense
@@ -71,11 +73,13 @@
 </template>
 
 <script>
+import createEmployeeModal from "../components/employee//createEmployeeModal.vue"
 import { EMPLOYEE_URL } from "../urls";
 import axios from "axios";
 
 export default {
   name: "Home",
+  components: {createEmployeeModal},
   data: () => ({
     search: "",
     drawer: null,
