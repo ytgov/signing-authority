@@ -125,7 +125,6 @@ export default {
           "Content-Type": "application/json"
         },
       }).then ( response => {
-        console.log(response.data)
        this.$refs.notifier.showAPIMessages(response.data)
        if (response.status == 200){
          this.$router.replace({path:`/employee/${response.data.insertedId}`})
