@@ -29,34 +29,38 @@
           <v-row
             justify="center">
             <v-col
-            md=3>
+            md=5>
+            <v-form v-model="formValid">
               <v-text-field
-                v-bind="userData.first_name"
+                v-model="first_name"
                 label= "First Name"
+                :rules="[rules.required]"
               ></v-text-field>
                <v-text-field
-                v-bind="userData.last_name"
+                v-model="last_name"
                 label= "Last Name"
+                :rules="[rules.required]"
               ></v-text-field>
                <v-text-field
-                v-bind="userData.ynet_id"
+                v-model="ynet_id"
                 label= "YNET ID"
+                :rules="[rules.required]"
               ></v-text-field>
                <v-text-field
-                v-bind="userData.email"
+                v-model="email"
                 label= "Email"
+                :rules="[rules.required]"
               ></v-text-field>
-
-
-
-
+            </v-form>
             </v-col>
           </v-row>
         </v-card-text>
           <v-row>
             <v-col
             align="center">
-          <v-btn
+            <v-btn
+                :disabled=!formValid
+                @click = "createUser"
                 color="secondary">
                 Create Employee
               </v-btn>
@@ -78,6 +82,8 @@
     </v-dialog>
 </template>
 <script>
+import axios from "axios"
+import { EMPLOYEE_URL} from "../../urls"
 export default {
   name:"createEmployeeModal",
   components:{
@@ -87,43 +93,46 @@ export default {
   data: () => ({
     dialog: false,
     message: "",
-    userData: {
-                "first_name": "",
-                "last_name": "",
-                "ynetid": "",
-                "email": ""
-              },
+    formValid: false,
+    first_name: "",
+    last_name: "",
+    ynet_id: "",
+    email: "",
+    rules: {
+      required: value => !!value || 'This field is required.'
+     }
   }),
   computed: {
     ynetid: function() {
-      return this.userData.first_name[0]+ this.userData.last_name
+      return this.first_name[0]+ this.last_name
+    },
+    form: function () {
+      return {
+        first_name: this.first_name,
+        last_name: this.last_name,
+        ynet_id: this.ynet_id,
+        email: this.email
+      }
     }
   },
   methods: {
 
-    // createUser: function () {
-    //   console.log("Manual Create User")
-
-    //   let file = this.currentFile
-    //   let form = new FormData()
-
-    //   // form.append("user", this.email)
-    //   form.append("user", this.employee.ynet_id)
-    //   form.append("uploadUser", "systemUser") //<- change out for logged in user
-    //   form.append("authorityId", this.formB._id)
-    //   form.append("file", file )
-    //   axios.post(FORMB_UPLOAD_URL, form, {
-    //   headers: {
-    //     "Content-Type": "multipart/form-data"
-    //   },
-    // }).then ( response => {
-    //    this.$refs.notifier.showAPIMessages(response.data)
-    //    if (response.status == 200){
-    //      //this should probably wait a second or two before returning
-    //      this.$emit('uploadComplete')
-    //    }
-    // })
-    // },
+    createUser: function () {
+      console.log("Manual Create User")
+      console.log(this.form)
+      axios.post(EMPLOYEE_URL, this.form, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then ( response => {
+        console.log(response.data)
+       this.$refs.notifier.showAPIMessages(response.data)
+       if (response.status == 200){
+         this.$router.replace({path:`/employee/${response.data.insertedId}`})
+         //this should probably wait a second or two before returning
+       }
+      })
+    },
   },
 }
 </script>
