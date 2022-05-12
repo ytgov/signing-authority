@@ -63,7 +63,7 @@ pipeline {
 
         success {
             emailext (
-                to: 'michael@icefoganalytics.com',
+                to: 'michael@icefoganalytics.com,ryanjagar@hey.com',
                 subject: '$DEFAULT_SUBJECT',
                 body: 'build number ${BUILD_NUMBER} with Git commit hash ${GIT_REVISION} has succeeded',
                 mimeType: 'text/html'
@@ -72,7 +72,7 @@ pipeline {
         }
         failure {
             emailext (
-                to: 'michael@icefoganalytics.com',
+                to: 'michael@icefoganalytics.com,ryanjagar@hey.com',
                 subject: '$DEFAULT_SUBJECT',
                 body: 'build number ${BUILD_NUMBER} with Git commit hash ${GIT_REVISION} has failed',
                 mimeType: 'text/html'
