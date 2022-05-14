@@ -115,6 +115,16 @@ authoritiesRouter.post("/",
   async (req: Request, res: Response) => {
     let db = req.store.Authorities as GenericService<Authority>;
 
+<<<<<<< HEAD
+      if (req.body.employee_id)
+        req.body.employee_id = new ObjectId(req.body.employee_id);
+      console.log(req.body)
+      await db.create( req.body);
+
+      let item = await loadSingleAuthority(req, id);
+
+      res.json({ data: item })
+=======
     if (req.body.department_id)
       req.body.department_id = new ObjectId(req.body.department_id);
 
@@ -124,6 +134,7 @@ authoritiesRouter.post("/",
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());
     res.json({ data: item })
+>>>>>>> db42dd5a125bf899912f9f2074b2b2182e632bea
   });
 
 
