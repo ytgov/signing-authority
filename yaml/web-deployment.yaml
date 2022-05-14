@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.22.0 (955b78124)
   creationTimestamp: null
   labels:
-    io.kompose.service: web
-  name: web
+    io.kompose.service: signing-authority-web
+  name: signing-authority-web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: web
+      io.kompose.service: signing-authority-web
   strategy: {}
   template:
     metadata:
@@ -21,11 +21,11 @@ spec:
         kompose.version: 1.22.0 (955b78124)
       creationTimestamp: null
       labels:
-        io.kompose.service: web
+        io.kompose.service: signing-authority-web
     spec:
       containers:
         - image: 10.230.7.2/fin-prd-ns/signing-authority-web:latest
-          name: web
+          name: signing-authority-web
           ports:
             - containerPort: 3000
           resources: {}
