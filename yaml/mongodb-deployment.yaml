@@ -6,13 +6,13 @@ metadata:
     kompose.version: 1.22.0 (955b78124)
   creationTimestamp: null
   labels:
-    io.kompose.service: mongodb
-  name: mongodb
+    io.kompose.service: signing-authority-mongodb
+  name: signing-authority-mongodb
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: mongodb
+      io.kompose.service: signing-authority-mongodb
   strategy:
     type: Recreate
   template:
@@ -22,7 +22,7 @@ spec:
         kompose.version: 1.22.0 (955b78124)
       creationTimestamp: null
       labels:
-        io.kompose.service: mongodb
+        io.kompose.service: signing-authority-mongodb
     spec:
       containers:
         - image: mongo:5.0.6
@@ -39,16 +39,16 @@ spec:
                   name: env-secrets
                   key: MONGO_PASSWORD
                   optional: false
-          name: mongodb
+          name: signing-authority-mongodb
           ports:
             - containerPort: 27017
           resources: {}
           volumeMounts:
             - mountPath: /data/db
-              name: mongo-data
+              name: signing-authority-mongo-data
       restartPolicy: Always
       volumes:
-        - name: mongo-data
+        - name: signing-authority-mongo-data
           persistentVolumeClaim:
-            claimName: mongo-data
+            claimName: signing-authority-mongo-data
 status: {}

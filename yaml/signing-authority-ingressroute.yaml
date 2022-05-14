@@ -14,7 +14,7 @@ spec:
       #match requests to this domain
       match: Host(`signing-authorities.ynet.gov.yk.ca`)
       services:
-        - name: web
+        - name: signing-authority-web
           port: 3000
           weight: 10
 
