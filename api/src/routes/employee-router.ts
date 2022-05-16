@@ -18,6 +18,13 @@ employeeRouter.get('/', async (req: Request, res: Response) => {
   return res.json({ data: await db.getAll({}) });
 });
 
+employeeRouter.post('/', async (req: Request, res: Response) => {
+  //create a new employee
+  let db = req.store.Employees as GenericService<Employee>;
+  let created = await db.create(req.body);
+  return res.json(created);
+});
+
 employeeRouter.post('/search',
   [body("terms").notEmpty().trim()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
