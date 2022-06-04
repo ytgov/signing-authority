@@ -4,18 +4,18 @@
     <v-row>
       <v-col
        md="9">
-    <v-file-input
-      truncate-length="50"
-      @change="selectFile"
-    ></v-file-input>
+        <v-file-input
+        truncate-length="50"
+        @change="selectFile"
+        ></v-file-input>
       </v-col>
 
       <v-col>
-    <v-btn
-      @click="upload()"
-      :disabled="!currentFile ? true : false"
-      color="primary"
-      class=""> Upload </v-btn>
+        <v-btn
+          @click="upload()"
+          :disabled="!currentFile ? true : false"
+          color="primary"
+          class=""> Upload </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -52,13 +52,12 @@ export default {
     data: {"data": "Empty"},
   }),
   computed: {
-    ...mapGetters("authority",
-      ["formB"
+    ...mapGetters("authority",[
+      "formB"
     ]),
-    //RA - TODO: Clean up profile import
-    ...mapState('profile',[
-      "email",
 
+    ...mapState('employee',[
+      'employee'
     ])
   },
   methods: {
@@ -75,8 +74,9 @@ export default {
       let file = this.currentFile
       let form = new FormData()
 
-      form.append("user", this.email)
-
+      // form.append("user", this.email)
+      form.append("user", this.employee.ynet_id)
+      form.append("uploadUser", "systemUser") //<- change out for logged in user
       form.append("authorityId", this.formB._id)
       form.append("file", file )
       axios.post(FORMB_UPLOAD_URL, form, {
