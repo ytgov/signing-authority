@@ -14,7 +14,13 @@ services:
       - CLIENT_SECRET=${CLIENT_SECRET}
       - ISSUER_BASE_URL=${ISSUER_BASE_URL}
       - SECRET=${SECRET}
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_DB=${MONGO_DB}
+      - MONGO_FILEBUCKET=${MONGO_FILEBUCKET}
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
       - NODE_ENV=${NODE_ENV}
+
 
   mongodb:
     image: mongo:5.0.6
