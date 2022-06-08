@@ -52,7 +52,7 @@
         >
         </v-text-field>
       </div>
-    
+
     </div>
     <notifications ref="notifier"></notifications>
   </div>
@@ -60,7 +60,7 @@
 
 <script>
 import { mapState } from "vuex";
-import store from "../store";
+import store from "@/store";
 
 export default {
   name: "Profile",

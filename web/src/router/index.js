@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 import dashboardRoutes from "@/modules/dashboard/router";
 import formRoutes from "@/modules/forms/router";
+import authenticationRoutes from "@/modules/authentication/router";
 
 
 Vue.use(VueRouter);
@@ -17,6 +18,7 @@ const routes = [
 
   ...dashboardRoutes,
   ...formRoutes,
+  ...authenticationRoutes,
 
   {
     path: "/search",
@@ -26,25 +28,25 @@ const routes = [
     meta: { requiresAuth: false }
   },
 
-  {
-    path: "/sign-in",
-    name: "Login",
-    component: () =>
-      import ("../views/Login.vue"),
-  },
-  {
-    path: "/login-complete",
-    name: "LoginComplete",
-    component: () =>
-      import("../views/LoginComplete.vue"),
-  },
-  {
-    path: "/profile",
-    name: "Profile",
-    component: () =>
-      import("../views/Profile.vue"),
-    meta: { requiresAuth: true }
-  },
+  // {
+  //   path: "/sign-in",
+  //   name: "Login",
+  //   component: () =>
+  //     import ("../views/Login.vue"),
+  // },
+  // {
+  //   path: "/login-complete",
+  //   name: "LoginComplete",
+  //   component: () =>
+  //     import("../views/LoginComplete.vue"),
+  // },
+  // {
+  //   path: "/profile",
+  //   name: "Profile",
+  //   component: () =>
+  //     import("../views/Profile.vue"),
+  //   meta: { requiresAuth: true }
+  // },
 
   {
     path: "/administration",

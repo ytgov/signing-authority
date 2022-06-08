@@ -19,9 +19,9 @@
 </template>
 
 <script>
-import * as config from "../config";
-import router from "../router";
-import store from "../store";
+import * as config from "@/config";
+import router from "@/router";
+import store from "@/store";
 
 export default {
   name: "Login",
