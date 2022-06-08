@@ -363,7 +363,7 @@ export default {
     showUpload: false,
   }),
   computed: {
-    ...mapGetters("authority", ["formB"]),
+    ...mapGetters("authority/formB", ["formB"]),
     ...mapGetters("department", ["departments"]),
     employeeFullName: function () {
       return `${this.formB.employee.first_name} ${this.formB.employee.last_name}`;
@@ -388,7 +388,8 @@ export default {
     this.id = this.$route.params.id;
   },
   methods: {
-    ...mapActions("authority", ["loadFormB", "saveFormB"]),
+    ...mapActions("authority/formB", ["loadFormB", "saveFormB"]),
+
     addLine() {
       this.formB.authority_lines.push({});
     },

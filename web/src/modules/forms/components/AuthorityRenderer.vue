@@ -48,8 +48,8 @@
 </template>
 
 <script>
-import { AUTHORITY_URL } from "../../urls";
-import pdfPreviewButton from "../PDFPreviewButton.vue";
+import { AUTHORITY_URL } from "@/urls";
+import pdfPreviewButton from "./PDFPreviewButton.vue";
 export default {
   components: { pdfPreviewButton },
   name: "AuthorityRenderer",

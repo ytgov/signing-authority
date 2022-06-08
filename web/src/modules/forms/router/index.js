@@ -1,6 +1,5 @@
 import formBroutes from "../formB/router"
 
-console.log(...formBroutes)
 const routes = [
   {
     path: "/form-b",

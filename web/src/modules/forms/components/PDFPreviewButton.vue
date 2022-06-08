@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import pdfPreview from "./forms/pdfPreview";
+import pdfPreview from "./pdfPreview";
 
 export default {
   props: ["pdfURL"],

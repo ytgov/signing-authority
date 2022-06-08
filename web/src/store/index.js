@@ -4,7 +4,7 @@ import Vuex from "vuex";
 import auth from "./auth";
 import profile from "./profile";
 import employee from "./employee";
-import authority from "./authority";
+import authority from "@/modules/forms/store";
 import department from "./department";
 
 Vue.use(Vuex);

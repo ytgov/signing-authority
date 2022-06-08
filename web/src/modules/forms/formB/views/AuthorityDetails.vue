@@ -39,7 +39,7 @@
       {{ formB.employee.last_name }}
     </h1>
 
-    <authority-metadata-card :formB="formB" @close="close" />
+    <authority-metadata-card :formB="formB" />
 
     <v-row>
       <v-col>
@@ -238,7 +238,8 @@ export default {
     showUpload: false,
   }),
   computed: {
-    ...mapGetters("authority", ["formB"]),
+    ...mapGetters("authority/formB", ["formB"]),
+
     breadcrumbs: function () {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
       b.push({
@@ -256,7 +257,7 @@ export default {
     this.id = this.$route.params.id;
   },
   methods: {
-    ...mapActions("authority", ["loadFormB", "downloadFormB"]),
+    ...mapActions("authority/formB", ["loadFormB", "downloadFormB"]),
     editClick() {
       //TODO: this should check the state to determine if changes are allowed
       this.$router.push(`/form-b/${this.id}/edit`);
