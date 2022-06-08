@@ -5,7 +5,7 @@ const routes = [
   {
     path: "/form-b",
     component: () =>
-          import ("../views/formsViewLayout.vue"),
+          import ("@/layouts/blank-layout/Blanklayout.vue"),
     children: [
       ...formBroutes,
   ]
