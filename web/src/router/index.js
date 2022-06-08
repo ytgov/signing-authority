@@ -1,6 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+import dashboardRoutes from "@/modules/dashboard/router";
+import formRoutes from "@/modules/forms/router";
+
 
 Vue.use(VueRouter);
 
@@ -11,13 +14,12 @@ const routes = [
     component: () =>
       import("../views/Home.vue"),
   },
-  {
-    path: "/dashboard",
-    name: "Dashboard",
-    component: () =>
-      import ("../views/Dashboard.vue"),
-    meta: { requiresAuth: false }
-  },
+
+  ...dashboardRoutes,
+  ...formRoutes,
+
+
+
   {
     path: "/search",
     name: "Search",
@@ -25,29 +27,29 @@ const routes = [
       import("../views/Search.vue"),
     meta: { requiresAuth: false }
   },
-  {
-    path: "/form-b/:id",
-    name: "Details",
-    component: () =>
-      import("../views/AuthorityDetails.vue"),
-    meta: { requiresAuth: false },
-    // children: [
-    //   {
-    //     path: "edit2",
-    //     name: "AuthorityDetailsEdit",
-    //     component: () =>
-    //       import("../views/AuthorityDetailsEdit.vue"),
-    //     meta: { requiresAuth: false }
-    //   }
-    // ]
-  },
-  {
-        path: "/form-b/:id/edit",
-        name: "AuthorityDetailsEdit",
-        component: () =>
-          import("../views/AuthorityDetailsEdit.vue"),
-        meta: { requiresAuth: false }
-  },
+  // {
+  //   path: "/form-b/:id",
+  //   name: "Details",
+  //   component: () =>
+  //     import("../views/AuthorityDetails.vue"),
+  //   meta: { requiresAuth: false },
+  //   // children: [
+  //   //   {
+  //   //     path: "edit2",
+  //   //     name: "AuthorityDetailsEdit",
+  //   //     component: () =>
+  //   //       import("../views/AuthorityDetailsEdit.vue"),
+  //   //     meta: { requiresAuth: false }
+  //   //   }
+  //   // ]
+  // },
+  // {
+  //       path: "/form-b/:id/edit",
+  //       name: "AuthorityDetailsEdit",
+  //       component: () =>
+  //         import("../views/AuthorityDetailsEdit.vue"),
+  //       meta: { requiresAuth: false }
+  // },
   {
     path: "/sign-in",
     name: "Login",
