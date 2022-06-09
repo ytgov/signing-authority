@@ -5,11 +5,10 @@
 
 
     <h1>
-      Form A for {{ formB.employee.first_name }}
-      {{ formB.employee.last_name }}
+     Delegation of Financial Signing Authority Chart
     </h1>
 
-    <authority-metadata-card :formB="formB" />
+    <!-- <authority-metadata-card :formB="formB" /> -->
 
     <v-row>
       <v-col>
@@ -25,25 +24,18 @@
               <thead>
                 <tr>
                   <th
+                    colspan="2"
                     rowspan="5"
-                    style="text-align: left; padding: 10px; vertical-align: top"
+                    style="text-align: left; padding: 10px; vertical-align: middle"
                   >
-                    <h3>Delegate:</h3>
-                    Public Officer Name:<br />
-                    <strong>
-                      {{ formB.employee.first_name }}
-                      {{ formB.employee.last_name }}
-                    </strong>
-                    <br /><br />
+
 
                     Department:<br />
                     <strong>{{ formB.department.name }}</strong>
                     <br /><br />
                     Program/Branch:<br />
                     <strong>{{ formB.program }}</strong>
-                    <br /><br />
-                    Position title:<br />
-                    <strong>{{ formB.title }}</strong>
+
                   </th>
                   <th colspan="13">SPENDING AUTHORITY</th>
                   <th rowspan="3" class="rotate" style="height: 140px">
@@ -123,15 +115,18 @@
                   </th>
                 </tr>
                 <tr style="height: 30px">
-
                   <th style="height: 30px">
-                    Area of Authority - General Ledger Coding
+                    Position
+                  </th>
+                  <th style="height: 30px px-3">
+                    Area of Authority
                   </th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr v-for="(line, idx) of formB.authority_lines" :key="idx">
+                  <td class=" px-3">Director of Super Cool Programs</td>
                   <td class="pl-3">{{ line.account }}</td>
                   <td class="fb-value">{{ line.s24_procure_goods_limit }}</td>
                   <td class="fb-value">
@@ -195,13 +190,13 @@ import { AUTHORITY_URL } from "@/urls";
 import { mapGetters, mapActions } from "vuex";
 
 // import uploadFormModal from "../components/uploadFormModal.vue"
-import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
+// import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
 
 export default {
   name: "AuthorityDetails",
   components: {
     // uploadFormModal,
-    AuthorityMetadataCard,
+    // AuthorityMetadataCard,
   },
   data: () => ({
     id: "",
