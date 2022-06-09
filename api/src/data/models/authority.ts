@@ -28,6 +28,30 @@ export interface Authority extends MongoEntity {
     issue_date_display?: string;
 }
 
+// Form A
+
+export interface FormA extends MongoEntity {
+    //_id?: ObjectId;
+    department_id: ObjectId;
+    position: string;
+    issue_date: Date;
+    archive_date?: Date;
+    archive_reason?: string;
+
+    reviewed_by_department: boolean;
+    reviewed_by_person?: String
+    reviewed_by_date?: Date;
+
+    formb_file_reference?: ObjectId;
+    memo_file_reference?: ObjectId;
+    authority_lines?: AuthorityLine[];
+
+    // used in DTO only
+    department?: Department;
+    employee?: Employee;
+    issue_date_display?: string;
+}
+
 export interface AuthorityLine {
     // authority_id: ObjectId;
     dept: string;
