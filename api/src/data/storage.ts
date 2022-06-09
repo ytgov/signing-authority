@@ -3,7 +3,7 @@ import { FileStore } from "../utils/file-store";
 import { MongoFileStore } from "../utils/mongo-file-store";
 import { MONGO_URL, MONGO_DB } from "../config";
 import { GenericService, UserService } from "../services";
-import { Authority, Department, Employee } from "./models";
+import { Authority, Department, Employee, FormA } from "./models";
 
 let options: MongoClientOptions = {
     connectTimeoutMS: 3000,
@@ -18,6 +18,7 @@ export class Storage {
     Departments!: GenericService<Department>;
     Users!: UserService;
     Files!: FileStore;
+    FormA!: GenericService<FormA>;
 
     constructor() {
     }
@@ -33,11 +34,12 @@ export class Storage {
 
                     //Subscriptions are from the old project
                     this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Authorities"));
+                    this.FormA = new GenericService(this.mongoConnection.db(MONGO_DB).collection("FormA"));
                     this.Employees = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Employees"));
                     this.Departments = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Departments"));
                     this.Users = new UserService(this.mongoConnection.db(MONGO_DB).collection("Users"));
                     this.Files = new MongoFileStore(this.mongoConnection.db(MONGO_DB));
-                    
+
                     this.isInitialized = true;
                     resolve("Connected");
                 })
