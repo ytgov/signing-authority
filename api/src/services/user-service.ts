@@ -10,13 +10,13 @@ export class UserService {
         this.db = db;
     }
 
-    async create(email: string, first_name: string, last_name: string, status: string, roles: string): Promise<any> {
-        let existing = await this.db.find({ email }).count();
+    async create(user: any): Promise<any> {
+        let existing = await this.db.find({ email: user.email }).count();
 
         if (existing > 0)
             return undefined;
 
-        let user = { email, first_name, last_name, status, roles, create_date: new Date() };
+        user.create_date = new Date();
 
         return await this.db.insertOne(user);
     }
@@ -33,11 +33,7 @@ export class UserService {
         return this.db.findOne<User>({ email });
     }
 
-    async makeDTO(userRaw: any) {
-        let dto = userRaw;
-        dto.display_name = `${userRaw.first_name} ${userRaw.last_name}`;
-        dto.roles = _.split(userRaw.roles, ",").filter((r: string) => r.length > 0);
-
-        return dto;
+    async getBySub(sub: string): Promise<User | null> {
+        return this.db.findOne<User>({ sub });
     }
 }

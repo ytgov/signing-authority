@@ -22,6 +22,9 @@ export const API_PORT = process.env.API_PORT || "3000";
 export const FRONTEND_URL = process.env.FRONTEND_URL || "";
 export const AUTH_REDIRECT = process.env.AUTH_REDIRECT || "";
 
+export const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN || "";
+export const AUTH0_AUDIENCE = process.env.AUTH0_AUDIENCE || "";
+
 export const APPLICATION_NAME = process.env.APPLICATION_NAME || "";
 
 export const MONGO_DB = process.env.MONGO_DB || "";

@@ -2,15 +2,9 @@
 const routes = [
   {
     path: "/sign-in",
-    name: "Login",
+    name: "SignIn",
     component: () =>
-      import ("../views/Login.vue"),
-  },
-  {
-    path: "/login-complete",
-    name: "LoginComplete",
-    component: () =>
-      import("../views/LoginComplete.vue"),
+      import("../views/SignIn.vue"),
   },
   {
     path: "/profile",
@@ -18,7 +12,7 @@ const routes = [
     component: () =>
       import("../views/Profile.vue"),
     meta: { requiresAuth: true }
-    },
-  ];
+  },
+];
 
-  export default routes;
+export default routes;

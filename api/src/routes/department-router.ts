@@ -1,13 +1,12 @@
 import express, { Request, Response } from "express";
 import { RequiresData } from "../middleware";
 import _ from "lodash";
-import { EnsureAuthenticated } from "./auth";
 import { GenericService } from "../services";
 import { Department } from "../data/models";
 import { ObjectId } from "mongodb";
 
 export const departmentRouter = express.Router();
-departmentRouter.use(RequiresData, EnsureAuthenticated);
+departmentRouter.use(RequiresData);
 
 departmentRouter.get('/', async (req: Request, res: Response) => {
   let db = req.store.Departments as GenericService<Department>;

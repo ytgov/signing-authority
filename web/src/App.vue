@@ -102,7 +102,7 @@
               <v-list-item-title>Administration</v-list-item-title>
             </v-list-item>
             <v-divider />
-            <v-list-item @click="signOut">
+            <v-list-item @click="$auth.logout({ returnTo })">
               <v-list-item-icon>
                 <v-icon>mdi-exit-run</v-icon>
               </v-list-item-icon>
@@ -144,10 +144,13 @@ export default {
       return store.getters.fullName;
     },
     isAuthenticated() {
-      return store.getters.isAuthenticated;
+      return this.$auth.isAuthenticated;
     },
     roles() {
       return store.getters.roles;
+    },
+    returnTo: function () {
+      return config.applicationUrl;
     },
   },
   data: () => ({
@@ -166,10 +169,11 @@ export default {
 
     showAdmin: false,
   }),
-  created: async function () {
-    await store.dispatch("checkAuthentication");
-    store.dispatch("initialize");
-    store.dispatch("profile/loadProfile");
+  mounted: async function () {
+    window.setTimeout(() => {
+      store.dispatch("initialize");
+      store.dispatch("profile/loadProfile");
+    }, 1250);
   },
   watch: {
     $route(to) {

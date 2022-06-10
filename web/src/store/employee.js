@@ -1,5 +1,5 @@
 import { EMPLOYEE_URL } from "../urls";
-import axios from "axios";
+import { secureGet, securePut } from "./jwt";
 
 const state = {
     employee: {},
@@ -12,7 +12,7 @@ const getters = {
 
 const actions = {
     async loadEmployee({ commit }, id) {
-        return await axios.get(`${EMPLOYEE_URL}/${id}`)
+        return await secureGet(`${EMPLOYEE_URL}/${id}`)
             .then(resp => {
                 commit("setEmployee", resp.data.data);
                 return resp.data.data
@@ -22,7 +22,7 @@ const actions = {
             });
     },
     async loadEmployeeAuthorities({ commit }, id) {
-        return await axios.get(`${EMPLOYEE_URL}/${id}/authorities`)
+        return await secureGet(`${EMPLOYEE_URL}/${id}/authorities`)
             .then(resp => {
                 commit("setEmployeeAuthorities", resp.data.data);
                 return resp.data.data
@@ -43,7 +43,7 @@ const actions = {
             primary_department: employee.primary_department
         };
 
-        return await axios.put(`${EMPLOYEE_URL}/${employee._id}`, body)
+        return await securePut(`${EMPLOYEE_URL}/${employee._id}`, body)
             .then(resp => {
                 //commit("setEmployee", resp.data.data);
                 return resp.data.data

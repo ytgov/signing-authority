@@ -1,5 +1,5 @@
-import axios from "axios";
-import { AUTH_CHECK_URL, LOGOUT_URL } from "../urls";
+import { secureGet } from "./jwt";
+import { AUTH_CHECK_URL } from "../urls";
 
 const state = {
     user: null,
@@ -13,7 +13,7 @@ const getters = {
 };
 const actions = {
     async checkAuthentication({ commit }) {
-        await axios.get(AUTH_CHECK_URL)
+        await secureGet(AUTH_CHECK_URL)
             .then(resp => {
                 commit("setUser", resp.data.data);
             }).catch(() => {
@@ -21,12 +21,7 @@ const actions = {
             });
     },
     async signOut({ commit }) {
-        await axios.get(LOGOUT_URL)
-            .then(() => {
-                commit("clearUser");
-            }).catch(err => {
-                console.error(err);
-            });
+        commit("profile/clearUser");
     }
 };
 const mutations = {

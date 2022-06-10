@@ -1,15 +1,15 @@
 import express, { Request, Response } from "express";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import _, { join } from "lodash";
-import { EnsureAuthenticated } from "./auth";
 import { GenericService } from "../services";
 import { Authority, Department, Employee } from "../data/models";
 import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
 import moment from "moment";
+import { checkJwt } from "../middleware/authz.middleware";
 
 export const employeeRouter = express.Router();
-employeeRouter.use(RequiresData, EnsureAuthenticated);
+employeeRouter.use(RequiresData, checkJwt);
 
 employeeRouter.get('/', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account

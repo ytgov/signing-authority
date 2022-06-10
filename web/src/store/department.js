@@ -1,6 +1,5 @@
 import { DEPARTMENT_URL } from "../urls";
-import axios from "axios";
-
+import { secureGet } from "./jwt";
 const state = {
     departments: []
 };
@@ -11,7 +10,7 @@ const getters = {
 
 const actions = {
     async loadDepartments({ commit }) {
-        return await axios.get(`${DEPARTMENT_URL}`)
+        return await secureGet(`${DEPARTMENT_URL}`)
             .then(resp => {
                 commit("setDepartments", resp.data.data);
                 return resp.data.data

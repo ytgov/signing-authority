@@ -89,7 +89,7 @@
 <script>
 import createEmployeeModal from "@/components/employee/createEmployeeModal.vue"
 import { EMPLOYEE_URL } from "@/urls";
-import axios from "axios";
+import { securePost } from '@/store/jwt';
 
 export default {
   name: "Home",
@@ -110,8 +110,7 @@ export default {
 
       this.loading = true;
 
-      axios
-        .post(`${EMPLOYEE_URL}/search`, { terms: cleanSearch })
+      securePost(`${EMPLOYEE_URL}/search`, { terms: cleanSearch })
         .then((resp) => {
           this.searchResults = resp.data.data;
           this.drawer = true;

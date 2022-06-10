@@ -6,10 +6,8 @@ import fileUpload from "express-fileupload";
 import { API_PORT, FRONTEND_URL, APPLICATION_NAME } from './config';
 import { doHealthCheck } from "./utils/healthCheck";
 import { userRouter, authoritiesRouter, employeeRouter, departmentRouter } from "./routes";
-import { Storage } from "./data";
 
 //import { configureLocalAuthentication } from "./routes/auth-local";
-import { configureAuthentication } from "./routes/auth";
 import { RequiresData } from "./middleware";
 import { Seed } from "./data/seed";
 
@@ -42,8 +40,6 @@ app.use(cors({
   optionsSuccessStatus: 200,
   credentials: true
 }));
-
-configureAuthentication(app);
 
 app.get("/seed", RequiresData, async (req: Request, res: Response) => {
   await Seed(req.store);

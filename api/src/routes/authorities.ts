@@ -7,7 +7,6 @@ import { body, param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 import _ from "lodash";
-import { EnsureAuthenticated } from "./auth";
 import { Authority, Department, Employee } from "src/data/models";
 import { Auth, ObjectId } from "mongodb";
 import moment from "moment";
@@ -16,11 +15,9 @@ import { generatePDF } from "../utils/pdf-generator";
 import { ExpressHandlebars } from "express-handlebars";
 
 export const authoritiesRouter = express.Router();
-// userRouter.use(RequiresData, EnsureAuthenticated);
 
 
 import fs from "fs"
-import path from "path"
 
 authoritiesRouter.use('/uploads', uploadsRouter)
 

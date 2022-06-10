@@ -11,9 +11,9 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
+    name: "Default",
     component: () =>
-      import("../views/Home.vue"),
+      import("../views/Default.vue"),
   },
 
   ...dashboardRoutes,
@@ -87,6 +87,8 @@ const router = new VueRouter({
 });
 
 import store from "../store";
+import { getInstance } from "@/auth/auth0-plugin";
+let authService;
 
 router.beforeEach(async (to, from, next) => {
   var requiresAuth = to.meta.requiresAuth || false;
@@ -95,16 +97,30 @@ router.beforeEach(async (to, from, next) => {
     return next();
   }
 
-  await store.dispatch("checkAuthentication");
-  var isAuthenticated = store.getters.isAuthenticated;
-
-  if (requiresAuth && !isAuthenticated) {
-    console.log("You aren't authenticatd, redirecting to sign-in")
-    next("/sign-in");
-    return;
+  if (!authService) {
+    authService = await getInstance();
   }
 
-  return next();
+  let i = window.setInterval(async () => {
+    if (authService.isLoading === false) {
+      window.clearInterval(i);
+
+      next(await kick());
+    }
+  }, 100);
 });
 
+async function kick() {
+  if (!authService) {
+    authService = await getInstance();
+  }
+
+  const accessToken = await authService.getTokenSilently();
+  let user = await store.dispatch("getCurrentUser", { accessToken });
+
+  if (user && user.status == "Inactive")
+    return "inactive";
+
+  return;
+}
 export default router;

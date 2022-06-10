@@ -3,17 +3,18 @@ import { body, param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
 import _ from "lodash";
-import { EnsureAuthenticated } from "./auth";
+import { checkJwt, loadUser } from "../middleware/authz.middleware";
 
 export const userRouter = express.Router();
-userRouter.use(RequiresData, EnsureAuthenticated);
+userRouter.use(RequiresData);
+userRouter.use(checkJwt, loadUser);
 
 userRouter.get("/me",
     async (req: Request, res: Response) => {
         const db = req.store.Users as UserService;
         let person = req.user;
         let me = await db.getByEmail(person.email);
-        return res.json({ data: await db.makeDTO(Object.assign(req.user, me)) });
+        return res.json({ data: Object.assign(req.user, me) });
     });
 
 userRouter.get("/",
@@ -21,9 +22,9 @@ userRouter.get("/",
         const db = req.store.Users as UserService;
         let list = await db.getAll();
 
-        for (let user of list) {
-            user = await db.makeDTO(user)
-        }
+        /*  for (let user of list) {
+             user = await db.makeDTO(user)
+         } */
 
         return res.json({ data: list });
     });

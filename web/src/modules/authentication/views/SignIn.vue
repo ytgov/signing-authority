@@ -12,32 +12,38 @@
       skip the sign in process and return you here immediately.
     </p>
 
-    <a class="v-btn primary v-size--default" :href="loginLink"
-      >Click here to sign in</a
+    <v-btn
+      v-if="!$auth.isAuthenticated"
+      @click="$auth.loginWithRedirect()"
+      color="primary"
     >
+      Sign In
+    </v-btn>
   </div>
 </template>
 
 <script>
 import * as config from "@/config";
-import router from "@/router";
-import store from "@/store";
+import { getInstance } from "@/auth/auth0-plugin";
 
 export default {
   name: "Login",
   data: () => ({
-    loginLink: `${config.apiBaseUrl}/api/auth/login`,
     title: `Sign in to ${config.applicationName}`,
   }),
   async created() {
-    await store.dispatch("checkAuthentication");
-    var isAuthenticated = store.getters.isAuthenticated;
+    const authService = getInstance();
 
-    if (isAuthenticated) {
-      router.push("/");
-    }
+    let i = window.setInterval(() => {
+      if (authService.isLoading === false) {
+        window.clearInterval(i);
 
-    console.log(config.apiBaseUrl);
+        if (authService.isAuthenticated) {
+          this.$router.push("/dashboard");
+        }
+      }
+    }, 250);
   },
+  methods: {},
 };
 </script>
