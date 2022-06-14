@@ -20,8 +20,8 @@ export default {
   data: () => ({
     title: `Loading ${applicationName}`,
   }),
-  mounted() {
-    const authService = getInstance();
+  async mounted() {
+    const authService = await getInstance();
 
     let i = window.setInterval(() => {
       if (authService.isLoading === false) {
