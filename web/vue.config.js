@@ -1,8 +1,5 @@
 var dotenv = require('dotenv')
 
-process.env.VUE_APP_TEST = "Booyeah"
-
-
 let path;
 switch (process.env.NODE_ENV) {
   case "test":
