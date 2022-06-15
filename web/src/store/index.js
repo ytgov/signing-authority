@@ -33,5 +33,10 @@ export default new Vuex.Store({
       return userResp.data.data;
     }
   },
-  modules: { auth, profile, employee, authority, department }
+  modules: {
+    auth,
+    profile,
+    employee,
+    authority,
+    department }
 });
