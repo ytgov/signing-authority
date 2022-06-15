@@ -13,25 +13,24 @@
 
 <script>
 import { applicationName } from "../config";
-import { getInstance } from "@/auth/auth0-plugin";
 
 export default {
   name: "Default",
   data: () => ({
     title: `Loading ${applicationName}`,
   }),
+  methods: {
+
+  },
+  computed: {
+  },
+  watch: {
+  },
   async mounted() {
-    const authService = await getInstance();
-
-    let i = window.setInterval(() => {
-      if (authService.isLoading === false) {
-        window.clearInterval(i);
-
-        if (authService.isAuthenticated) {
+    if (this.$auth.isAuthenticated) {
           this.$router.push("/dashboard");
         } else this.$router.push("/sign-in");
-      }
-    }, 250);
+
   },
 };
 </script>

@@ -133,26 +133,15 @@
 
 <script>
 import router from "./router";
-import store from "./store";
+// import store from "./store";
+
+import {mapActions} from 'vuex'
 import * as config from "./config";
 import { LOGOUT_URL } from "./urls";
+// import { getInstance } from "@/auth/auth0-plugin";
 
 export default {
   name: "App",
-  computed: {
-    username() {
-      return store.getters.fullName;
-    },
-    isAuthenticated() {
-      return this.$auth.isAuthenticated;
-    },
-    roles() {
-      return store.getters.roles;
-    },
-    returnTo: function () {
-      return config.applicationUrl;
-    },
-  },
   data: () => ({
     dialog: false,
     drawer: null,
@@ -166,14 +155,21 @@ export default {
     hasSidebar: false, //config.hasSidebar,
     hasSidebarClosable: config.hasSidebarClosable,
     search: "",
-
     showAdmin: false,
   }),
-  mounted: async function () {
-    window.setTimeout(() => {
-      store.dispatch("initialize");
-      store.dispatch("profile/loadProfile");
-    }, 1250);
+  computed: {
+     isAuthenticated() {
+      return this.$auth.isAuthenticated;
+    },
+    username () {
+      return this.$auth.user.name
+    },
+
+    returnTo: function () {
+      return config.applicationUrl;
+    },
+  },
+  async mounted (){
   },
   watch: {
     $route(to) {
@@ -193,6 +189,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions("profile",[
+      "loadProfile"
+    ]),
     nav: function (location) {
       router.push(location);
       console.log(location);
