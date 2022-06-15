@@ -19,6 +19,7 @@ const getters = {
 };
 const actions = {
     async loadProfile({ commit }) {
+        console.log (`Loading Profile from ${PROFILE_URL}`)
         await secureGet(PROFILE_URL)
             .then(resp => {
                 commit("setProfile", resp.data.data);

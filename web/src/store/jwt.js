@@ -6,6 +6,7 @@ export async function secureGet(url) {
   console.log("YO")
   let auth = await getInstance();
   let token = await auth.getTokenSilently()
+  console.log("token: " + token)
 
   return axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
 }

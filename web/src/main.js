@@ -18,7 +18,6 @@ Vue.use(VueCurrencyInput, { globalOptions: { currency: 'USD', locale: 'en' } });
 
 import { Auth0Plugin } from '@/auth/auth0-plugin';
 
-console.log(` Im a thing! ${ process.env.VUE_APP_AUTH_CLIENTID}`)
 Vue.use(Auth0Plugin, {
   domain: process.env.VUE_APP_AUTH_DOMAIN,
   client_id: process.env.VUE_APP_AUTH_CLIENTID,
