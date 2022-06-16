@@ -1,15 +1,17 @@
 import { secureGet } from "./jwt";
 import { AUTH_CHECK_URL } from "../urls";
 
+
 const state = {
-    user: null,
-    fullName: "",
-    roles: []
+    // user: null,
+    // fullName: "",
+    // roles: [],
+    // authService: null,
+    token: null,
 };
 const getters = {
-    isAuthenticated: state => !!state.user,
-    fullName: state => { return state.fullName },
-    roles: state => { return state.roles }
+
+
 };
 const actions = {
     async checkAuthentication({ commit }) {
@@ -25,6 +27,9 @@ const actions = {
     }
 };
 const mutations = {
+    setToken(state, paylod) {
+        state.token=paylod;
+    },
     setUser(state, user) {
         state.user = user;
         state.fullName = user.display_name;
@@ -37,6 +42,7 @@ const mutations = {
 };
 
 export default {
+    namespaced: true,
     state,
     getters,
     actions,

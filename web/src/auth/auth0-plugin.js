@@ -4,6 +4,7 @@
 
  import Vue from 'vue';
  import createAuth0Client from '@auth0/auth0-spa-js';
+ import store from "@/store"
 
  /**
   *  Vue.js Instance Definition
@@ -82,6 +83,9 @@
              } finally {
                  this.isAuthenticated = await this.auth0Client.isAuthenticated();
                  this.user = await this.auth0Client.getUser();
+                //set the access token in the auth store
+                 let token = await this.getTokenSilently();
+                 store.commit("auth/setToken", token);
                  this.isLoading = false;
              }
          },
