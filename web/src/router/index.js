@@ -114,13 +114,19 @@ async function kick() {
   if (!authService) {
     authService = await getInstance();
   }
+/* eslint-disable no-unused-vars */
 
   const accessToken = await authService.getTokenSilently();
+
   let user = await store.dispatch("getCurrentUser", { accessToken });
 
-  if (user && user.status == "Inactive")
-    return "inactive";
+  //Disabled because this breaks things -
+  //@MJ what is the purpose inactive check?
 
+  // if (user && user.status == "Inactive")
+     // return "inactive";
+
+/* eslint-enable no-unused-vars */
   return;
 }
 export default router;
