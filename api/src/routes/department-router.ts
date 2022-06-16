@@ -11,10 +11,16 @@ const questService = new QuestService();
 
 departmentRouter.get('/', async (req: Request, res: Response) => {
   let depts = await questService.getDepartmentList();
-
-  return res.json({ data: depts });
+  const temp_depts = [
+    "highways",
+    "finance",
+    "public service",
+    "environment"
+  ]
+  return res.json ({data: temp_depts})
+  //return res.json({ data: depts });
 });
-/* 
+/*
 departmentRouter.get('/:id', async (req: Request, res: Response) => {
   let db = req.store.Departments as GenericService<Department>;
   let { id } = req.params;

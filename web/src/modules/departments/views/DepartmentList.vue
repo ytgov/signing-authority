@@ -11,6 +11,7 @@
     </BaseBreadcrumb>
 
     <BaseCard showHeader="true">
+    <div>{{departments}}</div>
       <v-data-table
         :items="items"
         :headers="[
@@ -41,7 +42,7 @@
 
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "DepartmentList",
@@ -68,6 +69,12 @@ export default {
   mounted: function () {
     this.loadList();
   },
+  computed: {
+    ...mapState("department", [
+      "departments"
+    ])
+  },
+
   methods: {
     ...mapActions("department", ["loadDepartments"]),
     openDepartment(item) {
