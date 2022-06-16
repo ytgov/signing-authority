@@ -2,7 +2,7 @@
 // this could be refactored into vuex to get around possible async issues
 
 import axios from "axios";
-import {store} from "@/store";
+import store from "@/store";
 
 console.log(store)
 
