@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 import dashboardRoutes from "@/modules/dashboard/router";
 import formRoutes from "@/modules/forms/router";
 import authenticationRoutes from "@/modules/authentication/router";
+import departmentRoutes from "@/modules/departments/router";
 
 
 Vue.use(VueRouter);
@@ -19,6 +20,7 @@ const routes = [
   ...dashboardRoutes,
   ...formRoutes,
   ...authenticationRoutes,
+  ...departmentRoutes,
 
   {
     path: "/search",
@@ -114,7 +116,7 @@ async function kick() {
   if (!authService) {
     authService = await getInstance();
   }
-/* eslint-disable no-unused-vars */
+  /* eslint-disable no-unused-vars */
 
   const accessToken = await authService.getTokenSilently();
 
@@ -124,9 +126,9 @@ async function kick() {
   //@MJ what is the purpose inactive check?
 
   // if (user && user.status == "Inactive")
-     // return "inactive";
+  // return "inactive";
 
-/* eslint-enable no-unused-vars */
+  /* eslint-enable no-unused-vars */
   return;
 }
 export default router;

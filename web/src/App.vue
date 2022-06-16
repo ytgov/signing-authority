@@ -120,12 +120,8 @@
 
     <v-main v-bind:style="{ 'padding-left: 33px !important': !hasSidebar }">
       <!-- Provides the application the proper gutter -->
-      <v-container fluid>
-        <v-row>
-          <v-col>
-            <router-view></router-view>
-          </v-col>
-        </v-row>
+      <v-container fluid class="page-wrapper">
+        <router-view></router-view>
       </v-container>
     </v-main>
   </v-app>
@@ -135,7 +131,7 @@
 import router from "./router";
 // import store from "./store";
 
-import {mapActions} from 'vuex'
+import { mapActions } from "vuex";
 import * as config from "./config";
 import { LOGOUT_URL } from "./urls";
 // import { getInstance } from "@/auth/auth0-plugin";
@@ -158,19 +154,18 @@ export default {
     showAdmin: false,
   }),
   computed: {
-     isAuthenticated() {
+    isAuthenticated() {
       return this.$auth.isAuthenticated;
     },
-    username () {
-      return this.$auth.user.name
+    username() {
+      return this.$auth.user.name;
     },
 
     returnTo: function () {
       return config.applicationUrl;
     },
   },
-  async mounted (){
-  },
+  async mounted() {},
   watch: {
     $route(to) {
       let meta = to.meta || {};
@@ -189,9 +184,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions("profile",[
-      "loadProfile"
-    ]),
+    ...mapActions("profile", ["loadProfile"]),
     nav: function (location) {
       router.push(location);
       console.log(location);

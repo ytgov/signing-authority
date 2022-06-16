@@ -5,7 +5,7 @@ import auth from "./auth";
 import profile from "./profile";
 import employee from "./employee";
 import authority from "@/modules/forms/store";
-import department from "./department";
+import department from "@/modules/departments/store";
 import { secureGet } from "./jwt";
 import { USER_URL } from "@/urls"
 
@@ -25,7 +25,7 @@ export default new Vuex.Store({
   actions: {
     initialize() {
       console.log("Initializing Store");
-      this.dispatch("department/loadDepartments");
+      //this.dispatch("department/loadDepartments");
     },
     async getCurrentUser(state) {
       let userResp = await secureGet(`${USER_URL}/me`);

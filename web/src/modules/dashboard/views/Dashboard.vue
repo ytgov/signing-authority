@@ -1,26 +1,52 @@
 <template>
   <div class="home">
-    <h1>Signing Authority App Home</h1>
-    <p></p>
-    <v-card class="mt-5" color="#fff2d5">
-      <v-card-title>Find an Employee <v-spacer />
-      <create-employee-modal /></v-card-title>
+    <h1>Signing Authorities Home</h1>
 
-      <v-card-text>
-        <v-text-field
-          dense
-          outlined
-          background-color="white"
-          label="Search"
-          append-icon="mdi-magnify"
-          @click:append="doSearch"
-          @keydown="searchKeyUp"
-          hint="Enter a Name, YNET ID or Employee ID"
-          v-model="search"
-        ></v-text-field>
-        <router-link to="/search">Advanced search</router-link>
-      </v-card-text>
-    </v-card>
+    <v-row>
+      <v-col
+        ><v-card class="mt-5" color="#fff2d5">
+          <v-card-title
+            >Find Authorities by Employee <v-spacer />
+          </v-card-title>
+
+          <v-card-text>
+            <v-text-field
+              dense
+              outlined
+              background-color="white"
+              label="Search"
+              append-icon="mdi-magnify"
+              @click:append="doSearch"
+              @keydown="searchKeyUp"
+              hint="Enter a Name, YNET ID or Employee ID"
+              v-model="search"
+              hide-details
+            ></v-text-field>
+
+            <v-card-actions class="mt-2">
+              <router-link to="/search">Advanced search</router-link>
+              <v-spacer></v-spacer>
+              <create-employee-modal />
+            </v-card-actions>
+          </v-card-text> </v-card
+      ></v-col>
+      <v-col>
+
+        <router-link to="/departments">Departments</router-link>
+
+        <v-card class="mt-5" color="#fff2d5">
+          <v-card-title> Recent Authorities </v-card-title>
+          <v-card-text>
+            <v-list>
+              <v-list-item> Some </v-list-item>
+              <v-list-item> List </v-list-item>
+              <v-list-item> Of </v-list-item>
+              <v-list-item> Things </v-list-item>
+            </v-list>
+          </v-card-text>
+        </v-card></v-col
+      >
+    </v-row>
 
     <v-navigation-drawer
       v-model="drawer"
@@ -45,7 +71,9 @@
                 Advanced search</v-btn
               >
             </div>
-            <div class="float-left">Employees ({{ searchResults.length }} matches)</div>
+            <div class="float-left">
+              Employees ({{ searchResults.length }} matches)
+            </div>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -70,31 +98,18 @@
       </div>
     </v-navigation-drawer>
     <!-- repalce with a recent work component -->
-    <v-card class="mt-5" color="#fff2d5">
-      <v-card-title> Recent Authorities </v-card-title>
-      <v-card-text>
-        <v-list>
-          <v-list-item> Some </v-list-item>
-          <v-list-item> List </v-list-item>
-          <v-list-item> Of </v-list-item>
-          <v-list-item> Things </v-list-item>
-        </v-list>
-
-      </v-card-text>
-    </v-card>
   </div>
-
 </template>
 
 <script>
-import createEmployeeModal from "@/components/employee/createEmployeeModal.vue"
+import createEmployeeModal from "@/components/employee/createEmployeeModal.vue";
 import { EMPLOYEE_URL } from "@/urls";
 // import { securePost } from '@/store/jwt';
-import { api } from '@/auth/axiosAPIConfig'
+import { api } from "@/auth/axiosAPIConfig";
 
 export default {
   name: "Home",
-  components: {createEmployeeModal},
+  components: { createEmployeeModal },
   data: () => ({
     search: "",
     drawer: null,
@@ -111,7 +126,8 @@ export default {
 
       this.loading = true;
 
-      api.post(`${EMPLOYEE_URL}/search`, { terms: cleanSearch })
+      api
+        .post(`${EMPLOYEE_URL}/search`, { terms: cleanSearch })
         .then((resp) => {
           this.searchResults = resp.data.data;
           this.drawer = true;

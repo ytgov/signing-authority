@@ -1,19 +1,20 @@
 import express, { Request, Response } from "express";
 import { RequiresData } from "../middleware";
 import _ from "lodash";
-import { GenericService } from "../services";
-import { Department } from "../data/models";
-import { ObjectId } from "mongodb";
+import { QuestService } from "../services";
 
 export const departmentRouter = express.Router();
 departmentRouter.use(RequiresData);
 
+const questService = new QuestService();
+
+
 departmentRouter.get('/', async (req: Request, res: Response) => {
-  let db = req.store.Departments as GenericService<Department>;
+  let depts = await questService.getDepartmentList();
 
-  return res.json({ data: await db.getAll({}, "name") });
+  return res.json({ data: depts });
 });
-
+/* 
 departmentRouter.get('/:id', async (req: Request, res: Response) => {
   let db = req.store.Departments as GenericService<Department>;
   let { id } = req.params;
@@ -21,3 +22,4 @@ departmentRouter.get('/:id', async (req: Request, res: Response) => {
 
   return res.json({ data: item });
 });
+ */

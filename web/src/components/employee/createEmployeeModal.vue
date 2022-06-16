@@ -1,94 +1,68 @@
 <template>
-   <v-dialog
-    v-model="dialog"
-     width="600">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          v-bind="attrs"
-          v-on="on"
-          color="primary"
-        >
-        Create New Employee
-        </v-btn>
-      </template>
+  <v-dialog v-model="dialog" width="600" persistent>
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn v-bind="attrs" v-on="on" color="primary" class="my-0">
+        Add Employee
+      </v-btn>
+    </template>
 
-      <v-card>
-        <v-card-title class="text-h5 grey lighten-2">
-          New Employee
-          <v-spacer />
-          <v-icon @click="dialog=false">mdi-close</v-icon>
-        </v-card-title>
+    <v-app-bar color="info" dark>
+      Add Employee
+      <v-spacer> </v-spacer>
+      <v-btn icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
+    </v-app-bar>
 
-        <v-card-text>
-          <v-row>
-            <v-col>
-           <notifications ref="notifier"></notifications>
-            </v-col>
-          </v-row>
+    <v-card>
+      <v-card-text class="pt-5">
+        <notifications ref="notifier"></notifications>
 
-          <v-row
-            justify="center">
-            <v-col
-            md=5>
-            <v-form v-model="formValid">
-              <v-text-field
-                v-model="first_name"
-                label= "First Name"
-                :rules="[rules.required]"
-              ></v-text-field>
-               <v-text-field
-                v-model="last_name"
-                label= "Last Name"
-                :rules="[rules.required]"
-              ></v-text-field>
-               <v-text-field
-                v-model="ynet_id"
-                label= "YNET ID"
-                :rules="[rules.required]"
-              ></v-text-field>
-               <v-text-field
-                v-model="email"
-                label= "Email"
-                :rules="[rules.required]"
-              ></v-text-field>
-            </v-form>
-            </v-col>
-          </v-row>
-        </v-card-text>
-          <v-row>
-            <v-col
-            align="center">
-            <v-btn
-                :disabled=!formValid
-                @click = "createUser"
-                color="secondary">
-                Create Employee
-              </v-btn>
-            </v-col>
-          </v-row>
-        <v-divider></v-divider>
+        <v-form v-model="formValid" lazy-validation>
+          <v-text-field
+            v-model="first_name"
+            dense
+            outlined
+            label="First name"
+            :rules="[rules.required]"
+          ></v-text-field>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="dialog=false"
-          >
-            Close
+          <v-text-field
+            v-model="last_name"
+            dense
+            outlined
+            label="Last name"
+            :rules="[rules.required]"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="ynet_id"
+            dense
+            outlined
+            label="YNET ID"
+            :rules="[rules.required]"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="email"
+            dense
+            outlined
+            label="Email"
+            :rules="[rules.required]"
+          ></v-text-field>
+
+          <v-btn :disabled="!formValid" @click="createUser" color="primary">
+            Save
           </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
-import axios from "axios"
-import { EMPLOYEE_URL} from "../../urls"
+import api from "@/auth/axiosAPIConfig";
+import { EMPLOYEE_URL } from "../../urls";
 export default {
-  name:"createEmployeeModal",
-  components:{
-
-  },
+  name: "createEmployeeModal",
+  components: {},
 
   data: () => ({
     dialog: false,
@@ -99,39 +73,41 @@ export default {
     ynet_id: "",
     email: "",
     rules: {
-      required: value => !!value || 'This field is required.'
-     }
+      required: (value) => !!value || "This field is required.",
+    },
   }),
   computed: {
-    ynetid: function() {
-      return this.first_name[0]+ this.last_name
+    ynetid: function () {
+      return this.first_name[0] + this.last_name;
     },
     form: function () {
       return {
         first_name: this.first_name,
         last_name: this.last_name,
         ynet_id: this.ynet_id,
-        email: this.email
-      }
-    }
-  },
-  methods: {
-
-    createUser: function () {
-      console.log("Manual Create User")
-      console.log(this.form)
-      axios.post(EMPLOYEE_URL, this.form, {
-        headers: {
-          "Content-Type": "application/json"
-        },
-      }).then ( response => {
-       this.$refs.notifier.showAPIMessages(response.data)
-       if (response.status == 200){
-         this.$router.replace({path:`/employee/${response.data.insertedId}`})
-         //this should probably wait a second or two before returning
-       }
-      })
+        email: this.email,
+      };
     },
   },
-}
+  methods: {
+    createUser: function () {
+      api.post(EMPLOYEE_URL, this.form).then((response) => {
+        this.$refs.notifier.showAPIMessages(response.data);
+        if (response.status == 200) {
+          this.$router.replace({
+            path: `/employee/${response.data.insertedId}`,
+          });
+          //this should probably wait a second or two before returning
+        }
+      });
+    },
+    close() {
+      this.dialog = false;
+      this.first_name = "";
+      this.last_name = "";
+      this.email = "";
+      this.ynet_id = "";
+    },
+  },
+};
 </script>
