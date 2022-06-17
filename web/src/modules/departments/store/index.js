@@ -1,12 +1,16 @@
 import { DEPARTMENT_URL } from "@/urls";
 import { secureGet } from "@/store/jwt"
+// import {apple} from "@/auth/axiosAPIConfig"
+
+// console.log(apple)
 
 const state = {
     departments: []
 };
 
 const getters = {
-    departments: state => state.departments,
+    //not required. just use ...mapState
+    // departments: state => state.departments,
 };
 
 const actions = {
