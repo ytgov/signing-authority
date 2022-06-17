@@ -30,49 +30,43 @@
               <v-data-table
                 :headers="[{ text: 'Position', value: 'position' }]"
                 :search="search"
-                :items="formAItems"
-                :loading="loadingFormA"
+                :items="item.form_a_active"
               >
-              </v-data-table>
-              <div class="mt-4 ml-2">
-                <router-link :to="formALink">View all</router-link>
-              </div>
-            </v-card-text>
+              </v-data-table
+            ></v-card-text>
           </v-card>
         </v-col>
         <v-col>
           <v-card class="default">
             <v-card-title>Active Form B Authorizations</v-card-title>
             <v-card-text>
+              <v-data-table
+                :headers="[
+                  { text: 'Employee', value: 'name' },
+                  { text: 'Position', value: 'position' },
+                ]"
+                :search="search"
+                :items="item.form_b_active"
+              >
+              </v-data-table>
+
               <v-row>
                 <v-col>
-                  <v-card>
+                  <v-card class="mt-5">
                     <v-card-text class="text-h4 mb-0 pb-0">123</v-card-text>
                     <v-card-text class="mt-0 pt-0">Active</v-card-text>
                   </v-card>
                 </v-col>
                 <v-col>
-                  <v-card>
+                  <v-card class="mt-5">
                     <v-card-text class="text-h4 mb-0 pb-0">123</v-card-text>
                     <v-card-text class="mt-0 pt-0">Acting</v-card-text>
                   </v-card>
                 </v-col>
               </v-row>
 
-              <v-data-table
-                class="mt-5"
-                :headers="[
-                  { text: 'Employee', value: 'name' },
-                  { text: 'Position', value: 'position' },
-                ]"
-                :search="search"
-                :items="formBItems"
-                :loading="loadingFormB"
-              >
-              </v-data-table>
-
               <div class="mt-4 ml-2">
-                <router-link :to="formBLink">View all</router-link>
+                <router-link to="/departments/07/form-b">View all</router-link>
               </div>
             </v-card-text>
           </v-card>
@@ -94,7 +88,7 @@ export default {
     searchResults: [],
     loading: false,
     page: {
-      title: "Departments",
+      title: "Form B Authorizations",
     },
     breadcrumbs: [
       {
@@ -108,55 +102,41 @@ export default {
       },
       {
         text: "",
+        to: "",
+        exact: true,
+      },
+      {
+        text: "Form B Authorizations",
         disabled: true,
       },
     ],
-    formALink: "",
-    formBLink: "",
-
     item: {},
-    loadingFormA: true,
-    loadingFormB: true,
-    formAItems: [],
-    formBItems: [],
     selectedId: null,
   }),
-  mounted: function () {
+  mounted: async function () {
     this.selectedId = this.$route.params.id;
-    this.formALink = `/departments/${this.selectedId}/form-a`;
-    this.formBLink = `/departments/${this.selectedId}/form-b`;
-    this.loadList();
+    this.item = await this.getDepartment({ id: this.selectedId });
+
+    this.breadcrumbs[2].to = `/departments/${this.selectedId}`;
+    this.breadcrumbs[2].text = this.item.descr;
+
+    //this.items = this.loadList();
   },
   computed: {
     ...mapState("department", ["departments"]),
   },
 
   methods: {
-    ...mapActions("department", [
-      "getDepartment",
-      "getFormAList",
-      "getFormBList",
-    ]),
+    ...mapActions("department", ["getDepartment"]),
     openDepartment(item) {
       this.$router.push(`/departments/${item.dept}`);
     },
     async loadList() {
-      this.item = await this.getDepartment({ id: this.selectedId });
+      /* this.item = await this.getDepartment({ id: this.selectedId });
 
       if (this.item && this.item.dept) {
         this.breadcrumbs[2].text = this.item.descr;
-        this.page.title = this.item.descr;
-        this.loadFormA();
-        this.loadFormB();
-      }
-    },
-    async loadFormA() {
-      this.formAItems = await this.getFormAList({ id: this.selectedId });
-      this.loadingFormA = false;
-    },
-    async loadFormB() {
-      this.formBItems = await this.getFormBList({ id: this.selectedId });
-      this.loadingFormB = false;
+      } */
     },
   },
 };

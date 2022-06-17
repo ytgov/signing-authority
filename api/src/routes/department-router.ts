@@ -43,6 +43,29 @@ departmentRouter.get('/:id', async (req: Request, res: Response) => {
 
   res.status(404).send("Departent not found")
 });
+
+departmentRouter.get('/:id/form-a', async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  let list = [{ position: "Director, Marketing" },
+  { position: "Director" },
+  { position: "ADM" }]
+
+  res.json({ data: list })
+});
+
+departmentRouter.get('/:id/form-b', async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  let list = [
+    { name: "Michael Johnson", position: "Director, Marketing" },
+    { name: "Ryan Agar", position: "ADM, Finance and Admin" },
+    { name: "Sawyer Johnson", position: "Manager, Special Projects" }];
+
+  res.json({ data: list })
+});
+
+
 /*
 departmentRouter.get('/:id', async (req: Request, res: Response) => {
   let db = req.store.Departments as GenericService<Department>;

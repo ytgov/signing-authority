@@ -2,7 +2,7 @@ import { DEPARTMENT_URL } from "@/urls";
 import { secureGet } from "@/store/jwt"
 
 const state = {
-    departments: []
+    departments: [],
 };
 
 const actions = {
@@ -19,13 +19,25 @@ const actions = {
         });
     },
     async getDepartment(store, { id }) {
-        return await secureGet(`${DEPARTMENT_URL}/${id}`)
-            .then(resp => {
-                //commit("setDepartments", resp.data.data);
-                return resp.data.data
-            }).catch(() => {
-                //commit("setDepartments", []);
-            });
+        if (store.state.departments.length == 0) {
+            return secureGet(`${DEPARTMENT_URL}/${id}`).then(resp => {
+                return resp.data.data;
+            }).catch(() => { })
+        }
+
+        let dept = store.state.departments.filter(d => d.dept == id);
+
+        return dept[0];
+    },
+    async getFormAList(store, { id }) {
+        return secureGet(`${DEPARTMENT_URL}/${id}/form-a`).then(resp => {
+            return resp.data.data
+        })
+    },
+    async getFormBList(store, { id }) {
+        return secureGet(`${DEPARTMENT_URL}/${id}/form-b`).then(resp => {
+            return resp.data.data
+        })
     },
 };
 

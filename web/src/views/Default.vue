@@ -27,8 +27,6 @@ export default {
     const authService = getInstance();
 
     let i = window.setInterval(() => {
-      console.log(authService.isLoading);
-
       if (authService.isLoading === false) {
         window.clearInterval(i);
 
