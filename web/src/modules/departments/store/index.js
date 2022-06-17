@@ -24,6 +24,16 @@ const actions = {
                 commit("setDepartments", []);
             });
     },
+    async getDepartment(store, { id }) {
+        return await secureGet(`${DEPARTMENT_URL}/${id}`)
+            .then(resp => {
+                //commit("setDepartments", resp.data.data);
+                return resp.data.data
+
+            }).catch(() => {
+                //commit("setDepartments", []);
+            });
+    },
 };
 
 const mutations = {

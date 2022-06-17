@@ -11,13 +11,13 @@
     </BaseBreadcrumb>
 
     <BaseCard showHeader="true">
-    <div>{{departments2}}</div>
       <v-data-table
         :items="items"
         :headers="[
-          { text: 'Name', value: 'TILE_NAME' },
-          { text: 'Type', value: 'TILE_TYPE' },
-          { text: 'Url', value: 'URL' },
+          { text: 'Code', value: 'dept' },
+          { text: 'Description', value: 'descr' },
+          { text: 'Form A Lines', value: 'form_a_count' },
+          { text: 'Active Form B\'s', value: 'form_b_count' },
         ]"
         :search="search"
         class="row-clickable"
@@ -77,9 +77,7 @@ export default {
     this.loadList();
   },
   computed: {
-    ...mapState("department", [
-      // "departments"
-    ]),
+    ...mapState("department", ["departments"]),
   },
 
   methods: {

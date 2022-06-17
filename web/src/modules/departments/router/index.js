@@ -12,6 +12,17 @@ const routes = [
             import("../views/DepartmentList.vue"),
         meta: { requiresAuth: true }
     },
+    {
+        path: "/departments/:id",
+        name: "DepartmentDetail",
+        // ---TO TEST--
+        //I think this is done at the root of the router definiation file
+        // the meta flag signals the guard.
+        // beforeEnter: authenticationGuard,
+        component: () =>
+            import("../views/DepartmentDetail.vue"),
+        meta: { requiresAuth: true }
+    },
 ];
 
 export default routes;
