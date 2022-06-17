@@ -99,7 +99,7 @@ export default {
     breadcrumbs: [
       {
         text: "Signing Authorities Home",
-        to: "/",
+        to: "/dashboard",
       },
       {
         text: "Departments",

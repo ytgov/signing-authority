@@ -8,7 +8,7 @@
     <div class="row">
       <div class="col-md-6">
         <v-text-field
-          v-model="firstName"
+          v-model="profile.first_name"
           dense
           outlined
           label="First name"
@@ -19,7 +19,7 @@
       </div>
       <div class="col-md-6">
         <v-text-field
-          v-model="lastName"
+          v-model="profile.lastName"
           dense
           outlined
           label="Last name"
@@ -31,7 +31,7 @@
 
       <div class="col-md-6">
         <v-text-field
-          v-model="email"
+          v-model="profile.email"
           dense
           outlined
           label="Email"
@@ -52,7 +52,6 @@
         >
         </v-text-field>
       </div>
-
     </div>
     <notifications ref="notifier"></notifications>
   </div>
@@ -60,18 +59,11 @@
 
 <script>
 import { mapState } from "vuex";
-import store from "@/store";
 
 export default {
   name: "Profile",
   computed: {
-    ...mapState("profile", [
-      "firstName",
-      "lastName",
-      "username",
-      "email",
-      "roles",
-    ]),
+    ...mapState("home", ["profile"]),
     myRoles: function () {
       if (this.roles && this.roles.length > 0) return this.roles.join(", ");
 
@@ -79,10 +71,6 @@ export default {
     },
   },
   data: () => ({}),
-  async created() {
-    await store.dispatch("profile/loadProfile");
-  },
-  methods: {
-  },
+  methods: {},
 };
 </script>

@@ -12,7 +12,7 @@
 
     <BaseCard showHeader="true">
       <v-data-table
-        :items="items"
+        :items="departments"
         :headers="[
           { text: 'Code', value: 'dept' },
           { text: 'Description', value: 'descr' },
@@ -43,8 +43,6 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { api } from "@/auth/axiosAPIConfig";
-import { DEPARTMENT_URL } from "@/urls"
 
 export default {
   name: "DepartmentList",
@@ -53,14 +51,13 @@ export default {
     drawer: null,
     searchResults: [],
     loading: false,
-    departments2: [], //temp
     page: {
       title: "Departments",
     },
     breadcrumbs: [
       {
         text: "Signing Authorities Home",
-        to: "/",
+        to: "/dashboard",
       },
       {
         text: "Departments",
@@ -70,11 +67,7 @@ export default {
     items: [],
   }),
   mounted: function () {
-      api.get(`${DEPARTMENT_URL}`)
-      .then(resp => {
-        this.departments2 = resp.data.data
-      })
-    this.loadList();
+    //this.loadList();
   },
   computed: {
     ...mapState("department", ["departments"]),

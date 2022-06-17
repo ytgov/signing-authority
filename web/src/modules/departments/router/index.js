@@ -1,28 +1,23 @@
-// import { authenticationGuard } from '@/auth/authenticationGuard';
 
 const routes = [
     {
         path: "/departments",
-        name: "Departments",
-        // ---TO TEST--
-        //I think this is done at the root of the router definiation file
-        // the meta flag signals the guard.
-        // beforeEnter: authenticationGuard,
-        component: () =>
-            import("../views/DepartmentList.vue"),
-        meta: { requiresAuth: true }
-    },
-    {
-        path: "/departments/:id",
-        name: "DepartmentDetail",
-        // ---TO TEST--
-        //I think this is done at the root of the router definiation file
-        // the meta flag signals the guard.
-        // beforeEnter: authenticationGuard,
-        component: () =>
-            import("../views/DepartmentDetail.vue"),
-        meta: { requiresAuth: true }
-    },
+        component: () => import("@/layouts/Layout"),
+        children: [
+          {
+            name: "Departments",
+            path: "",
+            meta: { requiresAuth: true },
+            component: () => import("../views/DepartmentList.vue"),
+          },
+          {
+            name: "DepartmentDetail",
+            path: ":id",
+            meta: { requiresAuth: true },
+            component: () => import("../views/DepartmentDetail.vue"),
+          },
+        ]
+    }
 ];
 
 export default routes;

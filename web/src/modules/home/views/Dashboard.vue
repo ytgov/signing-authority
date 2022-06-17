@@ -31,7 +31,6 @@
           </v-card-text> </v-card
       ></v-col>
       <v-col>
-
         <router-link to="/departments">Departments</router-link>
 
         <v-card class="mt-5" color="#fff2d5">
@@ -103,9 +102,7 @@
 
 <script>
 import createEmployeeModal from "@/components/employee/createEmployeeModal.vue";
-import { EMPLOYEE_URL } from "@/urls";
-// import { securePost } from '@/store/jwt';
-import { api } from "@/auth/axiosAPIConfig";
+import { mapActions } from 'vuex';
 
 export default {
   name: "Home",
@@ -117,17 +114,17 @@ export default {
     loading: false,
   }),
   methods: {
+    ...mapActions("home",["employeeSearch"]),
     searchKeyUp(event) {
       if (event.key == "Enter") this.doSearch();
     },
-    doSearch() {
+    async doSearch() {
       let cleanSearch = this.search.trim().toLowerCase();
       if (cleanSearch.length == 0) return;
 
       this.loading = true;
 
-      api
-        .post(`${EMPLOYEE_URL}/search`, { terms: cleanSearch })
+      await this.employeeSearch({term: cleanSearch})
         .then((resp) => {
           this.searchResults = resp.data.data;
           this.drawer = true;

@@ -1,35 +1,28 @@
 import { DEPARTMENT_URL } from "@/urls";
 import { secureGet } from "@/store/jwt"
-// import {apple} from "@/auth/axiosAPIConfig"
-
-// console.log(apple)
 
 const state = {
     departments: []
 };
 
-const getters = {
-    //not required. just use ...mapState
-    // departments: state => state.departments,
-};
-
 const actions = {
+    async initialize(store) {
+        console.log("-- Initializing Department Store")
+        await store.dispatch("loadDepartments")
+    },
     async loadDepartments({ commit }) {
-        return await secureGet(`${DEPARTMENT_URL}`)
-            .then(resp => {
-                commit("setDepartments", resp.data.data);
-                return resp.data.data
-
-            }).catch(() => {
-                commit("setDepartments", []);
-            });
+        secureGet(`${DEPARTMENT_URL}`).then(resp => {
+            commit("setDepartments", resp.data.data);
+            return resp.data.data;
+        }).catch(() => {
+            commit("setDepartments", []);
+        });
     },
     async getDepartment(store, { id }) {
         return await secureGet(`${DEPARTMENT_URL}/${id}`)
             .then(resp => {
                 //commit("setDepartments", resp.data.data);
                 return resp.data.data
-
             }).catch(() => {
                 //commit("setDepartments", []);
             });
@@ -45,7 +38,6 @@ const mutations = {
 export default {
     namespaced: true,
     state,
-    getters,
     actions,
     mutations
 };

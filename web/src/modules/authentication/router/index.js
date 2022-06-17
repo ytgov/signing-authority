@@ -1,17 +1,20 @@
 
 const routes = [
   {
-    path: "/sign-in",
-    name: "SignIn",
-    component: () =>
-      import("../views/SignIn.vue"),
-  },
-  {
-    path: "/profile",
-    name: "Profile",
-    component: () =>
-      import("../views/Profile.vue"),
-    meta: { requiresAuth: true }
+    path: "/",
+    component: () => import("@/layouts/BlankLayout"),
+    children: [
+      {
+        name: "SignIn",
+        path: "sign-in",
+        component: () => import("../views/SignIn"),
+      },
+      {
+        name: "Inactive",
+        path: "inactive",
+        component: () => import("../views/Inactive"),
+      },
+    ],
   },
 ];
 

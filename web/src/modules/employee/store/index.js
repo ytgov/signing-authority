@@ -1,5 +1,5 @@
-import { EMPLOYEE_URL } from "../urls";
-import { secureGet, securePut } from "./jwt";
+import { EMPLOYEE_URL } from "@/urls";
+import { secureGet, securePut } from "@/store/jwt";
 
 const state = {
     employee: {},

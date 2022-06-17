@@ -1,4 +1,4 @@
-export const applicationName = "YG Signing Authorities";
+export const applicationName = "Signing Authorities";
 export const applicationIcon = "mdi-cash-register";
 export const hasSidebar = true;
 export const hasSidebarClosable = false;

@@ -2,13 +2,14 @@
 // this could be refactored into vuex to get around possible async issues
 
 import axios from "axios";
-import store from "@/store";
+import { getInstance } from "@/auth/auth0-plugin"
 
-console.log(store)
+
+const auth = getInstance()
 
 export const api = axios.create({
   headers: {
-    "Authorization": `Bearer ${store.state.auth.token}`,
+    "Authorization": `Bearer ${auth.getTokenSilently()}`,
     "Content-Type": 'application/json'
   }
 });

@@ -5,18 +5,18 @@ const routes = [
   {
     path: "/form-b",
     component: () =>
-          import ("@/layouts/blank-layout/Blanklayout.vue"),
+      import("@/layouts/Layout.vue"),
     children: [
       ...formBroutes,
-  ]
+    ]
   },
   {
     path: "/form-a",
     component: () =>
-          import ("@/layouts/blank-layout/Blanklayout.vue"),
+      import("@/layouts/Layout.vue"),
     children: [
       ...formAroutes,
-  ]
+    ]
   },
 ];
 

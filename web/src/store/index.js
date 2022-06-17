@@ -2,8 +2,8 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 import auth from "./auth";
-import profile from "./profile";
-import employee from "./employee";
+import home from "@/modules/home/store";
+import employee from "@/modules/employee/store";
 import authority from "@/modules/forms/store";
 import department from "@/modules/departments/store";
 import { secureGet } from "./jwt";
@@ -23,9 +23,12 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    initialize() {
+    async initialize() {
       console.log("Initializing Store");
-      //this.dispatch("department/loadDepartments");
+      await this.dispatch("department/initialize");
+      await this.dispatch("home/initialize");
+
+      console.log("Initializing Complete")
     },
     async getCurrentUser(state) {
       let userResp = await secureGet(`${USER_URL}/me`);
@@ -34,9 +37,10 @@ export default new Vuex.Store({
     }
   },
   modules: {
+    home,
     auth,
-    profile,
     employee,
     authority,
-    department }
+    department
+  }
 });

@@ -115,7 +115,7 @@
 
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
-import { AUTHORITY_URL} from "../../urls"
+import { AUTHORITY_URL} from "@/urls"
 import AuthorityRenderer from "@/modules/forms/components/AuthorityRenderer.vue";
 import axios from "axios"
 //import ListFiles from "../../components/forms/listFiles.vue";

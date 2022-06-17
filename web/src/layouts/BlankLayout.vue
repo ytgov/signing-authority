@@ -1,12 +1,10 @@
 <template>
-  <v-app>
-    <router-view />
-  </v-app>
+  <router-view />
 </template>
 
 <script>
 export default {
-  name: "App",
+  name: "BlankLayout",
   components: {},
 };
 </script>
