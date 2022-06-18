@@ -107,7 +107,11 @@ export default {
     },
   },
   data: () => ({
-    cancelledReasons: ["Some", "Reasons", "For", "Cancelling"],
+    cancelledReasons: [
+      "Departed Substantive Role",
+      "Expired",
+      "Cancelled",
+      "Suspended"]
   }),
 };
 </script>
