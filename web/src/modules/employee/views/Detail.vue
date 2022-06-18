@@ -72,8 +72,8 @@
                   label="Primary department"
                   hide-details
                   :items="departments"
-                  item-text="name"
-                  item-value="_id"
+                  item-text="descr"
+                  item-value="dept"
                 ></v-select>
               </v-col>
             </v-row>
