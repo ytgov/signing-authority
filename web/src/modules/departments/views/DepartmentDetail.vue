@@ -32,6 +32,7 @@
                 :search="search"
                 :items="formAItems"
                 :loading="loadingFormA"
+                 @click:row="openFormA"
               >
               </v-data-table>
               <div class="mt-4 ml-2">
@@ -157,6 +158,10 @@ export default {
     async loadFormB() {
       this.formBItems = await this.getFormBList({ id: this.selectedId });
       this.loadingFormB = false;
+    },
+    openFormA(item) {
+      console.log(item);
+      this.$router.push(`/form-a/${item._id}`)
     },
   },
 };
