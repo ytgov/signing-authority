@@ -5,6 +5,11 @@ const state = {
     departments: [],
 };
 
+const getters = {
+    departmentList: (state) => {
+        return state.departments.map(a => ({"descr": a.descr, "dept": a.dept }))
+    }
+ }
 const actions = {
     async initialize(store) {
         console.log("-- Initializing Department Store")
@@ -51,5 +56,6 @@ export default {
     namespaced: true,
     state,
     actions,
-    mutations
+    mutations,
+    getters
 };

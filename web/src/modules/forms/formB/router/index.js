@@ -4,7 +4,7 @@ const routes = [
     name: "Details",
     component: () =>
       import("../views/AuthorityDetails.vue"),
-    meta: { requiresAuth: false },
+    meta: { requiresAuth: true },
 
     // children: [
     // This doesn't seem to pass :id along to the coponent so it'so
