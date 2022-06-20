@@ -3,17 +3,20 @@
   <div>
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
 
-    <h1>Form B for {{ employeeFullName }}</h1>
-    <v-row>
+    <h1>Form A for {{ Position }}</h1>
+    <!-- <v-row>
       <v-col>
         <authority-metadata-card :formB="formB" @close="close" />
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
       <v-col>
         <v-card class="default">
           <v-card-text>
-            <formATable />
+            <formATable
+            :formA = "formA">
+            </formATable>
+
 
             <!--   <v-data-table style="font-size: .5rem !important"
             dense
@@ -35,41 +38,10 @@
   </div>
 </template>
 
-<style scoped>
-.table {
-  border-collapse: collapse;
-}
-.table th {
-  text-align: center;
-}
-.table thead {
-  text-transform: uppercase;
-}
-.table th,
-.table td {
-  border: 1px black solid;
-}
-
-.table th.rotate {
-  height: 140px;
-  white-space: nowrap;
-  vertical-align: bottom;
-  padding-bottom: 20px;
-}
-
-.table th.rotate > div {
-  transform: rotate(270deg);
-  width: 58px;
-}
-.table .fb-value {
-  width: 60px;
-  text-align: center;
-}
-</style>
 
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+// import { mapGetters, mapActions } from "vuex";
 import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
 import { formATable } from "../components/formATable.vue"
 
