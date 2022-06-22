@@ -23,7 +23,7 @@ export const FRONTEND_URL = process.env.FRONTEND_URL || "";
 export const AUTH_REDIRECT = process.env.AUTH_REDIRECT || "";
 
 
-export const AUTH0_DOMAIN = `${process.env.VUE_APP_AUTH_DOMAIN}/` || "";
+export const AUTH0_DOMAIN = `${process.env.VUE_APP_AUTH_DOMAIN}` || "";
 export const AUTH0_AUDIENCE = process.env.VUE_APP_AUTH_AUDIENCE || "";
 
 export const APPLICATION_NAME = process.env.APPLICATION_NAME || "";

@@ -69,6 +69,7 @@
                 :search="search"
                 :items="formBItems"
                 :loading="loadingFormB"
+                @click:row="openFormB"
               >
               </v-data-table>
 
@@ -160,8 +161,10 @@ export default {
       this.loadingFormB = false;
     },
     openFormA(item) {
-      console.log(item);
-      this.$router.push(`/form-a/${item._id}`)
+      this.$router.push(`${this.formALink}/${item._id}`)
+    },
+    openFormB(item) {
+      this.$router.push(`/employee/${item._id}/form-b/${item._id}`)
     },
   },
 };

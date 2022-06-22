@@ -1,12 +1,17 @@
 
 <template>
-  <div>
-    <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+  <v-container fluid class="down-top-padding">
+    <BaseBreadcrumb
+      :title="page.title"
+      :icon="page.icon"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template v-slot:right>
+        <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
+      </template>
+    </BaseBreadcrumb>
 
-
-    <h1>
-     Delegation of Financial Signing Authority Chart
-    </h1>
+    <h1>Delegation of Financial Signing Authority Chart</h1>
 
     <!-- <authority-metadata-card :formB="formB" /> -->
 
@@ -14,8 +19,7 @@
       <v-col>
         <v-card class="default">
           <v-card-text>
-            <formATable
-             :formA = "formA"></formATable>
+            <formATable :formA="formA"></formATable>
 
             <!--   <v-data-table style="font-size: .5rem !important"
             dense
@@ -38,9 +42,7 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <v-dialog></v-dialog>
-  </div>
+  </v-container>
 </template>
 
 
@@ -48,8 +50,8 @@
 
 <script>
 import { AUTHORITY_URL } from "@/urls";
-// import { mapGetters, mapActions } from "vuex";
-import formATable from  "../components/formATable.vue"
+import { mapActions, mapState } from "vuex";
+import formATable from "../components/formATable.vue";
 
 // import uploadFormModal from "../components/uploadFormModal.vue"
 // import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
@@ -57,49 +59,79 @@ import formATable from  "../components/formATable.vue"
 export default {
   name: "AuthorityDetails",
   components: {
-    formATable
+    formATable,
     // uploadFormModal,
     // AuthorityMetadataCard,
   },
   data: () => ({
     id: "",
+    loading: false,
+    page: {
+      title: "Departments",
+    },
+    breadcrumbs: [
+      {
+        text: "Signing Authorities Home",
+        to: "/dashboard",
+      },
+      {
+        text: "Departments",
+        to: "/departments",
+        exact: true,
+      },
+      {
+        text: "",
+        to: "",
+        exact: true,
+      },
+      {
+        text: "Form A Authorizations",
+        to: "",
+        exact: true,
+      },
+      {
+        text: "",
+        to: "",
+      },
+    ],
+    department: {},
+
     authority: {},
     showUpload: false,
     formA: {
       department: {
         name: "Finance",
-        id: "12"
+        id: "12",
       },
-      program: "Taxation"
+      program: "Taxation",
     },
     formB: {
       employee: {
         _id: "123",
         first_name: "Test",
-        last_name: "User"
-      }
-    }
+        last_name: "User",
+      },
+    },
   }),
   computed: {
+    ...mapState("department", ["departments"]),
     // ...mapGetters("authority/formB", ["formB"]),
-
-    breadcrumbs: function () {
-      let b = [{ text: "Dashboard", to: "/dashboard" }];
-      b.push({
-        text: `${this.formB.employee.first_name} ${this.formB.employee.last_name}`,
-        to: `/employee/${this.formB.employee._id}`,
-      });
-      b.push({
-        text: `Form A (${this.formA.department.name} - ${this.formA.program})`,
-      });
-      return b;
-    },
   },
   async mounted() {
     // this.loadFormB(this.$route.params.id);
     this.id = this.$route.params.id;
+    let departmentId = this.$route.params.departmentId;
+    this.department = await this.getDepartment({ id: departmentId });
+
+    this.breadcrumbs[2].text = this.department.descr;
+    this.breadcrumbs[2].to = `/departments/${departmentId}`;
+    this.breadcrumbs[3].to = `/departments/${departmentId}/form-a`;
+
+    this.breadcrumbs[4].text = "Positions"
+    //this.page.title = this.department.descr;
   },
   methods: {
+    ...mapActions("department", ["getDepartment"]),
     // ...mapActions("authority/formB", ["loadFormB", "downloadFormB"]),
     editClick() {
       //TODO: this should check the state to determine if changes are allowed

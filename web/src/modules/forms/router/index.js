@@ -3,7 +3,7 @@ import formAroutes from "../formA/router"
 
 const routes = [
   {
-    path: "/form-b",
+    path: "/departments/:departmentId/form-b",
     component: () =>
       import("@/layouts/Layout.vue"),
     children: [
@@ -11,7 +11,7 @@ const routes = [
     ]
   },
   {
-    path: "/form-a",
+    path: "/departments/:departmentId/form-a",
     component: () =>
       import("@/layouts/Layout.vue"),
     children: [

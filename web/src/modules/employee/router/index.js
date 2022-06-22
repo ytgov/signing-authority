@@ -3,6 +3,7 @@ const routes = [
   {
     path: "/employee",
     component: () => import("@/layouts/Layout"),
+    meta: { requiresAuth: true },
     children: [
       {
         name: "EmployeeDetail",

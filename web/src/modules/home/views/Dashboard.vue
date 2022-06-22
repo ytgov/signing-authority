@@ -5,16 +5,13 @@
     <v-row>
       <v-col
         ><v-card class="mt-5" color="#fff2d5">
-          <v-card-title
-            >Find Authorities by Employee <v-spacer />
-          </v-card-title>
-
+          <v-card-title>Authorities by Employee</v-card-title>
           <v-card-text>
             <v-text-field
               dense
               outlined
               background-color="white"
-              label="Search"
+              label="Search employees"
               append-icon="mdi-magnify"
               @click:append="doSearch"
               @keydown="searchKeyUp"
@@ -31,17 +28,21 @@
           </v-card-text> </v-card
       ></v-col>
       <v-col>
-        <router-link to="/departments">Departments</router-link>
-
         <v-card class="mt-5" color="#fff2d5">
-          <v-card-title> Recent Authorities </v-card-title>
+          <v-card-title>Authorities by Department</v-card-title>
           <v-card-text>
-            <v-list>
-              <v-list-item> Some </v-list-item>
-              <v-list-item> List </v-list-item>
-              <v-list-item> Of </v-list-item>
-              <v-list-item> Things </v-list-item>
-            </v-list>
+            <v-autocomplete
+              dense
+              outlined
+              background-color="white"
+              :items="departments"
+              item-text="display_name"
+              item-value="dept"
+              @change="selectDepartment"
+            >
+            </v-autocomplete>
+
+            <router-link to="/departments">View all</router-link>
           </v-card-text>
         </v-card></v-col
       >
@@ -102,7 +103,7 @@
 
 <script>
 import createEmployeeModal from "@/components/employee/createEmployeeModal.vue";
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Home",
@@ -113,8 +114,11 @@ export default {
     searchResults: [],
     loading: false,
   }),
+  computed: {
+    ...mapState("department", ["departments"]),
+  },
   methods: {
-    ...mapActions("home",["employeeSearch"]),
+    ...mapActions("home", ["employeeSearch"]),
     searchKeyUp(event) {
       if (event.key == "Enter") this.doSearch();
     },
@@ -124,7 +128,7 @@ export default {
 
       this.loading = true;
 
-      await this.employeeSearch({term: cleanSearch})
+      await this.employeeSearch({ term: cleanSearch })
         .then((resp) => {
           this.searchResults = resp.data.data;
           this.drawer = true;
@@ -139,6 +143,9 @@ export default {
     },
     selectEmployee(item) {
       this.$router.push(`/employee/${item._id}`);
+    },
+    selectDepartment(item) {
+      this.$router.push(`/departments/${item}`);
     },
   },
 };
