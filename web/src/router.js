@@ -6,6 +6,7 @@ import formRoutes from "@/modules/forms/router";
 import authenticationRoutes from "@/modules/authentication/router";
 import departmentRoutes from "@/modules/departments/router";
 import employeeRoutes from "@/modules/employee/router";
+import administrationRoutes from "@/modules/administration/router";
 
 Vue.use(VueRouter);
 
@@ -20,6 +21,7 @@ const routes = [
   ...authenticationRoutes,
   ...departmentRoutes,
   ...employeeRoutes,
+  ...administrationRoutes,
 
   {
     path: "*",
@@ -72,12 +74,12 @@ router.beforeEach(async (to, from, next) => {
   /*   let i = window.setInterval(async () => {
       if (authService.isLoading === false) {
         window.clearInterval(i);
-  
+
         next(await kick());
       }
     }, 100); */
 });
-/* 
+/*
 async function kick() {
   if (!authService) {
     authService = await getInstance();

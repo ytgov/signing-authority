@@ -6,6 +6,7 @@ import home from "@/modules/home/store";
 import employee from "@/modules/employee/store";
 import authority from "@/modules/forms/store";
 import department from "@/modules/departments/store";
+import administration from "@/modules/administration/store";
 import { secureGet } from "./jwt";
 import { USER_URL } from "@/urls"
 
@@ -41,6 +42,7 @@ export default new Vuex.Store({
     auth,
     employee,
     authority,
-    department
+    department,
+    administration
   }
 });

@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <admin-sidebar></admin-sidebar>
     <h1>Administration: <small>Home</small></h1>
 
     <div class="row">
@@ -8,7 +7,7 @@
         <v-card class="mt-5 default">
           <v-card-title></v-card-title>
           <v-card-text>
-          
+            <healthCheck></healthCheck>
           </v-card-text>
         </v-card>
       </div>
@@ -19,10 +18,15 @@
 </template>
 
 <script>
+
+import healthCheck from "../components/healthCheck.vue";
 export default {
   name: "Home",
+  components: {
+    healthCheck
+    },
   data: () => ({
-    
+
   }),
   created() {
   },

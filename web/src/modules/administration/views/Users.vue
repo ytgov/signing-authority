@@ -1,6 +1,6 @@
 <template>
   <div>
-    <admin-sidebar></admin-sidebar>
+    <!-- <admin-sidebar></admin-sidebar> -->
     <h1>Administration: <small>Manage Users</small></h1>
 
     <div class="row">
@@ -41,7 +41,7 @@
 
 <script>
 import axios from "axios";
-import { USER_URL } from "../../urls";
+import { USER_URL } from "@/urls";
 export default {
   name: "Home",
   data: () => ({
