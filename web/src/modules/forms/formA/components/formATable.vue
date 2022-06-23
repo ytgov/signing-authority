@@ -17,22 +17,22 @@
               Program/Branch:<br />
               <strong>{{ formA.program }}</strong>
         </th>
-        <th colspan="7">
+        <th colspan="7" style="height: 80px">
           SPENDING AUTHORITY
         </th>
         <th rowspan="5" class="rotate" style="height: 140px">
-          <div>
+          <div class="mb-2">
             PAYMENT<br />
             AUTHORITY s.30
           </div>
         </th>
       </tr>
       <tr>
-        <th colspan="6">
+        <th colspan="6" style="height: 80px">
           SECTION 23 and SECTION 24 ($000)
         </th>
         <th rowspan="4" class="rotate">
-          <div>(SECTION 29) <br />
+          <div class="ml-2">(SECTION 29) <br />
             CERTIFICATE OF <br />PERFORMANCE
           </div>
        </th>
@@ -41,25 +41,25 @@
         <!-- <th colspan="2" rowspan="2"  style="text-align: left; padding: 10px; vertical-align: middle">
           Program/Branch:<br />
               <strong>{{ formA.program }}</strong>B</th> -->
-        <th rowspan="3" class="rotate">
-          <div>
+        <th rowspan="3" class="rotate" style= "">
+          <div class="mb-2">
             CONTRACTS FOR <br />GOODS OR SERVICES
           </div>
         </th>
-        <th rowspan="3" class="rotate">
-          <div>LOANS & <br />GUARANTEES </div>
+        <th rowspan="3" class="rotate" style= "">
+          <div class="mb-2">LOANS & <br />GUARANTEES </div>
         </th>
-        <th rowspan="3" class="rotate">
+        <th rowspan="3" class="rotate" style= "">
            <div class="mb-2">Transfer <br/> Payments</div>
         </th>
-        <th rowspan="3" class="rotate">
+        <th rowspan="3" class="rotate" style= "">
           <div class="mb-2">AUTHORIZATION <br />FOR TRAVEL</div>
         </th>
-        <th rowspan="3" class="rotate">
+        <th rowspan="3" class="rotate" style= "">
           <div class="mb-2">REQUEST FOR <br />GOODS OR SERVICES</div>
         </th>
-        <th rowspan="3" class="rotate">
-           <div>ASSIGNMENT <br />AUTHORITY</div></th>
+        <th rowspan="3" class="rotate" style= "">
+           <div class="mb-2">ASSIGNMENT <br />AUTHORITY</div></th>
       </tr>
       <tr>
       </tr>
@@ -134,11 +134,9 @@ export default {
   white-space: nowrap;
   vertical-align: bottom;
   padding-bottom: 20px;
+  max-width: 80px;
 }
-.table th.bottom {
-  vertical-align: bottom;
 
-}
 .table th.rotate > div {
   transform: rotate(270deg);
   width: 58px;
