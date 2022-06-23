@@ -76,32 +76,50 @@
 
     <tbody>
       <tr v-for="(line, idx) of formA.authority_lines" :key="idx">
-        <td class=" px-3">Director of Super Cool Programs</td>
-        <td class="pl-3">{{ line.account }}</td>
-        <td class="fb-value">{{ line.s24_procure_goods_limit }}</td>
-        <td class="fb-value">
-          {{ line.s24_procure_services_limit }}
+
+        <td class=" px-3">
+          <!-- Position -->
+          Director of Super Cool Programs
+        </td>
+        <td class="pl-3">
+          <!-- Area of Authority -->
+          {{ line.account }}
         </td>
         <td class="fb-value">
+           <!-- Contracts for Goods or Services -->
+           {{ line.s24_procure_goods_limit }}
+        </td>
+        <td class="fb-value">
+          <!-- Loans and Guarantees -->
+          {{ line.loans_limit }}
+        </td>
+
+        <td class="fb-value">
+           <!-- Transfer Payments-->
           {{ line.s24_procure_request_limit }}
         </td>
         <td class="fb-value">
-          {{ line.s24_procure_assignment_limit }}
+            <!--Authorization for Travel-->
+            {{ line.s24_travel_limit }}
         </td>
+
         <td class="fb-value">
+          <!-- Request for Goods or Services -->
           {{ line.s23_procure_goods_limit }}
         </td>
+
         <td class="fb-value">
+          <!-- Assignment Authority -->
           {{ line.s23_procure_services_limit }}
         </td>
-        <td class="fb-value">{{ line.s24_transfer_limit }}</td>
-        <td class="fb-value">{{ line.s23_transfer_limit }}</td>
-        <td class="fb-value">{{ line.s24_travel_limit }}</td>
-        <td class="fb-value">{{ line.other_limit }}</td>
-        <td class="fb-value">{{ line.loans_limit }}</td>
-        <td class="fb-value">{{ line.trust_limit }}</td>
-        <td class="fb-value">{{ line.s29_performance_limit }}</td>
-        <td class="fb-value">{{ line.s30_payment_limit }}</td>
+        <td class="fb-value">
+          <!-- Section 29 Certificate of Performance -->
+          {{ line.s29_performance_limit }}
+        </td>
+        <td class="fb-value">
+          <!-- Section 30 Payment Authority -->
+          {{ line.s30_payment_limit }}
+        </td>
       </tr>
     </tbody>
   </table>
