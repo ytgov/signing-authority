@@ -1,5 +1,4 @@
 import formBroutes from "../formB/router"
-import formAroutes from "../formA/router"
 
 const routes = [
   {
@@ -10,14 +9,14 @@ const routes = [
       ...formBroutes,
     ]
   },
-  {
+ /*  {
     path: "/departments/:departmentId/form-a",
     component: () =>
       import("@/layouts/Layout.vue"),
     children: [
       ...formAroutes,
     ]
-  },
+  }, */
 ];
 
 export default routes;

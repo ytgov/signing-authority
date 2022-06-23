@@ -1,6 +1,6 @@
 const routes = [
   {
-    path: ":id",
+    path: "/departments/:departmentId/form-a/:id",
     name: "FormADetails",
     component: () =>
       import("../views/formAAuthorityDetails.vue"),

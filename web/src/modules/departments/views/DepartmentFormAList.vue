@@ -121,8 +121,7 @@ export default {
       this.loadingFormA = false;
     },
     openFormA(item) {
-      console.log(item);
-      this.$router.push(`/form-a/${item._id}`)
+      this.$router.push(`/departments/${this.selectedId}/form-a/${item._id}`)
     },
   },
 };
