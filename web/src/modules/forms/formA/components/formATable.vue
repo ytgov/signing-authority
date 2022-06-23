@@ -9,22 +9,18 @@
   >
     <thead>
       <tr>
-        <th
-          colspan="2"
-          rowspan="5"
-          style="text-align: left; padding: 10px; vertical-align: middle"
-        >
-
-
-          Department:<br />
-          <strong>{{ formA.department.name }}</strong>
-          <br /><br />
-          Program/Branch:<br />
-          <strong>{{ formA.program }}</strong>
-
+        <th colspan="2" rowspan="4"
+          style="text-align: left; padding: 10px; vertical-align: middle">
+            Department:<br />
+              <strong>{{ formA.department.name }}</strong>
+              <br /> <br /> <br />
+              Program/Branch:<br />
+              <strong>{{ formA.program }}</strong>
         </th>
-        <th colspan="13">SPENDING AUTHORITY</th>
-        <th rowspan="3" class="rotate" style="height: 140px">
+        <th colspan="7">
+          SPENDING AUTHORITY
+        </th>
+        <th rowspan="5" class="rotate" style="height: 140px">
           <div>
             PAYMENT<br />
             AUTHORITY s.30
@@ -32,82 +28,50 @@
         </th>
       </tr>
       <tr>
-        <th colspan="6">PROCUREMENT</th>
-        <th rowspan="2" colspan="2" style="max-width: 80px">
-          TRANSFER PAYMENTS
+        <th colspan="6">
+          SECTION 23 and SECTION 24 ($000)
         </th>
-        <th colspan="4" rowspan="2">
-          OTHER:<br />S.24 COMMITMENT & <br />S.23 SIGNING CONTRACT
-        </th>
-        <th rowspan="2">S.29</th>
+        <th rowspan="4" class="rotate">
+          <div>(SECTION 29) <br />
+            CERTIFICATE OF <br />PERFORMANCE
+          </div>
+       </th>
       </tr>
       <tr>
-        <th colspan="4">S.24 Commitment</th>
-        <th colspan="2" style="max-width: 80px">
-          S.23 Signing Contract
-        </th>
-      </tr>
-      <tr>
-        <th colspan="2" style="max-width: 80px">OWN PROCUREMENT</th>
+        <!-- <th colspan="2" rowspan="2"  style="text-align: left; padding: 10px; vertical-align: middle">
+          Program/Branch:<br />
+              <strong>{{ formA.program }}</strong>B</th> -->
         <th rowspan="3" class="rotate">
           <div>
-            Request for goods<br />
-            or services
+            CONTRACTS FOR <br />GOODS OR SERVICES
           </div>
         </th>
         <th rowspan="3" class="rotate">
-          <div>Assignment <br />Authority</div>
+          <div>LOANS & <br />GUARANTEES </div>
         </th>
         <th rowspan="3" class="rotate">
-          <div class="mb-2">Goods</div>
+           <div class="mb-2">Transfer <br/> Payments</div>
         </th>
         <th rowspan="3" class="rotate">
-          <div class="mb-2">Services</div>
+          <div class="mb-2">AUTHORIZATION <br />FOR TRAVEL</div>
         </th>
         <th rowspan="3" class="rotate">
-          <div class="mb-2">S.24 Commitment</div>
+          <div class="mb-2">REQUEST FOR <br />GOODS OR SERVICES</div>
         </th>
         <th rowspan="3" class="rotate">
-          <div>S.23 Signing<br />contract</div>
-        </th>
-        <th rowspan="3" class="rotate">
-          <div>S.24 Travel <br />authorization</div>
-        </th>
-        <th rowspan="3" class="rotate">
-          <div>OTher contracts & <br />Expenditures **</div>
-        </th>
-        <th rowspan="3" class="rotate">
-          <div>Loans & <br />Guarantees</div>
-        </th>
-        <th rowspan="3" class="rotate">
-          <div class="mb-2">Departmental Use</div>
-        </th>
-        <th rowspan="3" class="rotate">
-          <div>Certificate of <br />performance</div>
-        </th>
-        <th rowspan="3" class="rotate">
-          <div>
-            Requesition<br />
-            for payment
-          </div>
-        </th>
+           <div>ASSIGNMENT <br />AUTHORITY</div></th>
       </tr>
       <tr>
-        <th class="rotate" rowspan="2">
-          <div class="mb-2">Goods</div>
-        </th>
-        <th class="rotate" rowspan="2">
-          <div class="mb-2">Services</div>
-        </th>
       </tr>
-      <tr style="height: 30px">
-        <th style="height: 30px">
-          Position
-        </th>
-        <th style="height: 30px px-3">
-          Area of Authority
-        </th>
+      <tr>
+        <th class="bottom">
+              <div>POSTION</div>
+            </th>
+            <th class="bottom">
+              AREA OF <br />AUTHORITY
+            </th>
       </tr>
+
     </thead>
 
     <tbody>
@@ -166,12 +130,15 @@ export default {
 }
 
 .table th.rotate {
-  height: 160px;
+  height: 200px;
   white-space: nowrap;
   vertical-align: bottom;
   padding-bottom: 20px;
 }
+.table th.bottom {
+  vertical-align: bottom;
 
+}
 .table th.rotate > div {
   transform: rotate(270deg);
   width: 58px;
