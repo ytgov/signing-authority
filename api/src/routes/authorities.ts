@@ -154,12 +154,12 @@ authoritiesRouter.get('/:myAuthorities', async (req: Request, res: Response) => 
 async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
   let db = req.store.Authorities as GenericService<Authority>;
-  let depDb = req.store.Departments as GenericService<Department>;
+  // let depDb = req.store.Departments as GenericService<Department>;
   let empDb = req.store.Employees as GenericService<Employee>;
   let item = await db.getById(id);
 
   if (item) {
-    item.department = await depDb.getOne({ _id: item.department_id });
+    // item.department = await depDb.getOne({ _id: item.department_id });
     item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
 
     if (item.issue_date)

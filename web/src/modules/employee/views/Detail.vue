@@ -3,7 +3,6 @@
     <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
     <h1>
       {{ employee.first_name }} {{ employee.last_name }}
-
       <small> ({{ employee.ynet_id }})</small>
     </h1>
     <v-row>
@@ -134,6 +133,10 @@ export default {
       });
       return b;
     },
+    employee_department_name: function () {
+      return this.departments.find(d => d.dept ===
+      this.employee.primary_department);
+    },
   },
   watch: {},
   data: () => ({}),
@@ -151,7 +154,9 @@ export default {
 
 
       let authItem =  {
-        department_id: this.employee.primary_department,
+        // department_id: this.employee.primary_department,
+        department_code: this.employee_primary_department,
+        department_descr: this.employee_department_name.descr,
         employee_id: this.employee._id,
         issue_date: new Date(),
         title: "",

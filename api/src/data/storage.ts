@@ -15,7 +15,7 @@ export class Storage {
     isInitialized: boolean = false;
     Authorities!: GenericService<Authority>;
     Employees!: GenericService<Employee>;
-    Departments!: GenericService<Department>;
+    // Departments!: GenericService<Department>;
     Users!: UserService;
     Files!: FileStore;
     FormA!: GenericService<FormA>;
@@ -36,7 +36,7 @@ export class Storage {
                     this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Authorities"));
                     this.FormA = new GenericService(this.mongoConnection.db(MONGO_DB).collection("FormA"));
                     this.Employees = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Employees"));
-                    this.Departments = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Departments"));
+                    // this.Departments = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Departments"));
                     this.Users = new UserService(this.mongoConnection.db(MONGO_DB).collection("Users"));
                     this.Files = new MongoFileStore(this.mongoConnection.db(MONGO_DB));
 

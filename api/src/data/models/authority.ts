@@ -1,10 +1,13 @@
 import { ObjectId } from "mongodb";
 import { MongoEntity } from ".";
+import { Department } from "./";
 
 export interface Authority extends MongoEntity {
     //_id?: ObjectId;
     employee_id: ObjectId;
-    department_id: ObjectId;
+    // department_id: ObjectId;
+    department_code: string;
+    department_descr: String
     program: string;
     title: string;
     issue_date: Date;
@@ -30,27 +33,29 @@ export interface Authority extends MongoEntity {
 
 // Form A
 
-export interface FormA extends MongoEntity {
-    //_id?: ObjectId;
-    department_id: ObjectId;
-    position: string;
-    issue_date: Date;
-    archive_date?: Date;
-    archive_reason?: string;
+// export interface FormA extends MongoEntity {
+//     //_id?: ObjectId;
+//     // department_id: ObjectId;
+//     department_code: String;
+//     department_descr: String
+//     position: string;
+//     issue_date: Date;
+//     archive_date?: Date;
+//     archive_reason?: string;
 
-    reviewed_by_department: boolean;
-    reviewed_by_person?: String
-    reviewed_by_date?: Date;
+//     reviewed_by_department: boolean;
+//     reviewed_by_person?: String
+//     reviewed_by_date?: Date;
 
-    formb_file_reference?: ObjectId;
-    memo_file_reference?: ObjectId;
-    authority_lines?: AuthorityLine[];
+//     formb_file_reference?: ObjectId; //maybe this should be an array?
+//     memo_file_reference?: ObjectId;
+//     authority_lines?: AuthorityLine[];
 
-    // used in DTO only
-    department?: Department;
-    employee?: Employee;
-    issue_date_display?: string;
-}
+//     // used in DTO only
+//     // department?: Department;
+//     employee?: Employee;
+//     issue_date_display?: string;
+// }
 
 export interface AuthorityLine {
     // authority_id: ObjectId;
@@ -92,10 +97,10 @@ export interface Employee extends MongoEntity {
     display_name?: string;
 }
 
-export interface Department extends MongoEntity {
-    name: string;
-    account_prefix: string;
+// export interface Department extends MongoEntity {
+//     name: string;
+//     account_prefix: string;
 
-    // used in DTO only
-    authorities?: Authority[];
-}
+//     // used in DTO only
+//     authorities?: Authority[];
+// }

@@ -54,7 +54,9 @@ employeeRouter.get('/:id',
   async (req: Request, res: Response) => {
     let empDb = req.store.Employees as GenericService<Employee>;
     let autDb = req.store.Authorities as GenericService<Authority>;
-    let depDb = req.store.Departments as GenericService<Department>;
+
+    //departments are no longer stored in the DB
+    // let depDb = req.store.Departments as GenericService<Department>;
 
     let { id } = req.params;
     let item = await empDb.getOne({ _id: new ObjectId(id) });
@@ -63,7 +65,7 @@ employeeRouter.get('/:id',
       item.authorities = await autDb.getAll({ employee_id: new ObjectId(id) });
 
       for (let auth of item.authorities) {
-        auth.department = await depDb.getOne({ _id: new ObjectId(auth.department_id) });
+        // auth.department = await depDb.getOne({ _id: new ObjectId(auth.department_id) });
 
         if (auth.issue_date)
           auth.issue_date_display = moment(auth.issue_date).utc(false).format("YYYY-MM-DD");

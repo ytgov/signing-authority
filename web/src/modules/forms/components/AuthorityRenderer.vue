@@ -2,7 +2,8 @@
   <div>
     <v-card class="default mb-4">
       <v-card-title style="width: 100%">
-        {{ authority.department.name }}: {{ authority.program }}
+        {{authority.department_descr}}: {{ authority.program }}
+
       </v-card-title>
 
       <v-card-text>
