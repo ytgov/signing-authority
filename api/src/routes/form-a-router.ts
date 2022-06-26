@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { request, Request, Response } from "express";
 import { param } from "express-validator";
 import { Storage } from "../data";
 
@@ -18,20 +18,20 @@ import { ObjectId } from "mongodb";
 
 import { ExpressHandlebars } from "express-handlebars";
 
-export const authoritiesRouter = express.Router();
+export const formARouter = express.Router();
 
 
 import fs from "fs"
 
-authoritiesRouter.use('/uploads', uploadsRouter)
+formARouter.use('/uploads', uploadsRouter)
 
-authoritiesRouter.get("/", async (req: Request, res: Response) => {
+formARouter.get("/", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
   let list = await db.getAll({})
   res.json({ data: list })
 })
 
-authoritiesRouter.get("/:id",
+formARouter.get("/:id",
   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -43,7 +43,7 @@ authoritiesRouter.get("/:id",
     res.status(404).send();
   });
 
-// authoritiesRouter.get("/:id/pdf",
+// formARouter.get("/:id/pdf",
 //   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
 //   async (req: Request, res: Response) => {
 //     const { id } = req.params;
@@ -65,7 +65,7 @@ authoritiesRouter.get("/:id",
 //     res.status(404).send();
 //   });
 
-authoritiesRouter.put("/:id",
+formARouter.put("/:id",
   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -112,16 +112,15 @@ authoritiesRouter.put("/:id",
     res.json({ data: item })
   });
 
-authoritiesRouter.post("/",
+formARouter.post("/",
   async (req: Request, res: Response) => {
+    console.log(`In post FormA`)
+    console.log(req.store)
     let db = req.store.FormA as GenericService<FormA>;
 
 
-    if (req.body.department_id)
-      req.body.department_id = new ObjectId(req.body.department_id);
-
-    if (req.body.employee_id)
-      req.body.employee_id = new ObjectId(req.body.employee_id);
+    // if (req.body.department_id)
+    //   req.body.department_id = new ObjectId(req.body.department_id);
 
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());
@@ -131,17 +130,17 @@ authoritiesRouter.post("/",
 
 
 
-/* authoritiesRouter.post('/', async (req: Request, res: Response) => {
+/* formARouter.post('/', async (req: Request, res: Response) => {
   //post object {user: "YNETUsername", account: "full-accuont-code"}
   //returns true and the value and type of approval
   return res.json({"TESTING": "crap"});
 }); */
 
-authoritiesRouter.get('/account/:account', async (req: Request, res: Response) => {
+formARouter.get('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
   return res.json({ "params": req.params });
 });
-authoritiesRouter.post('/account/:account', async (req: Request, res: Response) => {
+formARouter.post('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
   // -----------
   let a: any = req.store as Storage
@@ -150,7 +149,7 @@ authoritiesRouter.post('/account/:account', async (req: Request, res: Response) 
   return res.json({});
 });
 
-authoritiesRouter.get('/:myAuthorities', async (req: Request, res: Response) => {
+formARouter.get('/:myAuthorities', async (req: Request, res: Response) => {
   //return a list of all the authorites assigned to my (YNET username)
   return res.json({ "params": req.params });
 });
@@ -159,29 +158,29 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
   let db = req.store.FormA as GenericService<FormA>;
   // let depDb = req.store.Departments as GenericService<Department>;
-  let empDb = req.store.Employees as GenericService<Employee>;
+  // let empDb = req.store.Employees as GenericService<Employee>;
   let item = await db.getById(id);
 
   if (item) {
     // item.department = await depDb.getOne({ _id: item.department_id });
-    item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
+    // item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
 
     if (item.issue_date)
       item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");
 
-    for (let line of item.authority_lines) {
-      line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
+    // for (let line of item.authority_lines) {
+    //   line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
 
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      if (line.account.length < 26)
-        line.account += "*";
-    }
+    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+    //   if (line.account.length < 26)
+    //     line.account += "*";
+    // }
 
     return item;
   }
