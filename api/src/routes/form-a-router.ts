@@ -23,7 +23,7 @@ export const formARouter = express.Router();
 
 import fs from "fs"
 
-formARouter.use('/uploads', uploadsRouter)
+// formARouter.use('/uploads', uploadsRouter)
 
 formARouter.get("/", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
@@ -71,9 +71,10 @@ formARouter.put("/:id",
     const { id } = req.params;
     let db = req.store.FormA as GenericService<FormA>;
 
-    if (req.body.department_id)
-      req.body.department_id = new ObjectId(req.body.department_id);
+    // if (req.body.department_id)
+    //   req.body.department_id = new ObjectId(req.body.department_id);
 
+    //RA: this should be the ID of the person creating the FormA I think
     if (req.body.employee_id)
       req.body.employee_id = new ObjectId(req.body.employee_id);
 
@@ -90,18 +91,12 @@ formARouter.put("/:id",
       line.ledger2 = account.substring(17, 22);
       delete line.account;
 
-      line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit;
-      line.s24_procure_services_limit = line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit;
-      line.s24_procure_request_limit = line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit;
-      line.s24_procure_assignment_limit = line.s24_procure_assignment_limit === "0" ? "" : line.s24_procure_assignment_limit;
-      line.s23_procure_goods_limit = line.s23_procure_goods_limit === "0" ? "" : line.s23_procure_goods_limit;
-      line.s23_procure_services_limit = line.s23_procure_services_limit === "0" ? "" : line.s23_procure_services_limit;
-      line.s24_transfer_limit = line.s24_transfer_limit === "0" ? "" : line.s24_transfer_limit;
-      line.s23_transfer_limit = line.s23_transfer_limit === "0" ? "" : line.s23_transfer_limit;
-      line.s24_travel_limit = line.s24_travel_limit === "0" ? "" : line.s24_travel_limit;
-      line.other_limit = line.other_limit === "0" ? "" : line.other_limit;
-      line.loans_limit = line.loans_limit === "0" ? "" : line.loans_limit;
-      line.trust_limit = line.trust_limit === "0" ? "" : line.trust_limit;
+      line.contracts_for_goods_services = line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
+      line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
+      line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments;
+      line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel;
+      line.request_for_goods_services = line.request_for_goods_services === "0" ? "" : line.request_for_goods_services;
+      line.assignment_authority = line.assignment_authority === "0" ? "" : line.assignment_authority;
       line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
       line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
     }
@@ -136,23 +131,23 @@ formARouter.post("/",
   return res.json({"TESTING": "crap"});
 }); */
 
-formARouter.get('/account/:account', async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  return res.json({ "params": req.params });
-});
-formARouter.post('/account/:account', async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  // -----------
-  let a: any = req.store as Storage
-  // await a.Authorities.create({"thing":"the other thing"})
-  // -----------
-  return res.json({});
-});
+// formARouter.get('/account/:account', async (req: Request, res: Response) => {
+//   //return all the authorites assigned to the account
+//   return res.json({ "params": req.params });
+// });
+// formARouter.post('/account/:account', async (req: Request, res: Response) => {
+//   //return all the authorites assigned to the account
+//   // -----------
+//   let a: any = req.store as Storage
+//   // await a.Authorities.create({"thing":"the other thing"})
+//   // -----------
+//   return res.json({});
+// });
 
-formARouter.get('/:myAuthorities', async (req: Request, res: Response) => {
-  //return a list of all the authorites assigned to my (YNET username)
-  return res.json({ "params": req.params });
-});
+// formARouter.get('/:myAuthorities', async (req: Request, res: Response) => {
+//   //return a list of all the authorites assigned to my (YNET username)
+//   return res.json({ "params": req.params });
+// });
 
 async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
