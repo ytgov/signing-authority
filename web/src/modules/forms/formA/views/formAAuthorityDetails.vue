@@ -49,7 +49,7 @@
 
 
 <script>
-import { AUTHORITY_URL } from "@/urls";
+import { AUTHORITY_URL} from "@/urls"
 import { mapActions, mapState } from "vuex";
 import formATable from "../components/formATable.vue";
 
@@ -64,7 +64,7 @@ export default {
     // AuthorityMetadataCard,
   },
   data: () => ({
-    id: "",
+    id: "62b7dc1177a03a5a69223007",
     loading: false,
     page: {
       title: "Departments",
@@ -160,6 +160,7 @@ export default {
     // ...mapGetters("authority/formB", ["formB"]),
   },
   async mounted() {
+    this.doAThing()
     // this.loadFormB(this.$route.params.id);
     this.id = this.$route.params.id;
     let departmentId = this.$route.params.departmentId;
@@ -171,10 +172,14 @@ export default {
 
     this.breadcrumbs[4].text = "Positions";
     //this.page.title = this.department.descr;
+    this.loadFormA("62b7dc1177a03a5a69223007")
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
     // ...mapActions("authority/formB", ["loadFormB", "downloadFormB"]),
+    ...mapActions("authority/formA", [
+      "loadFormA",
+    ]),
     editClick() {
       //TODO: this should check the state to determine if changes are allowed
       this.$router.push(`/form-a/${this.id}/edit`);
