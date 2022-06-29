@@ -160,7 +160,6 @@ export default {
     // ...mapGetters("authority/formB", ["formB"]),
   },
   async mounted() {
-    this.doAThing()
     // this.loadFormB(this.$route.params.id);
     this.id = this.$route.params.id;
     let departmentId = this.$route.params.departmentId;
