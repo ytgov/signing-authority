@@ -67,7 +67,7 @@
                     <br /><br />
 
                     Department:<br />
-                    <strong>{{ formB.department.name }}</strong>
+                    <strong>{{ formB.department_desc }}</strong>
                     <br /><br />
                     Program/Branch:<br />
                     <strong>{{ formB.program }}</strong>
@@ -247,7 +247,7 @@ export default {
         to: `/employee/${this.formB.employee_id}`,
       });
       b.push({
-        text: `Form B (${this.formB.department.name} - ${this.formB.program})`,
+        text: `Form B (${this.formB.department_descr} - ${this.formB.program})`,
       });
       return b;
     },
