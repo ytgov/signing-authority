@@ -1,9 +1,9 @@
 import { GenericService } from "src/services";
 import { MongoFileStore } from "src/utils/mongo-file-store";
 import { MONGO_DB } from "../config";
-import { Authority, AuthorityLine, Department, Employee } from "./models";
+import { Authority, AuthorityLine, Department, Employee, FormA } from "./models";
 import { Storage } from "./storage";
-import { employeeSeedData } from "./seed-data";
+import { employeeSeedData, formASeedData } from "./seed-data";
 
 
 export async function Seed(storage: Storage) {
@@ -43,6 +43,13 @@ export async function Seed(storage: Storage) {
     };
 
     const emp1 = await empDb.getOne({"email": "michael@icefoganalytics.com"});
+
+    let formADB= storage.FormA as GenericService<FormA>;
+
+    for (let index = 0; index < formASeedData.length; index++) {
+        const element = formASeedData[index];
+        let m = await formADB.create(element);
+    };
     // console.log(emp1);
     // let emp1 = await empDb.create(employeeSeedData[1]);
     // console.log(emp1)

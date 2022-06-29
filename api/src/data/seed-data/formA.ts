@@ -1,7 +1,7 @@
 import { FormA } from "../models"
 
 
-export const formASeedDate: FormA[] = [
+export const formASeedData: FormA[] = [
   {
     "department_code": "02",
     "department_descr": "FINANCE",
@@ -54,6 +54,77 @@ export const formASeedDate: FormA[] = [
         "position": "ADM Corporate",
         "dept": "02",
         "vote": "21",
+        "prog": "**",
+        "activity": "**",
+        "element": "**",
+        "allotment": "**",
+        "object": "****",
+        "ledger1": "****",
+        "ledger2": "*****",
+        "contracts_for_goods_services": 15,
+        "authorization_for_travel": 15,
+        "loans_and_guarantees": 10,
+        "transfer_payments": 10,
+        "request_for_goods_services": 0,
+        "assignment_authority": 0,
+        "s29_performance_limit": 100,
+        "s30_payment_limit": 100
+      }
+
+    ]
+  },
+  {
+    "department_code": "55",
+    "department_descr": "HIGHWAYS & PUBLIC WORKS",
+    "program_branch": "ICT",
+    "issue_date": new Date(),
+    "reviewed_by_department": false,
+    "created_by": "SeedData",
+    "authority_lines": [
+      {
+        "position": "ADM (All)",
+        "contracts_for_goods_services": 250,
+        "authorization_for_travel": 500,
+        "dept": "55",
+        "vote": "**",
+        "prog": "**",
+        "activity": "**",
+        "element": "**",
+        "allotment": "**",
+        "object": "****",
+        "ledger1": "****",
+        "ledger2": "*****",
+        "loans_and_guarantees": 0,
+        "transfer_payments": 0,
+        "request_for_goods_services": 0,
+        "assignment_authority": 0,
+        "s29_performance_limit": 0,
+        "s30_payment_limit": 0
+      },
+      {
+        "position": "Directors (All)",
+        "dept": "55",
+        "vote": "21",
+        "prog": "**",
+        "activity": "**",
+        "element": "**",
+        "allotment": "**",
+        "object": "****",
+        "ledger1": "****",
+        "ledger2": "*****",
+        "contracts_for_goods_services": 15,
+        "authorization_for_travel": 15,
+        "loans_and_guarantees": 10,
+        "transfer_payments": 10,
+        "request_for_goods_services": 0,
+        "assignment_authority": 0,
+        "s29_performance_limit": 100,
+        "s30_payment_limit": 100
+      },
+      {
+        "position": "Managers (All)",
+        "dept": "55",
+        "vote": "**",
         "prog": "**",
         "activity": "**",
         "element": "**",
