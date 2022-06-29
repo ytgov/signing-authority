@@ -42,6 +42,9 @@ export class GenericService<T extends MongoEntity> {
     async deleteWhere(query: Filter<any>): Promise<DeleteResult> {
         return this.db.deleteMany(query);
     }
+    async count(query: Filter<any>): Promise<Number> {
+        return this.db.countDocuments(query);
+    }
 
     async getById(id: string): Promise<any | null> {
         try {

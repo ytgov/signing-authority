@@ -31,6 +31,13 @@ formARouter.get("/", async (req: Request, res: Response) => {
   let list = await db.getAll({})
   res.json({ data: list })
 })
+formARouter.get ("/count", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let count = await db.count({});
+  if (count)
+    return res.json({ "form_a_count": count });
+  res.status(404).send();
+})
 
 formARouter.get("/:id",
   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
@@ -50,6 +57,15 @@ formARouter.get("/:id",
     let list = await db.getAll({"department_code": department_code})
     if (list)
       return res.json({ data: list });
+    res.status(404).send();
+  });
+
+  formARouter.get ("/department/:department/count", async (req: Request, res: Response) => {
+    let db = req.store.FormA as GenericService<FormA>;
+    let department_code = req.params.department
+    let count = await db.count({"department_code": department_code})
+    if (count)
+      return res.json({ "form_a_count": count });
     res.status(404).send();
   })
 
