@@ -1,10 +1,11 @@
 import { ObjectId } from "mongodb";
 import { MongoEntity } from ".";
 import { Department } from "./";
+import { Employee } from "./";
 
 export interface Authority extends MongoEntity {
     //_id?: ObjectId;
-    employee_id: ObjectId;
+    employee_id: ObjectId|undefined;
     // department_id: ObjectId;
     department_code: string;
     department_descr: String
@@ -84,23 +85,4 @@ export interface AuthorityLine {
     s30_payment_limit: number;
 }
 
-export interface Employee extends MongoEntity {
-    employee_id: number;
-    first_name: string;
-    last_name: string;
-    ynet_id: string;
-    email: string;
 
-    authorities?: Authority[];
-
-    // used in DTO only
-    display_name?: string;
-}
-
-// export interface Department extends MongoEntity {
-//     name: string;
-//     account_prefix: string;
-
-//     // used in DTO only
-//     authorities?: Authority[];
-// }

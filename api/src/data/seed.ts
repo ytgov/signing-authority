@@ -3,6 +3,7 @@ import { MongoFileStore } from "src/utils/mongo-file-store";
 import { MONGO_DB } from "../config";
 import { Authority, AuthorityLine, Department, Employee } from "./models";
 import { Storage } from "./storage";
+import { employeeSeedData } from "./seed-data";
 
 
 export async function Seed(storage: Storage) {
@@ -34,8 +35,21 @@ export async function Seed(storage: Storage) {
     let empDb = storage.Employees as GenericService<Employee>;
 
     // put in some employees
-    let emp1 = await empDb.create({ first_name: "Michael", last_name: "Johnson", employee_id: 12345, email: "michael@icefoganalytics.com", ynet_id: "MRJOHNSO" });
-    let emp2 = await empDb.create({ first_name: "Ryan", last_name: "Agar", employee_id: 54321, email: "ryanjagar@hey.com", ynet_id: "RAGAR" });
+
+    for (let index = 0; index < employeeSeedData.length; index++) {
+        const element = employeeSeedData[index];
+        let m = await empDb.create(element);
+        // console.log(m);
+    };
+
+    const emp1 = await empDb.getOne({"email": "michael@icefoganalytics.com"});
+    // console.log(emp1);
+    // let emp1 = await empDb.create(employeeSeedData[1]);
+    // console.log(emp1)
+    // let emp2 = await empDb.create(employeeSeedData [2]);
+    // let emp3 = await empDb.create(employeeSeedData [0]);
+    // let emp1 = await empDb.create({ first_name: "Michael", last_name: "Johnson", employee_id: 12345, email: "michael@icefoganalytics.com", ynet_id: "MRJOHNSO" });
+    // let emp2 = await empDb.create({ first_name: "Ryan", last_name: "Agar", employee_id: 54321, email: "ryanjagar@hey.com", ynet_id: "RAGAR" });
 
     // let depDb = storage.Departments as GenericService<Department>;
     // // put in some departments
@@ -102,9 +116,9 @@ export async function Seed(storage: Storage) {
     });
 
     let auth1 = await autDb.create({
-        department_code: "12",
-        department_descr: "FINANCE",
-        employee_id: emp1.insertedId,
+        department_code: "55",
+        department_descr: "Highways and Public Works",
+        employee_id: emp1?._id,
         issue_date: new Date(),
         title: "Manager",
         program: "ICT",

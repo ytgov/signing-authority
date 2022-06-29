@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { MongoEntity } from ".";
-import { Employee } from "./authority";
+import { Employee } from "./";
 
 export interface FormA extends MongoEntity {
   //_id?: ObjectId;
@@ -24,6 +24,7 @@ export interface FormA extends MongoEntity {
   // department?: Department;
   employee?: Employee;
   issue_date_display?: string;
+  created_by: string;
 
 }
 
