@@ -7,8 +7,9 @@ const state = {
 
 const getters = {
     departmentList: (state) => {
-        return state.departments.map(a => ({"descr": a.descr, "dept": a.dept }))
-    }
+        return state.departments.map(a => ({"descr": a.descr, "dept": a.dept, "display_name": a.display_name }))
+    },
+
  }
 const actions = {
     async initialize(store) {
@@ -24,6 +25,7 @@ const actions = {
         });
     },
     async getDepartment(store, { id }) {
+        console.log("In Gets Department")
         if (store.state.departments.length == 0) {
             return secureGet(`${DEPARTMENT_URL}/${id}`).then(resp => {
                 return resp.data.data;
@@ -31,19 +33,19 @@ const actions = {
         }
 
         let dept = store.state.departments.filter(d => d.dept == id);
-
+        console.log (dept)
         return dept[0];
     },
-    async getFormAList(store, { id }) {
-        return secureGet(`${DEPARTMENT_URL}/${id}/form-a`).then(resp => {
-            return resp.data.data
-        })
-    },
-    async getFormBList(store, { id }) {
-        return secureGet(`${DEPARTMENT_URL}/${id}/form-b`).then(resp => {
-            return resp.data.data
-        })
-    },
+    // async getFormAList(store, { id }) {
+    //     return secureGet(`${DEPARTMENT_URL}/${id}/form-a`).then(resp => {
+    //         return resp.data.data
+    //     })
+    // },
+    // async getFormBList(store, { id }) {
+    //     return secureGet(`${DEPARTMENT_URL}/${id}/form-b`).then(resp => {
+    //         return resp.data.data
+    //     })
+    // },
 };
 
 const mutations = {

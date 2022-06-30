@@ -28,8 +28,9 @@ export async function Seed(storage: Storage) {
     }
 
     // remove all employees
-    if (collections.indexOf("Departments") >= 0) {
-        await myDb.dropCollection("Departments");
+
+    if (collections.indexOf("FormA") >= 0) {
+        await myDb.dropCollection("FormA");
     }
 
     let empDb = storage.Employees as GenericService<Employee>;

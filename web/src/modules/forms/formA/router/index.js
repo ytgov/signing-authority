@@ -1,7 +1,7 @@
 const routes = [
   {
     path: "/departments/:departmentId/form-a/:id",
-    name: "FormADetails",
+    name: "DeptFormADetails",
     component: () =>
       import("../views/formAAuthorityDetails.vue"),
     meta: { requiresAuth: true },
@@ -18,6 +18,13 @@ const routes = [
     //   }
     // ]
   },
+  {
+    path: "/:id",
+    name: "FormADetailsLL",
+    component: () =>
+      import("../views/formAAuthorityDetails.vue"),
+    meta: { requiresAuth: true },
+  }
 ]
 
 

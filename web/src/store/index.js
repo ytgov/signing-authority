@@ -9,6 +9,7 @@ import department from "@/modules/departments/store";
 import administration from "@/modules/administration/store";
 import { secureGet } from "./jwt";
 import { USER_URL } from "@/urls"
+import forms from "@/modules/forms/store";
 
 Vue.use(Vuex);
 
@@ -43,6 +44,7 @@ export default new Vuex.Store({
     employee,
     authority,
     department,
-    administration
+    administration,
+    forms
   }
 });

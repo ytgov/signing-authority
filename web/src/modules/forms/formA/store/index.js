@@ -48,6 +48,15 @@ const actions = {
           }).catch(() => {
               //commit("setFormB", {});
           });
+    },
+    // Department Sepcific FormAs
+    async getDepartmentFormAList(state, department_code){
+        const auth = getInstance()
+        const a = await auth.get(`${FORMA_URL}/department/${department_code}`)
+        console.log(`${FORMA_URL}/department/${department_code}`)
+        console.log("From Form A")
+        console.log(a.data.data)
+        return a.data.data
     }
 };
 
