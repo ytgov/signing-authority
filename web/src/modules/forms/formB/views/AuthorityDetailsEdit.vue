@@ -375,7 +375,7 @@ export default {
         to: `/employee/${this.formB.employee_id}`,
       });
       b.push({
-        text: `Form B (${this.formB.department.name} - ${this.formB.program})`,
+        text: `Form B (${this.formB.department_desc} - ${this.formB.program})`,
         to: `/form-b/${this.formB._id}`,
         exact: true,
       });
