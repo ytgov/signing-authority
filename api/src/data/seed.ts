@@ -27,7 +27,7 @@ export async function Seed(storage: Storage) {
         await myDb.dropCollection("Employees");
     }
 
-    // remove all employees
+    // remove all FormAs
 
     if (collections.indexOf("FormA") >= 0) {
         await myDb.dropCollection("FormA");
@@ -72,6 +72,7 @@ export async function Seed(storage: Storage) {
     let auth1Lines = new Array<AuthorityLine>();
     auth1Lines.push({
         dept: "55", vote: "1", prog: "15", activity: "10", element: "**", allotment: "**", object: "****", ledger1: "", ledger2: "",
+
         s24_procure_goods_limit: 123,
         s24_procure_services_limit: 123,
         s24_procure_request_limit: 123,
