@@ -189,19 +189,19 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
     if (item.issue_date)
       item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");
 
-    // for (let line of item.authority_lines) {
-    //   line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
+    for (let line of item.authority_lines) {
+      line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
 
-    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-    //   line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-    //   if (line.account.length < 26)
-    //     line.account += "*";
-    // }
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      if (line.account.length < 26)
+        line.account += "*";
+    }
 
     return item;
   }
