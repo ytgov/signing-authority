@@ -9,13 +9,14 @@
   >
     <thead>
       <tr>
-        <th colspan="2" rowspan="4"
+        <th colspan="3" rowspan="4"
           style="text-align: left; padding: 10px; vertical-align: middle">
             Department:<br />
-              <strong>{{ formA.department.name }}</strong>
+              <strong>{{ formA.department_descr }}</strong>
               <br /> <br /> <br />
               Program/Branch:<br />
-              <strong>{{ formA.program }}</strong>
+              <strong>{{ formA.program_branch }}</strong>
+              <br/>
         </th>
         <th colspan="7" style="height: 80px">
           SPENDING AUTHORITY
@@ -70,6 +71,9 @@
             <th class="bottom">
               AREA OF <br />AUTHORITY
             </th>
+             <th class="bottom">
+              OPERATIONAL <br />RESTRICTIONS
+            </th>
       </tr>
 
     </thead>
@@ -79,11 +83,19 @@
 
         <td class=" px-3">
           <!-- Position -->
-          Director of Super Cool Programs
+         {{line.position}}
         </td>
         <td class="pl-3">
           <!-- Area of Authority -->
           {{ line.account }}
+        </td>
+        <td class="pl-3">
+           <!-- Operational RESTRICTIONS -->
+           {{ line.operational_restriction}}
+           <!-- <v-select class="px-2 py-n5 "
+          :items="items"
+          label="Operational Restrictions"
+        ></v-select> -->
         </td>
         <td class="fb-value">
            <!-- Contracts for Goods or Services -->
@@ -129,6 +141,16 @@ export default {
   name: "formATable",
   props: {
     formA: Object
+  },
+  data: () => ({
+    items: [
+      "None",
+      "Journal only",
+      "Acquisition card",
+      "Bank deposits"
+    ]
+  }),
+  computed: {
   }
 }
 </script>
@@ -153,6 +175,11 @@ export default {
   vertical-align: bottom;
   padding-bottom: 20px;
   max-width: 80px;
+}
+table th.bottom {
+  white-space: nowrap;
+  vertical-align: bottom;
+  width: 175px;
 }
 
 .table th.rotate > div {

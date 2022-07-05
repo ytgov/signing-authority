@@ -1,18 +1,17 @@
 
 <template>
   <v-container fluid class="down-top-padding">
-    <BaseBreadcrumb
+    <!-- <BaseBreadcrumb
       :title="page.title"
       :icon="page.icon"
       :breadcrumbs="breadcrumbs"
     >
-      <template v-slot:right>
+      <template v-slot:right> -->
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
-      </template>
-    </BaseBreadcrumb>
+      <!-- </template>
+    </BaseBreadcrumb> -->
 
     <h1>Delegation of Financial Signing Authority Chart</h1>
-
     <!-- <authority-metadata-card :formB="formB" /> -->
 
     <v-row>
@@ -30,11 +29,16 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
+            <!-- <v-btn
               :to="{
                 name: 'DepartmentDetail',
                 params: { id: formA.department.id },
               }"
+              color="#7A9A01"
+              >Close</v-btn
+            > -->
+            <v-btn
+              @click="$router.back()"
               color="#7A9A01"
               >Close</v-btn
             >
@@ -64,7 +68,7 @@ export default {
     // AuthorityMetadataCard,
   },
   data: () => ({
-    id: "62b7dc1177a03a5a69223007",
+    // id: "62b7dc1177a03a5a69223007",
     loading: false,
     page: {
       title: "Departments",
@@ -98,80 +102,76 @@ export default {
 
     authority: {},
     showUpload: false,
-    formA: {
-      department: {
-        name: "Finance",
-        id: "12",
-      },
-      program: "Taxation",
-      authority_lines: [
-        {
-          position: "Deputy Minister",
-          account: "12",
-          s24_procure_goods_limit: "100",
-          s24_procure_services_limit: "250",
-          s23_procure_goods_limit: "NL",
-          s23_procure_services_limit: "100",
-          s30_payment_limit: "NL",
-          s29_performance_limit: "NL",
-        },
-        {
-          position: "ADM, Finance and Admin",
-          account: "12x-10",
-          s24_procure_goods_limit: "50",
-          s24_procure_services_limit: "250",
-          s23_procure_goods_limit: "100",
-          s23_procure_services_limit: "100",
-          s30_payment_limit: "NL",
-          s29_performance_limit: "NL",
-        },
-        {
-          position: "",
-          account: "12x-50",
-          s24_procure_goods_limit: "50",
-          s24_procure_services_limit: "250",
-          s23_procure_goods_limit: "100",
-          s23_procure_services_limit: "100",
-          s30_payment_limit: "NL",
-          s29_performance_limit: "NL",
-        },
-        {
-          position: "ADM, Special Projects",
-          account: "12x-15",
-          s24_procure_goods_limit: "50",
-          s24_procure_services_limit: "250",
-          s23_procure_goods_limit: "100",
-          s23_procure_services_limit: "100",
-          s30_payment_limit: "NL",
-          s29_performance_limit: "NL",
-        },
-      ],
-    },
-    formB: {
-      employee: {
-        _id: "123",
-        first_name: "Test",
-        last_name: "User",
-      },
-    },
+    // formA: {
+    //   department: {
+    //     name: "Finance",
+    //     id: "12",
+    //   },
+    //   program: "Taxation",
+    //   authority_lines: [
+    //     {
+    //       position: "Deputy Minister",
+    //       account: "12",
+    //       s24_procure_goods_limit: "100",
+    //       s24_procure_services_limit: "250",
+    //       s23_procure_goods_limit: "NL",
+    //       s23_procure_services_limit: "100",
+    //       s30_payment_limit: "NL",
+    //       s29_performance_limit: "NL",
+    //     },
+    //     {
+    //       position: "ADM, Finance and Admin",
+    //       account: "12x-10",
+    //       s24_procure_goods_limit: "50",
+    //       s24_procure_services_limit: "250",
+    //       s23_procure_goods_limit: "100",
+    //       s23_procure_services_limit: "100",
+    //       s30_payment_limit: "NL",
+    //       s29_performance_limit: "NL",
+    //     },
+    //     {
+    //       position: "",
+    //       account: "12x-50",
+    //       s24_procure_goods_limit: "50",
+    //       s24_procure_services_limit: "250",
+    //       s23_procure_goods_limit: "100",
+    //       s23_procure_services_limit: "100",
+    //       s30_payment_limit: "NL",
+    //       s29_performance_limit: "NL",
+    //     },
+    //     {
+    //       position: "ADM, Special Projects",
+    //       account: "12x-15",
+    //       s24_procure_goods_limit: "50",
+    //       s24_procure_services_limit: "250",
+    //       s23_procure_goods_limit: "100",
+    //       s23_procure_services_limit: "100",
+    //       s30_payment_limit: "NL",
+    //       s29_performance_limit: "NL",
+    //     },
+    //   ],
+    // },
+
+
   }),
   computed: {
     ...mapState("department", ["departments"]),
+    ...mapState("authority/formA", ["formA"]),
     // ...mapGetters("authority/formB", ["formB"]),
   },
   async mounted() {
     // this.loadFormB(this.$route.params.id);
     this.id = this.$route.params.id;
-    let departmentId = this.$route.params.departmentId;
-    this.department = await this.getDepartment({ id: departmentId });
+    // let departmentId = this.$route.params.departmentId;
+    // this.department = await this.getDepartment({ id: departmentId });
 
-    this.breadcrumbs[2].text = this.department.descr;
-    this.breadcrumbs[2].to = `/departments/${departmentId}`;
-    this.breadcrumbs[3].to = `/departments/${departmentId}/form-a`;
+    // this.breadcrumbs[2].text = this.department.descr;
+    // this.breadcrumbs[2].to = `/departments/${departmentId}`;
+    // this.breadcrumbs[3].to = `/departments/${departmentId}/form-a`;
 
-    this.breadcrumbs[4].text = "Positions";
+    // this.breadcrumbs[4].text = "Positions";
     //this.page.title = this.department.descr;
-    this.loadFormA("62b7dc1177a03a5a69223007")
+    this.loadFormA(this.$route.params.id)
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),

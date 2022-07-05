@@ -79,7 +79,7 @@ export default {
     selectedId: null,
   }),
   mounted: async function () {
-    this.selectedId = this.$route.params.id;
+    this.deptId = this.$route.params.id;
     this.loadList()
     // this.loadList();
   },
@@ -98,7 +98,7 @@ export default {
     //   this.$router.push(`/departments/${item.dept}`);
     // },
     async loadList() {
-      this.item = await this.getDepartment({ id: this.selectedId });
+      this.item = await this.getDepartment({ id: this.deptId });
       if (this.item && this.item.dept) {
         this.breadcrumbs[2].text = this.item.descr;
         this.page.title = this.item.descr;
