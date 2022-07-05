@@ -1,6 +1,6 @@
 
 
-import formAroutes from "@/modules/forms/formA/router"
+// import formAroutes from "@/modules/forms/formA/router"
 
 const routes = [
     {
@@ -31,9 +31,9 @@ const routes = [
             meta: { requiresAuth: true },
             component: () => import("../views/DepartmentFormBList.vue"),
           },
-          ...formAroutes
+          // ...formAroutes
         ]
-    }
+    },
 ];
 
 export default routes;

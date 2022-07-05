@@ -65,10 +65,7 @@ export default {
   openFormA(item) {
     console.log (item)
       this.$router.push({
-        name: "FormADetailsLL",
-        params: {
-            "id": item._id,
-        }
+        path: `/form-a/${item._id}`,
       })
     },
  }
