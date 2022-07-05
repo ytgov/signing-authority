@@ -33,10 +33,11 @@ export async function Seed(storage: Storage) {
         await myDb.dropCollection("FormA");
     }
 
-    let empDb = storage.Employees as GenericService<Employee>;
+
 
     // put in some employees
 
+    let empDb = storage.Employees as GenericService<Employee>;
     for (let index = 0; index < employeeSeedData.length; index++) {
         const element = employeeSeedData[index];
         let m = await empDb.create(element);
@@ -45,10 +46,12 @@ export async function Seed(storage: Storage) {
 
     const emp1 = await empDb.getOne({"email": "michael@icefoganalytics.com"});
 
+    // put in some FormAs
     let formADB= storage.FormA as GenericService<FormA>;
 
     for (let index = 0; index < formASeedData.length; index++) {
         const element = formASeedData[index];
+        console.log (element)
         let m = await formADB.create(element);
     };
     // console.log(emp1);

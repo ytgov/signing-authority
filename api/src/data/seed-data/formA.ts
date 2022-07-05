@@ -12,6 +12,7 @@ export const formASeedData: FormA[] = [
     "authority_lines": [
       {
         "position": "Director of Awesome",
+        "operational_restriction": "None",
         "contracts_for_goods_services": 250,
         "authorization_for_travel": 500,
         "dept": "02",
@@ -32,6 +33,7 @@ export const formASeedData: FormA[] = [
       },
       {
         "position": "Director of Taxation",
+        "operational_restriction": "None",
         "dept": "02",
         "vote": "21",
         "prog": "**",
@@ -52,6 +54,7 @@ export const formASeedData: FormA[] = [
       },
       {
         "position": "ADM Corporate",
+        "operational_restriction": "None",
         "dept": "02",
         "vote": "21",
         "prog": "**",
@@ -154,6 +157,7 @@ export const formASeedData: FormA[] = [
     "authority_lines": [
       {
         "position": "ADM (All)",
+        "operational_restriction": "None",
         "contracts_for_goods_services": 250,
         "authorization_for_travel": 500,
         "dept": "55",
@@ -174,6 +178,7 @@ export const formASeedData: FormA[] = [
       },
       {
         "position": "Directors (All)",
+        "operational_restriction": "None",
         "dept": "55",
         "vote": "21",
         "prog": "**",
@@ -194,6 +199,7 @@ export const formASeedData: FormA[] = [
       },
       {
         "position": "Managers (All)",
+        "operational_restriction": "None",
         "dept": "55",
         "vote": "**",
         "prog": "**",
@@ -226,6 +232,7 @@ export const formASeedData: FormA[] = [
       {
         "position": "ADM (All)",
         "contracts_for_goods_services": 250,
+        "operational_restriction": "None",
         "authorization_for_travel": 500,
         "dept": "55",
         "vote": "**",
@@ -245,6 +252,7 @@ export const formASeedData: FormA[] = [
       },
       {
         "position": "Directors (All)",
+        "operational_restriction": "Journal only",
         "dept": "55",
         "vote": "21",
         "prog": "**",
@@ -265,6 +273,7 @@ export const formASeedData: FormA[] = [
       },
       {
         "position": "Managers (All)",
+        "operational_restriction": "None",
         "dept": "55",
         "vote": "**",
         "prog": "**",

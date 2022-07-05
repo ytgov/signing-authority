@@ -31,6 +31,7 @@ export interface FormA extends MongoEntity {
 export interface formAAuthorityLine {
   // authority_id: ObjectId;
   position: string;
+  operational_restriction?: string;
   dept: string;
   vote: string;
   prog: string;
@@ -49,4 +50,11 @@ export interface formAAuthorityLine {
   s29_performance_limit: number;
   s30_payment_limit: number;
 
+}
+
+export enum OperatiationRestriction {
+  "None",
+  "Journal only",
+  "Acquisition card",
+  "Bank deposits"
 }
