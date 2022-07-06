@@ -1,4 +1,4 @@
-import { DEPARTMENT_URL } from "@/urls";
+import { DEPARTMENT_URL, FORMA_URL } from "@/urls";
 import { secureGet } from "@/store/jwt"
 
 const state = {
@@ -9,6 +9,10 @@ const getters = {
     departmentList: (state) => {
         return state.departments.map(a => ({"descr": a.descr, "dept": a.dept, "display_name": a.display_name }))
     },
+    getDepartmentDetails: (state) => (deptId) => {
+        //return the details of a department for given departmentId
+        return state.departments.find(a => a.dept === deptId)
+    }
 
  }
 const actions = {
@@ -25,6 +29,9 @@ const actions = {
         });
     },
     async getDepartment(store, { id }) {
+        // Gets test data for a given department //
+        //TODO: Remove or refactor
+
         console.log("In Gets Department")
         if (store.state.departments.length == 0) {
             return secureGet(`${DEPARTMENT_URL}/${id}`).then(resp => {
@@ -36,11 +43,12 @@ const actions = {
         console.log (dept)
         return dept[0];
     },
-    // async getFormAList(store, { id }) {
-    //     return secureGet(`${DEPARTMENT_URL}/${id}/form-a`).then(resp => {
-    //         return resp.data.data
-    //     })
-    // },
+    async getFormAList(store, { id }) {
+        console.log(`${FORMA_URL}/department/${id}`)
+        return secureGet(`${FORMA_URL}/department/${id}`).then(resp => {
+            return resp.data.data
+        })
+    },
     // async getFormBList(store, { id }) {
     //     return secureGet(`${DEPARTMENT_URL}/${id}/form-b`).then(resp => {
     //         return resp.data.data

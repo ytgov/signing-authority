@@ -10,10 +10,14 @@
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
       <!-- </template>
     </BaseBreadcrumb> -->
-
-    <h1>Delegation of Financial Signing Authority Chart</h1>
-    <!-- <authority-metadata-card :formB="formB" /> -->
-
+    <v-row>
+      <v-col>
+        <h1>Delegation of Financial Signing Authority</h1>
+      </v-col>
+      <v-col>
+        <actions-menu> </actions-menu>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col>
         <v-card class="default">
@@ -56,6 +60,7 @@
 import { AUTHORITY_URL} from "@/urls"
 import { mapActions, mapState } from "vuex";
 import formATable from "../components/formATable.vue";
+import ActionsMenu from '../components/actionsMenu.vue';
 
 // import uploadFormModal from "../components/uploadFormModal.vue"
 // import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
@@ -64,6 +69,7 @@ export default {
   name: "AuthorityDetails",
   components: {
     formATable,
+    ActionsMenu,
     // uploadFormModal,
     // AuthorityMetadataCard,
   },

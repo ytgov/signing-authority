@@ -4,7 +4,7 @@
 
 import Vue from 'vue';
 import createAuth0Client from '@auth0/auth0-spa-js';
-import {secureGet} from "@/store/jwt";
+import {secureGet, securePut, securePost} from "@/store/jwt";
 
 /**
  *  Vue.js Instance Definition
@@ -64,6 +64,12 @@ export const useAuth0 = ({
 
             get(url){
                 return secureGet(url);
+            },
+            put(url){
+                return securePut(url);
+            },
+            post(url){
+                return securePost(url);
             }
         },
 

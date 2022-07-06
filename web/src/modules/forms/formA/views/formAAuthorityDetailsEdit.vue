@@ -14,7 +14,8 @@
         <v-card class="default">
           <v-card-text>
             <formATable
-            :formA = "formA">
+            :formA = "formA"
+            :edit="edit">
             </formATable>
 
 
@@ -41,7 +42,7 @@
 
 
 <script>
-// import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapState } from "vuex";
 import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
 import { formATable } from "../components/formATable.vue"
 
@@ -53,12 +54,12 @@ export default {
   },
   data: () => ({
     id: "",
-
+    edit: true,
     authority: {},
     showUpload: false,
   }),
   computed: {
-    ...mapGetters("authority/formB", ["formB"]),
+    ...mapState("authority/formA", ["formA"]),
     ...mapGetters("department", ["departments"]),
     employeeFullName: function () {
       return `${this.formB.employee.first_name} ${this.formB.employee.last_name}`;
@@ -79,14 +80,14 @@ export default {
     },
   },
   async mounted() {
-    this.loadFormB(this.$route.params.id);
+    this.loadFormA(this.$route.params.id);
     this.id = this.$route.params.id;
   },
   methods: {
     ...mapActions("authority/formB", ["loadFormB", "saveFormB"]),
 
     addLine() {
-      this.formB.authority_lines.push({});
+      this.formA.authority_lines.push({});
     },
     removeLine(idx) {
       this.formB.authority_lines.splice(idx, 1);

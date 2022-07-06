@@ -27,10 +27,10 @@
           <department-form-a-list
             :search="search" />
         </v-col>
-        <v-col>
-          <!-- <department-form-b-list
-            :search="search" /> -->
-        </v-col>
+        <!-- <v-col>
+          <department-form-b-list
+            :search="search" />
+        </v-col> -->
       </v-row>
     </BaseCard>
   </v-container>

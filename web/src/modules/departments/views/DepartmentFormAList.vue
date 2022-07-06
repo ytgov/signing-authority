@@ -28,7 +28,8 @@
         ></v-select>
       </template>
       <template v-slot:right>
-        <v-btn color="primary">Add Form A</v-btn>
+       <create-form-a-button
+        :department="getDepartmentDetails($route.params.id)" ></create-form-a-button>
       </template>
 
       <v-row>
@@ -53,10 +54,16 @@
 
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
+import CreateFormAButton from '@/modules/forms/formA/components/createFormAButton';
+import createFormAButton from '../../forms/formA/components/createFormAButton.vue';
 
 export default {
+  components: { createFormAButton },
   name: "DepartmentDetail",
+  componenets: {
+    CreateFormAButton,
+  },
   data: () => ({
     search: "",
     drawer: null,
@@ -102,6 +109,9 @@ export default {
   },
   computed: {
     ...mapState("department", ["departments"]),
+    ...mapGetters ("department",[
+      "getDepartmentDetails"
+    ])
   },
 
   methods: {

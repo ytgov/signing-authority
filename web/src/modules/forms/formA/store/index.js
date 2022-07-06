@@ -21,6 +21,19 @@ const actions = {
             commit("setFormA", {});
         });
   },
+  async createFormA({ commit }, item) {
+    const auth = getInstance()
+    console.log(item)
+
+    return auth.post(`${FORMA_URL}`, item)
+        .then(resp => {
+            commit("setFormA", resp.data.data);
+            return resp.data.data
+
+        }).catch(() => {
+            commit("setFormA", {});
+        });
+  },
     async saveFormA({ commit }, item) {
       const auth = getInstance()
         let body = _.clone(item);
