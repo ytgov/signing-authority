@@ -131,7 +131,7 @@ export default {
     hasSidebar: false, //config.hasSidebar,
     hasSidebarClosable: config.hasSidebarClosable,
     search: "",
-    showAdmin: false,
+    showAdmin: true,
     showOverlay: true,
   }),
   computed: {
