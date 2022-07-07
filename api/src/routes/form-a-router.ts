@@ -12,8 +12,10 @@ import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 
-import { FormA, Employee} from "src/data/models";
+import { FormA } from "src/data/models";
 import { ObjectId } from "mongodb";
+
+import { operationalRestrictions } from "../data/models"
 
 
 import { ExpressHandlebars } from "express-handlebars";
@@ -25,6 +27,9 @@ import fs from "fs"
 import e from "express";
 
 // formARouter.use('/uploads', uploadsRouter)
+formARouter.get("/operational-restrictions", (req:Request, res:Response) => {
+  return res.json(operationalRestrictions)
+})
 
 formARouter.get("/", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
@@ -147,7 +152,6 @@ formARouter.post("/",
     let item = await loadSingleAuthority(req, created.insertedId.toString());
     res.json({ data: item })
   });
-
 
 
 
