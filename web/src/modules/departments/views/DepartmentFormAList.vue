@@ -34,11 +34,18 @@
 
       <v-row>
         <v-col>
+          {{formAItems}}
           <v-card class="default">
             <v-card-title>Form A Authorizations</v-card-title>
             <v-card-text>
               <v-data-table
-                :headers="[{ text: 'Position', value: 'position' }]"
+                :headers="[
+                  { text: 'Branch', value: 'program_branch' },
+                  { text: 'Position', value: 'position' },
+                  { text: 'Issued', value: 'issue_date' },
+                  { text: 'Reviewed', value: 'reviewed_by_department' },
+
+                  ]"
                 :search="search"
                 :items="formAItems"
                 @click:row="openFormA"
@@ -131,7 +138,7 @@ export default {
       this.loadingFormA = false;
     },
     openFormA(item) {
-      this.$router.push(`/departments/${this.selectedId}/form-a/${item._id}`)
+      this.$router.push(`/form-a/${item._id}`)
     },
   },
 };

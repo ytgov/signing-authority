@@ -65,7 +65,7 @@
       <tr>
       </tr>
       <tr>
-        <th class="bottom">
+        <th class="bottom" style= " ">
               <div>POSITION</div>
             </th>
             <th class="bottom">
@@ -180,6 +180,8 @@ table th.bottom {
   white-space: nowrap;
   vertical-align: bottom;
   width: 175px;
+  padding-left: 10px;
+  text-align: left;
 }
 
 .table th.rotate > div {

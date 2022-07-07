@@ -103,7 +103,7 @@ formARouter.put("/:id",
     //RA: this should be the ID of the person creating the FormA I think
     if (req.body.employee_id)
       req.body.employee_id = new ObjectId(req.body.employee_id);
-
+    console.log(req.body.authority_lines[0])
     for (let line of req.body.authority_lines) {
       let account = `${line.account.replace(/[^0-9]/g, "")}*************************`;
       line.dept = account.substring(0, 2);
