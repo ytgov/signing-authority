@@ -65,11 +65,11 @@ export const useAuth0 = ({
             get(url){
                 return secureGet(url);
             },
-            put(url){
-                return securePut(url);
+            put(url, body){
+                return securePut(url, body);
             },
-            post(url){
-                return securePost(url);
+            post(url, body){
+                return securePost(url, body);
             }
         },
 

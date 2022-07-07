@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   name: "CreateFormAButton",
   props: {
@@ -16,26 +16,31 @@ export default {
   },
   data: () => ({
     //see <projectroot>/api/data/models/formA.ts for details
-    formA: {
+    newFormA: {
       department_code: "Empty",
       department_descr: "Empty",
       program_branch: "all",
       issue_date: new Date(),
       reviewed_by_department: false,
       created_by: "",
-}
-
-    // }
+    },
   }),
+  computed: {
+    ...mapState("authority/formA", ["formA"])
+  },
   methods: {
     ...mapActions("authority/formA", ["createFormA"]),
 
     doIt: async function () {
-      this.formA.department_code = this.department.dept
-      this.formA.department_descr = this.department.descr
-      this.formA.created_by = this.$auth.user.email
-      await this.createFormA(this.formA)
-
+      if (this.department == null){
+        this.$refs.notifier.showAPIMessages("Cannot create Form A. No deparment specificed")
+      } else {
+      this.newFormA.department_code = this.department.dept
+      this.newFormA.department_descr = this.department.descr
+      this.newFormA.created_by = this.$auth.user.email
+      await this.createFormA(this.newFormA)
+      this.$router.push(`/form-a/${this.formA._id}`)
+      }
     }
   },
 
