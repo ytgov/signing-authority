@@ -66,7 +66,7 @@
       </tr>
       <tr>
         <th class="bottom">
-              <div>POSTION</div>
+              <div>POSITION</div>
             </th>
             <th class="bottom">
               AREA OF <br />AUTHORITY
