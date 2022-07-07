@@ -34,7 +34,6 @@
 
       <v-row>
         <v-col>
-          {{formAItems}}
           <v-card class="default">
             <v-card-title>Form A Authorizations</v-card-title>
             <v-card-text>
