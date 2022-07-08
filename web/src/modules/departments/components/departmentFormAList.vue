@@ -4,8 +4,10 @@
   <v-card-text>
     <v-data-table
       :headers="[
+                //{ text: 'Department', value: 'department' },
                 { text: 'Division', value: 'division' },
                 { text: 'Position', value: 'position' },
+
                 ]"
       :search="search"
       :items=" positions"
@@ -48,10 +50,10 @@ export default {
     return { name: "DepartmentFormAList", params: { "id": this.$route.params.id } };
   },
   positions () {
-    const apple = this.formAItems.flatMap(a => (
-      a.authority_lines.map(b => ({"division":a.program_branch, "position":b.position, "_id":a._id}))
+    const x = this.formAItems.flatMap(a => (
+      a.authority_lines.map(b => ({"department":a.department_descr, "division":a.program_branch, "position":b.position, "_id":a._id}))
     ))
-    return apple
+    return x
   }
  },
  mounted: async function () {
