@@ -12,7 +12,7 @@
     </BaseBreadcrumb> -->
     <v-row>
       <v-col>
-        <h1>Delegation of Financial Signing Authority</h1>
+        <h1>Delegation of Financial Signing Authority - FORM A</h1>
       </v-col>
       <v-col>
         <actions-menu :formA="formA"> </actions-menu>
@@ -42,7 +42,7 @@
               >Close</v-btn
             > -->
             <v-btn
-              @click="$router.back()"
+              @click="$router.push(`/departments/${formA.department_code}`);"
               color="#7A9A01"
               >Close</v-btn
             >
