@@ -32,7 +32,7 @@
            <v-select class="px-2 py-n5 "
           :items="items"
           v-model="line.operational_restrictions"
-          label="Operational Restrictions"
+
         ></v-select>
         </td>
         <td class="fb-value">
@@ -122,9 +122,11 @@
           ></v-text-field>
         </td>
       </tr>
+
     </tbody>
 </template>
 <script>
+import { mapActions } from "vuex"
 export default {
   name: "formATable",
   props: {
@@ -132,23 +134,25 @@ export default {
   },
   data: () => ({
     items: [
-      "None",
-      "Journal only",
-      "Acquisition card",
-      "Bank deposits"
-    ]
+
+    ],
   }),
   methods: {
+    ...mapActions('authority', ["getOperationalRestictions"]),
     removeLine(idx) {
       this.formA.authority_lines.splice(idx, 1);
       this.saveFormB(this.formA);
     },
     itemChanged() {
-      // this.saveFormB(this.formB);
+      // this.saveFormA(this.formA);
     },
 
   },
   computed: {
+
+  },
+  async mounted () {
+    this.items = Object.keys(await this.getOperationalRestictions())
   }
 }
 </script>

@@ -56,7 +56,7 @@ export interface formAAuthorityLine {
 export enum operationalRestrictions {
   "" = "",
   "Bank Deposit" = "Bank Deposit",
-  "Presonnel Pay Actions" = "Personnel Pay Actions",
+  "Personnel Pay Actions" = "Personnel Pay Actions",
   "All Department Payments" = "All Department Payments",
   "Journal Only" = "Journal Only" ,
   "Acquisition cards" = "Acquisition cards",
