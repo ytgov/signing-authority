@@ -15,7 +15,7 @@
         <h1>Delegation of Financial Signing Authority</h1>
       </v-col>
       <v-col>
-        <actions-menu> </actions-menu>
+        <actions-menu :formA="formA"> </actions-menu>
       </v-col>
     </v-row>
     <v-row>
@@ -187,7 +187,7 @@ export default {
     ]),
     editClick() {
       //TODO: this should check the state to determine if changes are allowed
-      this.$router.push(`/form-a/${this.id}/edit`);
+      this.$router.push(`/form-a/${this.formA.id}/edit`);
     },
     async generateClick() {
       window.open(`${AUTHORITY_URL}/${this.id}/pdf`, "_blank");

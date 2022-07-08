@@ -24,6 +24,13 @@ const routes = [
     component: () =>
       import("../views/formAAuthorityDetails.vue"),
     meta: { requiresAuth: true },
+  },
+  {
+    path: ":id/edit",
+    name: "FormAEdit",
+    component: () =>
+      import("../views/formAAuthorityDetailsEdit.vue"),
+    meta: { requiresAuth: true }
   }
 ]
 

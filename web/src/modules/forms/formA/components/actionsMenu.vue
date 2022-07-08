@@ -7,8 +7,11 @@
           </v-btn>
         </template>
         <v-list dense>
-          <v-list-item @click="editClick">
-            <v-list-item-title>Edit</v-list-item-title>
+          <v-list-item
+            v-if="!formA.reviewed_by_department"
+            @click="editClick">
+            <v-list-item-title>Edit
+            </v-list-item-title>
           </v-list-item>
 
           <v-list-item @click="generateClick">
@@ -16,8 +19,8 @@
           </v-list-item>
 
           <v-list-item @click="uploadClick">
-            <upload-form-modal></upload-form-modal>
-            <!-- <v-list-item-title>Upload Signed PDF</v-list-item-title> -->
+            <!-- <upload-form-modal></upload-form-modal> -->
+            <v-list-item-title>Upload Signed PDF</v-list-item-title>
           </v-list-item>
 
           <v-list-item @click="archiveClick">
@@ -47,33 +50,30 @@ export default {
   },
   methods: {
     editClick() {
-      this.$router.push({
-        name: 'FormAEdit',
-        params: { id: this.formA.id },
-      });
+      this.$router.push(`/form-a/${this.formA._id}/edit`);
     },
     generateClick() {
       this.$router.push({
         name: 'FormAGenerate',
-        params: { id: this.formA.id },
+        params: { id: this.formA._id },
       });
     },
     uploadClick() {
       this.$router.push({
         name: 'FormAUpload',
-        params: { id: this.formA.id },
+        params: { id: this.formA._id },
       });
     },
     archiveClick() {
       this.$router.push({
         name: 'FormAArchive',
-        params: { id: this.formA.id },
+        params: { id: this.formA._id },
       });
     },
     duplicateClick() {
       this.$router.push({
         name: 'FormADuplicate',
-        params: { id: this.formA.id },
+        params: { id: this.formA._id },
       });
     },
   },
