@@ -41,6 +41,7 @@ export interface formAAuthorityLine {
   object: string;
   ledger1: string;
   ledger2: string;
+  //**   Note: -1 means: No Limit or NL **//
   contracts_for_goods_services: number;
   loans_and_guarantees: number;
   transfer_payments: number;
