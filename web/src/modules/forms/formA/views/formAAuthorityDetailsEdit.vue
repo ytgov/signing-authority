@@ -13,98 +13,20 @@
       <v-col>
         <v-card class="default">
           <v-card-text>
-             <table
+            <table
               border="0"
               cellspacing="0"
               cellpadding="0"
               class="table"
               style="background-color: white; width: 100%; text-align: left"
             >
-            <thead>
-      <tr>
-        <th colspan="3" rowspan="4"
-          style="text-align: left; padding: 10px; vertical-align: middle">
-            Department:<br />
-              <strong>{{ formA.department_descr }}</strong>
-              <br /> <br /> <br />
-              Program/Branch:<br />
-              <strong>{{ formA.program_branch }}</strong>
-              <br/>
-        </th>
-        <th colspan="7" style="height: 80px">
-          SPENDING AUTHORITY
-        </th>
-        <th rowspan="5" class="rotate" style="height: 140px">
-          <div class="mb-2">
-            PAYMENT<br />
-            AUTHORITY s.30
-          </div>
-        </th>
-      </tr>
-      <tr>
-        <th colspan="6" style="height: 80px">
-          SECTION 23 and SECTION 24 ($000)
-        </th>
-        <th rowspan="4" class="rotate">
-          <div class="ml-2">(SECTION 29) <br />
-            CERTIFICATE OF <br />PERFORMANCE
-          </div>
-       </th>
-      </tr>
-      <tr>
-        <!-- <th colspan="2" rowspan="2"  style="text-align: left; padding: 10px; vertical-align: middle">
-          Program/Branch:<br />
-              <strong>{{ formA.program }}</strong>B</th> -->
-        <th rowspan="3" class="rotate" style= "">
-          <div class="mb-2">
-            CONTRACTS FOR <br />GOODS OR SERVICES
-          </div>
-        </th>
-        <th rowspan="3" class="rotate" style= "">
-          <div class="mb-2">LOANS & <br />GUARANTEES </div>
-        </th>
-        <th rowspan="3" class="rotate" style= "">
-           <div class="mb-2">Transfer <br/> Payments</div>
-        </th>
-        <th rowspan="3" class="rotate" style= "">
-          <div class="mb-2">AUTHORIZATION <br />FOR TRAVEL</div>
-        </th>
-        <th rowspan="3" class="rotate" style= "">
-          <div class="mb-2">REQUEST FOR <br />GOODS OR SERVICES</div>
-        </th>
-        <th rowspan="3" class="rotate" style= "">
-           <div class="mb-2">ASSIGNMENT <br />AUTHORITY</div></th>
-      </tr>
-      <tr>
-      </tr>
-      <tr>
-        <th class="bottom" style= " ">
-              <div>POSITION</div>
-            </th>
-            <th class="bottom">
-              AREA OF <br />AUTHORITY
-            </th>
-             <th class="bottom">
-              OPERATIONAL <br />RESTRICTIONS
-            </th>
-      </tr>
-
-    </thead>
-            <form-a-table-body-edit
-            :formA="formA"> </form-a-table-body-edit>
+              <form-a-table-head
+                :formA="formA"
+                :edit="formATableBodyEdit"> </form-a-table-head>
+              <form-a-table-body-edit
+                :formA="formA">
+              </form-a-table-body-edit>
             </table>
-            <!-- <formATable
-            :formA = "formA"
-            :edit="edit">
-            </formATable> -->
-
-
-            <!--   <v-data-table style="font-size: .5rem !important"
-            dense
-            :headers="[{text:'Account', value:'account'}, {text: 'S23 Goods', value:'s24_procure_goods_limit'}]"
-            :items="formB.authority_lines"></v-data-table>
-
--->
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" @click="addLine">Add line</v-btn>
@@ -122,15 +44,17 @@
 
 
 <script>
-import { mapGetters, mapActions, mapState } from "vuex";
-import FormATableBodyEdit from '../components/formATableBodyEdit.vue';
+import { mapState, mapActions } from "vuex";
+import formATableBodyEdit from '../components/formATable/formATableBodyEdit.vue';
+import formATableHead from '../components/formATable/formATableHead.vue';
 // import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
 // import { formATable } from "../components/formATable.vue"
 
 export default {
   name: "AuthorityDetails",
   components: {
-    FormATableBodyEdit
+    formATableBodyEdit,
+    formATableHead
     // AuthorityMetadataCard,
     // formATable
   },
@@ -142,10 +66,10 @@ export default {
   }),
   computed: {
     ...mapState("authority/formA", ["formA"]),
-    ...mapGetters("department", ["departments"]),
     // employeeFullName: function () {
     //   return `${this.formB.employee.first_name} ${this.formB.employee.last_name}`;
     // },
+
     breadcrumbs: function () {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
       b.push({
@@ -160,11 +84,11 @@ export default {
   async mounted() {
     this.loadFormA(this.$route.params.id);
   },
-  methods: {
+   methods: {
     ...mapActions("authority/formA", ["loadFormA", "saveFormA"]),
 
     addLine() {
-      this.formA.authority_lines.push({});
+      this.formA.authority_lines.push({"account":`${this.formA.department_code}*`});
     },
     removeLine(idx) {
       this.formA.authority_lines.splice(idx, 1);
