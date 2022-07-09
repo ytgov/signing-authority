@@ -31,6 +31,7 @@
            <!-- {{ line.operational_restriction}} -->
            <v-select class="px-2 py-n5 "
           :items="items"
+          @change="itemChanged"
           v-model="line.operational_restrictions"
 
         ></v-select>
@@ -126,29 +127,34 @@
     </tbody>
 </template>
 <script>
-import { mapActions } from "vuex"
+import { mapActions, mapState } from "vuex"
 export default {
   name: "formATable",
-  props: {
-    formA: Object
-  },
+  // props: {
+  //   formA: Object
+  // },
   data: () => ({
     items: [
 
     ],
   }),
+  computed: {
+    ...mapState("authority/formA", ["formA"])
+  },
   methods: {
+    ...mapActions("authority/formA", ["saveFormA"]),
     ...mapActions('authority', ["getOperationalRestictions"]),
+
+    addLine() {
+      this.formA.authority_lines.push({});
+    },
     removeLine(idx) {
       this.formA.authority_lines.splice(idx, 1);
-      this.saveFormB(this.formA);
+      //this.saveFormA(this.formA);
     },
     itemChanged() {
-      // this.saveFormA(this.formA);
+      this.saveFormA(this.formA);
     },
-
-  },
-  computed: {
 
   },
   async mounted () {

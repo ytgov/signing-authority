@@ -10,7 +10,7 @@ const state = {
 
 const actions = {
     async loadFormA({ commit }, id) {
-      console.log(`FormA ID: ${id}`)
+    //   console.log(`FormA ID: ${id}`)
       const auth = getInstance()
       return auth.get(`${FORMA_URL}/${id}`)
         .then(resp => {
@@ -23,7 +23,7 @@ const actions = {
   },
   async createFormA({ commit }, item) {
     const auth = getInstance()
-    console.log(item)
+    // console.log(item)
 
     return auth.post(`${FORMA_URL}`, item)
         .then(resp => {
@@ -55,7 +55,7 @@ const actions = {
         return auth.get(`${FORMA_URL}/${id}/pdf`)
           .then(resp => {
               //commit("setFormB", resp.data.data);
-              console.log(resp)
+            //   console.log(resp)
               return resp.data.data
 
           }).catch(() => {
@@ -66,9 +66,6 @@ const actions = {
     async getDepartmentFormAList(state, department_code){
         const auth = getInstance()
         const a = await auth.get(`${FORMA_URL}/department/${department_code}`)
-        console.log(`${FORMA_URL}/department/${department_code}`)
-        console.log("From Form A")
-        console.log(a.data.data)
         return a.data.data
     }
 };

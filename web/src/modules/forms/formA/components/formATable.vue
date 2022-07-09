@@ -91,7 +91,7 @@
         </td>
         <td class="pl-3">
            <!-- Operational RESTRICTIONS -->
-           {{ line.operational_restriction}}
+           {{ line.operational_restrictions}}
            <!-- <v-select class="px-2 py-n5 "
           :items="items"
           label="Operational Restrictions"
@@ -99,30 +99,30 @@
         </td>
         <td class="fb-value">
            <!-- Contracts for Goods or Services -->
-           {{ line.s24_procure_goods_limit }}
+           {{ line.contracts_for_goods_services }}
         </td>
         <td class="fb-value">
           <!-- Loans and Guarantees -->
-          {{ line.loans_limit }}
+          {{ line.loans_and_guarantees }}
         </td>
 
         <td class="fb-value">
            <!-- Transfer Payments-->
-          {{ line.s24_procure_request_limit }}
+          {{ line.transfer_payments }}
         </td>
         <td class="fb-value">
             <!--Authorization for Travel-->
-            {{ line.s24_travel_limit }}
+            {{ line.authorization_for_travel }}
         </td>
 
         <td class="fb-value">
           <!-- Request for Goods or Services -->
-          {{ line.s23_procure_goods_limit }}
+          {{ line.request_for_goods_services }}
         </td>
 
         <td class="fb-value">
           <!-- Assignment Authority -->
-          {{ line.s23_procure_services_limit }}
+          {{ line.assignment_authority }}
         </td>
         <td class="fb-value">
           <!-- Section 29 Certificate of Performance -->
@@ -137,6 +137,7 @@
   </table>
 </template>
 <script>
+// import { mapState} from "vuex";
 export default {
   name: "formATable",
   props: {
@@ -150,8 +151,9 @@ export default {
       "Bank deposits"
     ]
   }),
-  computed: {
-  }
+  // computed: {
+  //   ...mapState("authority/formA", ["formA"])
+  // }
 }
 </script>
 <style scoped>

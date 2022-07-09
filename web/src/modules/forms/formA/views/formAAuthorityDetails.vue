@@ -108,55 +108,6 @@ export default {
 
     authority: {},
     showUpload: false,
-    // formA: {
-    //   department: {
-    //     name: "Finance",
-    //     id: "12",
-    //   },
-    //   program: "Taxation",
-    //   authority_lines: [
-    //     {
-    //       position: "Deputy Minister",
-    //       account: "12",
-    //       s24_procure_goods_limit: "100",
-    //       s24_procure_services_limit: "250",
-    //       s23_procure_goods_limit: "NL",
-    //       s23_procure_services_limit: "100",
-    //       s30_payment_limit: "NL",
-    //       s29_performance_limit: "NL",
-    //     },
-    //     {
-    //       position: "ADM, Finance and Admin",
-    //       account: "12x-10",
-    //       s24_procure_goods_limit: "50",
-    //       s24_procure_services_limit: "250",
-    //       s23_procure_goods_limit: "100",
-    //       s23_procure_services_limit: "100",
-    //       s30_payment_limit: "NL",
-    //       s29_performance_limit: "NL",
-    //     },
-    //     {
-    //       position: "",
-    //       account: "12x-50",
-    //       s24_procure_goods_limit: "50",
-    //       s24_procure_services_limit: "250",
-    //       s23_procure_goods_limit: "100",
-    //       s23_procure_services_limit: "100",
-    //       s30_payment_limit: "NL",
-    //       s29_performance_limit: "NL",
-    //     },
-    //     {
-    //       position: "ADM, Special Projects",
-    //       account: "12x-15",
-    //       s24_procure_goods_limit: "50",
-    //       s24_procure_services_limit: "250",
-    //       s23_procure_goods_limit: "100",
-    //       s23_procure_services_limit: "100",
-    //       s30_payment_limit: "NL",
-    //       s29_performance_limit: "NL",
-    //     },
-    //   ],
-    // },
 
 
   }),
