@@ -13,9 +13,11 @@
               </div>
                <div v-else>
               <br /> <br /> <br />
-              Program/Branch:<br />
-             <form-a-table-branch-edit></form-a-table-branch-edit>
-              <br/>
+              Program/Branch:
+                <div style=" width: 300px;">
+                <form-a-table-branch-edit></form-a-table-branch-edit>
+             </div>
+
               </div>
         </th>
         <th colspan="7" style="height: 80px">
@@ -82,7 +84,7 @@
 </template>
 <script>
 import formATableBranchEdit from './formATableBranchEdit.vue'
-// import { mapState} from "vuex";
+import { mapState} from "vuex";
 export default {
   components: { formATableBranchEdit },
   name: "formATableHead",
@@ -91,9 +93,9 @@ export default {
   },
   data: () => ({
   }),
-  // computed: {
-  //   ...mapState("authority/formA", ["formA"])
-  // }
+  computed: {
+    ...mapState("authority/formA", ["formA"])
+  }
 }
 </script>
 <style scoped>

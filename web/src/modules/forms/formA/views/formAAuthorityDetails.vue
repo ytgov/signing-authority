@@ -57,7 +57,7 @@
 
 
 <script>
-import { AUTHORITY_URL} from "@/urls"
+// import { AUTHORITY_URL} from "@/urls"
 import { mapActions, mapState } from "vuex";
 import formATable from "../components/formATable.vue";
 import ActionsMenu from '../components/actionsMenu.vue';
@@ -136,19 +136,19 @@ export default {
     ...mapActions("authority/formA", [
       "loadFormA",
     ]),
-    editClick() {
-      //TODO: this should check the state to determine if changes are allowed
-      this.$router.push(`/form-a/${this.formA.id}/edit`);
-    },
-    async generateClick() {
-      window.open(`${AUTHORITY_URL}/${this.id}/pdf`, "_blank");
-      //await this.downloadFormB(this.id);
-    },
-    uploadClick() {
-      this.showUpload = true; //show modal fup upload
-    },
-    archiveClick() {},
-    downloadClick() {},
+    // editClick() {
+    //   //TODO: this should check the state to determine if changes are allowed
+    //   this.$router.push(`/form-a/${this.formA.id}/edit`);
+    // },
+    // async generateClick() {
+    //   window.open(`${AUTHORITY_URL}/${this.id}/pdf`, "_blank");
+    //   //await this.downloadFormB(this.id);
+    // },
+    // uploadClick() {
+    //   this.showUpload = true; //show modal fup upload
+    // },
+    // archiveClick() {},
+    // downloadClick() {},
   },
 };
 </script>
