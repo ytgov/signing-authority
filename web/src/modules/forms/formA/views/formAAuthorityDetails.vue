@@ -42,7 +42,7 @@
               >Close</v-btn
             > -->
             <v-btn
-              @click="$router.push(`/departments/${formA.department_code}`);"
+              @click="$router.push(`/departments/${formA.department_code}/form-a`);"
               color="#7A9A01"
               >Close</v-btn
             >
