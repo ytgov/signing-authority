@@ -67,6 +67,7 @@ export default {
     items: [],
   }),
   mounted: function () {
+    this.loadDepartments()
     //this.loadList();
   },
   computed: {
