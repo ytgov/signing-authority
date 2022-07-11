@@ -1,7 +1,9 @@
-import express, { Request, Response } from "express";
+import express, { Request, response, Response } from "express";
 import { RequiresData } from "../middleware";
 import _ from "lodash";
 import { QuestService } from "../services";
+import axios from "axios";
+import { apiBaseUrl } from "../config";
 
 export const departmentRouter = express.Router();
 departmentRouter.use(RequiresData);
@@ -13,7 +15,17 @@ departmentRouter.get('/', async (req: Request, res: Response) => {
   let depts = await questService.getDepartmentList();
 
   for (let d of depts) {
-    d.form_a_count = Math.floor(Math.random() * 1000);
+    let formACountURL = `${apiBaseUrl}/api/form-a/department/${d.dept}/count`
+    let fromBCountURL =  `${apiBaseUrl}/api/form-b/department/${d.dept}/count`
+    // d.form_a_count = Math.floor(Math.random() * 1000);
+    await axios.get(formACountURL)
+    .then((response) => {
+      d.form_a_count = response.data.position_count
+    })
+    .catch((error) => {
+      console.error (`Could not find Form A count for ${d.dept} - ${d.descr}`)
+      d.form_a_count = 0
+    })
     d.form_b_count = Math.floor(Math.random() * 1000);
     d.display_name = `(${d.dept}) ${d.descr}`;
   }

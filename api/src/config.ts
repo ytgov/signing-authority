@@ -17,7 +17,7 @@ switch (process.env.NODE_ENV) {
 dotenv.config({ path: path });
 
 console.log(`LOADING ${NODE_ENV} CONFIG FROM ${path}`);
-
+export const apiBaseUrl = process.env.NODE_ENV == "production" ? "" : "http://localhost:3000";
 export const API_PORT = process.env.API_PORT || "3000";
 export const FRONTEND_URL = process.env.FRONTEND_URL || "";
 export const AUTH_REDIRECT = process.env.AUTH_REDIRECT || "";

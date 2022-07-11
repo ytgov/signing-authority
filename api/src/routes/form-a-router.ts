@@ -57,14 +57,35 @@ formARouter.get("/:id",
     res.status(404).send();
   });
 
-  formARouter.get ("/department/summary", async (req: Request, res: Response) => {
+  // formARouter.get ("/department/form-count", async (req: Request, res: Response) => {
+  //   let db = req.store.FormA as GenericService<FormA>;
+  //   let pipeline =
+  //     [
+  //       {$match: {}},
+  //       {$group:
+  //         {
+  //           _id:"$department_descr",
+  //           count: {$sum:1 }
+  //         }
+  //       }
+  //     ]
+
+  //   let count = await db.aggregate(pipeline)
+
+  //   // if (count)
+  //     return res.json({ "form_a_count": count });
+  //   // res.status(404).send();
+  // })
+  formARouter.get ("/department/position-count", async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<FormA>;
     let pipeline =
-      [ {$match: {}},
+      [
+        { $unwind : "$authority_lines" },
+        // {$match: {}},
         {$group:
           {
-            _id:"$department_descr",
-            count: {$sum:1 }
+            _id:{department_code: "$department_code", department_descr:"$department_descr"},
+            position_count: {$sum:1}
           }
         }
       ]
@@ -88,9 +109,25 @@ formARouter.get("/:id",
   formARouter.get ("/department/:department/count", async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<FormA>;
     let department_code = req.params.department
-    let count = await db.count({"department_code": department_code})
-    if (count)
-      return res.json({ "form_a_count": count });
+    let pipeline =
+      [
+        { $match: {"department_code": department_code}},
+        { $unwind : "$authority_lines" },
+        // {$match: {}},
+        {$group:
+          {
+            _id:{department_code: "$department_code", department_descr:"$department_descr"},
+            position_count: {$sum:1}
+          }
+        }
+      ]
+
+    let count = await db.aggregate(pipeline)
+
+
+    // let count = await db.count({"department_code": department_code})
+    if (count.length == 1)
+      return res.json( count[0] );
     res.status(404).send();
   })
 
