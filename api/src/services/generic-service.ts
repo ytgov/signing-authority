@@ -1,4 +1,4 @@
-import { Collection, ObjectId, Filter, InsertOneResult, DeleteResult } from "mongodb";
+import { Collection, ObjectId, Filter, InsertOneResult, DeleteResult, Document } from "mongodb";
 import { MongoEntity } from "../data/models";
 
 export class GenericService<T extends MongoEntity> {
@@ -44,6 +44,13 @@ export class GenericService<T extends MongoEntity> {
     }
     async count(query: Filter<any>): Promise<Number> {
         return this.db.countDocuments(query);
+    }
+
+    async aggregate(pipeline?: Document[]): Promise<Document[]> {
+
+        let aggCursor = await this.db.aggregate(pipeline)
+
+        return aggCursor.toArray()
     }
 
     async getById(id: string): Promise<any | null> {

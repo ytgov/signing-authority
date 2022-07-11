@@ -25,6 +25,7 @@ export const formARouter = express.Router();
 
 import fs from "fs"
 import e from "express";
+import { pipeline } from "nodemailer/lib/xoauth2";
 
 // formARouter.use('/uploads', uploadsRouter)
 formARouter.get("/operational-restrictions", (req:Request, res:Response) => {
@@ -56,6 +57,24 @@ formARouter.get("/:id",
     res.status(404).send();
   });
 
+  formARouter.get ("/department/summary", async (req: Request, res: Response) => {
+    let db = req.store.FormA as GenericService<FormA>;
+    let pipeline =
+      [ {$match: {}},
+        {$group:
+          {
+            _id:"$department_descr",
+            count: {$sum:1 }
+          }
+        }
+      ]
+
+    let count = await db.aggregate(pipeline)
+
+    // if (count)
+      return res.json({ "form_a_count": count });
+    // res.status(404).send();
+  })
   formARouter.get ("/department/:department", async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<FormA>;
     let department_code = req.params.department
@@ -64,6 +83,7 @@ formARouter.get("/:id",
       return res.json({ data: list });
     res.status(404).send();
   });
+
 
   formARouter.get ("/department/:department/count", async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<FormA>;
