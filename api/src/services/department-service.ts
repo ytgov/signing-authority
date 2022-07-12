@@ -1,11 +1,11 @@
 import { Department } from "src/data/models";
 import axios from "axios";
 
-import { API_GATEWAY_KEY } from "../config";
+import { API_GATEWAY_KEY, DEPARTMENT_API_URL } from "../config";
 import { rest } from "lodash";
 
 const AUTH_HEADER = { "Ocp-Apim-Subscription-Key": API_GATEWAY_KEY };
-const DEPARTMENT_API_URL = "https://api.gov.yk.ca/finance/api/v2/accounts/departments";
+// const DEPARTMENT_API_URL = "https://api.gov.yk.ca/finance/api/v2/accounts/departments";
 
 export class DepartmentService {
   //create a service to lookup a list of departments from YG API gateway

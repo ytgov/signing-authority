@@ -33,6 +33,7 @@ export const MONGO_HOST = process.env.MONGO_HOST || "";
 export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}`
 
 export const API_GATEWAY_KEY = process.env.API_GATEWAY_KEY || "";
+export const DEPARTMENT_API_URL = "https://api.gov.yk.ca/finance/api/v2/accounts/departments";
 
 export const MAIL_FROM = process.env.MAIL_FROM || "signing-authority@yukon.ca";
 export const MAIL_HOST = process.env.MAIL_HOST || "smtp.gov.yk.ca";
