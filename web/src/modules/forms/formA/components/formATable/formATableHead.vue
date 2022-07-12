@@ -88,9 +88,9 @@ import { mapState} from "vuex";
 export default {
   components: { formATableBranchEdit },
   name: "formATableHead",
-  props: {
-    formA: Object
-  },
+  // props: {
+  //   formA: Object
+  // },
   data: () => ({
   }),
   computed: {
