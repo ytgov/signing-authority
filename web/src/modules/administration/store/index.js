@@ -1,7 +1,14 @@
 import { HEALTHCHECK_URL } from "../../../urls";
 
 const state = {
-  appHealth: {},
+  //appHealth is an array of componentHealth
+  appHealth: [],
+  componentHealth: {
+    "name": "",
+    "status": false,
+    "loading": true,
+    "helpNotes": "" //what to do if something this component is broken
+  }
 };
 
 const actions = {
@@ -11,11 +18,15 @@ const actions = {
     let data = await response.json()
     commit("SET_APP_HEALTH", data)
   },
+  async seedData () {
+    await fetch ("http://localhost:3000/seed")
+    // const data = await response
+  }
 };
 
 const mutations = {
   SET_APP_HEALTH(state, payload) {
-      state.appHealth = payload;
+      state.appHealth = payload.appHealth;
   }
 };
 

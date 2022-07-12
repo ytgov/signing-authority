@@ -5,10 +5,16 @@
     <div class="row">
       <div class="col-md-4">
         <v-card class="mt-5 default">
-          <v-card-title></v-card-title>
-          <v-card-text>
+
             <healthCheck></healthCheck>
-          </v-card-text>
+
+        </v-card>
+      </div>
+      <div class="col-md-4">
+        <v-card class="mt-5 default">
+          <seed-data></seed-data>
+            <!-- Seed Data -->
+
         </v-card>
       </div>
     </div>
@@ -19,11 +25,14 @@
 
 <script>
 
-import healthCheck from "../components/healthCheck.vue";
+import healthCheck from "../components/health/healthCheck.vue";
+import SeedData from '../components/seed/seedData.vue';
+
 export default {
   name: "Home",
   components: {
-    healthCheck
+    healthCheck,
+    SeedData
     },
   data: () => ({
 

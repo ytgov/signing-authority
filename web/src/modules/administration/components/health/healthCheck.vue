@@ -1,14 +1,16 @@
 <template>
   <v-container>
+    <v-card class="mt-5 default">
+<v-card-title>Health Check</v-card-title>
+          <v-card-text>
     <health-object
-      title = "Database"
-      :status = appHealth.database
+      v-for="(component,idx) in appHealth"
+      :key="idx"
+      :title = component.name
+      :status = "component.status"
       ></health-object>
-      <health-object
-      title = "Department API"
-      :status = appHealth.departmentAPI
-      ></health-object>
-
+</v-card-text>
+    </v-card>
   </v-container>
 
 </template>
