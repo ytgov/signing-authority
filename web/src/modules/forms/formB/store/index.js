@@ -1,6 +1,7 @@
 import { AUTHORITY_URL } from "@/urls";
 import axios from "axios";
 import _ from "lodash";
+import { getInstance } from "@/auth/auth0-plugin"
 
 const state = {
     formB: { employee: {}, department: {} }
@@ -46,7 +47,13 @@ const actions = {
             }).catch(() => {
                 //commit("setFormB", {});
             });
-    }
+    },
+    async getFormBList( state, dept_id ) {
+        const auth = getInstance()
+        const resp = await auth.get(`${AUTHORITY_URL}/department/${dept_id}`)
+        return resp.data.data
+    },
+
 };
 
 const mutations = {

@@ -27,10 +27,10 @@
           <department-form-a-list
             :search="search" />
         </v-col>
-        <!-- <v-col>
+        <v-col>
           <department-form-b-list
             :search="search" />
-        </v-col> -->
+        </v-col>
       </v-row>
     </BaseCard>
   </v-container>
@@ -40,12 +40,12 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import departmentFormAList from '../components/departmentFormAList';
-// import departmentFormBList from '../components/departmentFormBList';
+import departmentFormBList from '../components/departmentFormBList';
 
 export default {
   components: {
     departmentFormAList,
-    // departmentFormBList
+    departmentFormBList
      },
   name: "DepartmentDetail",
   data: () => ({

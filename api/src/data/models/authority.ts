@@ -11,6 +11,7 @@ export interface Authority extends MongoEntity {
     department_descr: String
     program: string;
     title: string;
+    employee_name: string;
     issue_date: Date;
     expiry_date?: Date;
     archive_date?: Date;

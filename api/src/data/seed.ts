@@ -131,6 +131,7 @@ export async function Seed(storage: Storage) {
         department_code: "55",
         department_descr: "Highways and Public Works",
         employee_id: emp1?._id,
+        employee_name: `${emp1?.first_name} ${emp1?.last_name}` as string,
         issue_date: new Date(),
         title: "Manager",
         program: "ICT",
