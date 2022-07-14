@@ -25,19 +25,6 @@
       <v-row>
         <v-col>
           <v-card class="default">
-            <v-card-title>Form A Authorizations</v-card-title>
-            <v-card-text>
-              <v-data-table
-                :headers="[{ text: 'Position', value: 'position' }]"
-                :search="search"
-                :items="item.form_a_active"
-              >
-              </v-data-table
-            ></v-card-text>
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card class="default">
             <v-card-title>Active Form B Authorizations</v-card-title>
             <v-card-text>
               <v-data-table

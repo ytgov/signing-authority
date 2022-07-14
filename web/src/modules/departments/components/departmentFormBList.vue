@@ -4,13 +4,15 @@
             <v-card-text>
               <v-row>
                 <v-col>
-                  <v-card>
+                  <v-card
+                  :to="formBLink">
                     <v-card-text class="text-h4 mb-0 pb-0">{{activeFormB}}</v-card-text>
                     <v-card-text class="mt-0 pt-0">Active</v-card-text>
                   </v-card>
                 </v-col>
                 <v-col>
-                  <v-card>
+                  <v-card
+                  :to="formBLink">
                     <v-card-text class="text-h4 mb-0 pb-0">{{actingFormB}}</v-card-text>
                     <v-card-text class="mt-0 pt-0">Acting</v-card-text>
                   </v-card>

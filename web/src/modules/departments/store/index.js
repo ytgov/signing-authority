@@ -1,4 +1,4 @@
-import { DEPARTMENT_URL } from "@/urls";
+import { DEPARTMENT_URL, FORMA_URL } from "@/urls";
 import { secureGet } from "@/store/jwt"
 
 const state = {
@@ -43,12 +43,11 @@ const actions = {
         console.log (dept)
         return dept[0];
     },
-    // async getFormAList(store, { id }) {
-    //     console.log(`${FORMA_URL}/department/${id}`)
-    //     return secureGet(`${FORMA_URL}/department/${id}`).then(resp => {
-    //         return resp.data.data
-    //     })
-    // },
+    async getFormAList(store, { id }) {
+        return secureGet(`${FORMA_URL}/department/${id}`).then(resp => {
+            return resp.data.data
+        })
+    },
     // async getFormBList(store, { id }) {
     //     return secureGet(`${AUTHORITY_URL}/${id}/form-b`).then(resp => {
     //         return resp.data.data
