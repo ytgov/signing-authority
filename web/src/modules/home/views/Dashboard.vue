@@ -39,6 +39,8 @@
               item-text="display_name"
               item-value="dept"
               @change="selectDepartment"
+              :search-input.sync="searchTerm"
+              @keyup.enter="shortCutSelectDepartment(searchTerm)"
             >
             </v-autocomplete>
 
@@ -113,6 +115,7 @@ export default {
     drawer: null,
     searchResults: [],
     loading: false,
+    searchTerm : null
   }),
   computed: {
     ...mapState("department", ["departments"]),
@@ -143,6 +146,11 @@ export default {
     },
     selectEmployee(item) {
       this.$router.push(`/employee/${item._id}`);
+    },
+    shortCutSelectDepartment (searchInput) {
+      if (this.departments.filter(department => (department.dept === searchInput)).length === 1) {
+        this.selectDepartment(searchInput);
+      }
     },
     selectDepartment(item) {
       this.$router.push(`/departments/${item}`);
