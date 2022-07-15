@@ -1,5 +1,9 @@
 <template>
   <v-card class="default">
+
+    <!--  RA: TODO
+            move summary data to another component
+    -->
             <v-card-title>Active Form B Authorizations</v-card-title>
             <v-card-text>
               <v-row>
@@ -69,14 +73,14 @@ export default {
  mounted: async function () {
     this.selectedId = this.$route.params.id;
     console.log(`Department code: ${this.$route.params.id}`)
-    this.formALink = `/departments/${this.selectedId}/form-b`;
+    this.formBLink = `/departments/${this.selectedId}/form-b`;
     this.formBItems = await this.getFormBList(this.$route.params.id)
  },
  methods: {
   openFormB() {
       this.$router.push({ name: 'DepartmentFormBList', params: { "id": this.selectedId }})
     },
-  ...mapActions("forms/formB", ["getFormBList"])
+  ...mapActions("de/formB", ["getFormBList"])
  }
 
 }

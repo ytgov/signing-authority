@@ -2,6 +2,9 @@
   <v-card class="default">
   <v-card-title>Form A Authorizations</v-card-title>
   <v-card-text>
+    <!--  RA: TODO
+            move summary data to another component
+    -->
      <v-row class=pb-5>
         <v-col>
           <v-card

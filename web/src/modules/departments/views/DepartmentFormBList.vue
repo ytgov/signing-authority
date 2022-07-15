@@ -24,7 +24,10 @@
 
       <v-row>
         <v-col>
-          <v-card class="default">
+          <department-form-b-list
+            :search="search">
+          </department-form-b-list>
+          <!-- <v-card class="default">
             <v-card-title>Active Form B Authorizations</v-card-title>
             <v-card-text>
               <v-data-table
@@ -56,7 +59,7 @@
                 <router-link to="/departments/07/form-b">View all</router-link>
               </div>
             </v-card-text>
-          </v-card>
+          </v-card> -->
         </v-col>
       </v-row>
     </BaseCard>
@@ -66,8 +69,10 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import departmentFormBList from '../components/departmentFormBList.vue';
 
 export default {
+  components: { departmentFormBList },
   name: "DepartmentDetail",
   data: () => ({
     search: "",

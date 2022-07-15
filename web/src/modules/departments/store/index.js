@@ -1,4 +1,4 @@
-import { DEPARTMENT_URL, FORMA_URL } from "@/urls";
+import { DEPARTMENT_URL, FORMA_URL, AUTHORITY_URL } from "@/urls";
 import { secureGet } from "@/store/jwt"
 
 const state = {
@@ -48,11 +48,11 @@ const actions = {
             return resp.data.data
         })
     },
-    // async getFormBList(store, { id }) {
-    //     return secureGet(`${AUTHORITY_URL}/${id}/form-b`).then(resp => {
-    //         return resp.data.data
-    //     })
-    // },
+    async getFormBList(store, { id }) {
+        return secureGet(`${AUTHORITY_URL}/${id}/form-b`).then(resp => {
+            return resp.data.data
+        })
+    },
 };
 
 const mutations = {
