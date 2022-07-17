@@ -30,10 +30,10 @@ export default {
       if (authService.isLoading === false) {
         window.clearInterval(i);
 
-        //RA: I think this is forcing the user to always retun to the dashboard
-        // if (authService.isAuthenticated) {
-        //   this.$router.push("/dashboard");
-        // } else this.$router.push("/sign-in");
+        // RA: I think this is forcing the user to always return to the dashboard
+        if (authService.isAuthenticated) {
+          this.$router.push("/dashboard");
+        } else this.$router.push("/sign-in");
       }
     }, 1000);
   },
