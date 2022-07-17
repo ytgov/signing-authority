@@ -2,25 +2,11 @@
   <v-card class="default">
   <v-card-title>Form A Authorizations</v-card-title>
   <v-card-text>
-    <!--  RA: TODO
-            move summary data to another component
-    -->
-     <v-row class=pb-5>
-        <v-col>
-          <v-card
-          :to="formALink">
-            <v-card-text class="text-h4 mb-0 pb-0">{{activeFormA.length}}</v-card-text>
-            <v-card-text class="mt-0 pt-0">Active Form A's</v-card-text>
-          </v-card>
-        </v-col>
-        <v-col>
-          <v-card
-           :to="formALink">
-            <v-card-text class="text-h4 mb-0 pb-0">{{positions.length}}</v-card-text>
-            <v-card-text class="mt-0 pt-0">Positions</v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+
+    <department-form-a-summary
+      :positionCount="positions.length"
+      :activeFormACount="activeFormA.length" />
+
     <v-data-table
       :headers="[
                 //{ text: 'Department', value: 'department' },
@@ -51,11 +37,15 @@
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
+import departmentFormASummary from "../components/departmentFormASummary.vue"
 // import createFormAButton from '../../forms/formA/components/createFormAButton.vue';
 
 export default {
   // components: { createFormAButton },
  name: "FormAList",
+ components: {
+  departmentFormASummary
+ },
  props: {
   // formAItems: {
   //  type: Array,

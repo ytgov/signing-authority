@@ -4,6 +4,7 @@ export * from "./file-service";
 export * from "./generic-service";
 export * from "./quest-service";
 export * from "./user-service";
+export * from "./department-service";
 
 export interface QueryStatement {
     field: string;

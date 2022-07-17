@@ -110,7 +110,7 @@ formARouter.get("/:id",
     let db = req.store.FormA as GenericService<FormA>;
 
     let department_code = req.params.department
-    console.log (`Asking for a count of dept ${department_code}`)
+    // console.log (`Asking for a count of dept ${department_code}`)
     let pipeline =
       [
         { $match: {"department_code": department_code}},

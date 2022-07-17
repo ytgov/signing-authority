@@ -1,5 +1,6 @@
 export interface Department
 {
-  department: string,
-  name: string
+  dept: String,
+  descr: String,
+  display_name: String
 }
