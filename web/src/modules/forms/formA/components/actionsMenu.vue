@@ -23,8 +23,9 @@
             <v-list-item-title>Upload Signed PDF</v-list-item-title>
           </v-list-item>
 
-          <v-list-item @click="archiveClick">
-            <v-list-item-title>Archive</v-list-item-title>
+          <v-list-item>
+            <archive-form-a> </archive-form-a>
+            <!-- <v-list-item-title>Archive</v-list-item-title> -->
           </v-list-item>
 
           <v-list-item @click="archiveClick">
@@ -35,7 +36,9 @@
   </div>
 </template>
 <script>
+import archiveFormA from './archiveFormA.vue';
 export default {
+  components: { archiveFormA },
   name: 'actionsMenu',
   props: {
     formA: {
