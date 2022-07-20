@@ -50,6 +50,32 @@ const actions = {
                 commit("setFormA", {});
             });
     },
+    async archiveFormA({ commit,state }, archiveDetails) {
+        const auth = getInstance()
+        // const params = {
+        //     archive: true
+        // };
+
+        let body = _.clone(state.formA);
+        console.log("Clone state...")
+        console.table(body)
+        body.archived = archiveDetails;
+        delete body._id;
+
+        console.log(`Archiving FormA: ${state.formA._id}`)
+        console.log (body)
+        return auth.put(`${FORMA_URL}/${state.formA._id}`, body)
+            .then(resp => {
+                commit("setFormA",{});
+                console.log("got a 200 response")
+                return resp.code
+
+            }).catch(() => {
+
+                console.log(`Error archiving form A ${state.formA._id}`)
+                commit("setFormA", {});
+            });
+    },
     async downloadFormA(state, id) {
       const auth = getInstance()
         return auth.get(`${FORMA_URL}/${id}/pdf`)

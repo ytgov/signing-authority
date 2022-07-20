@@ -1,14 +1,11 @@
 import express, { request, Request, Response } from "express";
-import { param } from "express-validator";
+import { body, param } from "express-validator";
 import { Storage } from "../data";
 
 import moment from "moment";
 import _ from "lodash";
-
 import { uploadsRouter } from "./uploads"
 import { generatePDF } from "../utils/pdf-generator";
-
-
 import { ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 
@@ -16,18 +13,14 @@ import { FormA } from "src/data/models";
 import { ObjectId } from "mongodb";
 
 import { operationalRestrictions } from "../data/models"
-
-
 import { ExpressHandlebars } from "express-handlebars";
-
 export const formARouter = express.Router();
 
+import { checkJwt, loadUser } from "../middleware/authz.middleware";
 
-import fs from "fs"
-import e from "express";
-import { pipeline } from "nodemailer/lib/xoauth2";
 
 // formARouter.use('/uploads', uploadsRouter)
+
 formARouter.get("/operational-restrictions", (req:Request, res:Response) => {
   return res.json(operationalRestrictions)
 })
@@ -156,18 +149,35 @@ formARouter.get("/:id",
 //   });
 
 formARouter.put("/:id",
-  [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
+  [param("id").isMongoId().notEmpty()], ReturnValidationErrors, checkJwt, loadUser,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let db = req.store.FormA as GenericService<FormA>;
 
+
+    console.log(req.body)
+    if (req.query.archive=="true") {
+      console.log (`Archiving ${req.body.archived.reason}`)
+    }
+
+    /* ----------------- Form A Version History ------------------------------
+    //Eventually something like this should be done to keep version history
+    let oldItem = await loadSingleAuthority(req, id);
+    req.body.revision = []
+    req.body.revision.push({
+      revisedAt: new Date(),
+      revisedBy: req.user.email,
+      revisedBySub: req.user.sub,
+      previousVersion: oldItem
+    })
+    */
     // if (req.body.department_id)
     //   req.body.department_id = new ObjectId(req.body.department_id);
 
     //RA: this should be the ID of the person creating the FormA I think
     if (req.body.employee_id)
       req.body.employee_id = new ObjectId(req.body.employee_id);
-    console.log(req.body.authority_lines[0])
+    // console.log(req.body.authority_lines[0])
     for (let line of req.body.authority_lines) {
       let account = `${line.account.replace(/[^0-9]/g, "")}*************************`;
       line.dept = account.substring(0, 2);

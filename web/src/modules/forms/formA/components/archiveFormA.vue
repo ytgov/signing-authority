@@ -22,7 +22,7 @@
 
           <v-card-text class="pt-15 text-right">
             <v-text-field
-              v-model="formA.archived_by_department"
+              v-model="archiveDetails.reason"
               dense
               outlined
               label="Reason for archiving"
@@ -65,8 +65,8 @@ export default {
   methods: {
     ...mapActions("authority/formA", ["archiveFormA"]),
 
-    doArchive () {
-      this.archiveFormA(this.archiveDetails);
+    doArchive: async function () {
+      await this.archiveFormA(this.archiveDetails);
       this.$router.push(`/departments/${this.deptId}`);
     }
   },
