@@ -15,9 +15,6 @@ export interface FormA extends MongoEntity {
     by: String; //email address
     sub: String; //sub value from the JWT token
   }
-  archive_date?: Date;
-  archive_reason?: string;
-
   reviewed_by_department: boolean;
   reviewed_by_person?: String
   reviewed_by_date?: Date;
