@@ -39,7 +39,7 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
         sub = resp.data.sub;
 
         let u = await db.getBySub(resp.data.sub);
-        console.log(email, sub);
+        //console.log(email, sub);
 
         if (u) {
           req.user = { ...req.user, ...u };
