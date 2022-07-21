@@ -18,8 +18,9 @@ export const formARouter = express.Router();
 
 import { checkJwt, loadUser } from "../middleware/authz.middleware";
 
-
 // formARouter.use('/uploads', uploadsRouter)
+
+
 
 formARouter.get("/operational-restrictions", (req:Request, res:Response) => {
   return res.json(operationalRestrictions)
@@ -101,7 +102,6 @@ formARouter.get("/:id",
 
   formARouter.get ("/department/:department/count", async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<FormA>;
-
     let department_code = req.params.department
     // console.log (`Asking for a count of dept ${department_code}`)
     let pipeline =
@@ -116,10 +116,7 @@ formARouter.get("/:id",
           }
         }
       ]
-
     let count = await db.aggregate(pipeline)
-
-
     // let count = await db.count({"department_code": department_code})
     if (count.length == 1)
       return res.json( count[0] );
@@ -155,9 +152,12 @@ formARouter.put("/:id",
     let db = req.store.FormA as GenericService<FormA>;
 
 
-    console.log(req.body)
+    // If archiving a form note the details
     if (req.query.archive=="true") {
-      console.log (`Archiving ${req.body.archived.reason}`)
+      req.body.archive.by = req.user.email
+      req.body.archive.sub = req.user.sub
+      req.body.archive.date = new (Date)
+
     }
 
     /* ----------------- Form A Version History ------------------------------

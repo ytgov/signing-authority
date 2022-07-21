@@ -57,12 +57,11 @@ const actions = {
     // };
 
     let body = _.clone(state.formA);
-    console.log("Clone state...")
-    console.table(body)
-    body.archived = archiveDetails;
+
+    body.archive = archiveDetails;
     delete body._id;
 
-    return auth.put(`${FORMA_URL}/${state.formA._id}`, body)
+    return auth.put(`${FORMA_URL}/${state.formA._id}/?archive=true`, body)
         .then(resp => {
             commit("setFormA",{});
             console.log("got a 200 response")

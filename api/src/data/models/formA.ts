@@ -9,6 +9,12 @@ export interface FormA extends MongoEntity {
   department_descr: string
   program_branch: string;
   issue_date: Date;
+  archive?: {
+    date: Date,
+    reason: String;
+    by: String; //email address
+    sub: String; //sub value from the JWT token
+  }
   archive_date?: Date;
   archive_reason?: string;
 
