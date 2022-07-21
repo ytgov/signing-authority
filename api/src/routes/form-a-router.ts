@@ -151,6 +151,8 @@ formARouter.put("/:id",
     const { id } = req.params;
     let db = req.store.FormA as GenericService<FormA>;
 
+    req.body.updated_on = new Date();
+    req.body.updated_by = req.user.email;
 
     // If archiving a form note the details
     if (req.query.archive=="true") {
@@ -208,11 +210,14 @@ formARouter.put("/:id",
   });
 
 formARouter.post("/",
+  checkJwt, loadUser,
   async (req: Request, res: Response) => {
     // console.log(`In post FormA`)
     // console.log(req.body)
     let db = req.store.FormA as GenericService<FormA>;
 
+    req.body.created_on= new Date();
+    req.body.created_by = req.user.email;
 
     // if (req.body.department_id)
     //   req.body.department_id = new ObjectId(req.body.department_id);

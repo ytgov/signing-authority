@@ -15,6 +15,8 @@ export interface FormA extends MongoEntity {
     by: String; //email address
     sub: String; //sub value from the JWT token
   }
+  updated_by?: String //email address
+  updated_on?: Date;
   reviewed_by_department: boolean;
   reviewed_by_person?: String
   reviewed_by_date?: Date;
@@ -25,9 +27,9 @@ export interface FormA extends MongoEntity {
 
   // used in DTO only
   // department?: Department;
-  employee?: Employee;
-  issue_date_display?: string;
+  issue_date_display?: string; //the date the form is approved and goes into effect
   created_by: string;
+  created_on?: Date; // the date the file was origianlly created
 
 }
 
