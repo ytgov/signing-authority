@@ -209,8 +209,8 @@ formARouter.put("/:id",
 
 formARouter.post("/",
   async (req: Request, res: Response) => {
-    console.log(`In post FormA`)
-    console.log(req.body)
+    // console.log(`In post FormA`)
+    // console.log(req.body)
     let db = req.store.FormA as GenericService<FormA>;
 
 

@@ -28,7 +28,7 @@ departmentRouter.get('/', async (req: Request, res: Response) => {
       d.form_a_count = response.data.position_count
     })
     .catch((error) => {
-      console.error (`Could not find Form B count for ${d.dept} - ${d.descr}`)
+      // console.error (`Could not find Form B count for ${d.dept} - ${d.descr}`)
       d.form_a_count = 0
     })
     await axios.get(formBCountURL)
@@ -36,7 +36,7 @@ departmentRouter.get('/', async (req: Request, res: Response) => {
       d.form_b_count = response.data.position_count
     })
     .catch((error) => {
-      console.error (`Could not find Form A count for ${d.dept} - ${d.descr}`)
+      // console.error (`Could not find Form A count for ${d.dept} - ${d.descr}`)
       d.form_b_count = 0
     })
     d.form_b_count = Math.floor(Math.random() * 1000);
