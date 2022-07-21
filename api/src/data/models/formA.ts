@@ -27,6 +27,7 @@ export interface FormA extends MongoEntity {
 
   // used in DTO only
   // department?: Department;
+  employee?: Employee;
   issue_date_display?: string; //the date the form is approved and goes into effect
   created_by: string;
   created_on?: Date; // the date the file was origianlly created
