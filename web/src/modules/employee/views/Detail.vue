@@ -1,6 +1,14 @@
 <template>
-  <div>
-    <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+  <v-container fluid class="down-top-padding">
+    <BaseBreadcrumb
+      :title="page.title"
+      :icon="page.icon"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template v-slot:right>
+        <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
+      </template>
+    </BaseBreadcrumb>
     <h1>
       {{ employee.first_name }} {{ employee.last_name }}
       <small> ({{ employee.ynet_id }})</small>
@@ -109,7 +117,7 @@
         </div>
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -139,7 +147,9 @@ export default {
     },
   },
   watch: {},
-  data: () => ({}),
+  data: () => ({
+    page: {title: "Employee"}
+  }),
   async mounted() {
     this.loadEmployee(this.$route.params.id);
 

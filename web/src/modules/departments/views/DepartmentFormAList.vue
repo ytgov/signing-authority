@@ -20,7 +20,7 @@
           hide-details
         ></v-text-field>
         <v-select
-        class="ml-5"
+          class="ml-5"
           :items="statusOptions"
           label="Status"
           single-line
@@ -28,8 +28,9 @@
         ></v-select>
       </template>
       <template v-slot:right>
-       <create-form-a-button
-        :department="getDepartmentDetails($route.params.id)" ></create-form-a-button>
+        <create-form-a-button
+          :department="getDepartmentDetails($route.params.id)"
+        ></create-form-a-button>
       </template>
 
       <v-row>
@@ -43,8 +44,7 @@
                   { text: 'Position', value: 'position' },
                   { text: 'Issued', value: 'issue_date' },
                   { text: 'Reviewed', value: 'reviewed_by_department' },
-
-                  ]"
+                ]"
                 :search="search"
                 :items="formAItems"
                 @click:row="openFormA"
@@ -61,8 +61,8 @@
 
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
-import CreateFormAButton from '@/modules/forms/formA/components/createFormAButton';
-import createFormAButton from '../../forms/formA/components/createFormAButton.vue';
+import CreateFormAButton from "@/modules/forms/formA/components/createFormAButton";
+import createFormAButton from "../../forms/formA/components/createFormAButton.vue";
 
 export default {
   components: { createFormAButton },
@@ -84,11 +84,6 @@ export default {
         to: "/dashboard",
       },
       {
-        text: "Departments",
-        to: "/departments",
-        exact: true,
-      },
-      {
         text: "",
         to: "",
         exact: true,
@@ -101,43 +96,37 @@ export default {
     statusOptions: ["Active", "Inactive"],
     formAItems: [],
     item: {},
-    selectedId: null,
+    departmentId: null,
   }),
   mounted: async function () {
-    this.selectedId = this.$route.params.id;
-    this.item = await this.getDepartment({ id: this.selectedId });
+    this.departmentId = this.$route.params.departmentId;
+    this.item = await this.getDepartment({ id: this.departmentId });
 
-    this.breadcrumbs[2].to = `/departments/${this.selectedId}`;
-    this.breadcrumbs[2].text = this.item.descr;
+    this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
+    this.breadcrumbs[1].text = this.item.descr;
 
     //this.items = this.loadList();
     this.loadFormA();
   },
   computed: {
     ...mapState("department", ["departments"]),
-    ...mapGetters ("department",[
-      "getDepartmentDetails"
-    ])
+    ...mapGetters("department", ["getDepartmentDetails"]),
   },
-
   methods: {
     ...mapActions("department", ["getDepartment", "getFormAList"]),
-    openDepartment(item) {
-      this.$router.push(`/departments/${item.dept}`);
-    },
     async loadList() {
-      /* this.item = await this.getDepartment({ id: this.selectedId });
+      /* this.item = await this.getDepartment({ id: this.departmentId });
 
       if (this.item && this.item.dept) {
         this.breadcrumbs[2].text = this.item.descr;
       } */
     },
     async loadFormA() {
-      this.formAItems = await this.getFormAList({ id: this.selectedId });
+      this.formAItems = await this.getFormAList({ id: this.departmentId });
       this.loadingFormA = false;
     },
     openFormA(item) {
-      this.$router.push(`/form-a/${item._id}`)
+      this.$router.push(`/departments/${this.departmentId}/form-a/${item._id}`);
     },
   },
 };

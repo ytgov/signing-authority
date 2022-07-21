@@ -24,12 +24,10 @@
 
       <v-row>
         <v-col>
-          <department-form-a-list
-            :search="search" />
+          <department-form-a-list :search="search" />
         </v-col>
         <v-col>
-          <department-form-b-list
-            :search="search" />
+          <department-form-b-list :search="search" />
         </v-col>
       </v-row>
     </BaseCard>
@@ -39,14 +37,14 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import departmentFormAList from '../components/departmentFormAList';
-import departmentFormBList from '../components/departmentFormBList';
+import departmentFormAList from "../components/departmentFormAList";
+import departmentFormBList from "../components/departmentFormBList";
 
 export default {
   components: {
     departmentFormAList,
-    departmentFormBList
-     },
+    departmentFormBList,
+  },
   name: "DepartmentDetail",
   data: () => ({
     search: "",
@@ -62,45 +60,31 @@ export default {
         to: "/dashboard",
       },
       {
-        text: "Departments",
-        to: "/departments",
-        exact: true,
-      },
-      {
         text: "",
         disabled: true,
       },
     ],
-
-
+    departmentId: "",
     item: {},
     loadingFormB: true,
-
-    selectedId: null,
   }),
   mounted: async function () {
-    this.deptId = this.$route.params.id;
-    this.loadList()
-    // this.loadList();
+    this.departmentId = this.$route.params.departmentId;
+    this.loadList();
   },
   computed: {
     ...mapState("department", ["departments"]),
-
-
   },
   methods: {
-    ...mapActions("department", [
-      "getDepartment",
-
-    ]),
+    ...mapActions("department", ["getDepartment"]),
 
     // openDepartment(item) {
     //   this.$router.push(`/departments/${item.dept}`);
     // },
     async loadList() {
-      this.item = await this.getDepartment({ id: this.deptId });
+      this.item = await this.getDepartment({ id: this.departmentId });
       if (this.item && this.item.dept) {
-        this.breadcrumbs[2].text = this.item.descr;
+        this.breadcrumbs[1].text = this.item.descr;
         this.page.title = this.item.descr;
         // this.loadFormA();
         // this.loadFormB();

@@ -9,88 +9,88 @@ const state = {
 };
 
 const actions = {
-    async loadFormA({ commit }, id) {
-    //   console.log(`FormA ID: ${id}`)
-      const auth = getInstance()
-      return auth.get(`${FORMA_URL}/${id}`)
-        .then(resp => {
-            commit("setFormA", resp.data.data);
-            return resp.data.data
+    async loadFormA({ commit }, { id }) {
+           console.log(`FormA ID: ${id}`)
+        const auth = getInstance()
+        return auth.get(`${FORMA_URL}/${id}`)
+            .then(resp => {
+                commit("setFormA", resp.data.data);
+                return resp.data.data
 
-        }).catch(() => {
-            commit("setFormA", {});
-        });
-  },
-  async createFormA({ commit }, item) {
-    const auth = getInstance()
-    // console.log(item)
+            }).catch(() => {
+                commit("setFormA", {});
+            });
+    },
+    async createFormA({ commit }, item) {
+        const auth = getInstance()
+        // console.log(item)
 
-    return auth.post(`${FORMA_URL}`, item)
-        .then(resp => {
-            commit("setFormA", resp.data.data);
-            return resp.data.data
+        return auth.post(`${FORMA_URL}`, item)
+            .then(resp => {
+                commit("setFormA", resp.data.data);
+                return resp.data.data
 
-        }).catch(() => {
-            commit("setFormA", {});
-        });
-  },
-  async saveFormA({ commit }, item) {
-    const auth = getInstance()
-      let body = _.clone(item);
-      delete body.employee;
-      delete body.department;
-      delete body._id;
+            }).catch(() => {
+                commit("setFormA", {});
+            });
+    },
+    async saveFormA({ commit }, item) {
+        const auth = getInstance()
+        let body = _.clone(item);
+        delete body.employee;
+        delete body.department;
+        delete body._id;
 
-      return auth.put(`${FORMA_URL}/${item._id}`, body)
-          .then(resp => {
-              commit("setFormA", resp.data.data);
-              return resp.data.data
+        return auth.put(`${FORMA_URL}/${item._id}`, body)
+            .then(resp => {
+                commit("setFormA", resp.data.data);
+                return resp.data.data
 
-          }).catch(() => {
-              commit("setFormA", {});
-          });
-  },
-  async archiveFormA({ commit,state }, archiveDetails) {
-    const auth = getInstance()
-    // const params = {
-    //     archive: true
-    // };
+            }).catch(() => {
+                commit("setFormA", {});
+            });
+    },
+    async archiveFormA({ commit, state }, archiveDetails) {
+        const auth = getInstance()
+        // const params = {
+        //     archive: true
+        // };
 
-    let body = _.clone(state.formA);
+        let body = _.clone(state.formA);
 
-    body.archive = archiveDetails;
-    delete body._id;
+        body.archive = archiveDetails;
+        delete body._id;
 
-    return auth.put(`${FORMA_URL}/${state.formA._id}/?archive=true`, body)
-        .then(resp => {
-            commit("setFormA",{});
-            console.log("got a 200 response")
-            return resp.code
+        return auth.put(`${FORMA_URL}/${state.formA._id}/?archive=true`, body)
+            .then(resp => {
+                commit("setFormA", {});
+                console.log("got a 200 response")
+                return resp.code
 
-        }).catch(() => {
+            }).catch(() => {
 
-            console.log(`Error archiving form A ${state.formA._id}`)
-            commit("setFormA", {});
-        });
-  },
-  async downloadFormA(state, id) {
-      const auth = getInstance()
+                console.log(`Error archiving form A ${state.formA._id}`)
+                commit("setFormA", {});
+            });
+    },
+    async downloadFormA(state, id) {
+        const auth = getInstance()
         return auth.get(`${FORMA_URL}/${id}/pdf`)
-          .then(resp => {
-              //commit("setFormB", resp.data.data);
-            //   console.log(resp)
-              return resp.data.data
+            .then(resp => {
+                //commit("setFormB", resp.data.data);
+                //   console.log(resp)
+                return resp.data.data
 
-          }).catch(() => {
-              //commit("setFormB", {});
-          });
-  },
+            }).catch(() => {
+                //commit("setFormB", {});
+            });
+    },
     // Department Sepcific FormAs
-  async getDepartmentFormAList(state, department_code){
-      const auth = getInstance()
-      const a = await auth.get(`${FORMA_URL}/department/${department_code}`)
-      return a.data.data
-  }
+    async getDepartmentFormAList(state, department_code) {
+        const auth = getInstance()
+        const a = await auth.get(`${FORMA_URL}/department/${department_code}`)
+        return a.data.data
+    }
 };
 
 const mutations = {

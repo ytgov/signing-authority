@@ -22,54 +22,14 @@
       </template>
       <template v-slot:right> </template>
 
-      <v-row>
-        <v-col>
-          <department-form-b-list
-            :search="search">
-          </department-form-b-list>
-          <!-- <v-card class="default">
-            <v-card-title>Active Form B Authorizations</v-card-title>
-            <v-card-text>
-              <v-data-table
-                :headers="[
-                  { text: 'Employee', value: 'name' },
-                  { text: 'Position', value: 'position' },
-                ]"
-                :search="search"
-                :items="item.form_b_active"
-              >
-              </v-data-table>
-
-              <v-row>
-                <v-col>
-                  <v-card class="mt-5">
-                    <v-card-text class="text-h4 mb-0 pb-0">123</v-card-text>
-                    <v-card-text class="mt-0 pt-0">Active</v-card-text>
-                  </v-card>
-                </v-col>
-                <v-col>
-                  <v-card class="mt-5">
-                    <v-card-text class="text-h4 mb-0 pb-0">123</v-card-text>
-                    <v-card-text class="mt-0 pt-0">Acting</v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-
-              <div class="mt-4 ml-2">
-                <router-link to="/departments/07/form-b">View all</router-link>
-              </div>
-            </v-card-text>
-          </v-card> -->
-        </v-col>
-      </v-row>
+      <department-form-b-list :search="search"> </department-form-b-list>
     </BaseCard>
   </v-container>
 </template>
 
-
 <script>
 import { mapActions, mapState } from "vuex";
-import departmentFormBList from '../components/departmentFormBList.vue';
+import departmentFormBList from "../components/departmentFormBList.vue";
 
 export default {
   components: { departmentFormBList },
@@ -88,11 +48,6 @@ export default {
         to: "/dashboard",
       },
       {
-        text: "Departments",
-        to: "/departments",
-        exact: true,
-      },
-      {
         text: "",
         to: "",
         exact: true,
@@ -103,14 +58,14 @@ export default {
       },
     ],
     item: {},
-    selectedId: null,
+    departmentId: "",
   }),
   mounted: async function () {
-    this.selectedId = this.$route.params.id;
-    this.item = await this.getDepartment({ id: this.selectedId });
+    this.departmentId = this.$route.params.departmentId;
+    this.item = await this.getDepartment({ id: this.departmentId });
 
-    this.breadcrumbs[2].to = `/departments/${this.selectedId}`;
-    this.breadcrumbs[2].text = this.item.descr;
+    this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
+    this.breadcrumbs[1].text = this.item.descr;
 
     //this.items = this.loadList();
   },
@@ -124,7 +79,7 @@ export default {
       this.$router.push(`/departments/${item.dept}`);
     },
     async loadList() {
-      /* this.item = await this.getDepartment({ id: this.selectedId });
+      /* this.item = await this.getDepartment({ id: this.departmentId });
 
       if (this.item && this.item.dept) {
         this.breadcrumbs[2].text = this.item.descr;

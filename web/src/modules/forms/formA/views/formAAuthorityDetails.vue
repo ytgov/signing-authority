@@ -1,15 +1,16 @@
 
 <template>
   <v-container fluid class="down-top-padding">
-    <!-- <BaseBreadcrumb
+    <BaseBreadcrumb
       :title="page.title"
       :icon="page.icon"
       :breadcrumbs="breadcrumbs"
     >
-      <template v-slot:right> -->
+      <template v-slot:right>
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
-      <!-- </template>
-    </BaseBreadcrumb> -->
+      </template>
+    </BaseBreadcrumb>
+
     <v-row>
       <v-col>
         <h1>Delegation of Financial Signing Authority - FORM A</h1>
@@ -42,7 +43,9 @@
               >Close</v-btn
             > -->
             <v-btn
-              @click="$router.push(`/departments/${formA.department_code}/form-a`);"
+              @click="
+                $router.push(`/departments/${formA.department_code}/form-a`)
+              "
               color="#7A9A01"
               >Close</v-btn
             >
@@ -60,7 +63,7 @@
 // import { AUTHORITY_URL} from "@/urls"
 import { mapActions, mapState } from "vuex";
 import formATable from "../components/formATable.vue";
-import ActionsMenu from '../components/actionsMenu.vue';
+import ActionsMenu from "../components/actionsMenu.vue";
 
 // import uploadFormModal from "../components/uploadFormModal.vue"
 // import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
@@ -77,17 +80,12 @@ export default {
     // id: "62b7dc1177a03a5a69223007",
     loading: false,
     page: {
-      title: "Departments",
+      title: "",
     },
     breadcrumbs: [
       {
         text: "Signing Authorities Home",
         to: "/dashboard",
-      },
-      {
-        text: "Departments",
-        to: "/departments",
-        exact: true,
       },
       {
         text: "",
@@ -108,34 +106,28 @@ export default {
 
     authority: {},
     showUpload: false,
-
-
   }),
   computed: {
     ...mapState("department", ["departments"]),
     ...mapState("authority/formA", ["formA"]),
-    // ...mapGetters("authority/formB", ["formB"]),
   },
   async mounted() {
-    // this.loadFormB(this.$route.params.id);
     this.id = this.$route.params.id;
-    // let departmentId = this.$route.params.departmentId;
-    // this.department = await this.getDepartment({ id: departmentId });
+    let departmentId = this.$route.params.departmentId;
+    this.department = await this.getDepartment({ id: departmentId });
 
-    // this.breadcrumbs[2].text = this.department.descr;
-    // this.breadcrumbs[2].to = `/departments/${departmentId}`;
-    // this.breadcrumbs[3].to = `/departments/${departmentId}/form-a`;
+    this.breadcrumbs[1].text = this.department.descr;
+    this.breadcrumbs[1].to = `/departments/${departmentId}`;
+    this.breadcrumbs[2].to = `/departments/${departmentId}/form-a`;
 
     // this.breadcrumbs[4].text = "Positions";
     //this.page.title = this.department.descr;
-    this.loadFormA(this.$route.params.id)
+    await this.loadFormA({ id: this.$route.params.formAId });
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
     // ...mapActions("authority/formB", ["loadFormB", "downloadFormB"]),
-    ...mapActions("authority/formA", [
-      "loadFormA",
-    ]),
+    ...mapActions("authority/formA", ["loadFormA"]),
     // editClick() {
     //   //TODO: this should check the state to determine if changes are allowed
     //   this.$router.push(`/form-a/${this.formA.id}/edit`);

@@ -28,7 +28,7 @@
           </v-card-text> </v-card
       ></v-col>
       <v-col>
-        <v-card class="mt-5" color="#fff2d5">
+        <v-card class="mt-5 pb-2" color="#fff2d5">
           <v-card-title>Authorities by Department</v-card-title>
           <v-card-text>
             <v-autocomplete
@@ -38,13 +38,14 @@
               :items="departments"
               item-text="display_name"
               item-value="dept"
+              hide-details
               @change="selectDepartment"
               :search-input.sync="searchTerm"
               @keyup.enter="shortCutSelectDepartment(searchTerm)"
             >
             </v-autocomplete>
 
-            <router-link to="/departments">View all</router-link>
+            <!-- <router-link to="/departments">View all</router-link> -->
           </v-card-text>
         </v-card></v-col
       >

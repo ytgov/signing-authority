@@ -1,26 +1,19 @@
-import formAroutes from '../formA/router';
+//import formAroutes from '../formA/router';
 import formBroutes from "../formB/router"
 
 const routes = [
   {
     path: "/form-b",
+    meta: { requiresAuth: true },
     component: () =>
       import("@/layouts/Layout.vue"),
     children: [
       ...formBroutes,
     ]
   },
-  {
-    path: "/form-a",
-    component: () =>
-      import("@/layouts/Layout.vue"),
-    children: [
-      ...formAroutes,
-    ]
-  },
-
  /*  {
     path: "/departments/:departmentId/form-a",
+    meta: { requiresAuth: true },
     component: () =>
       import("@/layouts/Layout.vue"),
     children: [

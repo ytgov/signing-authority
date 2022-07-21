@@ -4,7 +4,8 @@
     <v-card-text>
       <department-form-b-summary
         :actingCount="actingFormB"
-        :activeFormBCount="activeFormB" />
+        :activeFormBCount="activeFormB"
+      />
       <v-data-table
         class="mt-5"
         :headers="headers"
@@ -21,51 +22,51 @@
   </v-card>
 </template>
 <script>
-import {mapActions} from "vuex"
-import departmentFormBSummary from './departmentFormBSummary.vue';
+import { mapActions } from "vuex";
+import departmentFormBSummary from "./departmentFormBSummary.vue";
 export default {
   components: { departmentFormBSummary },
- name: "FormBList",
- props: {
-  search: {
-    type: String,
-    default: '',
-  }
- },
-
- data: ()=> ({
-  formALink: "",
-  formBItems: [],
-  loadingFormB: false,
-  headers:[
-                  { text: 'Employee', value: 'employee_name' },
-                  { text: 'Position', value: 'title' },
-                ]
- }),
- computed: {
-  formBLink () {
-    return { name: "DepartmentFormBList", params: { "id": this.$route.params.id } };
-  },
-  activeFormB () {
-    return this.formBItems.length
-  },
-  actingFormB () {
-    return 0
-  }
- },
- mounted: async function () {
-    this.selectedId = this.$route.params.id;
-    console.log(`Department code: ${this.$route.params.id}`)
-    this.formBLink = `/departments/${this.selectedId}/form-b`;
-    this.formBItems = await this.getFormBList(this.$route.params.id)
- },
- methods: {
-  openFormB() {
-      this.$router.push({ name: 'DepartmentFormBList', params: { "id": this.selectedId }})
+  name: "FormBList",
+  props: {
+    search: {
+      type: String,
+      default: "",
     },
-  ...mapActions("de/formB", ["getFormBList"])
- }
+  },
+  data: () => ({
+    departmentId: "",
+    formBLink: "",
+    formBItems: [],
+    loadingFormB: false,
+    headers: [
+      { text: "Employee", value: "employee_name" },
+      { text: "Position", value: "title" },
+    ],
+  }),
+  computed: {
+    activeFormB() {
+      console.log("FORMBITEmS", this.formBItems)
 
-}
+      return this.formBItems.length;
+    },
+    actingFormB() {
+      return 0;
+    },
+  },
+  mounted: async function () {
+    this.departmentId = this.$route.params.departmentId;
+    this.formBLink = `/departments/${this.departmentId}/form-b`;
+    this.formBItems = await this.getFormBList({id: this.departmentId});
+  },
+  methods: {
+    ...mapActions("department", ["getFormBList"]),
+    openFormB() {
+      this.$router.push({
+        name: "DepartmentFormBList",
+        params: { id: this.departmentId },
+      });
+    },
+  },
+};
 </script>
 
