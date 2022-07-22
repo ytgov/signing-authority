@@ -125,6 +125,7 @@ export default {
     },
 
     close() {
+      this.saveFormA(this.formA)
       this.$router.push(`/departments/${this.formA.department_code}/form-a/${this.formA._id}`);
     },
   },

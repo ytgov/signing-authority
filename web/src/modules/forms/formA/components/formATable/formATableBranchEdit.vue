@@ -9,7 +9,7 @@
   ></v-text-field>
 </template>
 <script>
-import { mapActions, mapState } from "vuex"
+import { mapMutations, mapState } from "vuex"
 export default {
   name: "formATableBranchEdit",
 
@@ -20,10 +20,10 @@ export default {
     ...mapState("authority/formA", ["formA"])
   },
   methods: {
-    ...mapActions("authority/formA", ["saveFormA"]),
+    ...mapMutations("authority/formA", ["setFormA"]),
 
      itemChanged() {
-      this.saveFormA(this.formA);
+      this.setFormA(this.formA);
     },
   }
 }

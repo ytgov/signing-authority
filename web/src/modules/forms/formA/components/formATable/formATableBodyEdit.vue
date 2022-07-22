@@ -127,7 +127,7 @@
     </tbody>
 </template>
 <script>
-import { mapActions, mapState } from "vuex"
+import { mapActions, mapState, mapMutations } from "vuex"
 export default {
   name: "formATable",
   // props: {
@@ -142,16 +142,15 @@ export default {
     ...mapState("authority/formA", ["formA"])
   },
   methods: {
-    ...mapActions("authority/formA", ["saveFormA"]),
     ...mapActions('authority', ["getOperationalRestictions"]),
-
+    ...mapMutations("authority/formA", ["setFormA"]),
 
     removeLine(idx) {
       this.formA.authority_lines.splice(idx, 1);
-      this.saveFormA(this.formA);
+      this.setFormA(this.formA);
     },
     itemChanged() {
-      this.saveFormA(this.formA);
+      this.setFormA(this.formA);
     },
 
   },
