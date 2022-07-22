@@ -50,6 +50,35 @@ const actions = {
                 commit("setFormA", {});
             });
     },
+    async duplicateFormA ({ commit, state }) {
+      /*
+      Create a new FormA instance with a copy of the data in the current
+      Form A.
+      */
+
+      let dupe = {}
+      dupe.department_code = state.formA.department_code;
+      dupe.department_name = state.formA.department_descr;
+      dupe.program_branch = state.formA.program_branch;
+      dupe.position= state.formA.position;
+      dupe.issue_date = new Date();
+      dupe.reviewed_by_department = false;
+      dupe.authority_lines = state.formA.authority_lines;
+      dupe.created_by = ""; //TODO: get user from the store
+      dupe.parentFormA = state.formA._id; //TODO: decide how to audit a clone
+
+      const auth = getInstance ();
+      return auth.post(`${FORMA_URL}`, dupe)
+        .then(resp => {
+          commit("setFormA", resp.data.data);
+          return resp.data.data
+
+        }).catch(() => {
+          console.error (`Could not duplicate Form A ${state.formA._id}`);
+          commit("setFormA", {});
+        });
+    },
+
     async archiveFormA({ commit, state }, archiveDetails) {
         const auth = getInstance()
         // const params = {

@@ -25,7 +25,7 @@
           <!-- <v-list-item-title>Archive</v-list-item-title> -->
         </v-list-item>
 
-        <v-list-item @click="archiveClick">
+        <v-list-item @click="duplicateClick">
           <v-list-item-title>Duplicate</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -33,6 +33,7 @@
   </div>
 </template>
 <script>
+import { mapActions } from "vuex"
 import archiveFormA from "./archiveFormA.vue";
 export default {
   components: { archiveFormA },
@@ -49,6 +50,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions('authority/formA', ['duplicateFormA',]),
     editClick() {
       this.$router.push(
         `/departments/${this.formA.department_code}/form-a/${this.formA._id}/edit`
@@ -66,17 +68,12 @@ export default {
         params: { id: this.formA._id },
       });
     },
-    archiveClick() {
-      this.$router.push({
-        name: "FormAArchive",
-        params: { id: this.formA._id },
-      });
-    },
-    duplicateClick() {
-      this.$router.push({
-        name: "FormADuplicate",
-        params: { id: this.formA._id },
-      });
+
+    async duplicateClick() {
+      await this.duplicateFormA(); //the await may not be needed but ¯\_(ツ)_/¯
+      this.$router.push(
+        `/departments/${this.formA.department_code}/form-a/${this.formA._id}/edit`
+      );
     },
   },
 };
