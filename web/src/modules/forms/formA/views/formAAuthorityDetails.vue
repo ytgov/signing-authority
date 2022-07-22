@@ -6,58 +6,53 @@
       :icon="page.icon"
       :breadcrumbs="breadcrumbs"
     >
-      <template v-slot:right>
-        <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
-      </template>
     </BaseBreadcrumb>
 
-    <v-row>
-      <v-col>
-        <h1>Delegation of Financial Signing Authority - FORM A</h1>
-      </v-col>
-      <v-col>
+    <BaseCard
+      showHeader="false"
+      :heading="`Delegation of Financial Signing Authority - FORM A`"
+    >
+      <template v-slot:right>
+        <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
+        <v-chip class="mr-4 mb-1" color="success">Active</v-chip>
+        <v-chip class="mr-4 mb-1" color="red" dark>
+          <v-icon small>mdi-lock</v-icon>
+        </v-chip>
         <actions-menu :formA="formA"> </actions-menu>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-card class="default">
-          <v-card-text>
-            <formATable :formA="formA"></formATable>
+      </template>
 
-            <!--   <v-data-table style="font-size: .5rem !important"
-            dense
-            :headers="[{text:'Account', value:'account'}, {text: 'S23 Goods', value:'s24_procure_goods_limit'}]"
-            :items="formB.authority_lines"></v-data-table>
+      <v-card class="default">
+        <v-card-text>
+          <formATable :formA="formA"></formATable>
+        </v-card-text>
+      </v-card>
 
--->
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <!-- <v-btn
-              :to="{
-                name: 'DepartmentDetail',
-                params: { id: formA.department.id },
-              }"
-              color="#7A9A01"
-              >Close</v-btn
-            > -->
-            <v-btn
-              @click="
-                $router.push(`/departments/${formA.department_code}/form-a`)
-              "
-              color="#7A9A01"
-              >Close</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+      <v-row class="mt-3">
+        <v-col>
+          <v-card class="default">
+            <v-card-title>Related Form B Authorizations</v-card-title>
+            <v-card-text>
+              <v-data-table :headers="[{ text: 'Name' }]" />
+            </v-card-text> </v-card
+        ></v-col>
+        <v-col cols="7">
+          <v-card class="default">
+            <v-card-title>Audit History</v-card-title>
+            <v-card-text>
+              <v-data-table
+                :headers="[
+                  { text: 'Date' },
+                  { text: 'Person' },
+                  { text: 'Revision' },
+                ]"
+              />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </BaseCard>
   </v-container>
 </template>
-
-
-
 
 <script>
 // import { AUTHORITY_URL} from "@/urls"
@@ -77,7 +72,6 @@ export default {
     // AuthorityMetadataCard,
   },
   data: () => ({
-    // id: "62b7dc1177a03a5a69223007",
     loading: false,
     page: {
       title: "",
@@ -103,7 +97,6 @@ export default {
       },
     ],
     department: {},
-
     authority: {},
     showUpload: false,
   }),
@@ -122,7 +115,10 @@ export default {
 
     // this.breadcrumbs[4].text = "Positions";
     //this.page.title = this.department.descr;
-    await this.loadFormA({ id: this.$route.params.formAId });
+    let formA = await this.loadFormA({ id: this.$route.params.formAId });
+
+    this.page.title = `${formA.program_branch}: ${formA.position}`;
+    this.breadcrumbs[3].text = this.page.title;
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),

@@ -7,7 +7,7 @@
         <td class="" style="width: 300px;">
           <!-- Position -->
           <v-text-field
-            v-model="line.position"
+            v-model="formA.position"
             dense
             filled
             hide-details
@@ -32,7 +32,7 @@
            <v-select class="px-2 py-n5 "
           :items="items"
           @change="itemChanged"
-          v-model="line.operational_restrictions"
+          v-model="line.operational_restriction"
 
         ></v-select>
         </td>

@@ -8,6 +8,7 @@ export interface FormA extends MongoEntity {
   department_code: string;
   department_descr: string
   program_branch: string;
+  position: string;
   issue_date: Date;
   archive?: {
     date: Date,
@@ -36,7 +37,6 @@ export interface FormA extends MongoEntity {
 
 export interface formAAuthorityLine {
   // authority_id: ObjectId;
-  position: string;
   operational_restriction?: string;
   dept: string;
   vote: string;
@@ -56,7 +56,6 @@ export interface formAAuthorityLine {
   assignment_authority: number;
   s29_performance_limit: number;
   s30_payment_limit: number;
-
 }
 
 export enum operationalRestrictions {
@@ -64,8 +63,8 @@ export enum operationalRestrictions {
   "Bank Deposit" = "Bank Deposit",
   "Personnel Pay Actions" = "Personnel Pay Actions",
   "All Department Payments" = "All Department Payments",
-  "Journal Only" = "Journal Only" ,
+  "Journal Only" = "Journal Only",
   "Acquisition cards" = "Acquisition cards",
-  "Bank deposits" =   "Bank deposits",
+  "Bank deposits" = "Bank deposits",
   "Period 14 only" = "Period 14 only"
 }

@@ -13,6 +13,7 @@
         :items="formBItems"
         :loading="loadingFormB"
         @click:row="openFormB"
+        dense
       >
       </v-data-table>
       <div class="mt-4 ml-2">

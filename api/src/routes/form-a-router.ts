@@ -90,9 +90,11 @@ formARouter.get("/:id",
       return res.json({ "form_a_count": count });
     // res.status(404).send();
   })
+
   formARouter.get ("/department/:department", async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<FormA>;
     let department_code = req.params.department
+
     let list = await db.getAll({"department_code": department_code})
     if (list)
       return res.json({ data: list });

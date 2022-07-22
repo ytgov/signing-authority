@@ -1,5 +1,4 @@
 <template>
-
   <table
     border="0"
     cellspacing="0"
@@ -9,18 +8,21 @@
   >
     <thead>
       <tr>
-        <th colspan="3" rowspan="4"
-          style="text-align: left; padding: 10px; vertical-align: middle">
-            Department:<br />
-              <strong>{{ formA.department_descr }}</strong>
-              <br /> <br /> <br />
-              Program/Branch:<br />
-              <strong>{{ formA.program_branch }}</strong>
-              <br/>
+        <th
+          colspan="3"
+          rowspan="4"
+          style="text-align: left; padding: 10px; vertical-align: middle"
+        >
+          Department:<br />
+          <strong>{{ formA.department_descr }}</strong>
+          <br />
+          <br />
+          <br />
+          Program/Branch:<br />
+          <strong>{{ formA.program_branch }}</strong>
+          <br />
         </th>
-        <th colspan="7" style="height: 80px">
-          SPENDING AUTHORITY
-        </th>
+        <th colspan="7" style="height: 40px">SPENDING AUTHORITY</th>
         <th rowspan="5" class="rotate" style="height: 140px">
           <div class="mb-2">
             PAYMENT<br />
@@ -29,77 +31,73 @@
         </th>
       </tr>
       <tr>
-        <th colspan="6" style="height: 80px">
+        <th colspan="6" style="height: 40px">
           SECTION 23 and SECTION 24 ($000)
         </th>
         <th rowspan="4" class="rotate">
-          <div class="ml-2">(SECTION 29) <br />
+          <div class="ml-2">
+            (SECTION 29) <br />
             CERTIFICATE OF <br />PERFORMANCE
           </div>
-       </th>
+        </th>
       </tr>
       <tr>
         <!-- <th colspan="2" rowspan="2"  style="text-align: left; padding: 10px; vertical-align: middle">
           Program/Branch:<br />
               <strong>{{ formA.program }}</strong>B</th> -->
-        <th rowspan="3" class="rotate" style= "">
+        <th rowspan="3" class="rotate" style="">
+          <div class="mb-2">CONTRACTS FOR <br />GOODS OR SERVICES</div>
+        </th>
+        <th rowspan="3" class="rotate" style="">
+          <div class="mb-2">LOANS & <br />GUARANTEES</div>
+        </th>
+        <th rowspan="3" class="rotate" style="">
           <div class="mb-2">
-            CONTRACTS FOR <br />GOODS OR SERVICES
+            Transfer <br />
+            Payments
           </div>
         </th>
-        <th rowspan="3" class="rotate" style= "">
-          <div class="mb-2">LOANS & <br />GUARANTEES </div>
-        </th>
-        <th rowspan="3" class="rotate" style= "">
-           <div class="mb-2">Transfer <br/> Payments</div>
-        </th>
-        <th rowspan="3" class="rotate" style= "">
+        <th rowspan="3" class="rotate" style="">
           <div class="mb-2">AUTHORIZATION <br />FOR TRAVEL</div>
         </th>
-        <th rowspan="3" class="rotate" style= "">
+        <th rowspan="3" class="rotate" style="">
           <div class="mb-2">REQUEST FOR <br />GOODS OR SERVICES</div>
         </th>
-        <th rowspan="3" class="rotate" style= "">
-           <div class="mb-2">ASSIGNMENT <br />AUTHORITY</div></th>
+        <th rowspan="3" class="rotate" style="">
+          <div class="mb-2">ASSIGNMENT <br />AUTHORITY</div>
+        </th>
       </tr>
+      <tr></tr>
       <tr>
+        <th class="bottom" style="">
+          <div>POSITION</div>
+        </th>
+        <th class="bottom">AREA OF <br />AUTHORITY</th>
+        <th class="bottom">OPERATIONAL <br />RESTRICTIONS</th>
       </tr>
-      <tr>
-        <th class="bottom" style= " ">
-              <div>POSITION</div>
-            </th>
-            <th class="bottom">
-              AREA OF <br />AUTHORITY
-            </th>
-             <th class="bottom">
-              OPERATIONAL <br />RESTRICTIONS
-            </th>
-      </tr>
-
     </thead>
 
     <tbody>
       <tr v-for="(line, idx) of formA.authority_lines" :key="idx">
-
-        <td class=" px-3">
+        <td class="px-3">
           <!-- Position -->
-         {{line.position}}
+          {{ formA.position }}
         </td>
         <td class="pl-3">
           <!-- Area of Authority -->
           {{ line.account }}
         </td>
         <td class="pl-3">
-           <!-- Operational RESTRICTIONS -->
-           {{ line.operational_restrictions}}
-           <!-- <v-select class="px-2 py-n5 "
+          <!-- Operational RESTRICTIONS -->
+          {{ line.operational_restriction }}
+          <!-- <v-select class="px-2 py-n5 "
           :items="items"
           label="Operational Restrictions"
         ></v-select> -->
         </td>
         <td class="fb-value">
-           <!-- Contracts for Goods or Services -->
-           {{ line.contracts_for_goods_services }}
+          <!-- Contracts for Goods or Services -->
+          {{ line.contracts_for_goods_services }}
         </td>
         <td class="fb-value">
           <!-- Loans and Guarantees -->
@@ -107,12 +105,12 @@
         </td>
 
         <td class="fb-value">
-           <!-- Transfer Payments-->
+          <!-- Transfer Payments-->
           {{ line.transfer_payments }}
         </td>
         <td class="fb-value">
-            <!--Authorization for Travel-->
-            {{ line.authorization_for_travel }}
+          <!--Authorization for Travel-->
+          {{ line.authorization_for_travel }}
         </td>
 
         <td class="fb-value">
@@ -141,20 +139,15 @@
 export default {
   name: "formATable",
   props: {
-    formA: Object
+    formA: Object,
   },
   data: () => ({
-    items: [
-      "None",
-      "Journal only",
-      "Acquisition card",
-      "Bank deposits"
-    ]
+    items: ["None", "Journal only", "Acquisition card", "Bank deposits"],
   }),
   // computed: {
   //   ...mapState("authority/formA", ["formA"])
   // }
-}
+};
 </script>
 <style scoped>
 .table {

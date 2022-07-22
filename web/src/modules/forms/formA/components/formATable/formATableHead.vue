@@ -20,7 +20,7 @@
 
               </div>
         </th>
-        <th colspan="7" style="height: 80px">
+        <th colspan="7" style="height: 40px">
           SPENDING AUTHORITY
         </th>
         <th rowspan="5" class="rotate" style="height: 140px">

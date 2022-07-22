@@ -9,9 +9,10 @@
 
       <v-data-table
         :headers="[
-          { text: 'Division', value: 'division' },
+          { text: 'Program / Branch', value: 'program_branch' },
           { text: 'Position', value: 'position' },
         ]"
+        dense
         :search="search"
         :items="positions"
         :loading="loadingFormA"
@@ -76,7 +77,8 @@ export default {
       };
     },
     positions() {
-      const x = this.formAItems.flatMap((a) =>
+      return this.formAItems
+      /* const x = this.formAItems.flatMap((a) =>
         a.authority_lines.map((b) => ({
           department: a.department_descr,
           division: a.program_branch,
@@ -84,7 +86,7 @@ export default {
           _id: a._id,
         }))
       );
-      return x;
+      return x; */
     },
   },
   mounted: async function () {
