@@ -46,8 +46,6 @@ export default {
   }),
   computed: {
     activeFormB() {
-      console.log("FORMBITEmS", this.formBItems)
-
       return this.formBItems.length;
     },
     actingFormB() {
@@ -57,17 +55,16 @@ export default {
   mounted: async function () {
     this.departmentId = this.$route.params.departmentId;
     this.formBLink = `/departments/${this.departmentId}/form-b`;
-    this.formBItems = await this.getFormBList({id: this.departmentId});
+    this.formBItems = await this.getFormBList({ id: this.departmentId });
   },
   methods: {
     ...mapActions("department", ["getFormBList"]),
-    openFormB() {
+    openFormB(item) {
       this.$router.push({
-        name: "DepartmentFormBList",
-        params: { id: this.departmentId },
+        name: "FormBDetails",
+        params: { formBId: item._id },
       });
     },
   },
 };
 </script>
-

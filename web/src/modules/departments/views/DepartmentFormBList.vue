@@ -66,24 +66,14 @@ export default {
 
     this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
     this.breadcrumbs[1].text = this.item.descr;
-
-    //this.items = this.loadList();
   },
   computed: {
     ...mapState("department", ["departments"]),
   },
-
   methods: {
     ...mapActions("department", ["getDepartment"]),
     openDepartment(item) {
       this.$router.push(`/departments/${item.dept}`);
-    },
-    async loadList() {
-      /* this.item = await this.getDepartment({ id: this.departmentId });
-
-      if (this.item && this.item.dept) {
-        this.breadcrumbs[2].text = this.item.descr;
-      } */
     },
   },
 };

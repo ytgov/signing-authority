@@ -186,10 +186,11 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 }
 
 // Department Specific FORM B Routes
-authoritiesRouter.get ("/department/:department", async (req: Request, res: Response) => {
+authoritiesRouter.get("/department/:department", async (req: Request, res: Response) => {
   let db = req.store.Authorities as GenericService<Authority>;
   let department_code = req.params.department
-  let list = await db.getAll({"department_code": department_code})
+  let list = await db.getAll({ "department_code": department_code })
+
   if (list)
     return res.json({ data: list });
   res.status(404).send();

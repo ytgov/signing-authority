@@ -44,8 +44,6 @@ const actions = {
     async getFormAList(store, { id }) {
         const auth = getInstance();
 
-        console.log("LOADING FORM A for", id)
-
         return auth.get(`${FORMA_URL}/department/${id}`).then(resp => {
             return resp.data.data
         })
@@ -53,7 +51,7 @@ const actions = {
     async getFormBList(store, { id }) {
         const auth = getInstance();
 
-        return auth.get(`${AUTHORITY_URL}/${id}/form-b`).then(resp => {
+        return auth.get(`${AUTHORITY_URL}/department/${id}`).then(resp => {
             return resp.data.data
         })
     },

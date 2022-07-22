@@ -1,7 +1,7 @@
 const routes = [
   {
-    path: ":id",
-    name: "Details",
+    path: ":formBId",
+    name: "FormBDetails",
     component: () =>
       import("../views/AuthorityDetails.vue"),
     meta: { requiresAuth: true },
