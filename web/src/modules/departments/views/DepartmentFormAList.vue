@@ -28,9 +28,7 @@
         ></v-select>
       </template>
       <template v-slot:right>
-        <create-form-a-button
-          :department="getDepartmentDetails($route.params.id)"
-        ></create-form-a-button>
+        <create-form-a-button :department="item"></create-form-a-button>
       </template>
 
       <v-row>
@@ -57,7 +55,6 @@
     </BaseCard>
   </v-container>
 </template>
-
 
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
