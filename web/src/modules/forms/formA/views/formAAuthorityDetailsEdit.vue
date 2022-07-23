@@ -74,6 +74,10 @@ export default {
       {
         text: "",
         to: "",
+        exact: true,
+      },
+      {
+        text: "Edit",
       },
     ],
     department: {},
@@ -113,6 +117,7 @@ export default {
 
     this.page.title = `${formA.program_branch}: ${formA.position}`;
     this.breadcrumbs[3].text = this.page.title;
+    this.breadcrumbs[3].to = `/departments/${departmentId}/form-a/${this.id}`;
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
