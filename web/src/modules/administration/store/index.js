@@ -19,8 +19,9 @@ const actions = {
     commit("SET_APP_HEALTH", data)
   },
   async seedData () {
-    await fetch ("http://localhost:3000/seed")
-    // const data = await response
+    let resopnse = await fetch ("http://localhost:3000/seed")
+    let data = await resopnse.text()
+    return data
   }
 };
 

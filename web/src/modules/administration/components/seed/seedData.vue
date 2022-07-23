@@ -2,19 +2,38 @@
 <template>
   <v-container>
     <v-card class="mt-5 default">
-      <v-card-title>Seed Data</v-card-title>
+      <v-card-title>Data Management</v-card-title>
         <v-card-text>
+          <notifications ref="notifier"></notifications>
           <v-row>
             <v-col>
-              <v-btn
-                @click="seedData()">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn @click="doIt()" color="primary" v-on="on">
+                    <v-icon>mdi-database</v-icon>
+                    Seed Data
+                  </v-btn>
+                </template>
+                <span>Delete everything in the database and start fresh with seed data</span>
+              <!-- <v-btn
+                @click="doIt()">
                   Seed Data
-              </v-btn>
+              </v-btn> -->
+              </v-tooltip>
             </v-col>
             <v-spacer />
             <v-col>
-              <v-btn>
+              <v-btn
+                @click="doNothing()">
                 Remove Seed Data
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-btn
+                @click="doNothing()">
+                Archive Data
               </v-btn>
             </v-col>
           </v-row>
@@ -30,10 +49,14 @@ export default {
   methods: {
      ...mapActions("administration", [
       "seedData",
-      ])
-    // seedData: function () {
-    //   alert("This will remove ALL data in the system and restore it with default data")
-    // }
+      ]),
+      doIt: async function() {
+        let m = await this.seedData()
+        this.$refs.notifier.show("success", "mdi-check", m)
+      },
+      doNothing: function() {
+        this.$refs.notifier.show("error", "mdi-close", "Not implemented yet")
+      }
   }
 
 }
