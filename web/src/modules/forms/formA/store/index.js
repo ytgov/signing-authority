@@ -8,6 +8,21 @@ const state = {
     formA: { employee: {}, department: {} }
 };
 
+const getters = {
+    isActive: (state) => {
+      if (state.reviewed_by_department){
+        //we might consider a check on issue date and if a form is uploaded.
+        return true;
+      }
+      return false
+    },
+    isLocked: () => {
+      //todo: decide on lock logic
+      return false;
+    }
+
+};
+
 const actions = {
     async loadFormA({ commit }, { id }) {
            console.log(`FormA ID: ${id}`)
@@ -131,7 +146,7 @@ const mutations = {
 export default {
     namespaced: true,
     state,
-    // getters,
+    getters,
     actions,
     mutations
 };

@@ -14,10 +14,7 @@
     >
       <template v-slot:right>
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
-        <v-chip class="mr-4 mb-1" color="success">Active</v-chip>
-        <v-chip class="mr-4 mb-1" color="red" dark>
-          <v-icon small>mdi-lock</v-icon>
-        </v-chip>
+        <form-a-status :isActive="isActive"> </form-a-status>
         <actions-menu :formA="formA"> </actions-menu>
       </template>
 
@@ -56,9 +53,10 @@
 
 <script>
 // import { AUTHORITY_URL} from "@/urls"
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import formATable from "../components/formATable.vue";
 import ActionsMenu from "../components/actionsMenu.vue";
+import FormAStatus from '../components/formAStatus/formAStatus.vue';
 
 // import uploadFormModal from "../components/uploadFormModal.vue"
 // import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
@@ -68,6 +66,7 @@ export default {
   components: {
     formATable,
     ActionsMenu,
+    FormAStatus,
     // uploadFormModal,
     // AuthorityMetadataCard,
   },
@@ -103,6 +102,7 @@ export default {
   computed: {
     ...mapState("department", ["departments"]),
     ...mapState("authority/formA", ["formA"]),
+    ...mapGetters("authority/formA", ["isActive", "isLocked"])
   },
   async mounted() {
     this.id = this.$route.params.id;
