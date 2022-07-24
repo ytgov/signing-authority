@@ -11,6 +11,21 @@ export default new Vuetify({
                 primary: "#0097a9",
                 secondary: "#fff",
                 anchor: "#00818f",
+                yg_moss: "#7A9A01",
+                yg_blue: "#0097a9",
+                yg_zinc: "#24405A",
+                yg_twilight: "#512A44",
+                yg_lichen: "#DC4405",
+                yg_sun: "#F2A900"
+            },
+            dark: {
+                yg_moss: "#7A9A01",
+                yg_blue: "#0097a9",
+                yg_zinc: "#24405A",
+                yg_twilight: "#512A44",
+                yg_lichen: "#DC4405",
+                yg_sun: "#F2A900"
+
             }
         }
     }
