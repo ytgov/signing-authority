@@ -9,7 +9,7 @@
             <v-col>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
-                  <v-btn @click="doIt()" color="primary" v-on="on">
+                  <v-btn @click="doIt()" dark color="yg_twilight" v-on="on">
                     <v-icon>mdi-database</v-icon>
                     Seed Data
                   </v-btn>
