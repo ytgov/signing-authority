@@ -1,5 +1,5 @@
 import { EMPLOYEE_URL } from "@/urls";
-import { secureGet, securePut } from "@/store/jwt";
+import { getInstance } from "@/auth/auth0-plugin"
 
 const state = {
     employee: {},
@@ -12,7 +12,9 @@ const getters = {
 
 const actions = {
     async loadEmployee({ commit }, id) {
-        return await secureGet(`${EMPLOYEE_URL}/${id}`)
+        const auth = getInstance();
+
+        return await auth.get(`${EMPLOYEE_URL}/${id}`)
             .then(resp => {
                 commit("setEmployee", resp.data.data);
                 return resp.data.data
@@ -22,7 +24,9 @@ const actions = {
             });
     },
     async loadEmployeeAuthorities({ commit }, id) {
-        return await secureGet(`${EMPLOYEE_URL}/${id}/authorities`)
+        const auth = getInstance();
+
+        return await auth.get(`${EMPLOYEE_URL}/${id}/authorities`)
             .then(resp => {
                 commit("setEmployeeAuthorities", resp.data.data);
                 return resp.data.data
@@ -32,6 +36,8 @@ const actions = {
             });
     },
     async saveEmployee(store) {
+        const auth = getInstance();
+
         let employee = store.getters.employee;
 
         let body = {
@@ -43,7 +49,7 @@ const actions = {
             primary_department: employee.primary_department
         };
 
-        return await securePut(`${EMPLOYEE_URL}/${employee._id}`, body)
+        return await auth.put(`${EMPLOYEE_URL}/${employee._id}`, body)
             .then(resp => {
                 //commit("setEmployee", resp.data.data);
                 return resp.data.data
@@ -51,6 +57,13 @@ const actions = {
                 store.commit("setEmployee", {});
             });
     },
+    async searchEmployees(store, { terms }) {
+        const auth = getInstance();
+
+        return auth.post(`${EMPLOYEE_URL}/search`, { terms }).then(resp => {
+            return resp.data.data
+        })
+    }
 };
 
 const mutations = {

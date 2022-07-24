@@ -7,7 +7,7 @@
         :activeFormBCount="activeFormB"
       />
       <v-data-table
-        class="mt-5"
+        class="mt-5 row-clickable"
         :headers="headers"
         :search="search"
         :items="formBItems"
@@ -40,8 +40,8 @@ export default {
     formBItems: [],
     loadingFormB: false,
     headers: [
-      { text: "Employee", value: "employee_name" },
       { text: "Position", value: "title" },
+      { text: "Employee", value: "employee_name" },
     ],
   }),
   computed: {

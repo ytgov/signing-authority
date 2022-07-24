@@ -34,7 +34,6 @@
   </v-container>
 </template>
 
-
 <script>
 import { mapActions, mapState } from "vuex";
 import departmentFormAList from "../components/departmentFormAList";

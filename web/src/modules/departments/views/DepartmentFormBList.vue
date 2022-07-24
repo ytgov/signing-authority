@@ -20,7 +20,9 @@
           hide-details
         ></v-text-field>
       </template>
-      <template v-slot:right> </template>
+      <template v-slot:right>
+        <create-form-b :department="item"></create-form-b>
+      </template>
 
       <department-form-b-list :search="search"> </department-form-b-list>
     </BaseCard>
@@ -28,11 +30,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 import departmentFormBList from "../components/departmentFormBList.vue";
+import createFormB from "@/modules/forms/formB/components/createFormB.vue";
 
 export default {
-  components: { departmentFormBList },
+  components: { departmentFormBList, createFormB },
   name: "DepartmentDetail",
   data: () => ({
     search: "",
@@ -67,14 +70,9 @@ export default {
     this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
     this.breadcrumbs[1].text = this.item.descr;
   },
-  computed: {
-    ...mapState("department", ["departments"]),
-  },
+  computed: {},
   methods: {
     ...mapActions("department", ["getDepartment"]),
-    openDepartment(item) {
-      this.$router.push(`/departments/${item.dept}`);
-    },
   },
 };
 </script>

@@ -26,7 +26,7 @@ employeeRouter.post('/', async (req: Request, res: Response) => {
 });
 
 employeeRouter.post('/search',
-  [body("terms").notEmpty().trim()], ReturnValidationErrors,
+  //[body("terms").notEmpty().trim()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     let { terms } = req.body;
     //return all the authorites assigned to the account
