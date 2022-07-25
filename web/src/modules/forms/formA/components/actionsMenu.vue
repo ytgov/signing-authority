@@ -34,7 +34,7 @@
 </template>
 <script>
 import { mapActions } from "vuex"
-import archiveFormA from "./archiveFormA.vue";
+import archiveFormA from "./actions/archiveFormA.vue";
 export default {
   components: { archiveFormA },
   name: "actionsMenu",

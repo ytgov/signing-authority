@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import formAStatusLocked from "./formAStatusLocked.vue";
-import formAStatusUnlocked from "./formAStatusUnlocked.vue";
+import formAStatusLocked from "./isLocked/formAStatusLocked.vue";
+import formAStatusUnlocked from "./isLocked/formAStatusUnlocked.vue";
 export default {
   name: "formAStatus",
   components: {
