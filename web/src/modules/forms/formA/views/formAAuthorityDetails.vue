@@ -14,7 +14,9 @@
     >
       <template v-slot:right>
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
-        <form-a-status :isActive="isActive"> </form-a-status>
+        <form-a-status
+          :isLocked="isLocked"
+          :isActive="isActive"> </form-a-status>
         <actions-menu :formA="formA"> </actions-menu>
       </template>
 

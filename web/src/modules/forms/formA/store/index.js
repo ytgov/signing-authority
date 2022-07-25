@@ -10,15 +10,19 @@ const state = {
 
 const getters = {
     isActive: (state) => {
-      if (state.reviewed_by_department){
+      if (state.formA.reviewed_by_department){
         //we might consider a check on issue date and if a form is uploaded.
         return true;
       }
       return false
     },
     isLocked: () => {
-      //todo: decide on lock logic
-      return false;
+      //Decide what is the test a locked form A. In the meantime
+      if (state.formA.reviewed_by_department){
+        //we might consider a check on issue date and if a form is uploaded.
+        return true;
+      }
+      return false
     }
 
 };

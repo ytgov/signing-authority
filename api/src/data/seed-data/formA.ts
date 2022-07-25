@@ -9,6 +9,7 @@ export const formASeedData: FormA[] = [
     "position": "Director of Awesome",
     "issue_date": new Date(),
     "reviewed_by_department": false,
+
     "created_by": "SeedData",
     "authority_lines": [
       {
@@ -79,7 +80,9 @@ export const formASeedData: FormA[] = [
     "program_branch": "ICT",
     "position": "ADM (All)",
     "issue_date": new Date(),
-    "reviewed_by_department": false,
+    "reviewed_by_department": true,
+    "reviewed_by_person": "ghoffman",
+    "reviewed_by_date": new Date(),
     "created_by": "SeedData",
     "authority_lines": [
       {
