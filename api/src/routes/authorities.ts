@@ -113,11 +113,16 @@ authoritiesRouter.post("/",
     let db = req.store.Authorities as GenericService<Authority>;
 
 
+    console.log("POST AUTH", req.body)
+
     if (req.body.department_id)
       req.body.department_id = new ObjectId(req.body.department_id);
 
     if (req.body.employee_id)
       req.body.employee_id = new ObjectId(req.body.employee_id);
+
+    if (req.body.supervior_id)
+      req.body.supervior_id = new ObjectId(req.body.supervior_id);
 
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());

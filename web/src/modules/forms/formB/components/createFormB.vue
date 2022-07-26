@@ -50,6 +50,7 @@
             dense
             outlined
             v-model="formAId"
+            return-object
           ></v-autocomplete>
           <v-text-field
             label="Position Title"
@@ -139,23 +140,32 @@ export default {
   methods: {
     ...mapActions("department", ["getAll", "getFormAList"]),
     ...mapActions("employee", ["searchEmployees"]),
+    ...mapActions("forms/formB", ["createFormB"]),
     async doShow() {
+      this.employeeId = "";
+      this.supervisorId = "";
+      this.formAId = "";
+      this.position = "";
+
       let formAItems = await this.getFormAList({ id: this.department.dept });
       this.formAItems = formAItems.map((i) => {
         return Object.assign(i, {
           display_name: `${i.program_branch} / ${i.position}`,
         });
       });
-
-      console.log(this.formAItems);
     },
     async doCreate() {
-      console.log(
-        this.employeeId,
-        this.supervisorId,
-        this.formAId,
-        this.position
-      );
+      await this.createFormB({
+        department_code: this.formAId.department_code,
+        department_descr: this.formAId.department_descr,
+        employee_id: this.employeeId,
+        supervisor_id: this.supervisorId,
+        program_branch: this.formAId.program_branch,
+        formAId: this.formAId._id,
+        title: this.position,
+        authority_lines: this.formAId.authority_lines
+      });
+
       this.show = false;
     },
   },

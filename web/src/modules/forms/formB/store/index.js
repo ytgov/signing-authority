@@ -13,7 +13,9 @@ const getters = {
 
 const actions = {
     async loadFormB({ commit }, id) {
-        return axios.get(`${AUTHORITY_URL}/${id}`)
+        const auth = getInstance();
+
+        return auth.get(`${AUTHORITY_URL}/${id}`)
             .then(resp => {
                 commit("setFormB", resp.data.data);
                 return resp.data.data
@@ -21,6 +23,15 @@ const actions = {
             }).catch(() => {
                 commit("setFormB", {});
             });
+    },
+    async createFormB(store, item) {
+        const auth = getInstance();
+
+        let body = _.clone(item);
+        console.log("POSTING", body)
+
+        return auth.post(`${AUTHORITY_URL}`, body)
+            .then(resp => resp.data);
     },
     async saveFormB({ commit }, item) {
         let body = _.clone(item);
@@ -48,7 +59,7 @@ const actions = {
                 //commit("setFormB", {});
             });
     },
-    async getFormBList( state, dept_id ) {
+    async getFormBList(state, dept_id) {
         const auth = getInstance()
         const resp = await auth.get(`${AUTHORITY_URL}/department/${dept_id}`)
         return resp.data.data
