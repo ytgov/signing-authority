@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import _, { join } from "lodash";
-import { GenericService } from "../services";
+import { DirectoryService, GenericService } from "../services";
 import { Authority, Department, Employee } from "../data/models";
 import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
@@ -10,6 +10,8 @@ import { checkJwt } from "../middleware/authz.middleware";
 
 export const employeeRouter = express.Router();
 employeeRouter.use(RequiresData, checkJwt);
+
+const directoryService = new DirectoryService();
 
 employeeRouter.get('/', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
@@ -34,6 +36,11 @@ employeeRouter.post('/search',
     let db = req.store.Employees as GenericService<Employee>;
     let reg = new RegExp(terms, "i")
 
+    await directoryService.connect();
+
+    let results = await directoryService.search(terms);
+    console.log("FROM DIRECTORY", results)
+
     let list = await db.getAll({
       $or: [
         { "first_name": { $regex: reg } },
@@ -44,6 +51,13 @@ employeeRouter.post('/search',
 
     for (let item of list) {
       item.display_name = `${item.first_name} ${item.last_name}`;
+    }
+
+    for (let dir of results) {
+      list.push({
+        display_name: `${dir.givenName} ${dir.surname}`, first_name: dir.givenName, last_name: dir.last_name,
+        ynet_id: dir.userPrincipalName.toLowerCase().replace("@ynet.gov.yk.ca", ""), employee_id: 213, email: dir.mail, primary_department: ""
+      })
     }
 
     return res.json({ data: list });
@@ -99,9 +113,9 @@ employeeRouter.put('/:id',
     res.status(404).send();
   });
 
-  employeeRouter.get('/:id/authorities', async (req: Request, res: Response) => {
-    let { id } = req.params;
-    let db = req.store.Authorities as GenericService<Authority>;
-    let files = await db.getAll({"employee_id":id})
-    return res.json({ data: files })
-  });
+employeeRouter.get('/:id/authorities', async (req: Request, res: Response) => {
+  let { id } = req.params;
+  let db = req.store.Authorities as GenericService<Authority>;
+  let files = await db.getAll({ "employee_id": id })
+  return res.json({ data: files })
+});

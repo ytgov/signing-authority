@@ -35,6 +35,10 @@ export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.
 export const API_GATEWAY_KEY = process.env.API_GATEWAY_KEY || "";
 export const DEPARTMENT_API_URL = "https://api.gov.yk.ca/finance/api/v2/accounts/departments";
 
+export const AD_CLIENT_ID = process.env.AD_CLIENT_ID || "";
+export const AD_CLIENT_SECRET = process.env.AD_CLIENT_SECRET || "";
+export const AD_TENANT_ID = process.env.AD_TENANT_ID || "";
+
 export const MAIL_FROM = process.env.MAIL_FROM || "signing-authority@yukon.ca";
 export const MAIL_HOST = process.env.MAIL_HOST || "smtp.gov.yk.ca";
 export const MAIL_PORT = process.env.MAIL_PORT || 25;

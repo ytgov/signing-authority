@@ -97,7 +97,7 @@ export default {
     employeeSearch(val) {
       // Items have already been loaded
       if (val && val.length == 0) return;
-      if (this.employeeItems && this.employeeItems.length > 0) return;
+      //if (this.employeeItems && this.employeeItems.length > 0) return;
 
       // Items have already been requested
       if (this.isEmployeeLoading) return;
@@ -117,7 +117,7 @@ export default {
     supervisorSearch(val) {
       // Items have already been loaded
       if (val && val.length == 0) return;
-      if (this.supervisorItems && this.supervisorItems.length > 0) return;
+      //if (this.supervisorItems && this.supervisorItems.length > 0) return;
 
       // Items have already been requested
       if (this.isSupervisorLoading) return;

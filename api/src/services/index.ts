@@ -1,4 +1,5 @@
 
+export * from "./directory-service";
 export * from "./email-service";
 export * from "./file-service";
 export * from "./generic-service";
