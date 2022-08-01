@@ -36,11 +36,6 @@ employeeRouter.post('/search',
     let db = req.store.Employees as GenericService<Employee>;
     let reg = new RegExp(terms, "i")
 
-    await directoryService.connect();
-
-    let results = await directoryService.search(terms);
-    console.log("FROM DIRECTORY", results)
-
     let list = await db.getAll({
       $or: [
         { "first_name": { $regex: reg } },
@@ -51,16 +46,32 @@ employeeRouter.post('/search',
 
     for (let item of list) {
       item.display_name = `${item.first_name} ${item.last_name}`;
-    }
-
-    for (let dir of results) {
-      list.push({
-        display_name: `${dir.givenName} ${dir.surname}`, first_name: dir.givenName, last_name: dir.last_name,
-        ynet_id: dir.userPrincipalName.toLowerCase().replace("@ynet.gov.yk.ca", ""), employee_id: 213, email: dir.mail, primary_department: ""
-      })
+      item.long_name = `${item.display_name} (${item.ynet_id}) - ${item.position}`
     }
 
     return res.json({ data: list });
+  });
+
+employeeRouter.post('/search-directory',
+  //[body("terms").notEmpty().trim()], ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    let { terms } = req.body;
+    //return all the authorites assigned to the account
+
+    await directoryService.connect();
+
+    let results = await directoryService.search(terms);
+    console.log("FROM DIRECTORY", results)
+
+    for (let dir of results) {
+      dir.display_name = `${dir.givenName} ${dir.surname}`
+      dir.first_name = dir.givenName;
+      dir.last_name = dir.last_name;
+      dir.ynet_id = dir.userPrincipalName.toLowerCase().replace("@ynet.gov.yk.ca", "");
+      dir.email = dir.mail;
+    }
+
+    return res.json({ data: results });
   });
 
 employeeRouter.get('/:id',

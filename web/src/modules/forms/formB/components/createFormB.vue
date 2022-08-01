@@ -15,20 +15,9 @@
         <v-icon title="Close" @click="show = false">mdi-close</v-icon>
       </v-app-bar>
       <v-card tile>
-        <v-card-text class="mt-5">
-          <v-autocomplete
-            label="Employee"
-            dense
-            outlined
-            hide-no-data
-            hide-selected
-            :items="employeeItems"
-            item-text="display_name"
-            item-value="_id"
-            :loading="isEmployeeLoading"
-            :search-input.sync="employeeSearch"
-            v-model="employeeId"
-          ></v-autocomplete>
+        <v-card-text class="mt-5 pb-0">
+          <directory-search-add></directory-search-add>
+
           <v-autocomplete
             label="Supervisor"
             dense
@@ -58,13 +47,17 @@
             outlined
             v-model="position"
           ></v-text-field>
-        </v-card-text>
 
-        <v-card-actions>
-          <v-btn @click="doCreate" color="primary">Add</v-btn>
-          <v-spacer />
-          <v-btn @click="show = false" color="secondary">Close</v-btn>
-        </v-card-actions>
+          <div>
+            <v-btn @click="doCreate" color="primary" class="float-left"
+              >Add</v-btn
+            >
+            <v-btn @click="show = false" color="secondary" class="float-right"
+              >Close</v-btn
+            >
+          </div>
+          <div style="clear: both"></div>
+        </v-card-text>
       </v-card>
     </v-dialog>
   </div>
@@ -72,9 +65,12 @@
 
 <script>
 import { mapActions } from "vuex";
+import DirectorySearchAdd from "@/modules/employee/components/directorySearchAdd";
+
 export default {
   name: "CreateFormB",
   props: { department: Object },
+  components: { DirectorySearchAdd },
   data: () => ({
     show: false,
     formAItems: [],
@@ -116,7 +112,7 @@ export default {
     },
     supervisorSearch(val) {
       // Items have already been loaded
-      if (val && val.length == 0) return;
+      if (!val || val.length == 0) return;
       //if (this.supervisorItems && this.supervisorItems.length > 0) return;
 
       // Items have already been requested
@@ -163,7 +159,7 @@ export default {
         program_branch: this.formAId.program_branch,
         formAId: this.formAId._id,
         title: this.position,
-        authority_lines: this.formAId.authority_lines
+        authority_lines: this.formAId.authority_lines,
       });
 
       this.show = false;

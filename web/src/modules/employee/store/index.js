@@ -60,9 +60,18 @@ const actions = {
     async searchEmployees(store, { terms }) {
         const auth = getInstance();
 
-        return auth.post(`${EMPLOYEE_URL}/search`, { terms }).then(resp => {
-            return resp.data.data
-        })
+        return auth.post(`${EMPLOYEE_URL}/search`, { terms })
+            .then(resp => {
+                return resp.data.data
+            })
+    },
+    async searchDirectory(store, { terms }) {
+        const auth = getInstance();
+
+        return auth.post(`${EMPLOYEE_URL}/search-directory`, { terms })
+            .then(resp => {
+                return resp.data.data
+            })
     }
 };
 

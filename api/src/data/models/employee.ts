@@ -16,4 +16,5 @@ export interface Employee extends MongoEntity {
 
     // used in DTO only
     display_name?: string;
+    long_name?: string;
 }
