@@ -52,7 +52,6 @@ export default {
   async mounted() {
     this.id = this.$route.params.formBId;
     this.loadFormB(this.id);
-    this.page.title = "Form B Details";
   },
   methods: {
     ...mapActions("authority/formB", ["loadFormB", "downloadFormB"]),
