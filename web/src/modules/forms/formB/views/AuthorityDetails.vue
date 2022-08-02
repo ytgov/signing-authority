@@ -40,31 +40,7 @@
               >
                 <thead>
                   <tr>
-                    <th
-                      rowspan="5"
-                      style="
-                        text-align: left;
-                        padding: 10px;
-                        vertical-align: top;
-                      "
-                    >
-                      <h3>Delegate:</h3>
-                      Public Officer Name:<br />
-                      <strong>
-                        {{ formB.employee.first_name }}
-                        {{ formB.employee.last_name }}
-                      </strong>
-                      <br /><br />
-
-                      Department:<br />
-                      <strong>{{ formB.department_desc }}</strong>
-                      <br /><br />
-                      Program/Branch:<br />
-                      <strong>{{ formB.program }}</strong>
-                      <br /><br />
-                      Position title:<br />
-                      <strong>{{ formB.title }}</strong>
-                    </th>
+                    <delegate-info></delegate-info>
                     <th colspan="13">SPENDING AUTHORITY</th>
                     <th rowspan="3" class="rotate" style="height: 140px">
                       <div>
@@ -199,13 +175,14 @@
 </template>
 
 <script>
-import { AUTHORITY_URL } from "@/urls";
+// import { AUTHORITY_URL } from "@/urls";
 import { mapGetters, mapActions } from "vuex";
 
 // import uploadFormModal from "../components/uploadFormModal.vue";
 import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
 import FormBStatus from "../components/status/formBStatus.vue"
 import actionsMenu from "../components/menus/actionsMenu.vue";
+import delegateInfo from '../components/tableLayouts/delegateInfo.vue';
 
 export default {
   name: "AuthorityDetails",
@@ -214,6 +191,7 @@ export default {
     AuthorityMetadataCard,
     FormBStatus,
     actionsMenu,
+    delegateInfo,
   },
   data: () => ({
     id: "",
@@ -244,20 +222,9 @@ export default {
     this.page.title = "Form B Details";
   },
   methods: {
-    ...mapActions("authority/formB", ["loadFormB", "downloadFormB"]),
-    editClick() {
-      //TODO: this should check the state to determine if changes are allowed
-      this.$router.push(`/form-b/${this.id}/edit`);
-    },
-    async generateClick() {
-      window.open(`${AUTHORITY_URL}/${this.id}/pdf`, "_blank");
-      //await this.downloadFormB(this.id);
-    },
-    uploadClick() {
-      this.showUpload = true; //show modal fup upload
-    },
-    archiveClick() {},
-    downloadClick() {},
+    ...mapActions("authority/formB", ["loadFormB" ]),
+
+
   },
 };
 </script>
