@@ -16,41 +16,13 @@
       :heading="`Form B for ${formB.employee.first_name} ${formB.employee.last_name}`"
     >
       <template slot="right">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="secondary"
-              small
-              v-bind="attrs"
-              v-on="on"
-              class="mt-2"
-            >
-              Actions <v-icon>mdi-chevron-down</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item @click="editClick">
-              <v-list-item-title>Edit</v-list-item-title>
-            </v-list-item>
 
-            <v-list-item @click="generateClick">
-              <v-list-item-title>Lock for Signatures</v-list-item-title>
-            </v-list-item>
+        <form-b-status
+          :isLocked="isLocked"
+          :isActive="isActive">
+        </form-b-status>
+        <actions-menu> </actions-menu>
 
-            <v-list-item @click="uploadClick">
-              <upload-form-modal></upload-form-modal>
-              <!-- <v-list-item-title>Upload Signed PDF</v-list-item-title> -->
-            </v-list-item>
-
-            <v-list-item @click="archiveClick">
-              <v-list-item-title>Archive</v-list-item-title>
-            </v-list-item>
-
-            <v-list-item @click="archiveClick">
-              <v-list-item-title>Duplicate</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
       </template>
 
       <authority-metadata-card :formB="formB" />
@@ -230,20 +202,26 @@
 import { AUTHORITY_URL } from "@/urls";
 import { mapGetters, mapActions } from "vuex";
 
-import uploadFormModal from "../components/uploadFormModal.vue";
+// import uploadFormModal from "../components/uploadFormModal.vue";
 import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
+import FormBStatus from "../components/status/formBStatus.vue"
+import actionsMenu from "../components/menus/actionsMenu.vue";
 
 export default {
   name: "AuthorityDetails",
   components: {
-    uploadFormModal,
+    // uploadFormModal,
     AuthorityMetadataCard,
+    FormBStatus,
+    actionsMenu,
   },
   data: () => ({
     id: "",
     authority: {},
     showUpload: false,
     page: { title: "" },
+    isLocked: false,
+    isActive: true,
   }),
   computed: {
     ...mapGetters("authority/formB", ["formB"]),
