@@ -1,6 +1,8 @@
 <template>
+  <!-- TODO: Make these items editable - if allowed -->
   <th
     rowspan="5"
+    colspan="2"
     style="
       text-align: left;
       padding: 10px;
