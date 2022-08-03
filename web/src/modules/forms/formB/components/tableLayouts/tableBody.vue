@@ -4,13 +4,7 @@
                     <td class="pl-3">{{ line.account }}</td>
                     <td class="pl-3" style="width: 200px;">
                         <!-- Operational RESTRICTIONS -->
-                        <!-- {{ line.operational_restriction}} -->
-                        <v-select class="px-2 py-n5 "
-                        :items="items"
-
-                        v-model="line.operational_restriction"
-
-                      ></v-select>
+                        {{ line.operational_restriction}}
                       </td>
                     <td class="fb-value">{{ line.s24_procure_goods_limit }}</td>
                     <td class="fb-value">
@@ -41,22 +35,18 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex"
+import { mapState } from "vuex"
 export default {
   name: "tableBody",
   data: () => ({
-    items: [
 
-    ],
   }),
   computed: {
     ...mapState("authority/formB", ["formB"])
   },
   methods: {
-    ...mapActions('authority', ["getOperationalRestictions"]),
   },
   async mounted () {
-    this.items = Object.keys(await this.getOperationalRestictions())
   }
 }
 </script>

@@ -83,7 +83,7 @@
     </tr>
     <tr style="height: 30px">
       <th style="height: 30px">
-        Area of Authority - General Ledger Coding
+        Area of Authority <br /> General Ledger Coding
       </th>
        <th class="bottom">
               OPERATIONAL <br />RESTRICTIONS
