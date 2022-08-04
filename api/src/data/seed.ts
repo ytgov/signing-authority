@@ -1,9 +1,10 @@
 import { GenericService } from "src/services";
 import { MongoFileStore } from "src/utils/mongo-file-store";
 import { MONGO_DB } from "../config";
-import { Authority, AuthorityLine, Department, Employee, FormA } from "./models";
+import { Authority, FormBAuthorityLine, Employee, FormA } from "./models";
 import { Storage } from "./storage";
 import { employeeSeedData, formASeedData } from "./seed-data";
+import { ObjectId } from "mongodb";
 
 
 export async function Seed(storage: Storage) {
@@ -44,16 +45,20 @@ export async function Seed(storage: Storage) {
         // console.log(m);
     };
 
-    const emp1 = await empDb.getOne({"email": "michael@icefoganalytics.com"});
+    const emp1 = await empDb.getOne({ "email": "michael@icefoganalytics.com" });
+    const emp2 = await empDb.getOne({ "email": "ryanjagar@hey.com" });
 
     // put in some FormAs
-    let formADB= storage.FormA as GenericService<FormA>;
+    let formADB = storage.FormA as GenericService<FormA>;
 
     for (let index = 0; index < formASeedData.length; index++) {
         const element = formASeedData[index];
-        console.log (element)
+        console.log(element);
         let m = await formADB.create(element);
     };
+
+    const formA1 = (await formADB.getAll({}))[0];
+
     // console.log(emp1);
     // let emp1 = await empDb.create(employeeSeedData[1]);
     // console.log(emp1)
@@ -72,8 +77,9 @@ export async function Seed(storage: Storage) {
 
     let autDb = storage.Authorities as GenericService<Authority>;
 
-    let auth1Lines = new Array<AuthorityLine>();
+    let auth1Lines = new Array<FormBAuthorityLine>();
     auth1Lines.push({
+        coding: "5511510",
         dept: "55", vote: "1", prog: "15", activity: "10", element: "**", allotment: "**", object: "****", ledger1: "", ledger2: "",
 
         s24_procure_goods_limit: 123,
@@ -93,6 +99,7 @@ export async function Seed(storage: Storage) {
     });
 
     auth1Lines.push({
+        coding: "5511530",
         dept: "55", vote: "1", prog: "15", activity: "30", element: "**", allotment: "**", object: "****", ledger1: "", ledger2: "",
         s24_procure_goods_limit: 222,
         s24_procure_services_limit: 222,
@@ -110,6 +117,7 @@ export async function Seed(storage: Storage) {
         s30_payment_limit: 222
     });
     auth1Lines.push({
+        coding: "55115",
         dept: "55", vote: "1", prog: "15", activity: "**", element: "**", allotment: "02", object: "****", ledger1: "", ledger2: "",
         s24_procure_goods_limit: 222,
         s24_procure_services_limit: 222,
@@ -130,16 +138,18 @@ export async function Seed(storage: Storage) {
     let auth1 = await autDb.create({
         department_code: "55",
         department_descr: "Highways and Public Works",
-        employee_id: emp1?._id,
-        employee_name: `${emp1?.first_name} ${emp1?.last_name}` as string,
-        issue_date: new Date(),
-        title: "Manager",
-        program: "ICT",
-        supervisor_name: "Ryan Agar",
-        reviewed_by_department: true,
-        employee_signed: false,
-        supervisor_signed: false,
-        supervisor_title: "Director, Marketing",
-        authority_lines: auth1Lines
+        program_branch: "ICT",
+        employee: { id: emp1?._id || new ObjectId() , name: emp1?.first_name || "", title: emp1?.position || "", },
+        supervisor: { id: emp1?._id || new ObjectId() , name: emp1?.first_name || "", title: emp1?.position || "", },
+        //title: "Manager",
+        //supervisor_name: "Ryan Agar",
+        //reviewed_by_department_date: new Date(),
+        //employee_signed_date: undefined,
+        //supervisor_signed_date: undefined,
+        //supervisor_title: "Director, Marketing",
+        authority_lines: auth1Lines,
+        //create_date: new Date(),
+        //create_user_id: emp1?._id || new ObjectId(),
+        form_a_id: formA1._id || new ObjectId(),
     });
 }

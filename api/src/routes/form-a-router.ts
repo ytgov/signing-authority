@@ -1,18 +1,17 @@
-import express, { request, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { body, param } from "express-validator";
 import { Storage } from "../data";
 
 import moment from "moment";
 import _ from "lodash";
-import { uploadsRouter } from "./uploads"
+import { uploadsRouter } from "./uploads";
 import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 
-import { FormA } from "src/data/models";
+import { FormA, OperationalRestrictions } from "../data/models";
 import { ObjectId } from "mongodb";
 
-import { operationalRestrictions } from "../data/models"
 import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
 
@@ -22,22 +21,23 @@ import { checkJwt, loadUser } from "../middleware/authz.middleware";
 
 
 
-formARouter.get("/operational-restrictions", (req:Request, res:Response) => {
-  return res.json(operationalRestrictions)
-})
+formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
+  return res.json(OperationalRestrictions);
+});
 
 formARouter.get("/", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
-  let list = await db.getAll({})
-  res.json({ data: list })
-})
-formARouter.get ("/count", async (req: Request, res: Response) => {
+  let list = await db.getAll({});
+  res.json({ data: list });
+});
+
+formARouter.get("/count", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
   let count = await db.count({});
   if (count)
     return res.json({ "form_a_count": count });
   res.status(404).send();
-})
+});
 
 formARouter.get("/:id",
   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
@@ -45,85 +45,107 @@ formARouter.get("/:id",
     const { id } = req.params;
     let item = await loadSingleAuthority(req, id);
 
-    if (item)
+    if (item) {
+      if (item.deactivation)
+        item.status = "Archived";
+      else if (item.activation) {
+        item.status = "Active";
+      }
+      else item.status = "Inactive (Draft)";
+
       return res.json({ data: item });
+    }
 
     res.status(404).send();
   });
 
-  // formARouter.get ("/department/form-count", async (req: Request, res: Response) => {
-  //   let db = req.store.FormA as GenericService<FormA>;
-  //   let pipeline =
-  //     [
-  //       {$match: {}},
-  //       {$group:
-  //         {
-  //           _id:"$department_descr",
-  //           count: {$sum:1 }
-  //         }
-  //       }
-  //     ]
+// formARouter.get ("/department/form-count", async (req: Request, res: Response) => {
+//   let db = req.store.FormA as GenericService<FormA>;
+//   let pipeline =
+//     [
+//       {$match: {}},
+//       {$group:
+//         {
+//           _id:"$department_descr",
+//           count: {$sum:1 }
+//         }
+//       }
+//     ]
 
-  //   let count = await db.aggregate(pipeline)
+//   let count = await db.aggregate(pipeline)
 
-  //   // if (count)
-  //     return res.json({ "form_a_count": count });
-  //   // res.status(404).send();
-  // })
-  formARouter.get ("/department/position-count", async (req: Request, res: Response) => {
-    let db = req.store.FormA as GenericService<FormA>;
-    let pipeline =
-      [
-        { $unwind : "$authority_lines" },
-        // {$match: {}},
-        {$group:
-          {
-            _id:{department_code: "$department_code", department_descr:"$department_descr"},
-            position_count: {$sum:1}
-          }
+//   // if (count)
+//     return res.json({ "form_a_count": count });
+//   // res.status(404).send();
+// })
+formARouter.get("/department/position-count", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let pipeline =
+    [
+      { $unwind: "$authority_lines" },
+      // {$match: {}},
+      {
+        $group:
+        {
+          _id: { department_code: "$department_code", department_descr: "$department_descr" },
+          position_count: { $sum: 1 }
         }
-      ]
+      }
+    ];
 
-    let count = await db.aggregate(pipeline)
+  let count = await db.aggregate(pipeline);
 
-    // if (count)
-      return res.json({ "form_a_count": count });
-    // res.status(404).send();
-  })
+  // if (count)
+  return res.json({ "form_a_count": count });
+  // res.status(404).send();
+});
 
-  formARouter.get ("/department/:department", async (req: Request, res: Response) => {
-    let db = req.store.FormA as GenericService<FormA>;
-    let department_code = req.params.department
+formARouter.get("/department/:department", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
 
-    let list = await db.getAll({"department_code": department_code})
-    if (list)
-      return res.json({ data: list });
-    res.status(404).send();
-  });
+  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, position: 1 });
+
+  if (list) {
+    for (let item of list) {
+      if (item.deactivation)
+        item.status = "Archived";
+      else if (item.activation) {
+        item.status = "Active";
+      }
+      else item.status = "Inactive (Draft)";
+    }
+
+    return res.json({ data: list });
+  }
+
+  res.status(404).send();
+});
 
 
-  formARouter.get ("/department/:department/count", async (req: Request, res: Response) => {
-    let db = req.store.FormA as GenericService<FormA>;
-    let department_code = req.params.department
-    // console.log (`Asking for a count of dept ${department_code}`)
-    let pipeline =
-      [
-        { $match: {"department_code": department_code}},
-        { $unwind : "$authority_lines" },
-        // {$match: {}},
-        {$group:
-          {
-            _id:{department_code: "$department_code", department_descr:"$department_descr"},
-            position_count: {$sum:1}
-          }
+formARouter.get("/department/:department/count", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
+  // console.log (`Asking for a count of dept ${department_code}`)
+  let pipeline =
+    [
+      { $match: { "department_code": department_code } },
+      { $unwind: "$authority_lines" },
+      // {$match: {}},
+      {
+        $group:
+        {
+          _id: { department_code: "$department_code", department_descr: "$department_descr" },
+          position_count: { $sum: 1 }
         }
-      ]
-    let count = await db.aggregate(pipeline)
-    // let count = await db.count({"department_code": department_code})
-    if (count.length == 1)
-      return res.json( count[0] );
-    res.status(404).send();
-  })
+      }
+    ];
+  let count = await db.aggregate(pipeline);
+  // let count = await db.count({"department_code": department_code})
+  if (count.length == 1)
+    return res.json(count[0]);
+  res.status(404).send();
+});
 
 // formARouter.get("/:id/pdf",
 //   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
@@ -157,11 +179,12 @@ formARouter.put("/:id",
     req.body.updated_by = req.user.email;
 
     // If archiving a form note the details
-    if (req.query.archive=="true") {
-      req.body.archive.by = req.user.email
-      req.body.archive.sub = req.user.sub
-      req.body.archive.date = new (Date)
-
+    if (req.query.archive == "true") {
+      if (!req.body.deactivation)
+        req.body.deactivation = {};
+      req.body.deactivation.by = req.user.email;
+      req.body.deactivation.sub = req.user.sub;
+      req.body.deactivation.date = new (Date);
     }
 
     /* ----------------- Form A Version History ------------------------------
@@ -183,16 +206,16 @@ formARouter.put("/:id",
       req.body.employee_id = new ObjectId(req.body.employee_id);
     // console.log(req.body.authority_lines[0])
     for (let line of req.body.authority_lines) {
-      let account = `${line.account.replace(/[^0-9]/g, "")}*************************`;
-      line.dept = account.substring(0, 2);
-      line.vote = account.substring(2, 3);
-      line.prog = account.substring(3, 5);
-      line.activity = account.substring(5, 7);
-      line.element = account.substring(7, 9);
-      line.allotment = account.substring(9, 11);
-      line.object = account.substring(9, 13);
-      line.ledger1 = account.substring(13, 17);
-      line.ledger2 = account.substring(17, 22);
+      let coding = `${line.coding.replace(/[^0-9]/g, "")}*************************`;
+      line.dept = coding.substring(0, 2);
+      line.vote = coding.substring(2, 3);
+      line.prog = coding.substring(3, 5);
+      line.activity = coding.substring(5, 7);
+      line.element = coding.substring(7, 9);
+      line.allotment = coding.substring(9, 11);
+      line.object = coding.substring(9, 13);
+      line.ledger1 = coding.substring(13, 17);
+      line.ledger2 = coding.substring(17, 22);
       delete line.account;
 
       line.contracts_for_goods_services = line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
@@ -208,7 +231,7 @@ formARouter.put("/:id",
     await db.update(id, req.body);
 
     let item = await loadSingleAuthority(req, id);
-    res.json({ data: item })
+    res.json({ data: item });
   });
 
 formARouter.post("/",
@@ -218,7 +241,7 @@ formARouter.post("/",
     // console.log(req.body)
     let db = req.store.FormA as GenericService<FormA>;
 
-    req.body.created_on= new Date();
+    req.body.created_on = new Date();
     req.body.created_by = req.user.email;
 
     // if (req.body.department_id)
@@ -226,7 +249,7 @@ formARouter.post("/",
 
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());
-    res.json({ data: item })
+    res.json({ data: item });
   });
 
 
@@ -270,20 +293,20 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
       item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");
 
     if (item.authority_lines) {
-        for (let line of item.authority_lines) {
-          line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
+      for (let line of item.authority_lines) {
+        line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
 
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-          if (line.account.length < 26)
-            line.account += "*";
+        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+        if (line.account.length < 26)
+          line.account += "*";
       }
-  }
+    }
     return item;
   }
 

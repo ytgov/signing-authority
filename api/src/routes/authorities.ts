@@ -8,7 +8,7 @@ import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 import _ from "lodash";
 import { Authority, Department, Employee } from "src/data/models";
-import { Auth, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import moment from "moment";
 import { generatePDF } from "../utils/pdf-generator";
 

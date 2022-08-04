@@ -1,5 +1,6 @@
 import { MongoEntity } from ".";
 
+
 export interface StoredFile extends MongoEntity {
     filename: string;
     fileSize: number;

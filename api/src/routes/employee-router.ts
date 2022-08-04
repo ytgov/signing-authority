@@ -34,7 +34,7 @@ employeeRouter.post('/search',
     //return all the authorites assigned to the account
 
     let db = req.store.Employees as GenericService<Employee>;
-    let reg = new RegExp(terms, "i")
+    let reg = new RegExp(terms, "i");
 
     let list = await db.getAll({
       $or: [
@@ -46,7 +46,7 @@ employeeRouter.post('/search',
 
     for (let item of list) {
       item.display_name = `${item.first_name} ${item.last_name}`;
-      item.long_name = `${item.display_name} (${item.ynet_id}) - ${item.position}`
+      item.long_name = `${item.display_name} (${item.ynet_id}) - ${item.position}`;
     }
 
     return res.json({ data: list });
@@ -61,10 +61,10 @@ employeeRouter.post('/search-directory',
     await directoryService.connect();
 
     let results = await directoryService.search(terms);
-    console.log("FROM DIRECTORY", results)
+    console.log("FROM DIRECTORY", results);
 
     for (let dir of results) {
-      dir.display_name = `${dir.givenName} ${dir.surname}`
+      dir.display_name = `${dir.givenName} ${dir.surname}`;
       dir.first_name = dir.givenName;
       dir.last_name = dir.last_name;
       dir.ynet_id = dir.userPrincipalName.toLowerCase().replace("@ynet.gov.yk.ca", "");
@@ -92,8 +92,8 @@ employeeRouter.get('/:id',
       for (let auth of item.authorities) {
         // auth.department = await depDb.getOne({ _id: new ObjectId(auth.department_id) });
 
-        if (auth.issue_date)
-          auth.issue_date_display = moment(auth.issue_date).utc(false).format("YYYY-MM-DD");
+        /*  if (auth.issue_date)
+           auth.issue_date_display = moment(auth.issue_date).utc(false).format("YYYY-MM-DD"); */
       }
 
       return res.json({ data: item });
@@ -127,6 +127,6 @@ employeeRouter.put('/:id',
 employeeRouter.get('/:id/authorities', async (req: Request, res: Response) => {
   let { id } = req.params;
   let db = req.store.Authorities as GenericService<Authority>;
-  let files = await db.getAll({ "employee_id": id })
-  return res.json({ data: files })
+  let files = await db.getAll({ "employee_id": id });
+  return res.json({ data: files });
 });

@@ -1,75 +1,88 @@
 import { ObjectId } from "mongodb";
-import { MongoEntity } from ".";
-import { Department } from "./";
-import { Employee } from "./";
+import { FormA, MongoEntity, User, Department, Employee, StoredFile } from ".";
+
 
 export interface Authority extends MongoEntity {
-    //_id?: ObjectId;
-    employee_id: ObjectId|undefined;
-    // department_id: ObjectId;
+
+    employee: {
+        id: ObjectId;
+        name: string;
+        title: string;
+        signed_date?: Date;
+        value?: Employee;
+    };
+
+    supervisor: {
+        id: ObjectId;
+        name: string;
+        title: string;
+        signed_date?: Date;
+        value?: Employee;
+    };
+
+    form_a_id: ObjectId;
+
     department_code: string;
-    department_descr: String
-    program: string;
-    title: string;
-    employee_name: string;
-    issue_date: Date;
-    expiry_date?: Date;
-    archive_date?: Date;
-    archive_reason?: string;
-    supervisor_name: string;
-    supervisor_title: string;
+    department_descr: string;
+    program_branch: string;
 
-    employee_signed: boolean;
-    supervisor_signed: boolean;
-    reviewed_by_department: boolean;
+    authority_lines: FormBAuthorityLine[];
 
-    formb_file_reference?: ObjectId;
-    memo_file_reference?: ObjectId;
-    authority_lines?: AuthorityLine[];
+    department_reviews?: ReviewResults[];
+    finance_reviews?: ReviewResults[];
+
+    activation?: [
+        {
+            date: Date;
+            expire_date?: Date;
+            activate_reason: string;
+            archive_reason?: string;
+            activate_user_id: ObjectId;
+
+            file?: StoredFile;
+            memo?: StoredFile;
+        }
+    ];
 
     // used in DTO only
     department?: Department;
-    employee?: Employee;
+    form_a?: FormA;
+    //employee?: Employee;
+    //supervisor?: Employee;
+
     issue_date_display?: string;
+    created_by?: User;
 }
 
-// Form A
+export interface ReviewResults {
+    date: Date;
+    user_id: ObjectId;
+    result: ReviewResultType;
+    note?: string;
+}
 
-// export interface FormA extends MongoEntity {
-//     //_id?: ObjectId;
-//     // department_id: ObjectId;
-//     department_code: String;
-//     department_descr: String
-//     position: string;
-//     issue_date: Date;
-//     archive_date?: Date;
-//     archive_reason?: string;
+export enum ReviewResultType {
+    Approved = "Approved",
+    Rejected = "Rejected"
+}
 
-//     reviewed_by_department: boolean;
-//     reviewed_by_person?: String
-//     reviewed_by_date?: Date;
+export interface FormBAuthorityLine {
+    coding: string;
 
-//     formb_file_reference?: ObjectId; //maybe this should be an array?
-//     memo_file_reference?: ObjectId;
-//     authority_lines?: AuthorityLine[];
+    dept?: string;
+    vote?: string;
+    prog?: string;
+    activity?: string;
+    element?: string;
+    allotment?: string;
+    object?: string;
+    ledger1?: string;
+    ledger2?: string;
 
-//     // used in DTO only
-//     // department?: Department;
-//     employee?: Employee;
-//     issue_date_display?: string;
-// }
+    operational_restriction?: string;
+    notes?: string;
 
-export interface AuthorityLine {
-    // authority_id: ObjectId;
-    dept: string;
-    vote: string;
-    prog: string;
-    activity: string;
-    element: string;
-    allotment: string;
-    object: string;
-    ledger1: string;
-    ledger2: string;
+    //**   Note: -1 means: No Limit or NL **//
     s24_procure_goods_limit: number;
     s24_procure_services_limit: number;
     s24_procure_request_limit: number;
@@ -86,4 +99,9 @@ export interface AuthorityLine {
     s30_payment_limit: number;
 }
 
-
+export interface FormBAuditLine {
+    date: Date;
+    user_name: string;
+    action: string;
+    previous_value: Object;
+}
