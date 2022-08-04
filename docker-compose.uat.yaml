@@ -2,10 +2,10 @@ version: "3"
 
 services:
   web:
-    image: ghcr.io/ryanjagar/signing-authority:latest
+    image: ghcr.io/icefoganalytics/signing-authority:latest
     restart: unless-stopped
     ports:
-      - 3000:3000
+      - 21557:3000
     environment:
       - AUTH_REDIRECT=${AUTH_REDIRECT}
       - FRONTEND_URL=${FRONTEND_URL}
