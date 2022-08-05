@@ -20,7 +20,7 @@ app.use(fileUpload());
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      'default-src': ["'self'"],
+      'default-src': ["'self'", "https://dev-0tc6bn14.eu.auth0.com"],
       'base-uri': ["'self'"],
       'block-all-mixed-content': [],
       'font-src': ["'self'", 'https:', 'data:'],
