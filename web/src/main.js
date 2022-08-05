@@ -18,11 +18,12 @@ Vue.component("notifications", Notifications);
 Vue.use(VueCurrencyInput, { globalOptions: { currency: 'USD', locale: 'en' } });
 
 import { Auth0Plugin } from '@/auth/auth0-plugin';
+import { domain, clientId, audience } from '../auth_config.json';
 
 Vue.use(Auth0Plugin, {
-  domain: process.env.VUE_APP_AUTH_DOMAIN,
-  client_id: process.env.VUE_APP_AUTH_CLIENTID,
-  audience: process.env.VUE_APP_AUTH_AUDIENCE,
+  domain,
+  client_id: clientId,
+  audience,
   onRedirectCallback: (appState) => {
     router.push(
       appState && appState.targetUrl

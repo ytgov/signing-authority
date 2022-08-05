@@ -22,7 +22,6 @@ RUN npm run build
 
 WORKDIR /home/node/web
 ENV NODE_ENV=production
-ENV TESTER=michael
 
 RUN npm run build:docker
 
