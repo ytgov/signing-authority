@@ -12,7 +12,7 @@
     </BaseBreadcrumb>
 
     <BaseCard
-      showHeader="true"
+      :showHeader="true"
       :heading="`Form B for ${formB.employee.first_name} ${formB.employee.last_name}`"
     >
       <template slot="right">

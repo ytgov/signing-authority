@@ -9,7 +9,7 @@
         </BaseBreadcrumb>
 
         <BaseCard
-            showHeader="true"
+            :showHeader="true"
             :heading="`Delegation of Financial Signing Authority - FORM A`"
         >
             <template slot="right">

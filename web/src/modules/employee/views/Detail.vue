@@ -11,7 +11,7 @@
     </BaseBreadcrumb>
 
     <BaseCard
-      showHeader="true"
+      :showHeader="true"
       :heading="`${employee.first_name} ${employee.last_name} (${employee.ynet_id})`"
     >
       <v-row>

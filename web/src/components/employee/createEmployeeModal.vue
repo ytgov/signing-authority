@@ -12,7 +12,7 @@
       <v-btn icon @click="close"><v-icon>mdi-close</v-icon></v-btn>
     </v-app-bar>
 
-    <v-card>
+    <v-card tile>
       <v-card-text class="pt-5">
         <notifications ref="notifier"></notifications>
 

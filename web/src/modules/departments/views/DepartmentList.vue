@@ -10,7 +10,7 @@
             </template>
         </BaseBreadcrumb>
 
-        <BaseCard showHeader="true">
+        <BaseCard :showHeader="true">
             <v-data-table
                 :items="departments"
                 :headers="[

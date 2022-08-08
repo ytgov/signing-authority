@@ -10,7 +10,7 @@
             </template>
         </BaseBreadcrumb>
 
-        <BaseCard showHeader="true">
+        <BaseCard :showHeader="true">
             <template v-slot:left>
                 <v-text-field
                     v-model="search"

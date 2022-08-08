@@ -8,10 +8,7 @@
         >
         </BaseBreadcrumb>
 
-        <BaseCard
-            showHeader="false"
-            :heading="`Delegation of Financial Signing Authority - FORM A`"
-        >
+        <BaseCard>
             <template v-slot:right>
                 <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
                 <form-a-status
