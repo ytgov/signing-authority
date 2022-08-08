@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1>My Profile</h1>
+    <h1>My Profile</h1><!-- 
     <p>
       ** This information is all read-only with the exception of your Mail code
-    </p>
+    </p> -->
 
     <div class="row">
       <div class="col-md-6">
@@ -53,6 +53,7 @@
         </v-text-field>
       </div>
     </div>
+    {{profile}}
     <notifications ref="notifier"></notifications>
   </div>
 </template>
