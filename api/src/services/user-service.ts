@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Collection } from "mongodb";
+import { Collection, ObjectId } from "mongodb";
 import { User } from "../data/models";
 
 export class UserService {
@@ -21,8 +21,10 @@ export class UserService {
         return await this.db.insertOne(user);
     }
 
-    async update(email: string, item: any) {
-        return this.db.findOneAndUpdate({ email }, item);
+    async update(_id: ObjectId, item: any) {
+        console.log("TESTING", { _id }, item);
+
+        return this.db.findOneAndUpdate({ _id }, item, { upsert: true });
     }
 
     async getAll(): Promise<User[]> {

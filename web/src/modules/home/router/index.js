@@ -16,6 +16,12 @@ const routes = [
         meta: { requiresAuth: true },
         component: () => import("../views/Profile"),
       },
+      {
+        name: "Search",
+        path: "search",
+        meta: { requiresAuth: true },
+        component: () => import("../views/Search"),
+      },
     ]
   }
 ];

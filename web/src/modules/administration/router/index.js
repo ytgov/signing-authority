@@ -2,7 +2,6 @@
 const routes = [
   {
     path: "/administration",
-    name: "Administration",
     component: () => import("@/layouts/Layout"),
     meta: { requiresAuth: true },
     children: [

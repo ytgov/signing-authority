@@ -4,6 +4,7 @@ import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
 import _ from "lodash";
 import { checkJwt, loadUser } from "../middleware/authz.middleware";
+import { ObjectId } from "mongodb";
 
 export const userRouter = express.Router();
 userRouter.use(RequiresData);
@@ -13,8 +14,12 @@ userRouter.get("/me",
     async (req: Request, res: Response) => {
         const db = req.store.Users as UserService;
         let person = req.user;
+        console.log("REQ USER", person);
         let me = await db.getByEmail(person.email);
-        return res.json({ data: Object.assign(req.user, me) });
+
+        console.log("ME", me);
+
+        return res.json({ data: Object.assign(person, me) });
     });
 
 userRouter.get("/",
@@ -22,9 +27,9 @@ userRouter.get("/",
         const db = req.store.Users as UserService;
         let list = await db.getAll();
 
-        /*  for (let user of list) {
-             user = await db.makeDTO(user)
-         } */
+        for (let user of list) {
+            user.display_name = `${user.first_name} ${user.last_name}`;
+        }
 
         return res.json({ data: list });
     });
@@ -36,12 +41,20 @@ userRouter.put("/:email",
         let { email } = req.params;
         let { roles, status } = req.body;
 
-        let user = {
-            roles: _.join(roles, ","),
-            status,
-        };
+        let existing = await db.getByEmail(email);
 
-        await db.update(email, user);
+        if (existing) {
+            existing.status = status;
+            existing.roles = roles;
+            /* 
+                let user = {
+                    roles,
+                    //roles: _.join(roles, ","),
+                    status,
+                }; */
+
+            await db.update(existing._id || new ObjectId(), existing);
+        }
 
         return res.json({ messages: [{ variant: "success", text: "User saved" }] });
     });
@@ -74,7 +87,7 @@ userRouter.get("/make-admin/:email/:key",
         if (user) {
             console.log(`KEY MATCHES, making ${email} an admin`);
             user.roles = ["Admin"];
-            await db.update(email, user);
+            //await db.update(email, user);
         }
 
         res.send("Done");

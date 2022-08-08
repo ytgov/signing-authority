@@ -25,8 +25,8 @@ export default {
       default: "",
     },
     showHeader: {
-      type: String,
-      default: "",
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({}),

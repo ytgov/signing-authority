@@ -45,10 +45,7 @@
         ></v-col
       >
     </v-row>
-    <!--
-     **** TODO ****
-     Make a click on Name a mailto: link
-     -->
+    
     <v-data-table
       :items="searchResults"
       :headers="[
@@ -62,36 +59,7 @@
       :expanded.sync="expanded"
       item-key="student_id"
     >
-      <template v-slot:expanded-item="{ headers, item }">
-        <td
-          :colspan="headers.length"
-          style="padding: 10px 70px; background-color: #ddd"
-        >
-          Home email: <strong>{{ item.home_email }}</strong
-          ><br />
-          School email: <strong>{{ item.school_email }}</strong
-          ><br />
-        </td>
-      </template>
     </v-data-table>
-
-    <v-navigation-drawer
-      v-model="showDrawer"
-      absolute
-      right
-      temporary
-      width="600"
-    >
-      <application-list
-        :selectedStudent="selectedAuthority"
-        :studentApplications="signingAuthorities"
-      ></application-list>
-
-      <v-btn color="primary" class="mx-5" @click="createApplication"
-        >Create authority</v-btn
-      >
-    </v-navigation-drawer>
-    <!-- <create-student-dialog ref="createAuthorityDialog"></create-student-dialog> -->
   </div>
 </template>
 
