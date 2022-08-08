@@ -37,6 +37,7 @@
                     outlined
                     v-model="item.roles"
                     :items="roleOptions"
+                    clearable
                 ></v-select>
 
                 <v-btn @click="save" color="primary">Save</v-btn>
@@ -54,7 +55,7 @@ export default {
     data: () => ({
         showDialog: false,
         item: {},
-        roleOptions: ["Finance Admin", "Department Admin"],
+        roleOptions: ["System Admin", "Finance Admin", "Department Admin"],
     }),
     methods: {
         ...mapActions("administration", ["saveUser"]),

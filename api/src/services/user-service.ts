@@ -11,20 +11,17 @@ export class UserService {
     }
 
     async create(user: any): Promise<any> {
-        let existing = await this.db.find({ email: user.email }).count();
+        let existing = await this.db.find({ email: user.email }).toArray();
 
-        if (existing > 0)
+        if (existing.length > 0)
             return undefined;
 
         user.create_date = new Date();
-
         return await this.db.insertOne(user);
     }
 
     async update(_id: ObjectId, item: any) {
-        console.log("TESTING", { _id }, item);
-
-        return this.db.findOneAndUpdate({ _id }, item, { upsert: true });
+        return this.db.findOneAndReplace({ _id }, item);
     }
 
     async getAll(): Promise<User[]> {
@@ -36,6 +33,10 @@ export class UserService {
     }
 
     async getBySub(sub: string): Promise<User | null> {
-        return this.db.findOne<User>({ sub });
+        return this.db.findOne({ sub });
+    }
+
+    async delete(id: string) {
+        return this.db.deleteOne({ _id: new ObjectId(id) });
     }
 }

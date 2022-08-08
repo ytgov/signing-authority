@@ -33,6 +33,7 @@
                                 :headers="[
                                     { text: 'Name', value: 'display_name' },
                                     { text: 'Email', value: 'email' },
+                                    { text: 'Status', value: 'status' },
                                     { text: 'Roles', value: 'roles' },
                                 ]"
                                 @click:row="rowClick"

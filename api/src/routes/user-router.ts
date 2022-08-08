@@ -14,12 +14,8 @@ userRouter.get("/me",
     async (req: Request, res: Response) => {
         const db = req.store.Users as UserService;
         let person = req.user;
-        console.log("REQ USER", person);
         let me = await db.getByEmail(person.email);
-
-        console.log("ME", me);
-
-        return res.json({ data: Object.assign(person, me) });
+        return res.json({ data: me });
     });
 
 userRouter.get("/",
@@ -46,17 +42,11 @@ userRouter.put("/:email",
         if (existing) {
             existing.status = status;
             existing.roles = roles;
-            /* 
-                let user = {
-                    roles,
-                    //roles: _.join(roles, ","),
-                    status,
-                }; */
-
             await db.update(existing._id || new ObjectId(), existing);
+            return res.json({ messages: [{ variant: "success", text: "User saved" }] });
         }
 
-        return res.json({ messages: [{ variant: "success", text: "User saved" }] });
+        res.status(404).send();
     });
 
 userRouter.delete("/:id",
@@ -65,7 +55,10 @@ userRouter.delete("/:id",
         const db = req.store.Users as UserService;
         let { id } = req.params;
 
+        console.log("DO DELETE");
+
         //await db.disable(id);
+        //await db.delete(id);
 
         let list = await db.getAll();
 
