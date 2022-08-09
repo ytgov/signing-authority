@@ -59,21 +59,9 @@ employeeRouter.post('/search-directory',
   //[body("terms").notEmpty().trim()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     let { terms } = req.body;
-    //return all the authorites assigned to the account
 
     await directoryService.connect();
-
     let results = await directoryService.search(terms);
-    //console.log("FROM DIRECTORY", results);
-
-    for (let dir of results) {
-      dir.display_name = `${dir.givenName} ${dir.surname}`;
-      dir.first_name = dir.givenName;
-      dir.last_name = dir.last_name;
-      dir.ynet_id = dir.userPrincipalName.toLowerCase().replace("@ynet.gov.yk.ca", "");
-      dir.email = dir.mail;
-      dir.long_name = `${dir.display_name} (${dir.ynet_id}) - ${dir.jobTitle}`;
-    }
 
     return res.json({ data: results });
   });

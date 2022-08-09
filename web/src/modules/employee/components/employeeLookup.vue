@@ -17,22 +17,47 @@
             return-object
             @click:prepend="changeIcon"
             @change="selected"
+            ref="searchField"
         >
             <template slot="no-data">
                 <div class="mx-4 text-caption">
-                    No matches found? Try searching
-                    <a @click="changeIcon">{{ searchAlt }}</a>
+                    <strong>No matches found?</strong>
+                    This search matches the beginning of names and titles only
                 </div>
             </template>
         </v-autocomplete>
 
-        <v-card class="default">
+        <v-card class="default mb-4" v-if="model.email">
             <v-card-text>
-                Name: {{ model.display_name }}<br />
-                Email: {{ model.email }} <br />
-                Title: {{ model.jobTitle }}<br />
-                ynet_id: {{ model.ynet_id }}<br />
-                officeLocation: {{ model.officeLocation }}
+                <v-row>
+                    <v-col cols="9">
+                        <strong>Name:</strong> {{ model.display_name }} ({{
+                            model.ynet_id
+                        }})<br />
+                        <strong>Department:</strong> {{ model.department }} :
+                        {{ model.title }}<br />
+                        <strong>Email:</strong> {{ model.email }} <br />
+                        <strong>Location:</strong> {{ model.officeLocation }}
+                    </v-col>
+                    <v-col class="text-right">
+                        <v-btn
+                            @click="doSelect"
+                            color="primary"
+                            class="mb-0"
+                            small
+                        >
+                            <v-icon class="mr-2">mdi-account-check</v-icon>
+                            {{ actionName }}
+                        </v-btn>
+                        <v-btn
+                            @click="clear"
+                            color="secondary"
+                            class="ml-4 mb-0 mt-4"
+                            small
+                            >Clear</v-btn
+                        ></v-col
+                    >
+                </v-row>
             </v-card-text>
         </v-card>
     </div>
@@ -43,7 +68,7 @@ import { mapActions } from "vuex";
 
 export default {
     name: "DirectorySearchAdd",
-    props: {},
+    props: ["select", "actionName"],
     data: () => ({
         isLoading: false,
         items: [],
@@ -71,7 +96,16 @@ export default {
                 : this.searchIndex++; */
         },
         selected() {
-            console.log("SELECTED", this.model);
+            this.search = "";
+        },
+        doSelect() {
+            if (this.select) {
+                this.select(this.model);
+                this.clear();
+            }
+        },
+        clear() {
+            this.model = {};
             this.search = "";
         },
     },

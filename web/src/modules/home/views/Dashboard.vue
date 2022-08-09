@@ -53,7 +53,7 @@
             </v-col>
         </v-row>
 
-        <employee-lookup></employee-lookup>
+        <employee-lookup actionName="Authorities" :select="pickPerson"></employee-lookup>
 
         <v-navigation-drawer
             v-model="drawer"
@@ -139,6 +139,7 @@ export default {
 
             await this.employeeSearch({ term: cleanSearch })
                 .then((resp) => {
+
                     this.searchResults = resp.data.data;
                     this.drawer = true;
                     this.resultCount = resp.data.meta.item_count;
@@ -165,6 +166,11 @@ export default {
         selectDepartment(item) {
             this.$router.push(`/departments/${item}`);
         },
+        pickPerson(item) {
+            console.log("PICKED", item)
+
+            this.drawer = true
+        }
     },
 };
 </script>
