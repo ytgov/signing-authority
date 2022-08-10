@@ -1,11 +1,11 @@
-import express, { Request, Response, } from "express";
+import express, { application, Request, Response, } from "express";
 import cors from "cors";
 import path from "path";
 import helmet from "helmet";
 import fileUpload from "express-fileupload";
 import { API_PORT, FRONTEND_URL, APPLICATION_NAME } from './config';
 import { doHealthCheck } from "./utils/healthCheck";
-import { userRouter, authoritiesRouter, employeeRouter, departmentRouter, formARouter } from "./routes";
+import { userRouter, authoritiesRouter, employeeRouter, departmentRouter, formARouter, configRouter } from "./routes";
 
 //import { configureLocalAuthentication } from "./routes/auth-local";
 import { RequiresData } from "./middleware";
@@ -51,6 +51,7 @@ app.get("/api/healthCheck", RequiresData, (req: Request, res: Response) => {
   doHealthCheck(req, res);
 });
 
+app.use("/api/config", configRouter);
 app.use("/api/user", userRouter);
 app.use("/api/employees", employeeRouter);
 app.use("/api/departments", departmentRouter);

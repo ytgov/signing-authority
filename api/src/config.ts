@@ -16,6 +16,15 @@ switch (process.env.NODE_ENV) {
 
 dotenv.config({ path: path });
 
+// Filter out the variables that the frontend needs to know about
+let obj = process.env;
+let pattern ="VUE_APP_"
+
+export const VUE_APP_ = Object.keys(obj)
+                                .filter(k => k.includes(pattern))
+                                .reduce((cur, key) => {
+                                  return Object.assign(cur, { [key]: obj[key] })}, {});
+
 console.log(`LOADING ${NODE_ENV} CONFIG FROM ${path}`);
 export const apiBaseUrl = process.env.NODE_ENV == "production" ? "" : "http://localhost:3000";
 export const API_PORT = process.env.API_PORT || "3000";
