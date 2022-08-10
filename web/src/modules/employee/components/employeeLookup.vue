@@ -1,7 +1,7 @@
 <template>
-    <div class="mt-7">
+    <div>
         <v-autocomplete
-            :label="searchLocation"
+            :label="`${label} ${searchLocation}`"
             v-model="model"
             :items="items"
             :loading="isLoading"
@@ -68,7 +68,7 @@ import { mapActions } from "vuex";
 
 export default {
     name: "DirectorySearchAdd",
-    props: ["select", "actionName"],
+    props: ["select", "actionName", "label"],
     data: () => ({
         isLoading: false,
         items: [],

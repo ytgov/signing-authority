@@ -53,7 +53,7 @@
             </v-col>
         </v-row>
 
-        <employee-lookup actionName="Authorities" :select="pickPerson"></employee-lookup>
+        <employee-lookup actionName="Authorities" label="" :select="pickPerson"></employee-lookup>
 
         <v-navigation-drawer
             v-model="drawer"

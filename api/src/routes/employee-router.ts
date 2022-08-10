@@ -45,7 +45,7 @@ employeeRouter.post('/search',
       ]
     });
 
-    console.log("MATCHES FOR: ", terms, list.length);
+    //console.log("MATCHES FOR: ", terms, list.length);
 
     for (let item of list) {
       item.display_name = `${item.first_name} ${item.last_name}`;
