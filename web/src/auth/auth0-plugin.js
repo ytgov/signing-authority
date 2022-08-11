@@ -4,8 +4,9 @@
 
 import Vue from 'vue';
 import createAuth0Client from '@auth0/auth0-spa-js';
-import {secureGet, securePut, securePost} from "@/store/jwt";
-import {getAuthConfig} from './getAuthConfig';
+import { secureGet, securePut, securePost } from "@/store/jwt";
+import { getAuthConfig } from './getAuthConfig';
+import { apiConfigUrl } from "@/config";
 
 /**
  *  Vue.js Instance Definition
@@ -64,19 +65,19 @@ export const useAuth0 = ({
                 return this.auth0Client.getTokenSilently(o);
             },
 
-            get(url){
+            get(url) {
                 return secureGet(url);
             },
-            put(url, body){
+            put(url, body) {
                 return securePut(url, body);
             },
-            post(url, body){
+            post(url, body) {
                 return securePost(url, body);
             }
         },
 
         async created() {
-            this.options = await getAuthConfig("http://localhost:3000/api/config")
+            this.options = await getAuthConfig(apiConfigUrl)
 
             this.auth0Client = await createAuth0Client({
                 ...this.options,
