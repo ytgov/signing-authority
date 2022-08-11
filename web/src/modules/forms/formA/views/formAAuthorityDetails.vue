@@ -8,8 +8,11 @@
         >
         </BaseBreadcrumb>
 
-        <BaseCard>
-            <template v-slot:right>
+        <BaseCard
+            :showHeader="true"
+            :heading="`Delegation of Financial Signing Authority - FORM A`"
+        >
+            <template slot="right">
                 <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
                 <form-a-status
                     :isLocked="isLocked"

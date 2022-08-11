@@ -13,7 +13,7 @@
 
     <BaseCard
       :showHeader="true"
-      :heading="`Form B for ${formB.employee.first_name} ${formB.employee.last_name}`"
+      :heading="`Form B for ${formB.employee.name}`"
     >
       <template slot="right">
 
@@ -38,7 +38,7 @@
               <v-btn
                 :to="{
                   name: 'EmployeeDetail',
-                  params: { id: formB.employee._id },
+                  params: { id: formB.employee.email },
                 }"
                 color="#7A9A01"
                 >Close</v-btn
@@ -84,11 +84,11 @@ export default {
     breadcrumbs: function () {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
       b.push({
-        text: `${this.formB.employee.first_name} ${this.formB.employee.last_name}`,
-        to: `/employee/${this.formB.employee_id}`,
+        text: `${this.formB.employee.name}`,
+        to: `/employee/${this.formB.email}`,
       });
       b.push({
-        text: `${this.formB.department_descr} / ${this.formB.program} / ${this.formB.title}`,
+        text: `${this.formB.department_descr} / ${this.formB.program_branch} / ${this.formB.employee.title}`,
       });
       return b;
     },

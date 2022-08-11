@@ -5,7 +5,6 @@ import { FormA, MongoEntity, User, Department, Employee, StoredFile } from ".";
 export interface Authority extends MongoEntity {
 
     employee: {
-        id: ObjectId;
         name: string;
         title: string;
         signed_date?: Date;
@@ -13,7 +12,6 @@ export interface Authority extends MongoEntity {
     };
 
     supervisor: {
-        id: ObjectId;
         name: string;
         title: string;
         signed_date?: Date;

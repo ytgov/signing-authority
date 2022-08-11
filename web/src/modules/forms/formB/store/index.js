@@ -4,7 +4,7 @@ import _ from "lodash";
 import { getInstance } from "@/auth/auth0-plugin"
 
 const state = {
-    formB: { employee: {}, department: {} }
+    formB: { employee: {}, supervisor: {}, department: {} }
 };
 
 const getters = {

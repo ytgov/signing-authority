@@ -111,19 +111,6 @@ authoritiesRouter.put("/:id",
 authoritiesRouter.post("/",
   async (req: Request, res: Response) => {
     let db = req.store.Authorities as GenericService<Authority>;
-
-
-    console.log("POST AUTH", req.body)
-
-    if (req.body.department_id)
-      req.body.department_id = new ObjectId(req.body.department_id);
-
-    if (req.body.employee_id)
-      req.body.employee_id = new ObjectId(req.body.employee_id);
-
-    if (req.body.supervior_id)
-      req.body.supervior_id = new ObjectId(req.body.supervior_id);
-
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());
     res.json({ data: item })
@@ -160,12 +147,12 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
   let db = req.store.Authorities as GenericService<Authority>;
   // let depDb = req.store.Departments as GenericService<Department>;
-  let empDb = req.store.Employees as GenericService<Employee>;
+  //let empDb = req.store.Employees as GenericService<Employee>;
   let item = await db.getById(id);
 
   if (item) {
     // item.department = await depDb.getOne({ _id: item.department_id });
-    item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
+    //item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
 
     if (item.issue_date)
       item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");

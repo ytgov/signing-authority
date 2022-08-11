@@ -69,7 +69,7 @@
           <v-card-title>Review</v-card-title>
           <v-card-text>
             <h4 class="font-weight-black">Supervisor:</h4>
-            <p>{{ formB.supervisor_name }}, {{ formB.supervisor_title }}</p>
+            <p>{{ formB.supervisor.name }}, {{ formB.supervisor.title }}</p>
 
             <v-checkbox
               class="my-0 py-0"
