@@ -8,21 +8,21 @@ export interface Authority extends MongoEntity {
     employee: {
         name: string;
         title: string;
-        signed_date?: Date;
-        value?: Employee;
         upn: string;
         email: string;
         ynet_id: string;
+        signed_date?: Date;
+        value?: Employee;
     };
 
     supervisor: {
         name: string;
         title: string;
-        signed_date?: Date;
-        value?: Employee;
         upn: string;
         email: string;
         ynet_id: string;
+        signed_date?: Date;
+        value?: Employee;
     };
 
     form_a_id: ObjectId;

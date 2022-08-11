@@ -21,19 +21,33 @@ export const checkJwt = jwt({
 
 export async function loadUser(req: Request, res: Response, next: NextFunction) {
   const db = req.store.Users as UserService;
+
+  console.log("LOADUSER", req.user, req.user.sub)
+
   let sub = req.user.sub;
   const token = req.headers.authorization || "";
   let u = await db.getBySub(sub);
 
+  console.log("AFTER GETBYSUB", u)
+
   if (u) {
     req.user = { ...req.user, ...u };
+    console.log("RETURNING USER")
     return next();
   }
+
+  
+  console.log("DOING CALL TO USERINFO")
 
   await axios.get(`${AUTH0_DOMAIN}userinfo`,
     { headers: { 'authorization': token } })
     .then(async resp => {
+        console.log("USER INFO RESP", resp, resp.data)
+
       if (resp.data && resp.data.email) {
+
+
+
         console.log("LOOKUP Auth0", resp.data);
         let email = resp.data.email;
         let first_name = resp.data.given_name;
