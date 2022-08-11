@@ -1,13 +1,20 @@
 import express, { Request, Response } from "express";
 
-import { VUE_APP_ } from "../config";
+import { VUE_APP} from "../config";
 
 export const configRouter = express.Router();
 
 configRouter.post("/", async (req: Request, res: Response) => {
+
   //return just the front variables
   //the logic for this could be paramaeterized and we could
   //have a config service that returns the config variables
-  return res.json(VUE_APP_);
+  const auth = {
+    domain: VUE_APP.VUE_APP_AUTH_DOMAIN,
+    client_id: VUE_APP.VUE_APP_AUTH_CLIENTID,
+    audience: VUE_APP.VUE_APP_AUTH_AUDIENCE
+  }
+
+  return res.json(auth);
 });
 

@@ -20,7 +20,7 @@ dotenv.config({ path: path });
 let obj = process.env;
 let pattern ="VUE_APP_"
 
-export const VUE_APP_ = Object.keys(obj)
+export const VUE_APP: any  = Object.keys(obj)
                                 .filter(k => k.includes(pattern))
                                 .reduce((cur, key) => {
                                   return Object.assign(cur, { [key]: obj[key] })}, {});

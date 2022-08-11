@@ -5,6 +5,7 @@
 import Vue from 'vue';
 import createAuth0Client from '@auth0/auth0-spa-js';
 import {secureGet, securePut, securePost} from "@/store/jwt";
+import {getAuthConfig} from './getAuthConfig';
 
 /**
  *  Vue.js Instance Definition
@@ -22,7 +23,7 @@ export const useAuth0 = ({
     onRedirectCallback = () =>
         window.history.replaceState({}, document.title, window.location.pathname),
     redirectUri = window.location.origin,
-    ...pluginOptions
+    ...pluginOptions //eslint-disable-line no-unused-vars
 }) => {
     if (instance) return instance;
 
@@ -34,6 +35,7 @@ export const useAuth0 = ({
                 isAuthenticated: false,
                 user: {},
                 error: null,
+                options: {}
             };
         },
         methods: {
@@ -74,8 +76,11 @@ export const useAuth0 = ({
         },
 
         async created() {
+            this.options = await getAuthConfig("http://localhost:3000/api/config")
+
             this.auth0Client = await createAuth0Client({
-                ...pluginOptions,
+                ...this.options,
+                // ...pluginOptions,
                 redirect_uri: redirectUri,
             });
 
