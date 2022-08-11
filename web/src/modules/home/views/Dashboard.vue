@@ -24,11 +24,12 @@
                             <router-link to="/search"
                                 >Advanced search</router-link
                             >
-                            <v-spacer></v-spacer>
-                            <create-employee-modal />
+                            <!--<v-spacer></v-spacer>
+                             <create-employee-modal /> -->
                         </v-card-actions>
-                    </v-card-text> </v-card
-            ></v-col>
+                    </v-card-text>
+                </v-card></v-col
+            >
             <v-col>
                 <v-card class="mt-5 pb-2" color="#fff2d5">
                     <v-card-title>Authorities by Department</v-card-title>
@@ -53,8 +54,8 @@
             </v-col>
         </v-row>
 
-        <employee-lookup actionName="Authorities" label="" :select="pickPerson"></employee-lookup>
-
+        <!--         <employee-lookup actionName="Authorities" label="" :select="pickPerson"></employee-lookup>
+ -->
         <v-navigation-drawer
             v-model="drawer"
             absolute
@@ -109,13 +110,13 @@
 </template>
 
 <script>
-import createEmployeeModal from "@/components/employee/createEmployeeModal.vue";
-import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
+//import createEmployeeModal from "@/components/employee/createEmployeeModal.vue";
+//import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
 import { mapActions, mapState } from "vuex";
 
 export default {
     name: "Home",
-    components: { createEmployeeModal, EmployeeLookup },
+    //components: { createEmployeeModal, EmployeeLookup },
     data: () => ({
         search: "",
         drawer: null,
@@ -139,7 +140,6 @@ export default {
 
             await this.employeeSearch({ term: cleanSearch })
                 .then((resp) => {
-
                     this.searchResults = resp.data.data;
                     this.drawer = true;
                     this.resultCount = resp.data.meta.item_count;
@@ -167,10 +167,10 @@ export default {
             this.$router.push(`/departments/${item}`);
         },
         pickPerson(item) {
-            console.log("PICKED", item)
+            console.log("PICKED", item);
 
-            this.drawer = true
-        }
+            this.drawer = true;
+        },
     },
 };
 </script>

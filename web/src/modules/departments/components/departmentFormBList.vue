@@ -40,8 +40,8 @@ export default {
     formBItems: [],
     loadingFormB: false,
     headers: [
-      { text: "Position", value: "title" },
-      { text: "Employee", value: "employee_name" },
+      { text: "Position", value: "employee.title" },
+      { text: "Employee", value: "employee.name" },
     ],
   }),
   computed: {

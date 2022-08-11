@@ -47,13 +47,6 @@
                         v-model="position"
                     ></v-text-field>
 
-                    <employee-lookup
-                        actionName="Select"
-                        label="Supervisor : "
-                        :select="pickSupervisor"
-                        v-if="!selectedSupervisor.email"
-                    ></employee-lookup>
-
                     <v-autocomplete
                         :items="formAItems"
                         item-text="display_name"
@@ -64,6 +57,13 @@
                         v-model="formAId"
                         return-object
                     ></v-autocomplete>
+
+                    <employee-lookup
+                        actionName="Select"
+                        label="Supervisor : "
+                        :select="pickSupervisor"
+                        v-if="!selectedSupervisor.email"
+                    ></employee-lookup>
 
                     <v-text-field
                         v-model="selectedSupervisor.display_name"
@@ -89,6 +89,7 @@
                             @click="doCreate"
                             color="primary"
                             class="float-left"
+                            :disabled="!isValid"
                             >Add</v-btn
                         >
                         <v-btn
@@ -213,16 +214,47 @@ export default {
             });
         },
         async doCreate() {
-            await this.createFormB({
+            let lines = [];
+
+            for (let line of this.formAId.authority_lines) {
+                lines.push({
+                    coding: line.coding,
+                    s24_procure_goods_limit: line.contracts_for_goods_services,
+                    s24_procure_services_limit:
+                        line.contracts_for_goods_services,
+                    s24_procure_request_limit: line.request_for_goods_services,
+                    s24_procure_assignment_limit: line.assignment_authority,
+                    s23_procure_goods_limit: line.contracts_for_goods_services,
+                    s23_procure_services_limit:
+                        line.contracts_for_goods_services,
+                    s24_transfer_limit: line.transfer_payments,
+                    s23_transfer_limit: line.transfer_payments,
+                    s24_travel_limit: line.authorization_for_travel,
+                    other_limit: "",
+                    loans_limit: line.loans_and_guarantees,
+                    trust_limit: "",
+                    s29_performance_limit: line.s29_performance_limit,
+                    s30_payment_limit: line.s30_payment_limit,
+                });
+            }
+
+            let resp = await this.createFormB({
                 department_code: this.formAId.department_code,
                 department_descr: this.formAId.department_descr,
-                employee_id: this.employeeId,
-                supervisor_id: this.supervisorId,
+                employee: {
+                    name: this.selectedEmployee.display_name,
+                    title: this.position,
+                },
+                supervisor: {
+                    name: this.selectedSupervisor.display_name,
+                    title: this.supervisorTitle,
+                },
                 program_branch: this.formAId.program_branch,
-                formAId: this.formAId._id,
-                title: this.position,
-                authority_lines: this.formAId.authority_lines,
+                form_a_id: this.formAId._id,
+                authority_lines: lines,
             });
+
+            this.$router.push(`/form-b/${resp.data._id}`);
 
             this.show = false;
         },
