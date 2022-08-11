@@ -14,7 +14,9 @@ userRouter.get("/me",
     async (req: Request, res: Response) => {
         const db = req.store.Users as UserService;
         let person = req.user;
+        console.log("/me", "Lookup up person", person);
         let me = await db.getByEmail(person.email);
+        console.log("  - found", me);
         return res.json({ data: me });
     });
 

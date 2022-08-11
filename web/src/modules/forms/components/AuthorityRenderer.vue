@@ -2,7 +2,7 @@
   <div>
     <v-card class="default mb-4">
       <v-card-title style="width: 100%">
-        {{authority.department_descr}}: {{ authority.program }}
+        {{authority.department_descr}}: {{ authority.program_branch }}
 
       </v-card-title>
 
@@ -11,7 +11,7 @@
           <tr>
             <td style="width: 120px">Position Title:</td>
             <td>
-              <strong>{{ authority.title }}</strong>
+              <strong>{{ authority.employee.title }}</strong>
             </td>
           </tr>
           <tr>

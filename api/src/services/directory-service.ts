@@ -73,7 +73,8 @@ export class DirectoryService {
                                 long_name,
                                 title,
                                 department: dir.department,
-                                officeLocation: dir.officeLocation
+                                officeLocation: dir.officeLocation,
+                                userPrincipalName: dir.userPrincipalName.toLowerCase()
                             });
                         }
 

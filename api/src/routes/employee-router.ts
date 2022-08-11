@@ -67,7 +67,7 @@ employeeRouter.post('/search-directory',
   });
 
 employeeRouter.get('/:id',
-  [param("id").isMongoId()], ReturnValidationErrors,
+  [param("id").notEmpty()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     let empDb = req.store.Employees as GenericService<Employee>;
     let autDb = req.store.Authorities as GenericService<Authority>;
@@ -76,10 +76,15 @@ employeeRouter.get('/:id',
     // let depDb = req.store.Departments as GenericService<Department>;
 
     let { id } = req.params;
-    let item = await empDb.getOne({ _id: new ObjectId(id) });
+    //let item = await empDb.getOne({ ynet_id: id });
 
-    if (item) {
-      item.authorities = await autDb.getAll({ employee_id: new ObjectId(id) });
+    //if (item) {
+    let item = { authorities: new Array<any>() };
+    let authorities = await autDb.getAll({ "employee.ynet_id": id });
+
+    if (authorities.length > 0) {
+      let item = _.clone(authorities[authorities.length - 1].employee as any);
+      item.authorities = authorities;
 
       for (let auth of item.authorities) {
         // auth.department = await depDb.getOne({ _id: new ObjectId(auth.department_id) });
@@ -87,9 +92,12 @@ employeeRouter.get('/:id',
         /*  if (auth.issue_date)
            auth.issue_date_display = moment(auth.issue_date).utc(false).format("YYYY-MM-DD"); */
       }
-
       return res.json({ data: item });
     }
+
+
+    //return res.json({ data: item });
+    //}
 
     res.status(404).send();
   });

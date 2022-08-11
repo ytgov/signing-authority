@@ -12,7 +12,7 @@
 
     <BaseCard
       :showHeader="true"
-      :heading="`${employee.first_name} ${employee.last_name} (${employee.ynet_id})`"
+      :heading="`${employee.name} (${employee.ynet_id})`"
     >
       <v-row>
         <v-col cols="12" sm="6">
@@ -22,16 +22,18 @@
               <v-row>
                 <v-col cols="12" sm="6">
                   <v-text-field
-                    v-model="employee.first_name"
+                    v-model="employee.name"
                     dense
                     outlined
                     background-color="white"
-                    label="First name"
+                    label="Name"
                     hide-details
+                    readonly
+                    append-icon="mdi-lock"
                   >
                   </v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6">
+               <!--  <v-col cols="12" sm="6">
                   <v-text-field
                     v-model="employee.last_name"
                     dense
@@ -40,8 +42,8 @@
                     label="Last name"
                     hide-details
                   ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6">
+                </v-col> -->
+                <!-- <v-col cols="12" sm="6">
                   <v-text-field
                     v-model="employee.employee_id"
                     dense
@@ -50,7 +52,7 @@
                     label="Employee Id"
                     hide-details
                   ></v-text-field>
-                </v-col>
+                </v-col> -->
                 <v-col cols="12" sm="6">
                   <v-text-field
                     v-model="employee.ynet_id"
@@ -59,6 +61,8 @@
                     background-color="white"
                     label="YNET Id"
                     hide-details
+                    readonly
+                    append-icon="mdi-lock"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="12">
@@ -69,9 +73,11 @@
                     background-color="white"
                     label="Email"
                     hide-details
+                    readonly
+                    append-icon="mdi-lock"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="12">
+               <!--  <v-col cols="12" sm="12">
                   <v-select
                     v-model="employee.primary_department"
                     dense
@@ -83,10 +89,10 @@
                     item-text="descr"
                     item-value="dept"
                   ></v-select>
-                </v-col>
+                </v-col> -->
               </v-row>
               <v-row>
-                <v-col>
+                <!--<v-col>
                   <v-btn
                     color="primary"
                     class="mb-0 mt-5"
@@ -96,7 +102,7 @@
                   </v-btn>
                 </v-col>
                 <v-spacer></v-spacer>
-                <v-col>
+                 <v-col>
                   <v-btn
                     class="mb-0 mt-5 mr-0"
                     color="primary"
@@ -104,7 +110,7 @@
                   >
                     Create New Authority
                   </v-btn>
-                </v-col>
+                </v-col> -->
               </v-row>
             </v-card-text>
           </v-card>
@@ -139,7 +145,7 @@ export default {
     breadcrumbs: function () {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
       b.push({
-        text: `${this.employee.first_name} ${this.employee.last_name}`,
+        text: `${this.employee.name}`,
       });
       return b;
     },
@@ -186,7 +192,7 @@ export default {
           //  this.$refs.notifier.showAPIMessages(response.data)
           if (response.status == 200) {
             console.log("Create Successful");
-            this.loadEmployee(this.employee._id);
+            this.loadEmployee(this.employee.ynet_id);
           }
         });
     },

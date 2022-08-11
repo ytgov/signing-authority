@@ -244,10 +244,16 @@ export default {
                 employee: {
                     name: this.selectedEmployee.display_name,
                     title: this.position,
+                    upn: this.selectedEmployee.userPrincipalName,
+                    email: this.selectedEmployee.email,
+                    ynet_id: this.selectedEmployee.ynet_id
                 },
                 supervisor: {
                     name: this.selectedSupervisor.display_name,
                     title: this.supervisorTitle,
+                    upn: this.selectedSupervisor.userPrincipalName,
+                    email: this.selectedSupervisor.email,
+                    ynet_id: this.selectedSupervisor.ynet_id
                 },
                 program_branch: this.formAId.program_branch,
                 form_a_id: this.formAId._id,

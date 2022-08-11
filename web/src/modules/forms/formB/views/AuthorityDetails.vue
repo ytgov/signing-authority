@@ -38,7 +38,7 @@
               <v-btn
                 :to="{
                   name: 'EmployeeDetail',
-                  params: { id: formB.employee.email },
+                  params: { id: formB.employee.ynet_id },
                 }"
                 color="#7A9A01"
                 >Close</v-btn
@@ -85,7 +85,7 @@ export default {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
       b.push({
         text: `${this.formB.employee.name}`,
-        to: `/employee/${this.formB.email}`,
+        to: `/employee/${this.formB.employee.ynet_id}`,
       });
       b.push({
         text: `${this.formB.department_descr} / ${this.formB.program_branch} / ${this.formB.employee.title}`,

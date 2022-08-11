@@ -34,6 +34,7 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
     { headers: { 'authorization': token } })
     .then(async resp => {
       if (resp.data && resp.data.email) {
+        console.log("LOOKUP Auth0", resp.data);
         let email = resp.data.email;
         let first_name = resp.data.given_name;
         let last_name = resp.data.family_name;
@@ -53,5 +54,7 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
         }
       }
     })
-    .catch();
+    .catch(err => {
+      console.log("ERROR pulling userinfo", err);
+    });
 }
