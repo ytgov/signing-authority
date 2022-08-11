@@ -22,51 +22,43 @@ export const checkJwt = jwt({
 export async function loadUser(req: Request, res: Response, next: NextFunction) {
   const db = req.store.Users as UserService;
 
-  console.log("LOADUSER", req.user, req.user.sub)
-
   let sub = req.user.sub;
   const token = req.headers.authorization || "";
   let u = await db.getBySub(sub);
 
-  console.log("AFTER GETBYSUB", u)
-
   if (u) {
     req.user = { ...req.user, ...u };
-    console.log("RETURNING USER")
     return next();
   }
-
-  
-  console.log("DOING CALL TO USERINFO")
 
   await axios.get(`${AUTH0_DOMAIN}userinfo`,
     { headers: { 'authorization': token } })
     .then(async resp => {
-        console.log("USER INFO RESP", resp, resp.data)
-
-      if (resp.data && resp.data.email) {
-
-
-
-        console.log("LOOKUP Auth0", resp.data);
+      if (resp.data && resp.data.sub) {
         let email = resp.data.email;
         let first_name = resp.data.given_name;
         let last_name = resp.data.family_name;
-
         sub = resp.data.sub;
 
-        let u = await db.getBySub(resp.data.sub);
+        let u = await db.getBySub(sub);
 
         if (u) {
           req.user = { ...req.user, ...u };
-          next();
         }
         else {
-          await db.create({ email, sub, status: "Inactive", first_name, last_name });
-          //return res.status(406).send();
-          next();
+          if (!email)
+            email = `${first_name}.${last_name}@yukon-no-email.ca`;
+
+          u = await db.create({ email, sub, status: "Inactive", first_name, last_name });
+          console.log("CREATING USER FOR " + email);
+          req.user = { ...req.user, ...u };
         }
       }
+      else {
+        console.log("Payload from Auth0 is strange or failed for", req.user);
+      }
+
+      next();
     })
     .catch(err => {
       console.log("ERROR pulling userinfo", err);

@@ -60,7 +60,7 @@ userRouter.delete("/:id",
         console.log("DO DELETE");
 
         //await db.disable(id);
-        //await db.delete(id);
+        await db.delete(id);
 
         let list = await db.getAll();
 
