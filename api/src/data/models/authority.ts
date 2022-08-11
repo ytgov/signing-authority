@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { UnwrapPromiseLike } from "puppeteer";
 import { FormA, MongoEntity, User, Department, Employee, StoredFile } from ".";
 
 
@@ -9,6 +10,9 @@ export interface Authority extends MongoEntity {
         title: string;
         signed_date?: Date;
         value?: Employee;
+        upn: string;
+        email: string;
+        ynet_id: string;
     };
 
     supervisor: {
@@ -16,6 +20,9 @@ export interface Authority extends MongoEntity {
         title: string;
         signed_date?: Date;
         value?: Employee;
+        upn: string;
+        email: string;
+        ynet_id: string;
     };
 
     form_a_id: ObjectId;
