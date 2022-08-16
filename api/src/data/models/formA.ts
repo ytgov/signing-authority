@@ -87,11 +87,11 @@ export interface FormAAuditLine {
 
 export enum OperationalRestrictions {
     "" = "",
-    "Bank Deposit" = "Bank Deposit",
-    "Personnel Pay Actions" = "Personnel Pay Actions",
-    "All Department Payments" = "All Department Payments",
-    "Journal Only" = "Journal Only",
+    "Journal only" = "Journal only",
+    "Bank deposit" = "Bank deposit",
+    "Period 14 only" = "Period 14 only",
+    "Personnel pay actions" = "Personnel pay actions",
     "Acquisition cards" = "Acquisition cards",
-    "Bank deposits" = "Bank deposits",
-    "Period 14 only" = "Period 14 only"
+    "All department payments" = "All department payments",
+    "Travel advance" = "Travel advance"
 }

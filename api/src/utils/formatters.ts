@@ -20,3 +20,22 @@ export function CleanDouble(input: any): number {
 export function CleanInteger(input: any): number {
     return Math.round(CleanDouble(input));
 }
+
+export function FormatCoding(input: string = ""): string {
+    let account = `${input.replace(/[^0-9|x]/g, "")}ZZZZZZZZZZZZZZZZZZZZZZZZZ`;
+    let dept = account.substring(0, 2);
+    let vote = account.substring(2, 3);
+    let prog = account.substring(3, 5);
+    let activity = account.substring(5, 7);
+    let element = account.substring(7, 9);
+    let object = account.substring(9, 13);
+    let ledger1 = account.substring(13, 17);
+    let ledger2 = account.substring(17, 22);
+
+    let output = `${dept}${vote}-${prog}${activity}${element}-${object}-${ledger1}-${ledger2}`;
+
+    output = output.replace(/[Z]/g, "");
+    output = output.replace(/[-]*$/g, "");
+
+    return output;
+}

@@ -1,31 +1,30 @@
 import express, { Request, Response } from "express";
 import { Storage } from "../data";
-
-import { uploadsRouter } from "./uploads"
-
+import { uploadsRouter } from "./uploads";
+import fs from "fs";
 import { body, param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 import _ from "lodash";
-import { Authority, Department, Employee } from "src/data/models";
+import { Authority, Department, Employee } from "../data/models";
 import { ObjectId } from "mongodb";
 import moment from "moment";
 import { generatePDF } from "../utils/pdf-generator";
+import { FormatCoding } from "../utils/formatters";
 
 import { ExpressHandlebars } from "express-handlebars";
 
 export const authoritiesRouter = express.Router();
 
 
-import fs from "fs"
 
-authoritiesRouter.use('/uploads', uploadsRouter)
+authoritiesRouter.use('/uploads', uploadsRouter);
 
 authoritiesRouter.get("/", async (req: Request, res: Response) => {
   let db = req.store.Authorities as GenericService<Authority>;
-  let list = await db.getAll({})
-  res.json({ data: list })
-})
+  let list = await db.getAll({});
+  res.json({ data: list });
+});
 
 authoritiesRouter.get("/:id",
   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
@@ -46,13 +45,13 @@ authoritiesRouter.get("/:id/pdf",
     let item = await loadSingleAuthority(req, id);
 
     if (item) {
-      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html")
+      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html");
 
       let t = new ExpressHandlebars();
-      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {})
+      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
       let data = template(item);
 
-      let pdf = await generatePDF(data)
+      let pdf = await generatePDF(data);
       res.setHeader('Content-disposition', 'attachment; filename="FormB.pdf"');
       res.setHeader('Content-type', 'application/pdf');
       res.send(pdf);
@@ -105,7 +104,7 @@ authoritiesRouter.put("/:id",
     await db.update(id, req.body);
 
     let item = await loadSingleAuthority(req, id);
-    res.json({ data: item })
+    res.json({ data: item });
   });
 
 authoritiesRouter.post("/",
@@ -113,7 +112,7 @@ authoritiesRouter.post("/",
     let db = req.store.Authorities as GenericService<Authority>;
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());
-    res.json({ data: item })
+    res.json({ data: item });
   });
 
 
@@ -132,7 +131,7 @@ authoritiesRouter.get('/account/:account', async (req: Request, res: Response) =
 authoritiesRouter.post('/account/:account', async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
   // -----------
-  let a: any = req.store as Storage
+  let a: any = req.store as Storage;
   // await a.Authorities.create({"thing":"the other thing"})
   // -----------
   return res.json({});
@@ -160,15 +159,17 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
     for (let line of item.authority_lines) {
       line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
 
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "")
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
       if (line.account.length < 26)
         line.account += "*";
+
+      line.coding_display = FormatCoding(line.coding);
     }
 
     return item;
@@ -180,8 +181,8 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 // Department Specific FORM B Routes
 authoritiesRouter.get("/department/:department", async (req: Request, res: Response) => {
   let db = req.store.Authorities as GenericService<Authority>;
-  let department_code = req.params.department
-  let list = await db.getAll({ "department_code": department_code })
+  let department_code = req.params.department;
+  let list = await db.getAll({ "department_code": department_code });
 
   if (list)
     return res.json({ data: list });

@@ -1,7 +1,7 @@
 <template>
     <tbody>
         <tr v-for="(line, idx) of formB.authority_lines" :key="idx">
-            <td class="pl-3">{{ line.coding }}</td>
+            <td class="pl-3">{{ line.coding_display }}</td>
             <td class="pl-3" style="width: 200px">
                 <!-- Operational RESTRICTIONS -->
                 {{ line.operational_restriction }}
@@ -27,7 +27,6 @@
             <td class="fb-value">{{ line.s24_travel_limit }}</td>
             <td class="fb-value">{{ line.other_limit }}</td>
             <td class="fb-value">{{ line.loans_limit }}</td>
-            <td class="fb-value">{{ line.trust_limit }}</td>
             <td class="fb-value">{{ line.s29_performance_limit }}</td>
             <td class="fb-value">{{ line.s30_payment_limit }}</td>
         </tr>

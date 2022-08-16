@@ -4,7 +4,7 @@
       <!-- 1 columm x 5 rows -->
       <delegate-info></delegate-info>
 
-      <th colspan="13">SPENDING AUTHORITY</th>
+      <th colspan="12">SPENDING AUTHORITY</th>
       <th rowspan="3" class="rotate" style="height: 140px">
         <div>
           PAYMENT<br />
@@ -17,7 +17,7 @@
       <th rowspan="2" colspan="2" style="max-width: 80px">
         TRANSFER PAYMENTS
       </th>
-      <th colspan="4" rowspan="2">
+      <th colspan="3" rowspan="2">
         OTHER:<br />S.24 COMMITMENT & <br />S.23 SIGNING CONTRACT
       </th>
       <th rowspan="2">S.29</th>
@@ -59,9 +59,6 @@
       </th>
       <th rowspan="3" class="rotate">
         <div>Loans & <br />Guarantees</div>
-      </th>
-      <th rowspan="3" class="rotate">
-        <div class="mb-2">Departmental Use</div>
       </th>
       <th rowspan="3" class="rotate">
         <div>Certificate of <br />performance</div>

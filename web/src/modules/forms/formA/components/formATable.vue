@@ -89,7 +89,7 @@
             <tr v-for="(line, idx) of formA.authority_lines" :key="idx">
                 <td class="pl-3">
                     <!-- Area of Authority -->
-                    {{ line.coding }}
+                    {{ line.coding_display }}
                 </td>
                 <td class="pl-3">
                     <!-- Operational RESTRICTIONS -->

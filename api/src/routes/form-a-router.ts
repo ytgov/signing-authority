@@ -16,10 +16,9 @@ import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
 
 import { checkJwt, loadUser } from "../middleware/authz.middleware";
+import { FormatCoding } from "../utils/formatters";
 
 // formARouter.use('/uploads', uploadsRouter)
-
-
 
 formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
@@ -294,17 +293,20 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
     if (item.authority_lines) {
       for (let line of item.authority_lines) {
-        line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
+        line.coding_display = FormatCoding(line.coding);
 
-        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-        line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-        if (line.account.length < 26)
-          line.account += "*";
+
+        /*   line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
+  
+          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
+          if (line.account.length < 26)
+            line.account += "*"; */
       }
     }
     return item;
