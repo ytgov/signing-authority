@@ -36,22 +36,40 @@
             <v-row>
                 <v-col>
                     <v-card class="default">
-                        <v-card-title>Form A Authorizations</v-card-title>
+                        <v-card-title>Form A Authorization</v-card-title>
                         <v-card-text>
                             <v-data-table
-                                :headers="[
-                                    { text: 'Branch', value: 'program_branch' },
-                                    { text: 'Position', value: 'position' },
-                                    { text: 'Status', value: 'status' },
-                                    {
-                                        text: 'Reviewed',
-                                        value: 'reviewed_by_department',
-                                    },
-                                ]"
+                                :headers="headers"
                                 :search="search"
                                 :items="formAItems"
+
+                                group-by="program_branch"
                                 @click:row="openFormA"
                             >
+                            <template v-slot:group.header="{items, isOpen, toggle, group}">
+                                <th :colspan="1" @click="toggle">
+                                    <!-- <v-icon class="ml-n2" @click="toggle">
+                                        {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
+                                    </v-icon> -->
+                                <span class="" >
+                                   {{group}}
+                                </span>
+                                <!-- <span class="ml-10">
+                                     Positions: {{items.length}}
+                                </span> -->
+                                </th>
+                                <td :colspan="headers.length-1" >
+                                    <span v-if="!isOpen" class="">
+
+                                     Approved: {{items.filter(item => item.status != 'Inactive (Draft)').length}}
+                                </span>
+                                <span  v-if="!isOpen" class="ml-10">
+                                    Draft: {{items.filter(item => item.status == 'Inactive (Draft)').length}}
+                                </span>
+                                </td>
+
+
+                            </template>
                             </v-data-table
                         ></v-card-text>
                     </v-card>
@@ -77,6 +95,12 @@ export default {
         drawer: null,
         searchResults: [],
         loading: false,
+        headers: [
+            { text: 'Branch', value: 'program_branch' },
+            { text: 'Position', value: 'position' },
+            { text: 'Status', value: 'status' },
+            { text: 'Reviewed',value: 'reviewed_by_department',},
+        ],
         page: {
             title: "Form A Authorizations",
         },
