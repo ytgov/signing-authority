@@ -121,6 +121,18 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   res.status(404).send();
 });
 
+formARouter.post("/department/:department/branch", async (req: Request, res: Response) => {
+  //Return a list of FormA positions for a branch which is send in the body of a POST request
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
+
+  let program_branch = req.body.program_branch
+
+  let list = await db.getAll({ "department_code": department_code, "program_branch": program_branch }, { position: 1});
+    return res.json({ data: list });
+
+});
+
 
 formARouter.get("/department/:department/count", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
@@ -297,7 +309,7 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
 
         /*   line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
-  
+
           line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
           line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
           line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
