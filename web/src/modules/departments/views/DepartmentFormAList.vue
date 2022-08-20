@@ -1,182 +1,210 @@
 <template>
-    <v-container fluid class="down-top-padding">
-        <BaseBreadcrumb
-            :title="page.title"
-            :icon="page.icon"
-            :breadcrumbs="breadcrumbs"
-        >
-            <template v-slot:right>
-                <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
-            </template>
-        </BaseBreadcrumb>
+  <v-container fluid class="down-top-padding">
+    <BaseBreadcrumb
+      :title="page.title"
+      :icon="page.icon"
+      :breadcrumbs="breadcrumbs"
+    >
+      <template v-slot:right>
+        <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
+      </template>
+    </BaseBreadcrumb>
 
-        <BaseCard :showHeader="true">
-            <template v-slot:left>
-                <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Search"
-                    single-line
-                    hide-details
-                ></v-text-field>
-                <v-select
-                    class="ml-5"
-                    :items="statusOptions"
-                    v-model="statusFilter"
-                    label="Status"
-                    single-line
-                    hide-details
-                    @change="statusFilterChanged"
-                ></v-select>
-            </template>
-            <template v-slot:right>
-                <create-form-a-button :department="item"></create-form-a-button>
-            </template>
+    <BaseCard :showHeader="true">
+      <template v-slot:left>
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+        <v-select
+          class="ml-5"
+          :items="statusOptions"
+          v-model="statusFilter"
+          label="Status"
+          single-line
+          hide-details
+          @change="statusFilterChanged"
+        ></v-select>
+      </template>
+      <template v-slot:right>
+        <create-form-a-button :department="item"></create-form-a-button>
+      </template>
 
-            <v-row>
-                <v-col>
-                    <v-card class="default">
-                        <v-card-title>Form A Authorization</v-card-title>
-                        <v-card-text>
-                            <v-data-table
-                                :headers="headers"
-                                :search="search"
-                                :items="formAItems"
-
-                                group-by="program_branch"
-                                @click:row="openFormA"
-                            >
-                            <template v-slot:group.header="{items, isOpen, toggle, group}">
-                                <th :colspan="1" @click="toggle">
-                                    <!-- <v-icon class="ml-n2" @click="toggle">
+      <v-row>
+        <v-col>
+          <v-card class="default">
+            <v-card-title>Form A Authorization</v-card-title>
+            <v-card-text>
+              <v-data-table
+                :headers="headers"
+                :search="search"
+                :items="formAItems"
+                group-by="program_branch"
+                @click:row="openFormA"
+              >
+                <template
+                  v-slot:group.header="{ items, isOpen, toggle, group }"
+                >
+                  <th :colspan="1" @click="toggle">
+                    <!-- <v-icon class="ml-n2" @click="toggle">
                                         {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
                                     </v-icon> -->
-                                <span class="" >
-                                   {{group}}
-                                </span>
-                                <!-- <span class="ml-10">
+                    <span class="ml-n2">
+                      {{ group }}
+                    </span>
+                    <!-- <span class="ml-10">
                                      Positions: {{items.length}}
                                 </span> -->
-                                </th>
-                                <td :colspan="headers.length-1" >
-                                    <span v-if="!isOpen" class="">
-
-                                     Approved: {{items.filter(item => item.status != 'Inactive (Draft)').length}}
-                                </span>
-                                <span  v-if="!isOpen" class="ml-10">
-                                    Draft: {{items.filter(item => item.status == 'Inactive (Draft)').length}}
-                                </span>
-                                </td>
-
-
-                            </template>
-                            </v-data-table
-                        ></v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </BaseCard>
-    </v-container>
+                  </th>
+                  <td>
+                    <span v-if="!isOpen" class="">
+                      Approved:
+                      {{
+                        items.filter(item => item.status != "Inactive (Draft)")
+                          .length
+                      }}
+                    </span>
+                    <span v-if="!isOpen" class="ml-10">
+                      Draft:
+                      {{
+                        items.filter(item => item.status == "Inactive (Draft)")
+                          .length
+                      }}
+                    </span>
+                  </td>
+                    <td :colspan="headers.length - 2">
+                      <router-link
+                        :to="{
+                            name: 'FormABranchDetails',
+                            params: {
+                              departmentId: departmentId,
+                              branchName: group}}">
+                         View
+                        </router-link>
+                      <!-- <span @click="openBranchFormA(group)">
+                        View Branch Form A
+                    </span> -->
+                  </td>
+                </template>
+                 <!-- <template v-slot:group.summary="{ group }">
+                  <span>
+                    <v-btn primary @click="openBranchFormA(group)">
+                      bundle
+                    </v-btn>
+                  </span>
+                </template> -->
+              </v-data-table></v-card-text
+            >
+          </v-card>
+        </v-col>
+      </v-row>
+    </BaseCard>
+  </v-container>
 </template>
 
 <script>
+/*------ TODO ------*/
+// tidy up HTML code and break into multiple components
+
 import { mapActions, mapGetters, mapState } from "vuex";
 import createFormAButton from "../../forms/formA/components/createFormAButton.vue";
 
 export default {
-    components: { createFormAButton },
-    name: "DepartmentDetail",
-    componenets: {
-        createFormAButton,
+  components: { createFormAButton },
+  name: "DepartmentDetail",
+  componenets: {
+    createFormAButton
+  },
+  data: () => ({
+    search: "",
+    statusFilter: "Any",
+    drawer: null,
+    searchResults: [],
+    loading: false,
+    headers: [
+      { text: "Branch", value: "program_branch" },
+      { text: "Position", value: "position" },
+      { text: "Status", value: "status" },
+      { text: "Reviewed", value: "reviewed_by_department" }
+    ],
+    page: {
+      title: "Form A Authorizations"
     },
-    data: () => ({
-        search: "",
-        statusFilter: "Any",
-        drawer: null,
-        searchResults: [],
-        loading: false,
-        headers: [
-            { text: 'Branch', value: 'program_branch' },
-            { text: 'Position', value: 'position' },
-            { text: 'Status', value: 'status' },
-            { text: 'Reviewed',value: 'reviewed_by_department',},
-        ],
-        page: {
-            title: "Form A Authorizations",
-        },
-        breadcrumbs: [
-            {
-                text: "Signing Authorities Home",
-                to: "/dashboard",
-            },
-            {
-                text: "",
-                to: "",
-                exact: true,
-            },
-            {
-                text: "Form A Authorizations",
-                disabled: true,
-            },
-        ],
-        statusOptions: ["Any", "Active", "Inactive", "Archived"],
-        allItems: [],
-        formAItems: [],
-        item: {},
-        departmentId: null,
-    }),
-    mounted: async function () {
-        this.departmentId = this.$route.params.departmentId;
-        this.item = await this.getDepartment({ id: this.departmentId });
+    breadcrumbs: [
+      {
+        text: "Signing Authorities Home",
+        to: "/dashboard"
+      },
+      {
+        text: "",
+        to: "",
+        exact: true
+      },
+      {
+        text: "Form A Authorizations",
+        disabled: true
+      }
+    ],
+    statusOptions: ["Any", "Active", "Inactive", "Archived"],
+    allItems: [],
+    formAItems: [],
+    item: {},
+    departmentId: null
+  }),
+  mounted: async function() {
+    this.departmentId = this.$route.params.departmentId;
+    this.item = await this.getDepartment({ id: this.departmentId });
 
-        this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
-        this.breadcrumbs[1].text = this.item.descr;
+    this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
+    this.breadcrumbs[1].text = this.item.descr;
 
-        //this.items = this.loadList();
-        this.loadFormA();
+    //this.items = this.loadList();
+    this.loadFormA();
+  },
+  computed: {
+    ...mapState("department", ["departments"]),
+    ...mapGetters("department", ["getDepartmentDetails"])
+  },
+  methods: {
+    openBranchFormA: function(branchName) {
+      this.$router.push(
+        "/departments/" + this.departmentId + "/form-a/branch/" + branchName
+      );
     },
-    computed: {
-        ...mapState("department", ["departments"]),
-        ...mapGetters("department", ["getDepartmentDetails"]),
+    ...mapActions("department", ["getDepartment", "getFormAList"]),
+    statusFilterChanged() {
+      console.log("Only" + this.statusFilter);
+
+      if (this.statusFilter == "Any") {
+        this.formAItems = this.allItems;
+        return;
+      }
+
+      this.formAItems = this.allItems.filter(i => {
+        if (this.statusFilter == "Active" && i.status == "Active") return true;
+        else if (
+          this.statusFilter == "Inactive" &&
+          i.status.indexOf("Inactive") == 0
+        )
+          return true;
+        else if (this.statusFilter == "Archived" && i.status == "Archived")
+          return true;
+
+        return false;
+      });
     },
-    methods: {
-        ...mapActions("department", ["getDepartment", "getFormAList"]),
-        statusFilterChanged() {
-            console.log("Only" + this.statusFilter);
-
-            if (this.statusFilter == "Any") {
-                this.formAItems = this.allItems;
-                return;
-            }
-
-            this.formAItems = this.allItems.filter((i) => {
-                if (this.statusFilter == "Active" && i.status == "Active")
-                    return true;
-                else if (
-                    this.statusFilter == "Inactive" &&
-                    i.status.indexOf("Inactive") == 0
-                )
-                    return true;
-                else if (
-                    this.statusFilter == "Archived" &&
-                    i.status == "Archived"
-                )
-                    return true;
-
-                return false;
-            });
-        },
-        async loadFormA() {
-            this.allItems = this.formAItems = await this.getFormAList({
-                id: this.departmentId,
-            });
-            this.loadingFormA = false;
-        },
-        openFormA(item) {
-            this.$router.push(
-                `/departments/${this.departmentId}/form-a/${item._id}`
-            );
-        },
+    async loadFormA() {
+      this.allItems = this.formAItems = await this.getFormAList({
+        id: this.departmentId
+      });
+      this.loadingFormA = false;
     },
+    openFormA(item) {
+      this.$router.push(`/departments/${this.departmentId}/form-a/${item._id}`);
+    }
+  }
 };
 </script>
