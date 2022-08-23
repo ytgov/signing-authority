@@ -42,7 +42,7 @@
                             >Related Form B Authorizations</v-card-title
                         >
                         <v-card-text>
-                            <v-data-table :headers="[{ text: 'Name' }]" />
+                            <v-data-table dense :headers="[{ text: 'Name' }]" />
                         </v-card-text> </v-card
                 ></v-col>
                 <v-col cols="7">
@@ -50,11 +50,15 @@
                         <v-card-title>Audit History</v-card-title>
                         <v-card-text>
                             <v-data-table
+                                dense
                                 :headers="[
-                                    { text: 'Date' },
-                                    { text: 'Person' },
-                                    { text: 'Revision' },
+                                    { text: 'Date', value: 'date_display' },
+                                    { text: 'User', value: 'user_name' },
+                                    { text: 'Action', value: 'action' },
                                 ]"
+                                :items="formA.audit_lines"
+                                :sort-by="['date']"
+                                :sort-desc="[true]"
                             />
                         </v-card-text>
                     </v-card>

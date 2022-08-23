@@ -126,13 +126,11 @@ formARouter.post("/department/:department/branch", async (req: Request, res: Res
   let db = req.store.FormA as GenericService<FormA>;
   let department_code = req.params.department;
 
-  let program_branch = req.body.program_branch
+  let program_branch = req.body.program_branch;
 
-  let list = await db.getAll({ "department_code": department_code, "program_branch": program_branch }, { position: 1});
-    return res.json({ data: list });
-
+  let list = await db.getAll({ "department_code": department_code, "program_branch": program_branch }, { position: 1 });
+  return res.json({ data: list });
 });
-
 
 formARouter.get("/department/:department/count", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
@@ -189,6 +187,8 @@ formARouter.put("/:id",
     req.body.updated_on = new Date();
     req.body.updated_by = req.user.email;
 
+    let existing = await db.getById(id);
+
     // If archiving a form note the details
     if (req.query.archive == "true") {
       if (!req.body.deactivation)
@@ -196,6 +196,21 @@ formARouter.put("/:id",
       req.body.deactivation.by = req.user.email;
       req.body.deactivation.sub = req.user.sub;
       req.body.deactivation.date = new (Date);
+
+      req.body.audit_lines.push({
+        date: new Date(),
+        user_name: req.user.email,
+        action: "Archived",
+        previous_value: existing
+      });
+    }
+    else {
+      req.body.audit_lines.push({
+        date: new Date(),
+        user_name: req.user.email,
+        action: "Update",
+        previous_value: existing
+      });
     }
 
     /* ----------------- Form A Version History ------------------------------
@@ -255,8 +270,11 @@ formARouter.post("/",
     req.body.created_on = new Date();
     req.body.created_by = req.user.email;
 
-    // if (req.body.department_id)
-    //   req.body.department_id = new ObjectId(req.body.department_id);
+    req.body.audit_lines = [{
+      date: new Date(),
+      user_name: req.user.email,
+      action: "Position created"
+    }];
 
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());
@@ -302,6 +320,13 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
     if (item.issue_date)
       item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");
+
+    if (!item.audit_lines)
+      item.audit_lines = [];
+
+    for (let audit of item.audit_lines) {
+      audit.date_display = moment(audit.date).format("YYYY-MM-DD @ h:mm a");
+    }
 
     if (item.authority_lines) {
       for (let line of item.authority_lines) {
