@@ -28,14 +28,14 @@
           </div>
           <div v-if="branchBundle" style="margin-bottom: 10px">
             Program/Branch:<br />
-            <strong>Branch Holder</strong>
+            <strong>{{$route.params.branchName}}</strong>
+          </div>
+          <div v-else style="margin-bottom: 10px">
+            Program/Branch:<br />
+            <strong>{{formA.program_branch}}</strong>
           </div>
 
-          <div v-if="branchBundle" style="">
-            Position:<br />
-            <strong>All Positions</strong>
-          </div>
-          <div v-else style="">
+          <div v-if="!branchBundle" style="">
             Position:<br />
             <strong>{{ formA.position }}</strong>
           </div>
@@ -105,17 +105,17 @@
  <tbody v-if="branchBundle">
 
       <tr  v-for="(line, idx) of branchBundle" :key="idx">
-        <td
+        <td class="pl-2"
           v-if="line.position">
           {{line.position}}
         </td>
         <td v-else>
         </td>
-           <td class="pl-3">
+           <td class="pl-2">
           <!-- Area of Authority -->
           {{ line.coding }}
         </td>
-        <td class="pl-3">
+        <td class="pl-2">
           <!-- Operational RESTRICTIONS -->
           {{ line.operational_restriction }}
           <!-- <v-select class="px-2 py-n5 "

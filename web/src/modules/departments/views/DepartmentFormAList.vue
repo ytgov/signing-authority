@@ -54,9 +54,16 @@
                                     }"
                                 >
                                     <th :colspan="1" @click="toggle">
-                                        <!-- <v-icon class="ml-n2" @click="toggle">
-                                        {{ isOpen ? 'mdi-minus' : 'mdi-plus' }}
-                                    </v-icon> -->
+                                        <v-icon
+                                            class="mr-2 ml-0"
+                                           
+                                        >
+                                            {{
+                                                isOpen
+                                                    ? "mdi-chevron-up"
+                                                    : "mdi-chevron-down"
+                                            }}
+                                        </v-icon>
                                         <span class="ml-n2">
                                             Program / Branch: {{ group }}
                                         </span>
@@ -96,7 +103,7 @@
                                                 },
                                             }"
                                         >
-                                            View
+                                            View all in Program / Branch
                                         </router-link>
                                         <!-- <span @click="openBranchFormA(group)">
                         View Branch Form A
