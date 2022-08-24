@@ -14,37 +14,57 @@
             <template slot="right">
                 <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
 
-                <v-btn color="primary"></v-btn>
+                <!-- <v-menu offset-y left>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            color="secondary"
+                            small
+                            v-bind="attrs"
+                            v-on="on"
+                            class="mt-3"
+                        >
+                            Actions <v-icon>mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list dense>
+                        <v-list-item v-if="hasDrafts">
+                            <v-list-item-icon
+                                ><v-icon>mdi-lock</v-icon></v-list-item-icon
+                            >
+                            <v-list-item-title
+                                >Lock for Signatures
+                            </v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu> -->
             </template>
 
             <v-row class="mb-2">
-                <v-col>
+                <v-col cols="6" sm="4" md="3" lg="2">
                     <v-card>
                         <v-card-text>
-                          <div style="font-size:32px">{{$route.params.branchName}}</div>
-                          Program / Branch
+                            <div style="font-size: 32px">
+                                {{ delegations.length }}
+                            </div>
+                            Delegation{{ delegations.length != 1 ? "s" : "" }}
                         </v-card-text>
                     </v-card>
                 </v-col>
-                <v-col>
-                    <v-card>
+                <v-col cols="6" sm="4" md="3" lg="2" v-if="hasDrafts">
+                    <v-card class="warning" dark>
                         <v-card-text>
-                          <div style="font-size:32px">{{delegations.length}}</div>
-                          Delegations
+                            <div style="font-size: 32px">
+                                {{
+                                    delegations.filter(
+                                        (d) => d.status == "Inactive (Draft)"
+                                    ).length
+                                }}
+                            </div>
+                            In Draft
                         </v-card-text>
                     </v-card>
                 </v-col>
-                <v-col>
-                    <v-card>
-                        <v-card-text>
-                          <div style="font-size:32px">2</div>
-                          Active
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-              <v-col>
-
-              </v-col>
+                <v-col> </v-col>
             </v-row>
             <v-card class="default">
                 <v-card-text>
@@ -94,12 +114,18 @@ export default {
         department: {},
         authority: {},
         showUpload: false,
-        delegations: []
+        delegations: [],
     }),
     computed: {
         // ...mapState("department", ["departments"]),
         // ...mapState("authority/formA", ["formA"]),
         // ...mapGetters("authority/formA", ["isActive", "isLocked", "status"])
+        hasDrafts() {
+            return (
+                this.delegations.filter((d) => d.status == "Inactive (Draft)")
+                    .length > 0
+            );
+        },
     },
     async mounted() {
         this.delegations = await this.$store.dispatch(
@@ -110,7 +136,9 @@ export default {
             }
         );
 
-  console.log(this.delegations)
+        this.delegations = this.delegations.filter(
+            (d) => d.status != "Archived"
+        );
 
         this.holder = this.delegations.flatMap((role) =>
             role.authority_lines.map((line) =>
