@@ -129,7 +129,21 @@ formARouter.post("/department/:department/branch", async (req: Request, res: Res
   let program_branch = req.body.program_branch;
 
   let list = await db.getAll({ "department_code": department_code, "program_branch": program_branch }, { position: 1 });
-  return res.json({ data: list });
+
+  if (list) {
+    for (let item of list) {
+      if (item.deactivation)
+        item.status = "Archived";
+      else if (item.activation) {
+        item.status = "Active";
+      }
+      else item.status = "Inactive (Draft)";
+    }
+
+    return res.json({ data: list });
+  }
+
+  res.status(404).send();
 });
 
 formARouter.get("/department/:department/count", async (req: Request, res: Response) => {
