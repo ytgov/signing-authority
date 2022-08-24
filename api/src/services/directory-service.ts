@@ -1,4 +1,5 @@
 import axios from "axios";
+import moment from "moment";
 import { AD_CLIENT_ID, AD_CLIENT_SECRET, AD_TENANT_ID } from "../config";
 
 const AD_SCOPE = "https://graph.microsoft.com/.default";
@@ -7,6 +8,7 @@ export class DirectoryService {
     connected = false;
     token = "";
     authHeader = {};
+    validUntil = moment();
 
     constructor() {
 
@@ -24,12 +26,18 @@ export class DirectoryService {
                 this.token = resp.data.access_token;
                 this.authHeader = { "Authorization": `Bearer ${this.token}`, "ConsistencyLevel": "eventual" };
                 this.connected = true;
+                this.validUntil = moment().add(resp.data.expires_in, 'seconds');
             })
             .catch(error => { console.error("GRAPH ERROR: ", error); });
     }
 
     async search(terms: string): Promise<any> {
         if (terms && terms.length > 3) {
+            if (moment().isAfter(this.validUntil)) {
+                this.connected = false;
+                await this.connect();
+            }
+
             let pieces = terms.replace(".", " ").replace("&", " ").split(" ");
             let queryStmts = new Array<string>();
 
@@ -82,7 +90,7 @@ export class DirectoryService {
                     }
                 })
                 .catch(error => {
-                    console.log("ERROR", error.response.data);
+                    console.log("GRAPH ERROR", error.response.data);
                     return [];
                 });
         }
