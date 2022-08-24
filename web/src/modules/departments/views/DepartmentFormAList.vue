@@ -42,7 +42,7 @@
                                 :headers="headers"
                                 :search="search"
                                 :items="formAItems"
-                                group-by="program_branch"
+                                :group-by="grouping"
                                 @click:row="openFormA"
                             >
                                 <template
@@ -54,10 +54,7 @@
                                     }"
                                 >
                                     <th :colspan="1" @click="toggle">
-                                        <v-icon
-                                            class="mr-2 ml-0"
-                                           
-                                        >
+                                        <v-icon class="mr-2 ml-0">
                                             {{
                                                 isOpen
                                                     ? "mdi-chevron-up"
@@ -103,7 +100,7 @@
                                                 },
                                             }"
                                         >
-                                            View all in Program / Branch
+                                            View Group
                                         </router-link>
                                         <!-- <span @click="openBranchFormA(group)">
                         View Branch Form A
@@ -117,8 +114,8 @@
                     </v-btn>
                   </span>
                 </template> -->
-                            </v-data-table></v-card-text
-                        >
+                            </v-data-table>
+                        </v-card-text>
                     </v-card>
                 </v-col>
             </v-row>
@@ -145,6 +142,7 @@ export default {
         drawer: null,
         searchResults: [],
         loading: false,
+        grouping: "program_branch",
         headers: [
             { text: "Branch", value: "program_branch" },
             { text: "Position", value: "position" },
