@@ -217,22 +217,23 @@ export default {
             let lines = [];
 
             for (let line of this.formAId.authority_lines) {
+                let useOne = line.contracts_for_goods_services != "" ? "1" : "";
+
                 lines.push({
                     coding: line.coding,
-                    s24_procure_goods_limit: line.contracts_for_goods_services,
+                    s24_procure_goods_limit: useOne, // line.contracts_for_goods_services,
                     s24_procure_services_limit:
                         line.contracts_for_goods_services,
                     s24_procure_request_limit: line.request_for_goods_services,
                     s24_procure_assignment_limit: line.assignment_authority,
-                    s23_procure_goods_limit: line.contracts_for_goods_services,
+                    s23_procure_goods_limit: useOne, // line.contracts_for_goods_services,
                     s23_procure_services_limit:
                         line.contracts_for_goods_services,
                     s24_transfer_limit: line.transfer_payments,
                     s23_transfer_limit: line.transfer_payments,
                     s24_travel_limit: line.authorization_for_travel,
-                    other_limit: "",
+                    other_limit: line.contracts_for_goods_services,
                     loans_limit: line.loans_and_guarantees,
-                    trust_limit: "",
                     s29_performance_limit: line.s29_performance_limit,
                     s30_payment_limit: line.s30_payment_limit,
                 });
@@ -246,14 +247,14 @@ export default {
                     title: this.position,
                     upn: this.selectedEmployee.userPrincipalName,
                     email: this.selectedEmployee.email,
-                    ynet_id: this.selectedEmployee.ynet_id
+                    ynet_id: this.selectedEmployee.ynet_id,
                 },
                 supervisor: {
                     name: this.selectedSupervisor.display_name,
                     title: this.supervisorTitle,
                     upn: this.selectedSupervisor.userPrincipalName,
                     email: this.selectedSupervisor.email,
-                    ynet_id: this.selectedSupervisor.ynet_id
+                    ynet_id: this.selectedSupervisor.ynet_id,
                 },
                 program_branch: this.formAId.program_branch,
                 form_a_id: this.formAId._id,
