@@ -18,12 +18,13 @@ dotenv.config({ path: path });
 
 // Filter out the variables that the frontend needs to know about
 let obj = process.env;
-let pattern ="VUE_APP_"
+let pattern = "VUE_APP_";
 
-export const VUE_APP: any  = Object.keys(obj)
-                                .filter(k => k.includes(pattern))
-                                .reduce((cur, key) => {
-                                  return Object.assign(cur, { [key]: obj[key] })}, {});
+export const VUE_APP: any = Object.keys(obj)
+  .filter(k => k.includes(pattern))
+  .reduce((cur, key) => {
+    return Object.assign(cur, { [key]: obj[key] });
+  }, {});
 
 console.log(`LOADING ${NODE_ENV} CONFIG FROM ${path}`);
 export const apiBaseUrl = process.env.NODE_ENV == "production" ? "" : "http://localhost:3000";
@@ -39,7 +40,7 @@ export const APPLICATION_NAME = process.env.APPLICATION_NAME || "";
 
 export const MONGO_DB = process.env.MONGO_DB || "";
 export const MONGO_HOST = process.env.MONGO_HOST || "";
-export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}`
+export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}`;
 
 export const API_GATEWAY_KEY = process.env.API_GATEWAY_KEY || "";
 export const DEPARTMENT_API_URL = "https://api.gov.yk.ca/finance/api/v2/accounts/departments";
@@ -53,6 +54,8 @@ export const MAIL_HOST = process.env.MAIL_HOST || "smtp.gov.yk.ca";
 export const MAIL_PORT = process.env.MAIL_PORT || 25;
 export const MAIL_USER = process.env.MAIL_USER || "";
 export const MAIL_PASS = process.env.MAIL_PASS || "";
+
+export const FM_ACCOUNT_LOOKUP_URL = process.env.FM_ACCOUNT_LOOKUP_URL || "";
 
 export const MAIL_CONFIG_DEV = {
   host: MAIL_HOST,

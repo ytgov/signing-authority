@@ -28,6 +28,7 @@ services:
       - AD_CLIENT_ID=${AD_CLIENT_ID}
       - AD_CLIENT_SECRET=${AD_CLIENT_SECRET}
       - AD_TENANT_ID=${AD_TENANT_ID}
+      - FM_ACCOUNT_LOOKUP_URL=${FM_ACCOUNT_LOOKUP_URL}
 
   mongodb:
     image: mongo:5.0.6
