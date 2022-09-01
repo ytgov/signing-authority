@@ -186,6 +186,9 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
   let item = await db.getById(id);
 
   if (item) {
+    if (!item.audit_lines)
+      item.audit_lines = [];
+
     for (let audit of item.audit_lines) {
       audit.date_display = moment(audit.date).format("YYYY-MM-DD @ h:mm a");
     }

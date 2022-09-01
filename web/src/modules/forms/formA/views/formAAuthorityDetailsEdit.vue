@@ -9,7 +9,7 @@
 
     <BaseCard
       :showHeader="true"
-      :heading="`Delegation of Financial Signing Authority - FORM A`"
+      :heading="`Delegation of Financial Signing Authority`"
     >
       <template slot="right">
         <v-btn color="primary" @click="close">Save</v-btn>
@@ -70,7 +70,7 @@ export default {
         exact: true
       },
       {
-        text: "Form A Authorizations",
+        text: "Delegations by Position",
         to: "",
         exact: true
       },
