@@ -6,7 +6,7 @@ import { body, param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 import _ from "lodash";
-import { Authority, Department, Employee } from "../data/models";
+import { Authority, Department, Employee, FormA } from "../data/models";
 import { ObjectId } from "mongodb";
 import moment from "moment";
 import { generatePDF } from "../utils/pdf-generator";
@@ -145,6 +145,7 @@ authoritiesRouter.get('/:myAuthorities', async (req: Request, res: Response) => 
 async function loadSingleAuthority(req: Request, id: string): Promise<any> {
 
   let db = req.store.Authorities as GenericService<Authority>;
+  let formADb = req.store.FormA as GenericService<FormA>;
   // let depDb = req.store.Departments as GenericService<Department>;
   //let empDb = req.store.Employees as GenericService<Employee>;
   let item = await db.getById(id);
@@ -152,6 +153,8 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
   if (item) {
     // item.department = await depDb.getOne({ _id: item.department_id });
     //item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
+
+    item.form_a = await formADb.getById(item.form_a_id);
 
     if (item.issue_date)
       item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");

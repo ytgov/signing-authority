@@ -51,11 +51,10 @@ formARouter.get("/:id",
       }
       else item.status = "Inactive (Draft)";
 
-
       let db = req.store.Authorities as GenericService<Authority>;
       let connectedAuthorizations = await db.getAll({ form_a_id: item._id.toString() });
 
-      item.active_authorities = connectedAuthorizations;
+      item.active_authorities = connectedAuthorizations.filter(f => f.activation);
 
       return res.json({ data: item });
     }

@@ -15,7 +15,7 @@
         Department:<br />
         <strong>{{ formB.department_descr }}</strong>
         <br /><br />
-        Program/Branch:<br />
+        Program:<br />
         <strong>{{ formB.program_branch }}</strong>
         <br /><br />
         Position title:<br />
