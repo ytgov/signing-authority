@@ -83,7 +83,7 @@ export default {
         },
         async save() {
             let resp = await this.saveUser(this.item);
-            this.onSave(resp);
+            console.log (resp)
             this.showDialog = false;
         },
     },

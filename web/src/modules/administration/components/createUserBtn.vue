@@ -111,7 +111,7 @@ import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
 
 export default {
     name: "CreateUserBtn",
-    props: { search: String },
+    props: ["onSave"],
     components: { EmployeeLookup },
     data: () => ({
         roleOptions: ["System Admin", "Finance Admin", "Department Admin"],
@@ -121,10 +121,6 @@ export default {
         isEmployeeLoading: false,
         employeeItems: [],
         employeeSearch: "",
-
-        isSupervisorLoading: false,
-        supervisorItems: [],
-        supervisorSearch: "",
 
         employeeId: "",
         supervisorId: "",
@@ -143,7 +139,7 @@ export default {
         isValid() {
             if (
                 this.selectedEmployee.email &&
-                this.selectedEmployee.length > 0
+                this.selectedEmployee.title.length > 0
             )
                 return true;
 
@@ -170,31 +166,12 @@ export default {
                 })
                 .finally(() => (this.isEmployeeLoading = false));
         },
-        // supervisorSearch(val) {
-        //     // Items have already been loaded
-        //     if (!val || val.length == 0) return;
-        //     //if (this.supervisorItems && this.supervisorItems.length > 0) return;
-
-        //     // Items have already been requested
-        //     if (this.isSupervisorLoading) return;
-
-        //     this.isSupervisorLoading = true;
-
-        //     // Lazily load input items
-        //     this.searchEmployees({ terms: val })
-        //         .then((res) => {
-        //             this.supervisorItems = res;
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //         })
-        //         .finally(() => (this.isSupervisorLoading = false));
-        // },
     },
 
     mounted: async function () {},
     methods: {
         ...mapActions("employee", ["searchEmployees"]),
+        ...mapActions("administration", ["createUser"]),
 
        async doShow() {
             // this.selectedEmployee = {};
@@ -205,16 +182,11 @@ export default {
 
         },
         async doCreate() {
-            let user = {
-                employee_id: this.selectedEmployee.id,
-                position: this.item.position,
-                status: this.item.status,
-                roles: this.item.roles,
-                department_admin_for: this.item.department_admin_for,
-            };
-
-            console.log(user)
+            let resp = await this.createUser(this.selectedEmployee)
+            this.$emit("update");
             this.show = false;
+            console.log(resp);
+            this.onSave(resp);
         },
         pickEmployee(item) {
             this.selectedEmployee = item;

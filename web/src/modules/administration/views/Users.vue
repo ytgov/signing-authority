@@ -27,7 +27,7 @@
 
       </template>
             <template v-slot:right>
-        <create-user-btn :search="search"></create-user-btn>
+        <create-user-btn ref="create-user-btn" :onSave="saveComplete"></create-user-btn>
       </template>
 
 

@@ -50,6 +50,18 @@ userRouter.put("/:email",
         res.status(404).send();
     });
 
+userRouter.post("/",
+    async (req: Request, res: Response) => {
+        const db = req.store.Users as UserService;
+        let { email } = req.body;
+        let existing = await db.getByEmail(email);
+        if (existing) {
+            return res.status(409).send()
+        }
+        let user = await db.create(req.body);
+        return res.json(user)
+    });
+
 userRouter.delete("/:id",
     [param("id").notEmpty()], ReturnValidationErrors,
     async (req: Request, res: Response) => {

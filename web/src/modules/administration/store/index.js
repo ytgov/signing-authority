@@ -32,7 +32,7 @@ const actions = {
       .then(resp => {
         let data = resp.data.data;
         commit("SET_USERS", data)
-
+        console.log(`Loaded ${data.length} users`)
         return data
       })
       .catch(err => {
@@ -43,6 +43,14 @@ const actions = {
     const auth = getInstance();
     let body = { roles: item.roles, status: item.status, department_admin_for: item.department_admin_for};
     return auth.put(`${USER_URL}/${item.email}`, body);
+  },
+  async createUser({dispatch}, item) {
+    const auth = getInstance();
+
+    let body = item;
+    let result = await auth.post(`${USER_URL}`, body);
+    dispatch("loadUsers")
+    return result;
   }
 };
 
