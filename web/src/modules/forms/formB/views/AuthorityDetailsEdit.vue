@@ -404,7 +404,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
+import AuthorityMetadataCard from "../components/cards/authorityMetadataCard.vue";
 
 export default {
     name: "AuthorityDetails",
