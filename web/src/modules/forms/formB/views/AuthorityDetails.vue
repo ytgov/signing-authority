@@ -27,17 +27,22 @@
                     <v-divider></v-divider>
 
                     <v-stepper-step step="2">
+                        Lock for Signatures
+                    </v-stepper-step>
+                    <v-divider></v-divider>
+
+                    <v-stepper-step step="3">
                         Department Review
                     </v-stepper-step>
                     <v-divider></v-divider>
 
-                    <v-stepper-step step="3"> Finance Review </v-stepper-step>
+                    <v-stepper-step step="4"> Finance Review </v-stepper-step>
                     <v-divider></v-divider>
 
-                    <v-stepper-step step="4"> Signatures </v-stepper-step>
+                    <v-stepper-step step="5"> Signatures </v-stepper-step>
                     <v-divider></v-divider>
 
-                    <v-stepper-step step="5"> Active </v-stepper-step>
+                    <v-stepper-step step="6"> Active </v-stepper-step>
                 </v-stepper-header>
             </v-stepper>
 
@@ -145,7 +150,7 @@ export default {
         showUpload: false,
         page: { title: "" },
         isLocked: false,
-        isActive: true,
+        isActive: false,
     }),
     computed: {
         ...mapGetters("authority/formB", ["formB"]),
