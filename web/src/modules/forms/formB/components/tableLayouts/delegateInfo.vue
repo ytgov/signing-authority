@@ -2,7 +2,7 @@
     <!-- TODO: Make these items editable - if allowed -->
     <th
         rowspan="5"
-        colspan="2"
+        colspan="3"
         style="text-align: left; padding: 10px; vertical-align: top"
     >
         <h3>Delegate:</h3>

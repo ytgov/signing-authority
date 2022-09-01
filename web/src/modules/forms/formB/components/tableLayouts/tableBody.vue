@@ -3,8 +3,10 @@
         <tr v-for="(line, idx) of formB.authority_lines" :key="idx">
             <td class="pl-3">{{ line.coding_display }}</td>
             <td class="pl-3" style="width: 200px">
-                <!-- Operational RESTRICTIONS -->
                 {{ line.operational_restriction }}
+            </td>
+            <td class="pl-3" style="">
+                {{ line.notes }}
             </td>
             <td class="fb-value">{{ line.s24_procure_goods_limit }}</td>
             <td class="fb-value">
