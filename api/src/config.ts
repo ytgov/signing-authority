@@ -56,6 +56,7 @@ export const MAIL_USER = process.env.MAIL_USER || "";
 export const MAIL_PASS = process.env.MAIL_PASS || "";
 
 export const FM_ACCOUNT_LOOKUP_URL = process.env.FM_ACCOUNT_LOOKUP_URL || "";
+export const FM_ACCOUNT_LOOKUP_KEY = process.env.FM_ACCOUNT_LOOKUP_KEY || "";
 
 export const MAIL_CONFIG_DEV = {
   host: MAIL_HOST,

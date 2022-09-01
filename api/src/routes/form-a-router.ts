@@ -246,6 +246,7 @@ formARouter.put("/:id",
     req.body.updated_by = req.user.email;
 
     let existing = await db.getById(id);
+    delete existing.audit_lines
 
     // If archiving a form note the details
     if (req.query.archive == "true") {
@@ -254,6 +255,7 @@ formARouter.put("/:id",
       req.body.deactivation.by = req.user.email;
       req.body.deactivation.sub = req.user.sub;
       req.body.deactivation.date = new (Date);
+
 
       req.body.audit_lines.push({
         date: new Date(),
@@ -294,7 +296,6 @@ formARouter.put("/:id",
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
       console.log("CODING IS VALID: ", codingIsValid)
-
 
       let coding = `${line.coding.replace(/[^0-9]/g, "")}*************************`;
       line.dept = coding.substring(0, 2);
