@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import { body, param } from "express-validator";
-import { Storage } from "../data";
 
 import moment from "moment";
 import _ from "lodash";
@@ -9,7 +8,7 @@ import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 
-import { FormA, OperationalRestrictions } from "../data/models";
+import { Authority, FormA, OperationalRestrictions } from "../data/models";
 import { ObjectId } from "mongodb";
 
 import { ExpressHandlebars } from "express-handlebars";
@@ -51,6 +50,12 @@ formARouter.get("/:id",
         item.status = "Active";
       }
       else item.status = "Inactive (Draft)";
+
+
+      let db = req.store.Authorities as GenericService<Authority>;
+      let connectedAuthorizations = await db.getAll({ form_a_id: item._id.toString() });
+
+      item.active_authorities = connectedAuthorizations;
 
       return res.json({ data: item });
     }
@@ -103,7 +108,7 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   let db = req.store.FormA as GenericService<FormA>;
   let department_code = req.params.department;
 
-  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, position: 1 });
+  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, activity: 1, position: 1 });
 
   if (list) {
     for (let item of list) {
@@ -113,12 +118,50 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
         item.status = "Active";
       }
       else item.status = "Inactive (Draft)";
+
+      if (item.activity)
+        item.program_activity = `${item.program_branch} : ${item.activity}`;
+      else item.program_activity = item.program_branch;
     }
 
     return res.json({ data: list });
   }
 
   res.status(404).send();
+});
+
+formARouter.get("/department/:department/program", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
+
+  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1 });
+  let programs = list.map(d => d.program_branch);
+  programs = _.uniq(programs);
+
+  res.json({ data: programs });
+});
+
+formARouter.get("/department/:department/activity", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
+
+  let list = await db.getAll({ "department_code": department_code, activity: { $ne: null } }, { activity: 1 });
+  let activities = list.map(d => d.activity);
+  activities = _.uniq(activities);
+
+  res.json({ data: activities });
+});
+
+formARouter.get("/department/:department/program/:program_branch/activity", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
+  let { program_branch } = req.params;
+
+  let list = await db.getAll({ "department_code": department_code, program_branch, activity: { $ne: null } }, { activity: 1 });
+  let activities = list.map(d => d.activity);
+  activities = _.uniq(activities);
+
+  res.json({ data: activities });
 });
 
 formARouter.post("/department/:department/branch", async (req: Request, res: Response) => {

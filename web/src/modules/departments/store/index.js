@@ -55,6 +55,22 @@ const actions = {
             return resp.data.data
         })
     },
+    
+    async getProgramList(store, { id }) {
+        const auth = getInstance();
+
+        return auth.get(`${FORMA_URL}/department/${id}/program`).then(resp => {
+            return resp.data.data
+        })
+    },
+    
+    async getActivityList(store, { id }) {
+        const auth = getInstance();
+
+        return auth.get(`${FORMA_URL}/department/${id}/activity`).then(resp => {
+            return resp.data.data
+        })
+    },
 };
 
 const mutations = {

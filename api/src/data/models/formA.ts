@@ -1,10 +1,11 @@
 import { ObjectId } from "mongodb";
-import { Department, MongoEntity, Employee, StoredFile, ReviewResults } from ".";
+import { Department, MongoEntity, Employee, StoredFile, ReviewResults, Authority } from ".";
 
 export interface FormA extends MongoEntity {
     department_code: string;
     department_descr: string;
     program_branch: string;
+    activity?: string;
 
     position: string;
 
@@ -46,8 +47,10 @@ export interface FormA extends MongoEntity {
 
 
     // used in DTO only
+    program_activity?: string;
     status?: string;
     department?: Department;
+    active_authorities?: Authority[];
     issue_date_display?: string; //the date the form is approved and goes into effect
 }
 

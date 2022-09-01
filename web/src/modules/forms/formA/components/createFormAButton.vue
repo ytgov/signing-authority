@@ -27,12 +27,51 @@
                     append-icon="mdi-lock"
                 ></v-text-field>
 
-                <v-text-field
-                    label="Program / Branch"
+                <v-combobox
+                    label="Program"
                     dense
                     outlined
+                    :search-input.sync="programSearch"
                     v-model="newFormA.program_branch"
-                ></v-text-field>
+                    :items="programList"
+                    clearable
+                    required
+                >
+                    <template v-slot:no-data>
+                        <v-list-item>
+                            <v-list-item-content>
+                                <v-list-item-title>
+                                    No results matching "<strong>{{
+                                        programSearch
+                                    }}</strong
+                                    >". Press <kbd>Tab</kbd> to create a new one
+                                </v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </template>
+                </v-combobox>
+                <v-combobox
+                    label="Activity"
+                    dense
+                    outlined
+                    :search-input.sync="activitySearch"
+                    v-model="newFormA.activity"
+                    :items="activityList"
+                >
+                    <template v-slot:no-data>
+                        <v-list-item>
+                            <v-list-item-content>
+                                <v-list-item-title>
+                                    No results matching "<strong>{{
+                                        activitySearch
+                                    }}</strong
+                                    >". Press <kbd>enter</kbd> to create a new
+                                    one
+                                </v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </template>
+                </v-combobox>
                 <v-text-field
                     label="Position"
                     dense
@@ -72,6 +111,17 @@ export default {
             type: Object,
             required: true,
         },
+        programList: { type: Array },
+        activityList: { type: Array },
+    },
+    mounted() {
+        this.newFormA = {
+            department_code: "Empty",
+            department_descr: "Empty",
+            position: "",
+            program_branch: "",
+            activity: "",
+        };
     },
     data: () => ({
         //see <projectroot>/api/data/models/formA.ts for details
@@ -81,8 +131,10 @@ export default {
             department_descr: "Empty",
             position: "",
             program_branch: "",
-            authority_lines: [],
+            activity: "",
         },
+        programSearch: "",
+        activitySearch: "",
     }),
     methods: {
         ...mapActions("authority/formA", ["createFormA"]),
@@ -95,8 +147,7 @@ export default {
         },
 
         async doCreate() {
-            console.log(this.newFormA);
-
+            this.newFormA.authority_lines = [{ coding: this.department.dept }];
             let createResponse = await this.createFormA(this.newFormA);
             this.$router.push(
                 `/departments/${this.newFormA.department_code}/form-a/${createResponse._id}/edit`

@@ -18,8 +18,14 @@
                     append-icon="mdi-lock"
                 ></v-text-field>
                 <v-text-field
-                    label="Program / Branch"
+                    label="Program"
                     v-model="formA.program_branch"
+                    @change="itemChanged"
+                ></v-text-field>
+                <v-text-field
+                    label="Activity"
+                    v-model="formA.activity"
+                    hide-details
                     @change="itemChanged"
                 ></v-text-field>
                 <v-text-field

@@ -10,7 +10,7 @@
 
         <BaseCard
             :showHeader="true"
-            :heading="`Delegation of Financial Signing Authority - FORM A`"
+            heading="Delegation of Financial Signing Authority"
         >
             <template slot="right">
                 <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
@@ -42,10 +42,19 @@
                             >Related Form B Authorizations</v-card-title
                         >
                         <v-card-text>
-                            <v-data-table dense :headers="[{ text: 'Name' }]" />
+                            <v-data-table
+                                dense
+                                :headers="[
+                                    { text: 'Name', value: 'employee.name' },
+                                    { text: 'Title', value: 'employee.title' },
+                                ]"
+                                :items="formA.active_authorities"
+                                @click:row="openFormB"
+                                class="row-clickable"
+                            />
                         </v-card-text> </v-card
                 ></v-col>
-                <v-col cols="7">
+                <v-col cols="6">
                     <v-card class="default">
                         <v-card-title>Audit History</v-card-title>
                         <v-card-text>
@@ -103,7 +112,7 @@ export default {
                 exact: true,
             },
             {
-                text: "Form A Authorizations",
+                text: "Delegations by Position",
                 to: "",
                 exact: true,
             },
@@ -150,6 +159,10 @@ export default {
         // },
         // archiveClick() {},
         // downloadClick() {},
+
+        openFormB(item) {
+            this.$router.push(`/form-b/${item._id}`);
+        },
     },
 };
 </script>
