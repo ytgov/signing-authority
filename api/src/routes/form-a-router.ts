@@ -6,7 +6,7 @@ import _ from "lodash";
 import { uploadsRouter } from "./uploads";
 import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
-import { GenericService, UserService } from "../services";
+import { GenericService, QuestService, UserService } from "../services";
 
 import { Authority, FormA, OperationalRestrictions } from "../data/models";
 import { ObjectId } from "mongodb";
@@ -18,6 +18,8 @@ import { checkJwt, loadUser } from "../middleware/authz.middleware";
 import { FormatCoding } from "../utils/formatters";
 
 // formARouter.use('/uploads', uploadsRouter)
+
+const questService = new QuestService();
 
 formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
@@ -244,6 +246,7 @@ formARouter.put("/:id",
     req.body.updated_by = req.user.email;
 
     let existing = await db.getById(id);
+    delete existing.audit_lines
 
     // If archiving a form note the details
     if (req.query.archive == "true") {
@@ -252,6 +255,7 @@ formARouter.put("/:id",
       req.body.deactivation.by = req.user.email;
       req.body.deactivation.sub = req.user.sub;
       req.body.deactivation.date = new (Date);
+
 
       req.body.audit_lines.push({
         date: new Date(),
@@ -288,6 +292,11 @@ formARouter.put("/:id",
       req.body.employee_id = new ObjectId(req.body.employee_id);
     // console.log(req.body.authority_lines[0])
     for (let line of req.body.authority_lines) {
+
+      let codingIsValid = await questService.accountPatternIsValid(line.coding);
+
+      console.log("CODING IS VALID: ", codingIsValid)
+
       let coding = `${line.coding.replace(/[^0-9]/g, "")}*************************`;
       line.dept = coding.substring(0, 2);
       line.vote = coding.substring(2, 3);

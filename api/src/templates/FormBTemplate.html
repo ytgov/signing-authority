@@ -174,7 +174,7 @@
         style="background-color: white; width: 100%; text-align: left">
         <thead>
             <tr>
-                <td rowspan="5" colspan="2" style="
+                <td rowspan="5" colspan="3" style="
                 text-align: left;
                 padding: 10px;
                 vertical-align: top;
@@ -183,19 +183,18 @@
                     <h3 style="margin-bottom: 10px; font-size: 16px; font-weight: 700;">Delegate:</h3>
                     Public Officer Name:<br>
                     <strong>
-                        {{ employee.first_name }}
-                        {{ employee.last_name }}
+                        {{ employee.name }}
                     </strong>
                     <br /><br />
 
                     Department:<br>
-                    <strong style="margin-top: 5px">{{ department.name }}</strong>
+                    <strong style="margin-top: 5px">{{ department_descr }}</strong>
                     <br /><br />
-                    Program/Branch:<br>
-                    <strong>{{ program }}</strong>
+                    Program:<br>
+                    <strong>{{ program_branch }}</strong>
                     <br /><br />
                     Position title:<br>
-                    <strong>{{ title }}</strong>
+                    <strong>{{ employee.title }}</strong>
                 </td>
                 <th colspan="12">SPENDING AUTHORITY</th>
                 <th rowspan="3" class="rotate" style="height: 140px">
@@ -278,6 +277,9 @@
                 <th style="height: 30px">
                     Operational Restrictions
                 </th>
+                <th style="height: 30px">
+                    Notes
+                </th>
             </tr>
         </thead>
 
@@ -286,6 +288,7 @@
             <tr>
                 <td class="pl-3">{{ coding_display }}</td>
                 <td class="pl-3">{{ operational_restriction }}</td>
+                <td class="pl-3">{{ notes }}</td>
                 <td class="fb-value">{{ s24_procure_goods_limit }}</td>
                 <td class="fb-value">
                     {{ s24_procure_services_limit }}

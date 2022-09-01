@@ -28,7 +28,7 @@
                                 <tr>
                                     <th
                                         rowspan="5"
-                                        colspan="2"
+                                        colspan="3"
                                         style="
                                             text-align: left;
                                             padding: 10px;
@@ -172,6 +172,7 @@
                                     <th style="height: 30px">
                                         Operational Restrictions
                                     </th>
+                                    <th style="height: 30px">Notes</th>
                                 </tr>
                             </thead>
 
@@ -205,6 +206,15 @@
                                                 line.operational_restriction
                                             "
                                         ></v-select>
+                                    </td>
+                                    <td>
+                                        <v-text-field
+                                            v-model="line.notes"
+                                            dense
+                                            filled
+                                            hide-details
+                                            @change="itemChanged"
+                                        ></v-text-field>
                                     </td>
                                     <td class="fb-value">
                                         <v-text-field
