@@ -12,18 +12,28 @@
 
         <!-- <admin-sidebar></admin-sidebar> -->
 
-        <BaseCard>
-            <div class="row">
-                <div class="col-md-12">
-                    <v-text-field
+        <BaseCard
+         :show-header="true">
+            <template v-slot:left>
+                <v-text-field
                         v-model="search"
-                        dense
-                        outlined
+                        hide-details
                         background-color="white"
                         label="Search"
                         prepend-icon="mdi-magnify"
                         :loading="isLoading"
+                        clearable
                     ></v-text-field>
+
+      </template>
+            <template v-slot:right>
+        <create-user-btn :search="search"></create-user-btn>
+      </template>
+
+
+
+
+
 
                     <v-card class="default">
                         <v-card-text>
@@ -42,8 +52,7 @@
                             ></v-data-table>
                         </v-card-text>
                     </v-card>
-                </div>
-            </div>
+
         </BaseCard>
 
         <user-editor ref="userEditor" :onSave="saveComplete"></user-editor>
@@ -55,10 +64,11 @@
 import _ from "lodash";
 import { mapActions } from "vuex";
 import userEditor from "../components/UserEditor.vue";
+import CreateUserBtn from '../components/createUserBtn.vue';
 
 export default {
     name: "Home",
-    components: { userEditor },
+    components: { userEditor, CreateUserBtn },
     data: () => ({
         page: { title: "Manage Users" },
         breadcrumbs: [
