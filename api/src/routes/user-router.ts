@@ -35,13 +35,14 @@ userRouter.put("/:email",
     async (req: Request, res: Response) => {
         const db = req.store.Users as UserService;
         let { email } = req.params;
-        let { roles, status } = req.body;
-        
+        let { roles, status, department_admin_for } = req.body;
+
         let existing = await db.getByEmail(email);
 
         if (existing) {
             existing.status = status;
             existing.roles = roles;
+            existing.department_admin_for = department_admin_for;
             await db.update(existing._id || new ObjectId(), existing);
             return res.json({ messages: [{ variant: "success", text: "User saved" }] });
         }

@@ -8,6 +8,7 @@ export interface User {
     last_name: string;
     status?: string;
     roles?: string | string[];
+    department_admin_for?: string | string[];
     display_name?: string;
 
     create_date?: Date;

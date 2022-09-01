@@ -41,7 +41,7 @@ const actions = {
   },
   async saveUser(store, item) {
     const auth = getInstance();
-    let body = { roles: item.roles, status: item.status };
+    let body = { roles: item.roles, status: item.status, department_admin_for: item.department_admin_for};
     return auth.put(`${USER_URL}/${item.email}`, body);
   }
 };

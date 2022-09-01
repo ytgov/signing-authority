@@ -39,13 +39,12 @@
                     :items="roleOptions"
                     clearable
                 ></v-select>
-                <!-- Note - this doesn't get saved anywhere at the moement. -->
                 <v-select v-if="isDepartmentAdmin"
                     class= "pl-2"
                     label="Department"
                     dense
                     outlined
-                    v-model="department"
+                    v-model="item.department_admin_for"
                     :items="departmentList"
                     item-text="display_name"
                     item-value="dept"
@@ -69,7 +68,6 @@ export default {
         showDialog: false,
         item: {},
         roleOptions: ["System Admin", "Finance Admin", "Department Admin"],
-        department: ""
     }),
     computed: {
         isDepartmentAdmin: function () {
