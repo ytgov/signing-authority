@@ -37,6 +37,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - TZ=America/Whitehorse
     volumes:
       - mongo-data:/data/db
       - ./dump:/dump

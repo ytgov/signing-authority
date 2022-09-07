@@ -1,6 +1,9 @@
 FROM node:16-alpine3.15
 
-RUN apk add --no-cache  chromium
+RUN apk add --no-cache chromium tzdata
+RUN cp /usr/share/zoneinfo/America/Whitehorse /etc/localtime
+RUN echo "America/Whitehorse" > /etc/timezone
+RUN apk del tzdata
 
 RUN mkdir /home/node/web && chown -R node:node /home/node/web
 WORKDIR /home/node/web
