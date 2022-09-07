@@ -4,7 +4,7 @@
 
 import Vue from 'vue';
 import createAuth0Client from '@auth0/auth0-spa-js';
-import { secureGet, securePut, securePost } from "@/store/jwt";
+import { secureDelete, secureGet, securePut, securePost } from "@/store/jwt";
 import { getAuthConfig } from './getAuthConfig';
 import { apiConfigUrl } from "@/config";
 
@@ -73,6 +73,9 @@ export const useAuth0 = ({
             },
             post(url, body) {
                 return securePost(url, body);
+            },
+            delete(url) {
+                return secureDelete(url);
             }
         },
 
