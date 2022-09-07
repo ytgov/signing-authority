@@ -18,8 +18,7 @@ const actions = {
         return auth.get(`${AUTHORITY_URL}/${id}`)
             .then(resp => {
                 commit("setFormB", resp.data.data);
-                return resp.data.data
-
+                return resp.data.data;
             }).catch(() => {
                 commit("setFormB", {});
             });

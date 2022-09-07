@@ -13,6 +13,7 @@ import { generatePDF } from "../utils/pdf-generator";
 import { FormatCoding } from "../utils/formatters";
 
 import { ExpressHandlebars } from "express-handlebars";
+import { checkJwt, loadUser } from "../middleware/authz.middleware";
 
 export const authoritiesRouter = express.Router();
 
@@ -60,7 +61,7 @@ authoritiesRouter.get("/:id/pdf",
     res.status(404).send();
   });
 
-authoritiesRouter.put("/:id",
+authoritiesRouter.put("/:id", checkJwt, loadUser,
   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -71,6 +72,35 @@ authoritiesRouter.put("/:id",
 
     if (req.body.employee_id)
       req.body.employee_id = new ObjectId(req.body.employee_id);
+
+    let existing = await db.getById(id);
+    delete existing.audit_lines;
+
+    // If archiving a form note the details
+    /*       if (req.query.archive == "true") {
+            if (!req.body.deactivation)
+              req.body.deactivation = {};
+            req.body.deactivation.by = req.user.email;
+            req.body.deactivation.sub = req.user.sub;
+            req.body.deactivation.date = new (Date);
+      
+      
+            req.body.audit_lines.push({
+              date: new Date(),
+              user_name: req.user.email,
+              action: "Archived",
+              previous_value: existing
+            });
+          } 
+          else {*/
+    req.body.audit_lines.push({
+      date: new Date(),
+      user_name: req.user.email,
+      action: "Update",
+      previous_value: existing
+    });
+    //}
+
 
     for (let line of req.body.authority_lines) {
       let account = `${line.account.replace(/[^0-9]/g, "")}*************************`;
@@ -107,9 +137,16 @@ authoritiesRouter.put("/:id",
     res.json({ data: item });
   });
 
-authoritiesRouter.post("/",
+authoritiesRouter.post("/", checkJwt, loadUser,
   async (req: Request, res: Response) => {
     let db = req.store.Authorities as GenericService<Authority>;
+
+    req.body.audit_lines = [{
+      date: new Date(),
+      user_name: req.user.email,
+      action: "Form B created"
+    }];
+
     let created = await db.create(req.body);
     let item = await loadSingleAuthority(req, created.insertedId.toString());
     res.json({ data: item });
@@ -143,16 +180,18 @@ authoritiesRouter.get('/:myAuthorities', async (req: Request, res: Response) => 
 });
 
 async function loadSingleAuthority(req: Request, id: string): Promise<any> {
-
   let db = req.store.Authorities as GenericService<Authority>;
   let formADb = req.store.FormA as GenericService<FormA>;
-  // let depDb = req.store.Departments as GenericService<Department>;
-  //let empDb = req.store.Employees as GenericService<Employee>;
+
   let item = await db.getById(id);
 
   if (item) {
-    // item.department = await depDb.getOne({ _id: item.department_id });
-    //item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
+    if (!item.audit_lines)
+      item.audit_lines = [];
+
+    for (let audit of item.audit_lines) {
+      audit.date_display = moment(audit.date).format("YYYY-MM-DD @ h:mm a");
+    }
 
     item.form_a = await formADb.getById(item.form_a_id);
 

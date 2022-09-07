@@ -52,9 +52,14 @@
                 </v-card-text>
             </v-card>
 
-            <authority-metadata-card :formB="formB" class="mt-4" />
-
             <v-row class="mt-3">
+                <v-col cols="6">
+                    <authority-supervisor-card :formB="formB" />
+                </v-col>
+                <!-- <v-col cols="6">
+                    <authority-metadata-card :formB="formB" class="mt-4" />
+                </v-col> -->
+
                 <v-col>
                     <v-card class="default">
                         <v-card-title>Related Form A</v-card-title>
@@ -102,7 +107,7 @@
                     </v-card>
                 </v-col>
 
-                <v-col cols="6">
+                <v-col cols="12">
                     <v-card class="default">
                         <v-card-title>Audit History</v-card-title>
                         <v-card-text>
@@ -130,7 +135,8 @@
 import { mapGetters, mapActions } from "vuex";
 
 // import uploadFormModal from "../components/uploadFormModal.vue";
-import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
+//import AuthorityMetadataCard from "../components/cards/authorityMetadataCard.vue";
+import AuthoritySupervisorCard from "../components/cards/authoritySupervisorCard.vue";
 import FormBStatus from "../components/status/formBStatus.vue";
 import actionsMenu from "../components/menus/actionsMenu.vue";
 import FormBTable from "../components/formBTable.vue";
@@ -139,7 +145,8 @@ export default {
     name: "AuthorityDetails",
     components: {
         // uploadFormModal,
-        AuthorityMetadataCard,
+        //AuthorityMetadataCard,
+        AuthoritySupervisorCard,
         FormBStatus,
         actionsMenu,
         FormBTable,

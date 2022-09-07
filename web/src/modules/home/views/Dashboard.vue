@@ -19,14 +19,12 @@
                             v-model="search"
                             hide-details
                         ></v-text-field>
-
+<!-- 
                         <v-card-actions class="mt-2">
                             <router-link to="/search"
                                 >Advanced search</router-link
                             >
-                            <!--<v-spacer></v-spacer>
-                             <create-employee-modal /> -->
-                        </v-card-actions>
+                        </v-card-actions> -->
                     </v-card-text>
                 </v-card></v-col
             >
