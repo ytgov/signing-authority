@@ -60,7 +60,7 @@
                                         v-model="activityFilter"
                                         :items="activityListAny"
                                         @change="filterList"
-                                        :disabled="programFilter == 'Any'"
+                                        :disabled="programFilter == 'All'"
                                         dense
                                         outlined
                                         background-color="white"
@@ -83,6 +83,10 @@
                                 :items="matchingItems"
                                 @click:row="openFormA"
                                 class="row-clickable"
+                                :footer-props="{
+                                    'items-per-page-options': [25, 50, 75, -1],
+                                }"
+                                :items-per-page="50"
                             >
                             </v-data-table>
                         </v-card-text>
@@ -101,7 +105,7 @@
             </v-app-bar>
             <v-card tile>
                 <v-card-text class="pt-3">
-                    <p v-if="activityFilter != 'Any'">
+                    <p v-if="activityFilter != 'All'">
                         This will generate a new Form A that includes all
                         <strong>'Non Archived'</strong> position records within
                         the <strong>'{{ activityFilter }}'</strong> Activity of
@@ -154,7 +158,7 @@ export default {
     },
     data: () => ({
         search: "",
-        statusFilter: "Not Archived",
+        statusFilter: "Any",
         drawer: null,
         searchResults: [],
         loading: false,
@@ -186,9 +190,7 @@ export default {
         statusOptions: [
             "Any",
             "Active",
-            "Inactive",
-            "Not Archived",
-            "Archived",
+            "Inactive"
         ],
         allItems: [],
         formAItems: [],
@@ -197,8 +199,8 @@ export default {
         programList: [],
         activityList: [],
 
-        programFilter: "Any",
-        activityFilter: "Any",
+        programFilter: "All",
+        activityFilter: "All",
         matchingItems: [],
 
         showGenerateDialog: false,
@@ -210,26 +212,16 @@ export default {
         this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
         this.breadcrumbs[1].text = this.item.descr;
 
-        //this.items = this.loadList();
         this.loadFormA();
     },
-    watch: {
-        viewBy: function (val) {
-            console.log("VIEW WATCH ", val);
-            if (val == "Program") {
-                this.grouping = "program_branch";
-            } else {
-                this.grouping = "activity";
-            }
-        },
-    },
+    watch: {},
     computed: {
         ...mapState("department", ["departments"]),
         ...mapGetters("department", ["getDepartmentDetails"]),
 
         programListAny() {
             let list = _.clone(this.programList);
-            list.unshift("Any");
+            list.unshift("All");
             return list;
         },
         activityListAny() {
@@ -243,11 +235,11 @@ export default {
 
             list = _.uniq(list);
 
-            list.unshift("Any");
+            list.unshift("All");
             return list;
         },
         canGenerate() {
-            if (this.programFilter == "Any" || this.matchingItems.length == 0)
+            if (this.matchingItems.length == 0)
                 return false;
 
             let allArchived = true;
@@ -265,6 +257,14 @@ export default {
         },
     },
     methods: {
+        ...mapActions("department", [
+            "getDepartment",
+            "getFormAList",
+            "getProgramList",
+
+            "getActivityList",
+            "generateFormA",
+        ]),
         openBranchFormA: function (branchName) {
             this.$router.push(
                 "/departments/" +
@@ -273,19 +273,12 @@ export default {
                     branchName
             );
         },
-        ...mapActions("department", [
-            "getDepartment",
-            "getFormAList",
-            "getProgramList",
-            "getActivityList",
-        ]),
         programChanged() {
-            this.activityFilter = "Any";
+            this.activityFilter = "All";
             this.filterList();
         },
         filterList() {
             let list = _.clone(this.allItems);
-            //console.log("LIST1", list.length)
 
             if (this.statusFilter != "Any") {
                 list = list.filter((i) => {
@@ -310,19 +303,16 @@ export default {
                     return false;
                 });
             }
-            //console.log("LIST2", list.length)
 
-            if (this.programFilter != "Any") {
+            if (this.programFilter != "All") {
                 list = list.filter(
                     (i) => i.program_branch == this.programFilter
                 );
             }
 
-            if (this.activityFilter != "Any") {
+            if (this.activityFilter != "All") {
                 list = list.filter((i) => i.activity == this.activityFilter);
             }
-
-            //console.log("LIST3", list.length)
 
             this.matchingItems = list;
         },
@@ -350,12 +340,15 @@ export default {
         generateFormAClick() {
             this.statusFilter = "Not Archived";
             this.filterList();
-
             this.showGenerateDialog = true;
         },
-        doGenerateFormA() {
+        async doGenerateFormA() {
             console.log("GENERATE", this.matchingItems.length);
-            window.alert("This isn't built yet");
+            let answer = await this.generateFormA({
+                id: this.departmentId,
+                items: this.matchingItems,
+            });
+            console.log("ANSWER", answer);
         },
     },
 };

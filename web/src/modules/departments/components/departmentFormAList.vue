@@ -4,7 +4,8 @@
         <v-card-text>
             <department-form-a-summary
                 :positionCount="positions.length"
-                :activeFormACount="0"
+                :awaitingFormACount="0"
+                :awaitingPositionCount="0"
             />
 
             <v-data-table

@@ -74,7 +74,9 @@ authoritiesRouter.put("/:id", checkJwt, loadUser,
       req.body.employee_id = new ObjectId(req.body.employee_id);
 
     let existing = await db.getById(id);
-    delete existing.audit_lines;
+
+    if (existing)
+      delete existing.audit_lines;
 
     // If archiving a form note the details
     /*       if (req.query.archive == "true") {
@@ -101,20 +103,7 @@ authoritiesRouter.put("/:id", checkJwt, loadUser,
     });
     //}
 
-
     for (let line of req.body.authority_lines) {
-      let account = `${line.account.replace(/[^0-9]/g, "")}*************************`;
-      line.dept = account.substring(0, 2);
-      line.vote = account.substring(2, 3);
-      line.prog = account.substring(3, 5);
-      line.activity = account.substring(5, 7);
-      line.element = account.substring(7, 9);
-      line.allotment = account.substring(9, 11);
-      line.object = account.substring(9, 13);
-      line.ledger1 = account.substring(13, 17);
-      line.ledger2 = account.substring(17, 22);
-      delete line.account;
-
       line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit;
       line.s24_procure_services_limit = line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit;
       line.s24_procure_request_limit = line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit;
@@ -193,24 +182,13 @@ async function loadSingleAuthority(req: Request, id: string): Promise<any> {
       audit.date_display = moment(audit.date).format("YYYY-MM-DD @ h:mm a");
     }
 
-    item.form_a = await formADb.getById(item.form_a_id);
+    item.form_a = await formADb.getById(item.form_a_id.toString());
 
-    if (item.issue_date)
-      item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");
-
+    if (item.activation && item.activation.length > 0) {
+      let lastActiviation = item.activation[item.activation.length - 1];
+      item.issue_date_display = moment(lastActiviation.date).format("YYYY-MM-DD");
+    }
     for (let line of item.authority_lines) {
-      line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
-
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-      line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-      if (line.account.length < 26)
-        line.account += "*";
-
       line.coding_display = FormatCoding(line.coding);
     }
 

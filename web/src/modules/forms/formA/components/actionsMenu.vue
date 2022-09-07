@@ -33,6 +33,9 @@
                 <v-list-item @click="duplicateClick">
                     <v-list-item-title>Duplicate</v-list-item-title>
                 </v-list-item>
+                <v-list-item @click="deleteClick" v-if="!isActive && !isLocked">
+                    <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item>
             </v-list>
         </v-menu>
     </div>
@@ -66,7 +69,7 @@ export default {
         };
     },
     methods: {
-        ...mapActions("authority/formA", ["duplicateFormA"]),
+        ...mapActions("authority/formA", ["duplicateFormA", "deleteFormA"]),
         editClick() {
             this.$router.push(
                 `/departments/${this.formA.department_code}/form-a/${this.formA._id}/edit`
@@ -84,12 +87,18 @@ export default {
                 params: { id: this.formA._id },
             });
         },
-
         async duplicateClick() {
             await this.duplicateFormA(); //the await may not be needed but ¯\_(ツ)_/¯
             this.$router.push(
                 `/departments/${this.formA.department_code}/form-a/${this.formA._id}/edit`
             );
+        },
+        async deleteClick() {
+            let response = await this.deleteFormA(this.formA._id);
+
+            if (response.status == 200) {
+                console.log("CRA");
+            }
         },
     },
 };

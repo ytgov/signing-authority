@@ -34,18 +34,16 @@ formARouter.get("/", async (req: Request, res: Response) => {
 formARouter.get("/count", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<FormA>;
   let count = await db.count({});
-  if (count)
-    return res.json({ "form_a_count": count });
-  res.status(404).send();
+  res.json({ "form_a_count": count });
 });
 
 formARouter.get("/:id",
   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    let item = await loadSingleAuthority(req, id);
+    let item = await loadSinglePosition(req, id);
 
-    if (item) {
+    if (item && item._id) {
       if (item.deactivation)
         item.status = "Archived";
       else if (item.activation) {
@@ -109,6 +107,58 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   let db = req.store.FormA as GenericService<FormA>;
   let department_code = req.params.department;
 
+  let list = await db.getAll({ "department_code": department_code, deactivation: { $eq: null } }, { program_branch: 1, activity: 1, position: 1 });
+
+  if (list) {
+    for (let item of list) {
+      if (item.deactivation)
+        item.status = "Archived";
+      else if (item.activation) {
+        item.status = "Active";
+      }
+      else item.status = "Inactive (Draft)";
+
+      if (item.activity)
+        item.program_activity = `${item.program_branch} : ${item.activity}`;
+      else item.program_activity = item.program_branch;
+    }
+
+    return res.json({ data: list });
+  }
+
+  res.status(404).send();
+});
+
+formARouter.get("/department/:department/pending-forms", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
+
+  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, activity: 1, position: 1 });
+
+  if (list) {
+    for (let item of list) {
+      if (item.deactivation)
+        item.status = "Archived";
+      else if (item.activation) {
+        item.status = "Active";
+      }
+      else item.status = "Inactive (Draft)";
+
+      if (item.activity)
+        item.program_activity = `${item.program_branch} : ${item.activity}`;
+      else item.program_activity = item.program_branch;
+    }
+
+    return res.json({ data: list });
+  }
+
+  res.status(404).send();
+});
+
+formARouter.get("/department/:department/pending-positions", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<FormA>;
+  let department_code = req.params.department;
+
   let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, activity: 1, position: 1 });
 
   if (list) {
@@ -135,7 +185,7 @@ formARouter.get("/department/:department/program", async (req: Request, res: Res
   let db = req.store.FormA as GenericService<FormA>;
   let department_code = req.params.department;
 
-  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1 });
+  let list = await db.getAll({ "department_code": department_code, "deactivation": { $eq: null } }, { program_branch: 1 });
   let programs = list.map(d => d.program_branch);
   programs = _.uniq(programs);
 
@@ -146,7 +196,7 @@ formARouter.get("/department/:department/activity", async (req: Request, res: Re
   let db = req.store.FormA as GenericService<FormA>;
   let department_code = req.params.department;
 
-  let list = await db.getAll({ "department_code": department_code, activity: { $ne: null } }, { activity: 1 });
+  let list = await db.getAll({ "department_code": department_code, activity: { $ne: null }, "deactivation": { $eq: null } }, { activity: 1 });
   let activities = list.map(d => d.activity);
   activities = _.uniq(activities);
 
@@ -236,8 +286,20 @@ formARouter.get("/department/:department/count", async (req: Request, res: Respo
 //     res.status(404).send();
 //   });
 
+
+formARouter.delete("/:id",
+  [param("id").notEmpty()], ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let db = req.store.FormA as GenericService<FormA>;
+
+    db.delete(id);
+    res.send("");
+  });
+
 formARouter.put("/:id",
-  [param("id").isMongoId().notEmpty()], ReturnValidationErrors, checkJwt, loadUser,
+  [param("id").isMongoId().notEmpty(),
+  body("program_branch").notEmpty().trim(), body("activity").trim()], ReturnValidationErrors, checkJwt, loadUser,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let db = req.store.FormA as GenericService<FormA>;
@@ -246,7 +308,12 @@ formARouter.put("/:id",
     req.body.updated_by = req.user.email;
 
     let existing = await db.getById(id);
-    delete existing.audit_lines;
+
+    if (existing)
+      delete existing.audit_lines;
+
+    if (req.body.activity && req.body.activity.length == 0)
+      delete req.body.activity;
 
     // If archiving a form note the details
     if (req.query.archive == "true") {
@@ -273,20 +340,6 @@ formARouter.put("/:id",
       });
     }
 
-    /* ----------------- Form A Version History ------------------------------
-    //Eventually something like this should be done to keep version history
-    let oldItem = await loadSingleAuthority(req, id);
-    req.body.revision = []
-    req.body.revision.push({
-      revisedAt: new Date(),
-      revisedBy: req.user.email,
-      revisedBySub: req.user.sub,
-      previousVersion: oldItem
-    })
-    */
-    // if (req.body.department_id)
-    //   req.body.department_id = new ObjectId(req.body.department_id);
-
     //RA: this should be the ID of the person creating the FormA I think
     if (req.body.employee_id)
       req.body.employee_id = new ObjectId(req.body.employee_id);
@@ -296,18 +349,6 @@ formARouter.put("/:id",
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
       console.log("CODING IS VALID: ", codingIsValid);
-
-      let coding = `${line.coding.replace(/[^0-9]/g, "")}*************************`;
-      line.dept = coding.substring(0, 2);
-      line.vote = coding.substring(2, 3);
-      line.prog = coding.substring(3, 5);
-      line.activity = coding.substring(5, 7);
-      line.element = coding.substring(7, 9);
-      line.allotment = coding.substring(9, 11);
-      line.object = coding.substring(9, 13);
-      line.ledger1 = coding.substring(13, 17);
-      line.ledger2 = coding.substring(17, 22);
-      delete line.account;
 
       line.contracts_for_goods_services = line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
@@ -321,15 +362,12 @@ formARouter.put("/:id",
 
     await db.update(id, req.body);
 
-    let item = await loadSingleAuthority(req, id);
+    let item = await loadSinglePosition(req, id);
     res.json({ data: item });
   });
 
-formARouter.post("/",
-  checkJwt, loadUser,
+formARouter.post("/", checkJwt, loadUser,
   async (req: Request, res: Response) => {
-    // console.log(`In post FormA`)
-    // console.log(req.body)
     let db = req.store.FormA as GenericService<FormA>;
 
     req.body.created_on = new Date();
@@ -342,17 +380,10 @@ formARouter.post("/",
     }];
 
     let created = await db.create(req.body);
-    let item = await loadSingleAuthority(req, created.insertedId.toString());
+    let item = await loadSinglePosition(req, created.insertedId.toString());
     res.json({ data: item });
   });
 
-
-
-/* formARouter.post('/', async (req: Request, res: Response) => {
-  //post object {user: "YNETUsername", account: "full-accuont-code"}
-  //returns true and the value and type of approval
-  return res.json({"TESTING": "crap"});
-}); */
 
 // formARouter.get('/account/:account', async (req: Request, res: Response) => {
 //   //return all the authorites assigned to the account
@@ -372,47 +403,29 @@ formARouter.post("/",
 //   return res.json({ "params": req.params });
 // });
 
-async function loadSingleAuthority(req: Request, id: string): Promise<any> {
-
+async function loadSinglePosition(req: Request, id: string): Promise<FormA | null> {
   let db = req.store.FormA as GenericService<FormA>;
-  // let depDb = req.store.Departments as GenericService<Department>;
-  // let empDb = req.store.Employees as GenericService<Employee>;
+
   let item = await db.getById(id);
 
-  if (item) {
-    // item.department = await depDb.getOne({ _id: item.department_id });
-    // item.employee = await empDb.getOne({ _id: new ObjectId(item.employee_id) });
+  if (!item)
+    return null;
 
-    if (item.issue_date)
-      item.issue_date = moment(item.issue_date).utc(false).format("YYYY-MM-DD");
+  if (item.activation && item.activation.date)
+    item.issue_date_display = moment(item.activation.date).format("YYYY-MM-DD");
 
-    if (!item.audit_lines)
-      item.audit_lines = [];
+  if (!item.audit_lines)
+    item.audit_lines = [];
 
-    for (let audit of item.audit_lines) {
-      audit.date_display = moment(audit.date).format("YYYY-MM-DD @ h:mm a");
-    }
-
-    if (item.authority_lines) {
-      for (let line of item.authority_lines) {
-        line.coding_display = FormatCoding(line.coding);
-
-
-        /*   line.account = `${line.dept}${line.vote}-${line.prog}${line.activity}${line.element}-${line.object}-${line.ledger1}-${line.ledger2}`;
-
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-          line.account = line.account.replace(/\*+$/g, "").replace(/-$/g, "");
-          if (line.account.length < 26)
-            line.account += "*"; */
-      }
-    }
-    return item;
+  for (let audit of item.audit_lines) {
+    audit.date_display = moment(audit.date).format("YYYY-MM-DD @ h:mm a");
   }
 
-  return undefined;
+  if (item.authority_lines) {
+    for (let line of item.authority_lines) {
+      line.coding_display = FormatCoding(line.coding);
+    }
+  }
+
+  return item;
 }

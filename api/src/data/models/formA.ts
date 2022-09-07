@@ -56,6 +56,7 @@ export interface FormA extends MongoEntity {
 
 export interface FormAAuthorityLine {
     coding: string;
+    coding_display?: string;
 
     dept?: string;
     vote?: string;
@@ -86,6 +87,8 @@ export interface FormAAuditLine {
     user_name: string;
     action: string;
     previous_value: Object;
+
+    date_display?: string;
 }
 
 export enum OperationalRestrictions {

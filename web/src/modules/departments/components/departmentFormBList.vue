@@ -14,6 +14,10 @@
                 :loading="loadingFormB"
                 @click:row="openFormB"
                 dense
+                :footer-props="{
+                    'items-per-page-options': [25, 50, 75, -1],
+                }"
+                :items-per-page="50"
             >
             </v-data-table>
             <div class="mt-4 ml-2">

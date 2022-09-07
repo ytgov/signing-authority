@@ -3,9 +3,9 @@
     <v-col>
       <v-card :to="formALink">
         <v-card-text class="text-h4 mb-0 pb-0">
-          {{ activeFormACount }}
+          {{ awaitingFormACount }}
         </v-card-text>
-        <v-card-text class="mt-0 pt-0">Form As</v-card-text>
+        <v-card-text class="mt-0 pt-0">Pending Form As</v-card-text>
       </v-card>
     </v-col>
     <v-col>
@@ -31,7 +31,7 @@
 export default {
   name: "departmentFormASummary",
   props: {
-    activeFormACount: {
+    awaitingFormACount: {
       type: Number,
       default: 0,
     },

@@ -6,7 +6,7 @@ import _ from "lodash";
 import { getInstance } from "@/auth/auth0-plugin";
 
 const state = {
-  formA: { employee: {}, department: {}, audit_lines: [] }
+  formA: { employee: {}, department: {}, audit_lines: [], status: "" }
 };
 
 const getters = {
@@ -91,7 +91,6 @@ const actions = {
     dupe.issue_date = new Date();
     dupe.reviewed_by_department = false;
     dupe.authority_lines = state.formA.authority_lines;
-    dupe.created_by = ""; //TODO: get user from the store
     dupe.parentFormA = state.formA._id; //TODO: decide how to audit a clone
 
     const auth = getInstance();
@@ -105,6 +104,14 @@ const actions = {
         console.error(`Could not duplicate Form A ${state.formA._id}`);
         commit("setFormA", { authority_lines: [] });
       });
+  },
+  async deleteFormA({ commit }, id) {
+    const auth = getInstance();
+
+    return auth.delete(`${FORMA_URL}/${id}`)
+      .then(resp => {
+        return resp;
+      })
   },
 
   async archiveFormA({ commit, state }, archiveDetails) {

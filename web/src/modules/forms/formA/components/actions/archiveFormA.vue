@@ -2,12 +2,12 @@
     <v-dialog v-model="dialog" max-width="600px" persistent>
         <template v-slot:activator="{ on, attrs }">
             <v-list-item-title v-bind="attrs" v-on="on">
-                Archive Form A
+                Archive Position
             </v-list-item-title>
             <!-- <v-btn color="primary" v-bind="attrs" v-on="on">Archive Form A</v-btn> -->
         </template>
         <v-app-bar dark color="#0097A9">
-            <v-toolbar-title> Archive Form A </v-toolbar-title>
+            <v-toolbar-title> Archive Position </v-toolbar-title>
             <v-spacer />
             <v-icon title="Close" @click="dialog = false">mdi-close</v-icon>
         </v-app-bar>

@@ -90,7 +90,7 @@ employeeRouter.get('/:id',
         // auth.department = await depDb.getOne({ _id: new ObjectId(auth.department_id) });
 
         /*  if (auth.issue_date)
-           auth.issue_date_display = moment(auth.issue_date).utc(false).format("YYYY-MM-DD"); */
+           auth.issue_date_display = moment(auth.issue_date).format("YYYY-MM-DD"); */
       }
       return res.json({ data: item });
     }

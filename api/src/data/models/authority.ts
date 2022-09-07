@@ -32,6 +32,7 @@ export interface Authority extends MongoEntity {
     program_branch: string;
 
     authority_lines: FormBAuthorityLine[];
+    audit_lines?: FormBAuditLine[];
 
     department_reviews?: ReviewResults[];
     finance_reviews?: ReviewResults[];
@@ -51,7 +52,7 @@ export interface Authority extends MongoEntity {
 
     // used in DTO only
     department?: Department;
-    form_a?: FormA;
+    form_a: FormA | null;
     //employee?: Employee;
     //supervisor?: Employee;
 
@@ -73,6 +74,7 @@ export enum ReviewResultType {
 
 export interface FormBAuthorityLine {
     coding: string;
+    coding_display?: string;
 
     dept?: string;
     vote?: string;
@@ -109,4 +111,6 @@ export interface FormBAuditLine {
     user_name: string;
     action: string;
     previous_value: Object;
+
+    date_display?: string;
 }

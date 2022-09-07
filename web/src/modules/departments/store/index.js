@@ -55,7 +55,7 @@ const actions = {
             return resp.data.data
         })
     },
-    
+
     async getProgramList(store, { id }) {
         const auth = getInstance();
 
@@ -63,13 +63,22 @@ const actions = {
             return resp.data.data
         })
     },
-    
+
     async getActivityList(store, { id }) {
         const auth = getInstance();
 
         return auth.get(`${FORMA_URL}/department/${id}/activity`).then(resp => {
             return resp.data.data
         })
+    },
+
+    async generateFormA(store, { id, items }) {
+        const auth = getInstance();
+
+        let body = { items };
+
+        return auth.post(`${FORMA_URL}/department/${id}`, body)
+            .then(resp => resp.data.data)
     },
 };
 

@@ -135,7 +135,7 @@ export async function Seed(storage: Storage) {
         s30_payment_limit: 222
     });
 
-    let auth1 = await autDb.create({
+/*     let auth1 = await autDb.create({
         department_code: "55",
         department_descr: "Highways and Public Works",
         program_branch: "ICT",
@@ -151,5 +151,5 @@ export async function Seed(storage: Storage) {
         //create_date: new Date(),
         //create_user_id: emp1?._id || new ObjectId(),
         form_a_id: formA1._id || new ObjectId(),
-    });
+    }); */
 }
