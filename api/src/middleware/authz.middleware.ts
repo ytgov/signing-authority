@@ -19,6 +19,36 @@ export const checkJwt = jwt({
   algorithms: ["RS256"]
 });
 
+export async function isDepartmentAdmin (req: Request, res: Response, next: NextFunction){
+  console.log("*******IS DERPARTMENT ADMIN*********");
+
+  const user = req.user;
+  // if (!user) {
+  //   return res.send(401).json({ error: "Unauthenticated" });
+  // }
+  // await loadUser(req, res, next); // we don't need this if load users is called at the router level
+
+  const { department_code } = req.body;
+  const { roles, department_admin_for} = req.user;
+
+  if (roles.includes("Department Admin") && department_admin_for !== department_code) {
+    // return res.sendStatus(403)
+    res.status(403).send()
+    return
+  }
+  // else if (!roles.includes("System Admin")){
+  //   return res.status(401).json({ error: "Unauthorized" });
+  // }
+
+
+  console.log("Roles: ")
+  console.log(roles)
+  console.log("Department Admin For: ")
+  console.log(department_admin_for)
+  console.log(department_code)
+  next();
+}
+
 export async function loadUser(req: Request, res: Response, next: NextFunction) {
   const db = req.store.Users as UserService;
 
