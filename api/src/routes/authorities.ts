@@ -6,7 +6,7 @@ import { body, param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { GenericService, UserService } from "../services";
 import _ from "lodash";
-import { Authority, Department, Employee, FormA } from "../data/models";
+import { Authority, Department, Employee, Position } from "../data/models";
 import { ObjectId } from "mongodb";
 import moment from "moment";
 import { generatePDF } from "../utils/pdf-generator";
@@ -170,7 +170,7 @@ authoritiesRouter.get('/:myAuthorities', async (req: Request, res: Response) => 
 
 async function loadSingleAuthority(req: Request, id: string): Promise<any> {
   let db = req.store.Authorities as GenericService<Authority>;
-  let formADb = req.store.FormA as GenericService<FormA>;
+  let formADb = req.store.FormA as GenericService<Position>;
 
   let item = await db.getById(id);
 

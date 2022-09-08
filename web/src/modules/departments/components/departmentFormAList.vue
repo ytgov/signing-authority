@@ -4,7 +4,7 @@
         <v-card-text>
             <department-form-a-summary
                 :positionCount="positions.length"
-                :awaitingFormACount="0"
+                :awaitingFormACount="pendingGroups.length"
                 :awaitingPositionCount="0"
             />
 
@@ -48,18 +48,8 @@ export default {
         departmentFormASummary,
     },
     props: {
-        // formAItems: {
-        //  type: Array,
-        //  default: () => [],
-        // },
-        // loadingFormA: {
-        //  type: Boolean,
-        //  default: false,
-        // },
-        search: {
-            type: String,
-            default: "",
-        },
+        search: { type: String, default: "" },
+        pendingGroups: { type: Array, default: new Array() },
     },
 
     data: () => ({
@@ -74,7 +64,7 @@ export default {
         },
         formALink() {
             return {
-                name: "DepartmentFormAList",
+                name: "DepartmentPositionList",
                 params: { id: this.$route.params.id },
             };
         },
@@ -99,6 +89,7 @@ export default {
     },
     methods: {
         ...mapActions("forms/formA", ["getDepartmentFormAList"]),
+
         openFormA(item) {
             this.$router.push(
                 `/departments/${this.$route.params.departmentId}/form-a/${item._id}`

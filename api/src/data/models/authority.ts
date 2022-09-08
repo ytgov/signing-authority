@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { UnwrapPromiseLike } from "puppeteer";
-import { FormA, MongoEntity, User, Department, Employee, StoredFile } from ".";
+import { Position, MongoEntity, User, Department, Employee, StoredFile } from ".";
 
 
 export interface Authority extends MongoEntity {
@@ -52,7 +52,7 @@ export interface Authority extends MongoEntity {
 
     // used in DTO only
     department?: Department;
-    form_a: FormA | null;
+    form_a: Position | null;
     //employee?: Employee;
     //supervisor?: Employee;
 

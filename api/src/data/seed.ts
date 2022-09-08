@@ -1,7 +1,7 @@
 import { GenericService } from "src/services";
 import { MongoFileStore } from "src/utils/mongo-file-store";
 import { MONGO_DB } from "../config";
-import { Authority, FormBAuthorityLine, Employee, FormA } from "./models";
+import { Authority, FormBAuthorityLine, Employee, Position } from "./models";
 import { Storage } from "./storage";
 import { employeeSeedData, formASeedData } from "./seed-data";
 import { ObjectId } from "mongodb";
@@ -49,7 +49,7 @@ export async function Seed(storage: Storage) {
     const emp2 = await empDb.getOne({ "email": "ryanjagar@hey.com" });
 
     // put in some FormAs
-    let formADB = storage.FormA as GenericService<FormA>;
+    let formADB = storage.FormA as GenericService<Position>;
 
     for (let index = 0; index < formASeedData.length; index++) {
         const element = formASeedData[index];

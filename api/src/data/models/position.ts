@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { Department, MongoEntity, Employee, StoredFile, ReviewResults, Authority } from ".";
 
-export interface FormA extends MongoEntity {
+export interface Position extends MongoEntity {
     department_code: string;
     department_descr: string;
     program_branch: string;
@@ -9,8 +9,10 @@ export interface FormA extends MongoEntity {
 
     position: string;
 
-    authority_lines?: FormAAuthorityLine[];
-    audit_lines?: FormAAuditLine[];
+    authority_lines?: PositionAuthorityLine[];
+    audit_lines?: PositionAuditLine[];
+
+    position_group_id?: ObjectId;
 
     department_reviews?: ReviewResults[];
     finance_reviews?: ReviewResults[];
@@ -54,7 +56,7 @@ export interface FormA extends MongoEntity {
     issue_date_display?: string; //the date the form is approved and goes into effect
 }
 
-export interface FormAAuthorityLine {
+export interface PositionAuthorityLine {
     coding: string;
     coding_display?: string;
 
@@ -82,7 +84,7 @@ export interface FormAAuthorityLine {
     s30_payment_limit: number;
 }
 
-export interface FormAAuditLine {
+export interface PositionAuditLine {
     date: Date;
     user_name: string;
     action: string;

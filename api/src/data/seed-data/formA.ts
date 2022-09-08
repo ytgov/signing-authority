@@ -1,7 +1,7 @@
-import { FormA } from "../models";
+import { Position } from "../models";
 
 
-export const formASeedData: FormA[] = [
+export const formASeedData: Position[] = [
   {
     "department_code": "02",
     "department_descr": "FINANCE",
@@ -193,7 +193,7 @@ export const formASeedData: FormA[] = [
   }
 ];
 
-export const formAFAM5533: FormA[] = [
+export const formAFAM5533: Position[] = [
   // Highways Limitations per FAM 5.5.3.3
   {
     "department_code": "55",

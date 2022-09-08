@@ -75,9 +75,14 @@ const actions = {
     async generateFormA(store, { id, items }) {
         const auth = getInstance();
 
-        let body = { items };
+        return auth.post(`${FORMA_URL}/department/${id}`, { items })
+            .then(resp => resp.data.data)
+    },
 
-        return auth.post(`${FORMA_URL}/department/${id}`, body)
+    async getPendingGroups(store, { id }) {
+        const auth = getInstance();
+
+        return auth.get(`${FORMA_URL}/department/${id}/pending-groups`)
             .then(resp => resp.data.data)
     },
 };

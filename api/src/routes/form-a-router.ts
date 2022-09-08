@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { body, param } from "express-validator";
+import { body, check, param } from "express-validator";
 
 import moment from "moment";
 import _ from "lodash";
@@ -8,7 +8,7 @@ import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
 import { GenericService, QuestService, UserService } from "../services";
 
-import { Authority, FormA, OperationalRestrictions } from "../data/models";
+import { Authority, Position, OperationalRestrictions, PositionGroup } from "../data/models";
 import { ObjectId } from "mongodb";
 
 import { ExpressHandlebars } from "express-handlebars";
@@ -21,18 +21,20 @@ import { FormatCoding } from "../utils/formatters";
 
 const questService = new QuestService();
 
+formARouter.use(checkJwt);
+
 formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
 });
 
 formARouter.get("/", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let list = await db.getAll({});
   res.json({ data: list });
 });
 
 formARouter.get("/count", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let count = await db.count({});
   res.json({ "form_a_count": count });
 });
@@ -82,7 +84,7 @@ formARouter.get("/:id",
 //   // res.status(404).send();
 // })
 formARouter.get("/department/position-count", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let pipeline =
     [
       { $unwind: "$authority_lines" },
@@ -104,7 +106,7 @@ formARouter.get("/department/position-count", async (req: Request, res: Response
 });
 
 formARouter.get("/department/:department", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
   let list = await db.getAll({ "department_code": department_code, deactivation: { $eq: null } }, { program_branch: 1, activity: 1, position: 1 });
@@ -129,34 +131,53 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   res.status(404).send();
 });
 
-formARouter.get("/department/:department/pending-forms", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
-  let department_code = req.params.department;
+formARouter.post("/department/:department_code", loadUser, async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<Position>;
+  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+  let { program, activity, items } = req.body;
 
-  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, activity: 1, position: 1 });
 
-  if (list) {
-    for (let item of list) {
-      if (item.deactivation)
-        item.status = "Archived";
-      else if (item.activation) {
-        item.status = "Active";
+  console.log("HERE!!!");
+
+  let { department_code } = req.params;
+
+  let group: PositionGroup = {
+    create_date: new Date(),
+    created_by: req.user.email,
+    department_code: department_code,
+    status: "WAITING",
+    program,
+    activity
+  };
+
+  let result = await groupDb.create(group);
+  if (result.insertedId) {
+    for (let item of items) {
+      let position = await db.getById(item);
+
+      if (position) {
+        position.position_group_id = result.insertedId;
+
+        await db.update(item, position);
       }
-      else item.status = "Inactive (Draft)";
-
-      if (item.activity)
-        item.program_activity = `${item.program_branch} : ${item.activity}`;
-      else item.program_activity = item.program_branch;
     }
-
-    return res.json({ data: list });
   }
 
-  res.status(404).send();
+  return res.json({ data: result.insertedId });
+});
+
+formARouter.get("/department/:department_code/pending-groups", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<Position>;
+  let { department_code } = req.params;
+  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+
+  let list = await groupDb.getAll({ department_code });
+
+  return res.json({ data: list });
 });
 
 formARouter.get("/department/:department/pending-positions", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
   let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, activity: 1, position: 1 });
@@ -182,7 +203,7 @@ formARouter.get("/department/:department/pending-positions", async (req: Request
 });
 
 formARouter.get("/department/:department/program", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
   let list = await db.getAll({ "department_code": department_code, "deactivation": { $eq: null } }, { program_branch: 1 });
@@ -193,7 +214,7 @@ formARouter.get("/department/:department/program", async (req: Request, res: Res
 });
 
 formARouter.get("/department/:department/activity", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
   let list = await db.getAll({ "department_code": department_code, activity: { $ne: null }, "deactivation": { $eq: null } }, { activity: 1 });
@@ -204,7 +225,7 @@ formARouter.get("/department/:department/activity", async (req: Request, res: Re
 });
 
 formARouter.get("/department/:department/program/:program_branch/activity", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
   let { program_branch } = req.params;
 
@@ -217,7 +238,7 @@ formARouter.get("/department/:department/program/:program_branch/activity", asyn
 
 formARouter.post("/department/:department/branch", async (req: Request, res: Response) => {
   //Return a list of FormA positions for a branch which is send in the body of a POST request
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
   let program_branch = req.body.program_branch;
@@ -241,7 +262,7 @@ formARouter.post("/department/:department/branch", async (req: Request, res: Res
 });
 
 formARouter.get("/department/:department/count", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<FormA>;
+  let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
   // console.log (`Asking for a count of dept ${department_code}`)
   let pipeline =
@@ -291,7 +312,7 @@ formARouter.delete("/:id",
   [param("id").notEmpty()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    let db = req.store.FormA as GenericService<FormA>;
+    let db = req.store.FormA as GenericService<Position>;
 
     db.delete(id);
     res.send("");
@@ -302,7 +323,7 @@ formARouter.put("/:id",
   body("program_branch").notEmpty().trim(), body("activity").trim()], ReturnValidationErrors, checkJwt, loadUser,
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    let db = req.store.FormA as GenericService<FormA>;
+    let db = req.store.FormA as GenericService<Position>;
 
     req.body.updated_on = new Date();
     req.body.updated_by = req.user.email;
@@ -368,7 +389,7 @@ formARouter.put("/:id",
 
 formARouter.post("/", checkJwt, loadUser,
   async (req: Request, res: Response) => {
-    let db = req.store.FormA as GenericService<FormA>;
+    let db = req.store.FormA as GenericService<Position>;
 
     req.body.created_on = new Date();
     req.body.created_by = req.user.email;
@@ -403,8 +424,8 @@ formARouter.post("/", checkJwt, loadUser,
 //   return res.json({ "params": req.params });
 // });
 
-async function loadSinglePosition(req: Request, id: string): Promise<FormA | null> {
-  let db = req.store.FormA as GenericService<FormA>;
+async function loadSinglePosition(req: Request, id: string): Promise<Position | null> {
+  let db = req.store.FormA as GenericService<Position>;
 
   let item = await db.getById(id);
 
