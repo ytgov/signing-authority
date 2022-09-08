@@ -105,7 +105,11 @@
             </v-app-bar>
             <v-card tile>
                 <v-card-text class="pt-3">
-                    <p v-if="activityFilter != 'All'">
+                    <p v-if="programFilter == 'All'">
+                        This will generate a new Form A that includes all
+                        <strong>'Non Archived'</strong> position records.
+                    </p>
+                    <p v-else-if="activityFilter != 'All'">
                         This will generate a new Form A that includes all
                         <strong>'Non Archived'</strong> position records within
                         the <strong>'{{ activityFilter }}'</strong> Activity of
@@ -187,11 +191,7 @@ export default {
                 disabled: true,
             },
         ],
-        statusOptions: [
-            "Any",
-            "Active",
-            "Inactive"
-        ],
+        statusOptions: ["Any", "Active", "Inactive"],
         allItems: [],
         formAItems: [],
         item: {},
@@ -239,8 +239,7 @@ export default {
             return list;
         },
         canGenerate() {
-            if (this.matchingItems.length == 0)
-                return false;
+            if (this.matchingItems.length == 0) return false;
 
             let allArchived = true;
 
@@ -261,7 +260,6 @@ export default {
             "getDepartment",
             "getFormAList",
             "getProgramList",
-
             "getActivityList",
             "generateFormA",
         ]),
@@ -287,16 +285,6 @@ export default {
                     else if (
                         this.statusFilter == "Inactive" &&
                         i.status.indexOf("Inactive") == 0
-                    )
-                        return true;
-                    else if (
-                        this.statusFilter == "Archived" &&
-                        i.status == "Archived"
-                    )
-                        return true;
-                    else if (
-                        this.statusFilter == "Not Archived" &&
-                        i.status != "Archived"
                     )
                         return true;
 
@@ -338,16 +326,20 @@ export default {
             );
         },
         generateFormAClick() {
-            this.statusFilter = "Not Archived";
+            this.statusFilter = "Any";
             this.filterList();
             this.showGenerateDialog = true;
         },
         async doGenerateFormA() {
-            console.log("GENERATE", this.matchingItems.length);
+            let items = this.matchingItems.map((i) => i._id);
+
             let answer = await this.generateFormA({
                 id: this.departmentId,
-                items: this.matchingItems,
+                items,
+                program: this.programFilter,
+                activity: this.activityFilter,
             });
+
             console.log("ANSWER", answer);
         },
     },

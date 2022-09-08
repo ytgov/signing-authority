@@ -19,10 +19,10 @@ const routes = [
         component: () => import("../views/DepartmentDetail.vue"),
       },
       {
-        name: "DepartmentFormAList",
+        name: "DepartmentPositionList",
         path: ":departmentId/form-a",
         meta: { requiresAuth: true },
-        component: () => import("../views/DepartmentFormAList.vue"),
+        component: () => import("../views/DepartmentPositionList.vue"),
       },
       {
         name: "DepartmentFormBList",
