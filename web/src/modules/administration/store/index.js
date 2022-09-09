@@ -39,10 +39,14 @@ const actions = {
         console.log("BROKEN", err)
       })
   },
-  async saveUser(store, item) {
+  async saveUser({dispatch}, item) {
     const auth = getInstance();
     let body = { roles: item.roles, status: item.status, department_admin_for: item.department_admin_for};
-    return auth.put(`${USER_URL}/${item.email}`, body);
+    const result = await auth.put(`${USER_URL}/${item.email}`, body);
+    if (result.status === 200) {
+      dispatch("loadUsers");
+    }
+    return result
   },
   async createUser({dispatch}, item) {
     const auth = getInstance();

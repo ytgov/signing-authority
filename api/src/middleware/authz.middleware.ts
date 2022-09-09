@@ -20,32 +20,27 @@ export const checkJwt = jwt({
 });
 
 export async function isDepartmentAdmin (req: Request, res: Response, next: NextFunction){
-  console.log("*******IS DERPARTMENT ADMIN*********");
-
   const user = req.user;
-  // if (!user) {
-  //   return res.send(401).json({ error: "Unauthenticated" });
-  // }
-  // await loadUser(req, res, next); // we don't need this if load users is called at the router level
+  if (!user.roles) {
+    console.error(`No user roles found for ${user.email}`);
+    res.status(401).send()
+    return
+  }
 
   const { department_code } = req.body;
   const { roles, department_admin_for} = req.user;
 
   if (roles.includes("Department Admin") && department_admin_for !== department_code) {
-    // return res.sendStatus(403)
-    res.status(403).send()
+    console.error(`User: ${user.email} does not have department admin on ${department_code}`);
+    res.status(403).send();
     return
   }
-  // else if (!roles.includes("System Admin")){
-  //   return res.status(401).json({ error: "Unauthorized" });
-  // }
-
-
-  console.log("Roles: ")
-  console.log(roles)
-  console.log("Department Admin For: ")
-  console.log(department_admin_for)
-  console.log(department_code)
+  if (!roles.includes("System Admin")){
+    res.status(403).send();
+  }
+  if (!roles.includes("Finance Admin")) {
+    res.status(403).send();
+  }
   next();
 }
 

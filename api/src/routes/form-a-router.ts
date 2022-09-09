@@ -14,7 +14,7 @@ import { ObjectId } from "mongodb";
 import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
 
-import { checkJwt, loadUser } from "../middleware/authz.middleware";
+import { checkJwt, loadUser, isDepartmentAdmin } from "../middleware/authz.middleware";
 import { FormatCoding } from "../utils/formatters";
 
 // formARouter.use('/uploads', uploadsRouter)
@@ -319,8 +319,9 @@ formARouter.delete("/:id",
   });
 
 formARouter.put("/:id",
+  checkJwt, loadUser, isDepartmentAdmin,
   [param("id").isMongoId().notEmpty(),
-  body("program_branch").notEmpty().trim(), body("activity").trim()], ReturnValidationErrors, checkJwt, loadUser,
+  body("program_branch").notEmpty().trim(), body("activity").trim()], ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let db = req.store.FormA as GenericService<Position>;
@@ -367,9 +368,9 @@ formARouter.put("/:id",
     // console.log(req.body.authority_lines[0])
     for (let line of req.body.authority_lines) {
 
-      let codingIsValid = await questService.accountPatternIsValid(line.coding);
+      // let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
-      console.log("CODING IS VALID: ", codingIsValid);
+      // console.log("CODING IS VALID: ", codingIsValid);
 
       line.contracts_for_goods_services = line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
