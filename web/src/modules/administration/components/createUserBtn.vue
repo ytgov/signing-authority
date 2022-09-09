@@ -134,7 +134,10 @@ export default {
     }),
     computed: {
          isDepartmentAdmin: function () {
-            return this.item.roles === "Department Admin"
+            if (this.selectedEmployee.roles){
+                return this.selectedEmployee.roles.includes("Department Admin")
+            }
+            return false
         },
         ...mapGetters("department", ["departmentList"]),
 
