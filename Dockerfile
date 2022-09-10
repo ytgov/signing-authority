@@ -1,6 +1,17 @@
 FROM node:16-alpine3.15
 
-RUN apk add --no-cache chromium tzdata
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont \
+      tzdata
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 RUN cp /usr/share/zoneinfo/America/Whitehorse /etc/localtime
 RUN echo "America/Whitehorse" > /etc/timezone
 RUN apk del tzdata
