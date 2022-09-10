@@ -1,14 +1,14 @@
 import express, { Request, Response } from "express";
-import { body, check, param } from "express-validator";
+import { body, param } from "express-validator";
 
 import moment from "moment";
 import _ from "lodash";
-import { uploadsRouter } from "./uploads";
+import fs from "fs";
 import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
-import { GenericService, QuestService, UserService } from "../services";
+import { GenericService, QuestService } from "../services";
 
-import { Authority, Position, OperationalRestrictions, PositionGroup } from "../data/models";
+import { Authority, Position, OperationalRestrictions, PositionGroup, StoredFile } from "../data/models";
 import { ObjectId } from "mongodb";
 
 import { ExpressHandlebars } from "express-handlebars";
@@ -16,12 +16,12 @@ export const formARouter = express.Router();
 
 import { checkJwt, loadUser, isDepartmentAdmin } from "../middleware/authz.middleware";
 import { FormatCoding } from "../utils/formatters";
+import { FileStore } from "../utils/file-store";
+import { API_PORT } from "../config";
 
 // formARouter.use('/uploads', uploadsRouter)
 
 const questService = new QuestService();
-
-formARouter.use(checkJwt);
 
 formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
@@ -36,33 +36,36 @@ formARouter.get("/", async (req: Request, res: Response) => {
 formARouter.get("/count", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let count = await db.count({});
-  res.json({ "form_a_count": count });
+  res.json({ form_a_count: count });
 });
 
-formARouter.get("/:id",
-  [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
+formARouter.get(
+  "/:id",
+  [param("id").isMongoId().notEmpty()],
+  ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let item = await loadSinglePosition(req, id);
 
     if (item && item._id) {
-      if (item.deactivation)
-        item.status = "Archived";
+      if (item.deactivation) item.status = "Archived";
       else if (item.activation) {
         item.status = "Active";
-      }
-      else item.status = "Inactive (Draft)";
+      } else item.status = "Inactive (Draft)";
 
       let db = req.store.Authorities as GenericService<Authority>;
-      let connectedAuthorizations = await db.getAll({ form_a_id: item._id.toString() });
+      let connectedAuthorizations = await db.getAll({
+        form_a_id: item._id.toString(),
+      });
 
-      item.active_authorities = connectedAuthorizations.filter(f => f.activation);
+      item.active_authorities = connectedAuthorizations.filter((f) => f.activation);
 
       return res.json({ data: item });
     }
 
     res.status(404).send();
-  });
+  }
+);
 
 // formARouter.get ("/department/form-count", async (req: Request, res: Response) => {
 //   let db = req.store.FormA as GenericService<FormA>;
@@ -85,23 +88,24 @@ formARouter.get("/:id",
 // })
 formARouter.get("/department/position-count", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
-  let pipeline =
-    [
-      { $unwind: "$authority_lines" },
-      // {$match: {}},
-      {
-        $group:
-        {
-          _id: { department_code: "$department_code", department_descr: "$department_descr" },
-          position_count: { $sum: 1 }
-        }
-      }
-    ];
+  let pipeline = [
+    { $unwind: "$authority_lines" },
+    // {$match: {}},
+    {
+      $group: {
+        _id: {
+          department_code: "$department_code",
+          department_descr: "$department_descr",
+        },
+        position_count: { $sum: 1 },
+      },
+    },
+  ];
 
   let count = await db.aggregate(pipeline);
 
   // if (count)
-  return res.json({ "form_a_count": count });
+  return res.json({ form_a_count: count });
   // res.status(404).send();
 });
 
@@ -109,19 +113,21 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
-  let list = await db.getAll({ "department_code": department_code, deactivation: { $eq: null } }, { program_branch: 1, activity: 1, position: 1 });
+  let list = await db.getAll(
+    { department_code: department_code, deactivation: { $eq: null } },
+    { program_branch: 1, activity: 1, position: 1 }
+  );
 
   if (list) {
     for (let item of list) {
-      if (item.deactivation)
-        item.status = "Archived";
+      if (item.deactivation) item.status = "Archived";
       else if (item.activation) {
         item.status = "Active";
-      }
-      else item.status = "Inactive (Draft)";
+      } else if (item.position_group_id) {
+        item.status = "Locked";
+      } else item.status = "Inactive (Draft)";
 
-      if (item.activity)
-        item.program_activity = `${item.program_branch} : ${item.activity}`;
+      if (item.activity) item.program_activity = `${item.program_branch} : ${item.activity}`;
       else item.program_activity = item.program_branch;
     }
 
@@ -131,23 +137,20 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   res.status(404).send();
 });
 
-formARouter.post("/department/:department_code", loadUser, async (req: Request, res: Response) => {
+formARouter.post("/department/:department_code", checkJwt, loadUser, async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
-  let { program, activity, items } = req.body;
-
-
-  console.log("HERE!!!");
-
+  let { program, activity, items, department_descr } = req.body;
   let { department_code } = req.params;
 
   let group: PositionGroup = {
     create_date: new Date(),
-    created_by: req.user.email,
-    department_code: department_code,
-    status: "WAITING",
-    program,
-    activity
+    created_by: `${req.user.first_name} ${req.user.last_name}`,
+    department_code,
+    department_descr,
+    status: "Locked for Signatures",
+    program: program || "All",
+    activity: activity || "All",
   };
 
   let result = await groupDb.create(group);
@@ -157,6 +160,12 @@ formARouter.post("/department/:department_code", loadUser, async (req: Request, 
 
       if (position) {
         position.position_group_id = result.insertedId;
+        position.audit_lines?.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Locked",
+          previous_value: {},
+        });
 
         await db.update(item, position);
       }
@@ -173,26 +182,199 @@ formARouter.get("/department/:department_code/pending-groups", async (req: Reque
 
   let list = await groupDb.getAll({ department_code });
 
+  for (let item of list) {
+    item.create_date_display = moment(item.create_date).utc(true).format("MMMM D, YYYY @ h:mm a");
+
+    if (item.activated_positions) item.positions = item.activated_positions;
+    else item.positions = await db.getAll({ position_group_id: item._id });
+  }
+
   return res.json({ data: list });
 });
+
+formARouter.delete(
+  "/department/:department_code/pending-groups/:id",
+  checkJwt,
+  loadUser,
+  async (req: Request, res: Response) => {
+    let db = req.store.FormA as GenericService<Position>;
+    let { department_code, id } = req.params;
+    let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+
+    let item = await groupDb.getById(id);
+
+    if (item) {
+      let positions = await db.getAll({ position_group_id: item._id });
+
+      for (let position of positions) {
+        let posId = position._id?.toString() || "";
+        position.position_group_id = undefined;
+
+        position.audit_lines?.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Unlocked",
+          previous_value: {},
+        });
+
+        await db.update(posId, position);
+      }
+
+      await groupDb.delete(id);
+    }
+
+    return res.json({});
+  }
+);
+
+formARouter.put(
+  "/department/:department_code/pending-groups/:id",
+  checkJwt,
+  loadUser,
+  async (req: Request, res: Response) => {
+    let db = req.store.FormA as GenericService<Position>;
+    let { department_code, id } = req.params;
+    let { save_action, comments } = req.body;
+    let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+    let fileStore = req.store.Files as FileStore;
+
+    let item = await groupDb.getById(id);
+
+    if (item) {
+      if (save_action == "FinanceApproveApprove") {
+        item.status = "Active";
+        item.finance_approval_complete = {
+          id: req.user._id,
+          name: `${req.user.first_name} ${req.user.last_name}`,
+          date: new Date(),
+          comments,
+        };
+
+        let positions = await db.getAll({ position_group_id: item._id });
+
+        item.activated_positions = positions.map((p) => {
+          return {
+            _id: p._id,
+            position: p.position,
+            program_branch: p.program_branch,
+            activity: p.activity,
+            authority_lines: p.authority_lines,
+          };
+        });
+
+        if (item.upload_signatures) {
+          for (let position of positions) {
+            position.position_group_id = undefined;
+
+            position.activation = {
+              activate_user_id: req.user._id,
+              approver_name: item.upload_signatures.deputy_minister_name,
+              recommender_name: item.upload_signatures.department_administrator_name,
+              date: new Date(),
+              file_id: item.upload_signatures.file_id,
+            };
+
+            position.audit_lines?.push({
+              date: new Date(),
+              user_name: `${req.user.first_name} ${req.user.last_name}`,
+              action: "Activate",
+              previous_value: {},
+            });
+
+            let posId = (position._id || "").toString();
+            delete position._id;
+            await db.update(posId, position);
+          }
+        }
+
+        delete item._id;
+        await groupDb.update(id, item);
+      } else if (save_action == "FinanceApproveReject") {
+        item.status = "Rejected";
+        item.finance_approval_reject = {
+          id: req.user._id,
+          name: `${req.user.first_name} ${req.user.last_name}`,
+          date: new Date(),
+          comments,
+        };
+
+        delete item._id;
+        groupDb.update(id, item);
+      } else if (save_action == "FinanceReviewApprove") {
+        item.status = "Upload Signatures";
+        item.finance_review_complete = {
+          id: req.user._id,
+          name: `${req.user.first_name} ${req.user.last_name}`,
+          date: new Date(),
+          comments,
+        };
+
+        delete item._id;
+        groupDb.update(id, item);
+      } else if (save_action == "FinanceReviewReject") {
+        item.status = "Rejected";
+        item.finance_review_reject = {
+          id: req.user._id,
+          name: `${req.user.first_name} ${req.user.last_name}`,
+          date: new Date(),
+          comments,
+        };
+
+        delete item._id;
+        groupDb.update(id, item);
+      } else if (save_action == "UploadSignatures") {
+        item.status = "Finance Approve";
+
+        if (req.files && req.files.file) {
+          let file = req.files.file;
+
+          if (Array.isArray(file)) file = file[0];
+
+          let storedFile: StoredFile = {
+            content: file.data,
+            file_size: file.size,
+            filename: file.name,
+            mime_type: file.mimetype,
+            uploaded_by: `${req.user.first_name} ${req.user.last_name}`,
+          };
+
+          let fileInfo = await fileStore.putFile(storedFile);
+
+          if (fileInfo && fileInfo._id) {
+            item.upload_signatures = {
+              id: req.user._id,
+              name: `${req.user.first_name} ${req.user.last_name}`,
+              date: new Date(),
+              department_administrator_name: req.body.department_administrator_name,
+              deputy_minister_name: req.body.deputy_minister_name,
+              file_id: fileInfo._id,
+            };
+
+            delete item._id;
+            await groupDb.update(id, item);
+          }
+        }
+      }
+    }
+
+    return res.json({});
+  }
+);
 
 formARouter.get("/department/:department/pending-positions", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
-  let list = await db.getAll({ "department_code": department_code }, { program_branch: 1, activity: 1, position: 1 });
+  let list = await db.getAll({ department_code: department_code }, { program_branch: 1, activity: 1, position: 1 });
 
   if (list) {
     for (let item of list) {
-      if (item.deactivation)
-        item.status = "Archived";
+      if (item.deactivation) item.status = "Archived";
       else if (item.activation) {
         item.status = "Active";
-      }
-      else item.status = "Inactive (Draft)";
+      } else item.status = "Inactive (Draft)";
 
-      if (item.activity)
-        item.program_activity = `${item.program_branch} : ${item.activity}`;
+      if (item.activity) item.program_activity = `${item.program_branch} : ${item.activity}`;
       else item.program_activity = item.program_branch;
     }
 
@@ -206,8 +388,8 @@ formARouter.get("/department/:department/program", async (req: Request, res: Res
   let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
-  let list = await db.getAll({ "department_code": department_code, "deactivation": { $eq: null } }, { program_branch: 1 });
-  let programs = list.map(d => d.program_branch);
+  let list = await db.getAll({ department_code: department_code, deactivation: { $eq: null } }, { program_branch: 1 });
+  let programs = list.map((d) => d.program_branch);
   programs = _.uniq(programs);
 
   res.json({ data: programs });
@@ -217,8 +399,15 @@ formARouter.get("/department/:department/activity", async (req: Request, res: Re
   let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
-  let list = await db.getAll({ "department_code": department_code, activity: { $ne: null }, "deactivation": { $eq: null } }, { activity: 1 });
-  let activities = list.map(d => d.activity);
+  let list = await db.getAll(
+    {
+      department_code: department_code,
+      activity: { $ne: null },
+      deactivation: { $eq: null },
+    },
+    { activity: 1 }
+  );
+  let activities = list.map((d) => d.activity);
   activities = _.uniq(activities);
 
   res.json({ data: activities });
@@ -229,30 +418,35 @@ formARouter.get("/department/:department/program/:program_branch/activity", asyn
   let department_code = req.params.department;
   let { program_branch } = req.params;
 
-  let list = await db.getAll({ "department_code": department_code, program_branch, activity: { $ne: null } }, { activity: 1 });
-  let activities = list.map(d => d.activity);
+  let list = await db.getAll(
+    {
+      department_code: department_code,
+      program_branch,
+      activity: { $ne: null },
+    },
+    { activity: 1 }
+  );
+  let activities = list.map((d) => d.activity);
   activities = _.uniq(activities);
 
   res.json({ data: activities });
 });
 
-formARouter.post("/department/:department/branch", async (req: Request, res: Response) => {
+formARouter.post("/department/:department/branch", checkJwt, loadUser, async (req: Request, res: Response) => {
   //Return a list of FormA positions for a branch which is send in the body of a POST request
   let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
 
   let program_branch = req.body.program_branch;
 
-  let list = await db.getAll({ "department_code": department_code, "program_branch": program_branch }, { position: 1 });
+  let list = await db.getAll({ department_code: department_code, program_branch: program_branch }, { position: 1 });
 
   if (list) {
     for (let item of list) {
-      if (item.deactivation)
-        item.status = "Archived";
+      if (item.deactivation) item.status = "Archived";
       else if (item.activation) {
         item.status = "Active";
-      }
-      else item.status = "Inactive (Draft)";
+      } else item.status = "Inactive (Draft)";
     }
 
     return res.json({ data: list });
@@ -265,63 +459,107 @@ formARouter.get("/department/:department/count", async (req: Request, res: Respo
   let db = req.store.FormA as GenericService<Position>;
   let department_code = req.params.department;
   // console.log (`Asking for a count of dept ${department_code}`)
-  let pipeline =
-    [
-      { $match: { "department_code": department_code } },
-      { $unwind: "$authority_lines" },
-      // {$match: {}},
-      {
-        $group:
-        {
-          _id: { department_code: "$department_code", department_descr: "$department_descr" },
-          position_count: { $sum: 1 }
-        }
-      }
-    ];
+  let pipeline = [
+    { $match: { department_code: department_code } },
+    { $unwind: "$authority_lines" },
+    // {$match: {}},
+    {
+      $group: {
+        _id: {
+          department_code: "$department_code",
+          department_descr: "$department_descr",
+        },
+        position_count: { $sum: 1 },
+      },
+    },
+  ];
   let count = await db.aggregate(pipeline);
   // let count = await db.count({"department_code": department_code})
-  if (count.length == 1)
-    return res.json(count[0]);
+  if (count.length == 1) return res.json(count[0]);
   res.status(404).send();
 });
 
-// formARouter.get("/:id/pdf",
-//   [param("id").isMongoId().notEmpty()], ReturnValidationErrors,
-//   async (req: Request, res: Response) => {
-//     const { id } = req.params;
-//     let item = await loadSingleAuthority(req, id);
+formARouter.get(
+  "/:id/pdf",
+  [param("id").isMongoId().notEmpty()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
 
-//     if (item) {
-//       const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html")
+    let db = req.store.FormA as GenericService<Position>;
+    let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
 
-//       let t = new ExpressHandlebars();
-//       const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {})
-//       let data = template(item);
+    let item = await groupDb.getById(id);
 
-//       let pdf = await generatePDF(data)
-//       res.setHeader('Content-disposition', 'attachment; filename="FormB.pdf"');
-//       res.setHeader('Content-type', 'application/pdf');
-//       res.send(pdf);
-//     }
+    if (item) {
+      item.positions = await db.getAll({ position_group_id: item._id });
 
-//     res.status(404).send();
-//   });
+      let lines = new Array();
 
+      for (let position of item.positions) {
+        let title = position.position;
+        let lineList = position.authority_lines || [];
 
-formARouter.delete("/:id",
-  [param("id").notEmpty()], ReturnValidationErrors,
+        for (let line of lineList) {
+          lines.push({
+            position: title,
+            coding: line.coding,
+            coding_display: FormatCoding(line.coding),
+            operational_restriction: line.operational_restriction,
+            contracts_for_goods_services: line.contracts_for_goods_services,
+            loans_and_guarantees: line.loans_and_guarantees,
+            transfer_payments: line.transfer_payments,
+            authorization_for_travel: line.authorization_for_travel,
+            request_for_goods_services: line.request_for_goods_services,
+            assignment_authority: line.assignment_authority,
+            s29_performance_limit: line.s29_performance_limit,
+            s30_payment_limit: line.s30_payment_limit,
+          });
+        }
+      }
+
+      item.authority_lines = lines;
+
+      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormATemplate.html");
+
+      (item as any).API_PORT = API_PORT;
+
+      let t = new ExpressHandlebars();
+      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
+      let data = template(item);
+
+      let pdf = await generatePDF(data);
+      res.setHeader("Content-disposition", 'attachment; filename="FormA.pdf"');
+      res.setHeader("Content-type", "application/pdf");
+      res.send(pdf);
+    }
+
+    res.status(404).send();
+  }
+);
+
+formARouter.delete(
+  "/:id",
+  checkJwt,
+  loadUser,
+  [param("id").notEmpty()],
+  ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let db = req.store.FormA as GenericService<Position>;
 
     db.delete(id);
     res.send("");
-  });
+  }
+);
 
-formARouter.put("/:id",
-  checkJwt, loadUser, isDepartmentAdmin,
-  [param("id").isMongoId().notEmpty(),
-  body("program_branch").notEmpty().trim(), body("activity").trim()], ReturnValidationErrors,
+formARouter.put(
+  "/:id",
+  checkJwt,
+  loadUser,
+  isDepartmentAdmin,
+  [param("id").isMongoId().notEmpty(), body("program_branch").notEmpty().trim(), body("activity").trim()],
+  ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let db = req.store.FormA as GenericService<Position>;
@@ -331,48 +569,42 @@ formARouter.put("/:id",
 
     let existing = await db.getById(id);
 
-    if (existing)
-      delete existing.audit_lines;
+    if (existing) delete existing.audit_lines;
 
-    if (req.body.activity && req.body.activity.length == 0)
-      delete req.body.activity;
+    if (req.body.activity && req.body.activity.length == 0) delete req.body.activity;
 
     // If archiving a form note the details
     if (req.query.archive == "true") {
-      if (!req.body.deactivation)
-        req.body.deactivation = {};
+      if (!req.body.deactivation) req.body.deactivation = {};
       req.body.deactivation.by = req.user.email;
       req.body.deactivation.sub = req.user.sub;
-      req.body.deactivation.date = new (Date);
-
+      req.body.deactivation.date = new Date();
 
       req.body.audit_lines.push({
         date: new Date(),
-        user_name: req.user.email,
+        user_name: `${req.user.first_name} ${req.user.last_name}`,
         action: "Archived",
-        previous_value: existing
+        previous_value: existing,
       });
-    }
-    else {
+    } else {
       req.body.audit_lines.push({
         date: new Date(),
-        user_name: req.user.email,
+        user_name: `${req.user.first_name} ${req.user.last_name}`,
         action: "Update",
-        previous_value: existing
+        previous_value: existing,
       });
     }
 
     //RA: this should be the ID of the person creating the FormA I think
-    if (req.body.employee_id)
-      req.body.employee_id = new ObjectId(req.body.employee_id);
+    if (req.body.employee_id) req.body.employee_id = new ObjectId(req.body.employee_id);
     // console.log(req.body.authority_lines[0])
     for (let line of req.body.authority_lines) {
+      let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
-      // let codingIsValid = await questService.accountPatternIsValid(line.coding);
+      console.log("CODING IS VALID: ", codingIsValid);
 
-      // console.log("CODING IS VALID: ", codingIsValid);
-
-      line.contracts_for_goods_services = line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
+      line.contracts_for_goods_services =
+        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
       line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments;
       line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel;
@@ -386,26 +618,27 @@ formARouter.put("/:id",
 
     let item = await loadSinglePosition(req, id);
     res.json({ data: item });
-  });
+  }
+);
 
-formARouter.post("/", checkJwt, loadUser,
-  async (req: Request, res: Response) => {
-    let db = req.store.FormA as GenericService<Position>;
+formARouter.post("/", checkJwt, loadUser, async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<Position>;
 
-    req.body.created_on = new Date();
-    req.body.created_by = req.user.email;
+  req.body.created_on = new Date();
+  req.body.created_by = req.user.email;
 
-    req.body.audit_lines = [{
+  req.body.audit_lines = [
+    {
       date: new Date(),
-      user_name: req.user.email,
-      action: "Position created"
-    }];
+      user_name: `${req.user.first_name} ${req.user.last_name}`,
+      action: "Position created",
+    },
+  ];
 
-    let created = await db.create(req.body);
-    let item = await loadSinglePosition(req, created.insertedId.toString());
-    res.json({ data: item });
-  });
-
+  let created = await db.create(req.body);
+  let item = await loadSinglePosition(req, created.insertedId.toString());
+  res.json({ data: item });
+});
 
 // formARouter.get('/account/:account', async (req: Request, res: Response) => {
 //   //return all the authorites assigned to the account
@@ -430,14 +663,12 @@ async function loadSinglePosition(req: Request, id: string): Promise<Position | 
 
   let item = await db.getById(id);
 
-  if (!item)
-    return null;
+  if (!item) return null;
 
   if (item.activation && item.activation.date)
     item.issue_date_display = moment(item.activation.date).format("YYYY-MM-DD");
 
-  if (!item.audit_lines)
-    item.audit_lines = [];
+  if (!item.audit_lines) item.audit_lines = [];
 
   for (let audit of item.audit_lines) {
     audit.date_display = moment(audit.date).format("YYYY-MM-DD @ h:mm a");
