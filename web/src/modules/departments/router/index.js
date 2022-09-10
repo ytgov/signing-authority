@@ -20,7 +20,7 @@ const routes = [
       },
       {
         name: "DepartmentPositionList",
-        path: ":departmentId/form-a",
+        path: ":departmentId/positions",
         meta: { requiresAuth: true },
         component: () => import("../views/DepartmentPositionList.vue"),
       },
@@ -29,6 +29,18 @@ const routes = [
         path: ":departmentId/form-b",
         meta: { requiresAuth: true },
         component: () => import("../views/DepartmentFormBList.vue"),
+      },
+      {
+        name: "DepartmentPendingGroups",
+        path: ":departmentId/form-a",
+        meta: { requiresAuth: true },
+        component: () => import("../views/DepartmentPendingGroups.vue"),
+      },
+      {
+        name: "DepartmentPendingGroupDetail",
+        path: ":departmentId/form-a/:formAId",
+        meta: { requiresAuth: true },
+        component: () => import("../views/DepartmentPendingGroupDetail.vue"),
       },
       ...formAroutes,
     ]

@@ -98,7 +98,7 @@ export default {
 
     this.breadcrumbs[1].text = this.department.descr;
     this.breadcrumbs[1].to = `/departments/${departmentId}`;
-    this.breadcrumbs[2].to = `/departments/${departmentId}/form-a`;
+    this.breadcrumbs[2].to = `/departments/${departmentId}/positions`;
 
     // this.breadcrumbs[4].text = "Positions";
     //this.page.title = this.department.descr;
@@ -106,7 +106,7 @@ export default {
 
     this.page.title = `${formA.program_branch}: ${formA.position}`;
     this.breadcrumbs[3].text = this.page.title;
-    this.breadcrumbs[3].to = `/departments/${departmentId}/form-a/${this.id}`;
+    this.breadcrumbs[3].to = `/departments/${departmentId}/positions/${this.id}`;
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
@@ -131,7 +131,7 @@ export default {
     close() {
       this.saveFormA(this.formA);
       this.$router.push(
-        `/departments/${this.formA.department_code}/form-a/${this.formA._id}`
+        `/departments/${this.formA.department_code}/positions/${this.formA._id}`
       );
     }
   }

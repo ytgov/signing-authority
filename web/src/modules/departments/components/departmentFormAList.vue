@@ -70,15 +70,6 @@ export default {
         },
         positions() {
             return this.formAItems;
-            /* const x = this.formAItems.flatMap((a) =>
-        a.authority_lines.map((b) => ({
-          department: a.department_descr,
-          division: a.program_branch,
-          position: b.position,
-          _id: a._id,
-        }))
-      );
-      return x; */
         },
     },
     mounted: async function () {
@@ -92,7 +83,7 @@ export default {
 
         openFormA(item) {
             this.$router.push(
-                `/departments/${this.$route.params.departmentId}/form-a/${item._id}`
+                `/departments/${this.$route.params.departmentId}/positions/${item._id}`
             );
         },
     },

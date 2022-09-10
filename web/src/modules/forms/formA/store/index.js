@@ -19,7 +19,7 @@ const getters = {
   },
   isLocked: () => {
     //Decide what is the test a locked form A. In the meantime
-    if (state.formA.activation || state.formA.deactivation) {
+    if (state.formA.activation || state.formA.deactivation || state.formA.position_group_id) {
       //we might consider a check on issue date and if a form is uploaded.
       return true;
     }
@@ -28,6 +28,7 @@ const getters = {
   status: () => {
     if (state.formA.deactivation) return "Archived";
     if (state.formA.activation) return "Active";
+    if (state.formA.position_group_id) return "Locked";
     return "Inactive (Draft)";
   }
 };

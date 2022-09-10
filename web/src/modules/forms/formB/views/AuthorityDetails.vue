@@ -98,7 +98,7 @@
                                 class="my-0"
                                 @click="
                                     $router.push(
-                                        `/departments/${formB.department_code}/form-a/${formB.form_a_id}`
+                                        `/departments/${formB.department_code}/positions/${formB.form_a_id}`
                                     )
                                 "
                                 >View details</v-btn

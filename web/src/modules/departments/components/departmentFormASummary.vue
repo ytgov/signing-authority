@@ -9,7 +9,7 @@
       </v-card>
     </v-col>
     <v-col>
-      <v-card :to="formALink">
+      <v-card :to="positionsLink">
         <v-card-text class="text-h4 mb-0 pb-0">
           {{ positionCount }}
         </v-card-text>
@@ -17,7 +17,7 @@
       </v-card>
     </v-col>
     <v-col>
-      <v-card :to="formALink">
+      <v-card :to="positionsLink">
         <v-card-text class="text-h4 mb-0 pb-0">
           {{ awaitingPositionCount }}
         </v-card-text>
@@ -47,7 +47,13 @@ export default {
   computed: {
     formALink() {
       return {
-        name: "DepartmentFormAList",
+        name: "DepartmentPendingGroups",
+        params: { departmentId: this.$route.params.departmentId },
+      };
+    },
+    positionsLink() {
+      return {
+        name: "DepartmentPositionList",
         params: { departmentId: this.$route.params.departmentId },
       };
     },

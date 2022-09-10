@@ -150,7 +150,7 @@ export default {
             this.newFormA.authority_lines = [{ coding: this.department.dept }];
             let createResponse = await this.createFormA(this.newFormA);
             this.$router.push(
-                `/departments/${this.newFormA.department_code}/form-a/${createResponse._id}/edit`
+                `/departments/${this.newFormA.department_code}/positions/${createResponse._id}/edit`
             );
         },
     },

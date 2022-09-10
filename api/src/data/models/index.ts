@@ -1,8 +1,7 @@
-
 import { ObjectId } from "mongodb";
 
 export class MongoEntity {
-    _id?: ObjectId
+  _id?: ObjectId;
 }
 
 export * from "./authority";
@@ -12,4 +11,3 @@ export * from "./position";
 export * from "./position-group";
 export * from "./department";
 export * from "./employee";
-
