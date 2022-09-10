@@ -64,6 +64,7 @@
                 ></v-select>
                 <v-select
                     label="Role"
+                    multiple
                     dense
                     outlined
                     v-model="selectedEmployee.roles"
@@ -75,6 +76,7 @@
                     label="Department"
                     dense
                     outlined
+                    multiple
                     v-model="selectedEmployee.department_admin_for"
                     :items="departmentList"
                     item-text="display_name"
@@ -132,7 +134,10 @@ export default {
     }),
     computed: {
          isDepartmentAdmin: function () {
-            return this.item.roles === "Department Admin"
+            if (this.selectedEmployee.roles){
+                return this.selectedEmployee.roles.includes("Department Admin")
+            }
+            return false
         },
         ...mapGetters("department", ["departmentList"]),
 

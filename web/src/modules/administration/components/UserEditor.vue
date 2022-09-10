@@ -37,6 +37,7 @@
                     outlined
                     v-model="item.roles"
                     :items="roleOptions"
+                    multiple
                     clearable
                 ></v-select>
                 <v-select v-if="isDepartmentAdmin"
@@ -44,13 +45,13 @@
                     label="Department"
                     dense
                     outlined
+                    multiple
                     v-model="item.department_admin_for"
                     :items="departmentList"
                     item-text="display_name"
                     item-value="dept"
                     clearable
                 ></v-select>
-
                 <v-btn @click="save" color="primary">Save</v-btn>
             </v-card-text>
         </v-card>
@@ -71,7 +72,10 @@ export default {
     }),
     computed: {
         isDepartmentAdmin: function () {
-            return this.item.roles === "Department Admin"
+            if (this.item.roles){
+                return this.item.roles.includes("Department Admin")
+            }
+            return false
         },
         ...mapGetters("department", ["departmentList"])
     },
@@ -83,7 +87,7 @@ export default {
         },
         async save() {
             let resp = await this.saveUser(this.item);
-            console.log (resp)
+            this.onSave(resp);
             this.showDialog = false;
         },
     },

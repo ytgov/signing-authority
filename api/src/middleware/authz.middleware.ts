@@ -19,6 +19,31 @@ export const checkJwt = jwt({
   algorithms: ["RS256"]
 });
 
+export async function isDepartmentAdmin (req: Request, res: Response, next: NextFunction){
+  const user = req.user;
+  if (!user.roles) {
+    console.error(`No user roles found for ${user.email}`);
+    res.status(401).send()
+    return
+  }
+
+  const { department_code } = req.body;
+  const { roles, department_admin_for} = req.user;
+
+  if (roles.includes("Department Admin") && department_admin_for !== department_code) {
+    console.error(`User: ${user.email} does not have department admin on ${department_code}`);
+    res.status(403).send();
+    return
+  }
+  if (!roles.includes("System Admin")){
+    res.status(403).send();
+  }
+  if (!roles.includes("Finance Admin")) {
+    res.status(403).send();
+  }
+  next();
+}
+
 export async function loadUser(req: Request, res: Response, next: NextFunction) {
   const db = req.store.Users as UserService;
 
