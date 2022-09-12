@@ -67,6 +67,7 @@
                 :headers="headers"
                 :search="search"
                 :items="matchingItems"
+                :loading="loading"
                 @click:row="openFormA"
                 class="row-clickable"
                 :footer-props="{
@@ -181,13 +182,16 @@ export default {
     showGenerateDialog: false,
   }),
   mounted: async function() {
+    this.loading = true;
     this.departmentId = this.$route.params.departmentId;
     this.item = await this.getDepartment({ id: this.departmentId });
 
     this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
     this.breadcrumbs[1].text = this.item.descr;
 
-    this.loadFormA();
+    await this.loadFormA();
+    
+    this.loading = false;
   },
   watch: {},
   computed: {

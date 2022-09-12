@@ -16,6 +16,10 @@
         </actions-menu>
       </template>
 
+      <v-overlay absolute :value="loading">
+        <v-progress-circular indeterminate size="64"></v-progress-circular
+      ></v-overlay>
+
       <v-card class="default">
         <v-card-text>
           <formATable :formA="formA"></formATable>
@@ -161,6 +165,7 @@ export default {
     },
   },
   async mounted() {
+    this.loading = true;
     this.id = this.$route.params.id;
     let departmentId = this.$route.params.departmentId;
     this.department = await this.getDepartment({ id: departmentId });
@@ -172,6 +177,7 @@ export default {
     let formA = await this.loadFormA({ id: this.$route.params.formAId });
     this.page.title = `${formA.program_branch}: ${formA.position}`;
     this.breadcrumbs[3].text = this.page.title;
+    this.loading = false;
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
