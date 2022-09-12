@@ -27,13 +27,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar
-      app
-      color="#fff"
-      flat
-      height="70"
-      style="left: 0; border-bottom: 3px #f3b228 solid"
-    >
+    <v-app-bar app color="#fff" flat height="70" style="left: 0; border-bottom: 3px #f3b228 solid">
       <img src="/yukon.svg" style="margin: -8px 85px 0 0" height="44" />
       <v-toolbar-title>
         <span style="font-weight: 700">{{ applicationName }}</span>
@@ -50,9 +44,7 @@
       <v-spacer></v-spacer>
 
       <div>
-        <v-btn color="primary" text class="mr-1" to="/dashboard"
-          ><v-icon>mdi-home</v-icon></v-btn
-        >
+        <v-btn color="primary" text class="mr-1" to="/dashboard"><v-icon>mdi-home</v-icon></v-btn>
         <v-divider class="mr-5" vertical inset></v-divider>
         <span>{{ username }}</span>
         <v-menu offset-y class="ml-0">
@@ -96,11 +88,7 @@
 
     <v-overlay v-model="showOverlay">
       <div class="text-center">
-        <v-progress-circular
-          indeterminate
-          size="64"
-          class="mb-5"
-        ></v-progress-circular>
+        <v-progress-circular indeterminate size="64" class="mb-5"></v-progress-circular>
         <h1 class="title">Loading Signing Authorities</h1>
       </div>
     </v-overlay>
@@ -109,12 +97,12 @@
 
 <script>
 import router from "@/router";
-// import store from "./store";
-
 import { mapActions } from "vuex";
 import * as config from "@/config";
 import { LOGOUT_URL } from "@/urls";
-//import { getInstance } from "@/auth/auth0-plugin";
+import { getInstance } from "@/auth/auth0-plugin";
+
+const auth = getInstance();
 
 export default {
   name: "Layout",
@@ -139,8 +127,8 @@ export default {
       return this.$auth.user.name;
     },
 
-    returnTo: function () {
-      return config.applicationUrl;
+    returnTo: function() {
+      return auth.options.logout_redirect;
     },
   },
   async mounted() {
@@ -161,24 +149,24 @@ export default {
         this.hasSidebar = false;
       }
     },
-    roles: function (val) {
+    roles: function(val) {
       this.showAdmin = false;
       if (val.indexOf("Admin") >= 0) this.showAdmin = true;
     },
   },
   methods: {
     ...mapActions(["initialize"]),
-    nav: function (location) {
+    nav: function(location) {
       router.push(location);
       console.log(location);
     },
-    toggleHeader: function () {
+    toggleHeader: function() {
       this.headerShow = !this.headerShow;
     },
-    toggleMenu: function () {
+    toggleMenu: function() {
       this.menuShow = !this.menuShow;
     },
-    signOut: function () {
+    signOut: function() {
       window.location = LOGOUT_URL;
     },
   },
