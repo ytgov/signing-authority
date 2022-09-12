@@ -11,8 +11,9 @@ departmentRouter.use(RequiresData);
 const questService = new QuestService();
 const departmentService = new DepartmentService();
 
+departmentRouter.get("/", async (req: Request, res: Response) => {
+  console.log;
 
-departmentRouter.get('/', async (req: Request, res: Response) => {
   let depts = await departmentService.getDepartmentList();
 
   // if (depts.length === 0) {
@@ -20,7 +21,7 @@ departmentRouter.get('/', async (req: Request, res: Response) => {
   // }
 
   for (let d of depts) {
-    let formACountURL = `${apiBaseUrl}/api/form-a/department/${d.dept}/count`
+    /*  let formACountURL = `${apiBaseUrl}/api/form-a/department/${d.dept}/count`
     let formBCountURL = `${apiBaseUrl}/api/authority/department/${d.dept}/count`
     // d.form_a_count = Math.floor(Math.random() * 1000);
     await axios.get(formACountURL)
@@ -39,12 +40,13 @@ departmentRouter.get('/', async (req: Request, res: Response) => {
         // console.error (`Could not find Form A count for ${d.dept} - ${d.descr}`)
         d.form_b_count = 0
       })
-    d.form_b_count = Math.floor(Math.random() * 1000);
+    d.form_b_count = Math.floor(Math.random() * 1000);*/
     d.display_name = `(${d.dept}) ${d.descr}`;
   }
 
   res.json({ data: depts });
 });
+
 /* 
 departmentRouter.get('/:id/form-a', async (req: Request, res: Response) => {
   const { id } = req.params;

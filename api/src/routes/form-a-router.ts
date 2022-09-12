@@ -58,7 +58,7 @@ formARouter.get(
         form_a_id: item._id.toString(),
       });
 
-      item.active_authorities = connectedAuthorizations.filter((f) => f.activation);
+      item.active_authorities = connectedAuthorizations; //.filter((f) => f.activation);
 
       return res.json({ data: item });
     }
@@ -453,6 +453,12 @@ formARouter.post("/department/:department/branch", checkJwt, loadUser, async (re
   }
 
   res.status(404).send();
+});
+
+formARouter.post("/department/:department/validate-line", async (req: Request, res: Response) => {
+  let { authority_line } = req.body;
+  let val = await questService.accountPatternIsValid(authority_line.coding);
+  res.send(val);
 });
 
 formARouter.get("/department/:department/count", async (req: Request, res: Response) => {

@@ -1,18 +1,11 @@
 <template>
   <v-container fluid class="down-top-padding">
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    >
-    </BaseBreadcrumb>
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"> </BaseBreadcrumb>
 
-    <BaseCard
-      :showHeader="true"
-      :heading="`Delegation of Financial Signing Authority`"
-    >
+    <BaseCard :showHeader="true" :heading="`Delegation of Financial Signing Authority`">
       <template slot="right">
-        <v-btn color="primary" @click="close">Save</v-btn>
+        <v-btn color="primary" small class="mr-5" text @click="close">Cancel</v-btn>
+        <v-btn color="primary" @click="save" :disabled="!canSave">Save</v-btn>
       </template>
       <v-row>
         <v-col>
@@ -23,20 +16,13 @@
                 cellspacing="0"
                 cellpadding="0"
                 class="table"
-                style="
-                                    background-color: white;
-                                    width: 100%;
-                                    text-align: left;
-                                "
+                style="background-color: white;width: 100%;text-align: left;"
               >
                 <form-a-table-head> </form-a-table-head>
                 <form-a-table-body-edit></form-a-table-body-edit>
               </table>
+              <v-btn color="secondary" small class="mb-0" @click="addLine">Add line</v-btn>
             </v-card-text>
-            <v-card-actions>
-              <v-btn color="secondary" @click="addLine">Add line</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
@@ -53,43 +39,54 @@ export default {
   name: "FormAEdit",
   components: {
     formATableBodyEdit,
-    formATableHead
+    formATableHead,
   },
   data: () => ({
     page: {
-      title: ""
+      title: "",
     },
     breadcrumbs: [
       {
         text: "Signing Authorities Home",
-        to: "/dashboard"
+        to: "/dashboard",
       },
       {
         text: "",
         to: "",
-        exact: true
+        exact: true,
       },
       {
         text: "Delegations by Position",
         to: "",
-        exact: true
+        exact: true,
       },
       {
         text: "",
         to: "",
-        exact: true
+        exact: true,
       },
       {
-        text: "Edit"
-      }
+        text: "Edit",
+      },
     ],
     department: {},
     authority: {},
-    showUpload: false
+    showUpload: false,
   }),
   computed: {
     ...mapState("department", ["departments"]),
-    ...mapState("authority/formA", ["formA"])
+    ...mapState("authority/formA", ["formA"]),
+
+    canSave() {
+      if (this.formA && this.formA.authority_lines) {
+        for (let line of this.formA.authority_lines) {
+          if (line.coding_invalid) return false;
+        }
+
+        return true;
+      }
+      return false;
+    },
   },
   async mounted() {
     this.id = this.$route.params.formAId;
@@ -123,18 +120,20 @@ export default {
         request_for_goods_services: "",
         assignment_authority: "",
         s29_performance_limit: "",
-        s30_payment_limit: ""
+        s30_payment_limit: "",
       });
       this.setFormA(this.formA);
     },
 
     close() {
-      this.saveFormA(this.formA);
-      this.$router.push(
-        `/departments/${this.formA.department_code}/positions/${this.formA._id}`
-      );
-    }
-  }
+      this.$router.push(`/departments/${this.formA.department_code}/positions/${this.formA._id}`);
+    },
+
+    async save() {
+      await this.saveFormA(this.formA);
+      this.close();
+    },
+  },
 };
 </script>
 <style scoped>

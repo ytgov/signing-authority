@@ -10,38 +10,24 @@ export const checkJwt = jwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: `${AUTH0_DOMAIN}.well-known/jwks.json`
+    jwksUri: `${AUTH0_DOMAIN}.well-known/jwks.json`,
   }),
 
   // Validate the audience and the issuer.
   audience: AUTH0_AUDIENCE,
   issuer: [AUTH0_DOMAIN],
-  algorithms: ["RS256"]
+  algorithms: ["RS256"],
 });
 
-export async function isDepartmentAdmin (req: Request, res: Response, next: NextFunction){
-  const user = req.user;
-  if (!user.roles) {
-    console.error(`No user roles found for ${user.email}`);
-    res.status(401).send()
-    return
-  }
-
+export async function isDepartmentAdmin(req: Request, res: Response, next: NextFunction) {
   const { department_code } = req.body;
-  const { roles, department_admin_for} = req.user;
+  const { roles, department_admin_for } = req.user;
 
-  if (roles.includes("Department Admin") && department_admin_for !== department_code) {
-    console.error(`User: ${user.email} does not have department admin on ${department_code}`);
-    res.status(403).send();
-    return
-  }
-  if (!roles.includes("System Admin")){
-    res.status(403).send();
-  }
-  if (!roles.includes("Finance Admin")) {
-    res.status(403).send();
-  }
-  next();
+  // these folks can do it all!
+  if (roles.includes("System Admin")) return next();
+  if (roles.includes("Department Admin") && department_admin_for.includes(department_code)) return next();
+
+  return res.status(403).send(`You do not have department admin on ${department_code}`);
 }
 
 export async function loadUser(req: Request, res: Response, next: NextFunction) {
@@ -56,9 +42,9 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
     return next();
   }
 
-  await axios.get(`${AUTH0_DOMAIN}userinfo`,
-    { headers: { 'authorization': token } })
-    .then(async resp => {
+  await axios
+    .get(`${AUTH0_DOMAIN}userinfo`, { headers: { authorization: token } })
+    .then(async (resp) => {
       if (resp.data && resp.data.sub) {
         let email = resp.data.email;
         let first_name = resp.data.given_name;
@@ -69,23 +55,20 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
 
         if (u) {
           req.user = { ...req.user, ...u };
-        }
-        else {
-          if (!email)
-            email = `${first_name}.${last_name}@yukon-no-email.ca`;
+        } else {
+          if (!email) email = `${first_name}.${last_name}@yukon-no-email.ca`;
 
           u = await db.create({ email, sub, status: "Inactive", first_name, last_name });
           console.log("CREATING USER FOR " + email);
           req.user = { ...req.user, ...u };
         }
-      }
-      else {
+      } else {
         console.log("Payload from Auth0 is strange or failed for", req.user);
       }
 
       next();
     })
-    .catch(err => {
+    .catch((err) => {
       console.log("ERROR pulling userinfo", err);
     });
 }
