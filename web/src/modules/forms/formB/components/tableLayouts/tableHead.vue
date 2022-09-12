@@ -76,13 +76,12 @@
                 <div class="mb-2">Services</div>
             </th>
         </tr>
-        <tr style="height: 30px">
-            <th style="height: 30px">
-                Area of Authority <br />
-                General Ledger Coding
+        <tr style="height: 30px; text-align: left">
+            <th style="text-align: left; padding-left: 10px">
+                Area of Authority
             </th>
-            <th class="bottom">OPERATIONAL<br />RESTRICTIONS</th>
-            <th class="bottom">NOTES</th>
+            <th style="text-align: left; padding-left: 10px">OPERATIONAL RESTRICTIONS</th>
+            <th style="text-align: left; padding-left: 10px">NOTES</th>
         </tr>
     </thead>
 </template>
