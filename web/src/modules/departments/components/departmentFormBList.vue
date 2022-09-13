@@ -43,6 +43,7 @@ export default {
     headers: [
       { text: "Position", value: "employee.title" },
       { text: "Employee", value: "employee.name" },
+      { text: "Status", value: "status" },
     ],
   }),
   computed: {

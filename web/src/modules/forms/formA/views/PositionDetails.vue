@@ -113,9 +113,6 @@ import ActionsMenu from "../components/actionsMenu.vue";
 import FormAStatus from "../components/formAStatus/formAStatus.vue";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
 
-// import uploadFormModal from "../components/uploadFormModal.vue"
-// import AuthorityMetadataCard from "../components/authorityMetadataCard.vue";
-
 export default {
   name: "AuthorityDetails",
   components: {
@@ -123,8 +120,6 @@ export default {
     ActionsMenu,
     FormAStatus,
     PdfPreviewDialog,
-    // uploadFormModal,
-    // AuthorityMetadataCard,
   },
   data: () => ({
     loading: false,
@@ -182,19 +177,6 @@ export default {
   methods: {
     ...mapActions("department", ["getDepartment"]),
     ...mapActions("authority/formA", ["loadFormA"]),
-    // editClick() {
-    //   //TODO: this should check the state to determine if changes are allowed
-    //   this.$router.push(`/positions/${this.formA.id}/edit`);
-    // },
-    // async generateClick() {
-    //   window.open(`${AUTHORITY_URL}/${this.id}/pdf`, "_blank");
-    //   //await this.downloadFormB(this.id);
-    // },
-    // uploadClick() {
-    //   this.showUpload = true; //show modal fup upload
-    // },
-    // archiveClick() {},
-    // downloadClick() {},
 
     openFormB(item) {
       this.$router.push(`/form-b/${item._id}`);

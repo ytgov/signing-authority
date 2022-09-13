@@ -80,7 +80,7 @@ export default {
     canSave() {
       if (this.formA && this.formA.authority_lines) {
         for (let line of this.formA.authority_lines) {
-          if (line.coding_invalid) return false;
+          if (line.coding_invalid || line.is_working) return false;
         }
 
         return true;

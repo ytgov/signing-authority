@@ -1,294 +1,268 @@
 <html>
-
-<head>
+  <head>
     <style>
-        html,
-        body,
-        div,
-        span,
-        object,
-        iframe,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        p,
-        blockquote,
-        pre,
-        abbr,
-        address,
-        cite,
-        code,
-        del,
-        dfn,
-        em,
-        img,
-        ins,
-        kbd,
-        q,
-        samp,
-        small,
-        strong,
-        sub,
-        sup,
-        var,
-        b,
-        i,
-        dl,
-        dt,
-        dd,
-        ol,
-        ul,
-        li,
-        fieldset,
-        form,
-        label,
-        legend,
-        table,
-        caption,
-        tbody,
-        tfoot,
-        thead,
-        tr,
-        th,
-        td,
-        article,
-        aside,
-        canvas,
-        details,
-        figcaption,
-        figure,
-        footer,
-        header,
-        hgroup,
-        menu,
-        nav,
-        section,
-        summary,
-        time,
-        mark,
-        audio,
-        video {
-            margin: 0;
-            padding: 0;
-            border: 0;
-            outline: 0;
-            font-size: 100%;
-            vertical-align: baseline;
-            background: transparent;
-        }
+      html,
+      body,
+      div,
+      span,
+      object,
+      iframe,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      blockquote,
+      pre,
+      abbr,
+      address,
+      cite,
+      code,
+      del,
+      dfn,
+      em,
+      img,
+      ins,
+      kbd,
+      q,
+      samp,
+      small,
+      strong,
+      sub,
+      sup,
+      var,
+      b,
+      i,
+      dl,
+      dt,
+      dd,
+      ol,
+      ul,
+      li,
+      fieldset,
+      form,
+      label,
+      legend,
+      table,
+      caption,
+      tbody,
+      tfoot,
+      thead,
+      tr,
+      th,
+      td,
+      article,
+      aside,
+      canvas,
+      details,
+      figcaption,
+      figure,
+      footer,
+      header,
+      hgroup,
+      menu,
+      nav,
+      section,
+      summary,
+      time,
+      mark,
+      audio,
+      video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        background: transparent;
+      }
 
-        @page {
-            size: letter landscape;
-        }
+      @page {
+        size: letter landscape;
+      }
 
-        body {
-            padding: 30px;
-            line-height: 1;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 12px;
-        }
+      body {
+        padding: 30px;
+        line-height: 1;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+      }
 
-        .table {
-            border-collapse: collapse;
-        }
+      .table {
+        border-collapse: collapse;
+      }
 
-        .table th {
-            text-align: center;
-        }
+      .table th {
+        text-align: center;
+      }
 
-        .table thead {
-            text-transform: uppercase;
-        }
+      .table thead {
+        text-transform: uppercase;
+      }
 
-        .table th,
-        .table td {
-            border: 1px black solid;
-            font-size: 12px;
-        }
+      .table th,
+      .table td {
+        border: 1px black solid;
+        font-size: 12px;
+      }
 
-        .table th.rotate {
-            height: 140px;
-            white-space: nowrap;
-            vertical-align: bottom;
-            padding-bottom: 20px;
-        }
+      .table th.rotate {
+        height: 140px;
+        white-space: nowrap;
+        vertical-align: bottom;
+        padding-bottom: 20px;
+      }
 
-        .table th.rotate>div {
-            transform: rotate(270deg);
-            width: 48px;
-        }
+      .table th.rotate > div {
+        transform: rotate(270deg);
+        width: 48px;
+      }
 
-        .table .fb-value {
-            width: 50px;
-            text-align: center;
-        }
+      .table .fb-value {
+        width: 50px;
+        text-align: center;
+      }
     </style>
+  </head>
 
-
-</head>
-
-<body>
-    <table style="width: 100%;" border="0" cellspacing="0" cellpadding="0">
-        <tr style="height: 90px">
-            <td style="width: 180px">
-                <img src="http://localhost:{{API_PORT}}/finance-logo.png" style="height: 80px; width: 160px" />
-            </td>
-            <td style="width: 360px; font-size: 1.3rem; vertical-align: middle;">
-                Delegation of Financial<br>Signing Authority Chart
-            </td>
-            <td style="vertical-align: bottom; text-align: right; padding-bottom: 20px; font-weight: bold;">
-                <div style="font-size: 14px; margin-right: 160px">Effective Date:</div>
-                <div style="width: 150px; border-bottom: 1px black solid; float:right"></div>
-            </td>
-            <td style="text-align: right; vertical-align: top; width: 120px; padding-top: 25px">
-                <h4 style="font-size: 1.1rem;">FORM A</h4>
-            </td>
-        </tr>
+  <body>
+    <table style="width: 100%" border="0" cellspacing="0" cellpadding="0">
+      <tr style="height: 90px">
+        <td style="width: 180px">
+          <img src="http://localhost:{{API_PORT}}/finance-logo.png" style="height: 80px; width: 160px" />
+        </td>
+        <td style="width: 360px; font-size: 1.3rem; vertical-align: middle">
+          Delegation of Financial<br />Signing Authority Chart
+        </td>
+        <td style="vertical-align: bottom; text-align: right; padding-bottom: 20px; font-weight: bold">
+          <div style="font-size: 14px; margin-right: 160px"></div>
+          <div style="width: 150px; float: right"></div>
+        </td>
+        <td style="text-align: right; vertical-align: top; width: 120px; padding-top: 25px">
+          <h4 style="font-size: 1.1rem">FORM A</h4>
+        </td>
+      </tr>
     </table>
 
+    <table
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+      class="table"
+      style="background-color: white; width: 100%; text-align: left">
+      <thead>
+        <tr>
+          <td
+            rowspan="3"
+            colspan="3"
+            style="text-align: left; padding: 10px; vertical-align: top; width: 400px; height: 190px">
+            Department:<br />
+            <strong style="margin-top: 5px">{{department_descr}}</strong>
+            <br /><br />
+            Program:<br />
+            (Division)<strong> {{ program }}</strong> <br /><br />
+            Activity:<br />
+            (Branch)<strong> {{ activity }}</strong>
+          </td>
+          <th colspan="7">SPENDING AUTHORITY</th>
+          <th rowspan="4" class="rotate" style="height: 140px">
+            <div>PAYMENT AUTHORITY<br />S.30</div>
+          </th>
+        </tr>
+        <tr>
+          <th colspan="6">SECTION 23 AND SECTION 24 ($000)</th>
+          <th class="rotate" rowspan="3">
+            <div>
+              (SECTION 29)<br />
+              CERTIFICATE OF<br />
+              PERFORMANCE
+            </div>
+          </th>
+        </tr>
 
-    <table border="0" cellspacing="0" cellpadding="0" class="table"
-        style="background-color: white; width: 100%; text-align: left">
-        <thead>
-            <tr>
-                <td rowspan="3" colspan="3" style="
-                text-align: left;
-                padding: 10px;
-                vertical-align: top;
-                width: 400px;
-                height: 190px;">
-                    Department:<br>
-                    <strong style="margin-top: 5px">{{department_descr}}</strong>
-                    <br /><br />
-                    Program:<br>
-                    <strong>{{ program }}</strong>
-                    <br /><br />
-                    Activity:<br>
-                    <strong>{{ activity }}</strong>
-                </td>
-                <th colspan="7">SPENDING AUTHORITY</th>
-                <th rowspan="4" class="rotate" style="height: 140px">
-                    <div>
-                        PAYMENT AUTHORITY<br />S.30
-                    </div>
-                </th>
-            </tr>
-            <tr>
-                <th colspan="6">SECTION 23 AND SECTION 24 ($000)</th>
-                <th class="rotate" rowspan="3">
-                    <div>(SECTION 29)<br>
-                        CERTIFICATE OF<br>
-                        PERFORMANCE</div>
-                </th>
-            </tr>
+        <tr>
+          <th rowspan="2" class="rotate">
+            <div>Contracts for<br />Goods or Services</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Loans & Guarantees</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Transfer Payments</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Authorization for Travel</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Request for Goods<br />or Services</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Assignment<br />Authority</div>
+          </th>
+        </tr>
+        <tr style="height: 30px">
+          <th>Position Title</th>
+          <th style="height: 30px">Area of Authority</th>
+          <th style="height: 30px">Operational Restriction</th>
+        </tr>
+      </thead>
 
-            <tr>
-                <th rowspan="2" class="rotate">
-                    <div>Contracts for<br>Goods or Services</div>
-                </th>
-                <th rowspan="2" class="rotate">
-                    <div>Loans & Guarantees</div>
-                </th>
-                <th rowspan="2" class="rotate">
-                    <div>Transfer Payments</div>
-                </th>
-                <th rowspan="2" class="rotate">
-                    <div>Authorization for Travel</div>
-                </th>
-                <th rowspan="2" class="rotate">
-                    <div>Request for Goods<br>or Services</div>
-                </th>
-                <th rowspan="2" class="rotate">
-                    <div>Assignment<br>Authority</div>
-                </th>
-            </tr>
-            <tr style="height: 30px">
-                <th>Position Title</th>
-                <th style="height: 30px">
-                    Area of Authority
-                </th>
-                <th style="height: 30px">
-                    Operational Restriction
-                </th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {{#each authority_lines}}
-            <tr>
-                <td style="padding: 2px">{{ position }}</td>
-                <td style="padding: 2px">{{ coding_display }}</td>
-                <td style="padding: 2px">{{ operational_restriction }}</td>
-                <td class="fb-value">{{ contracts_for_goods_services }}</td>
-                <td class="fb-value">
-                    {{ loans_and_guarantees }}
-                </td>
-                <td class="fb-value">
-                    {{ transfer_payments }}
-                </td>
-                <td class="fb-value">
-                    {{ authorization_for_travel }}
-                </td>
-                <td class="fb-value">
-                    {{ request_for_goods_services }}
-                </td>
-                <td class="fb-value">
-                    {{ assignment_authority }}
-                </td>
-                <td class="fb-value">{{ s29_performance_limit }}</td>
-                <td class="fb-value">{{ s30_payment_limit }}</td>
-            </tr>
-            {{/each}}
-        </tbody>
+      <tbody>
+        {{#each authority_lines}}
+        <tr>
+          <td style="padding: 2px">{{ position }}</td>
+          <td style="padding: 2px">{{ coding_display }}</td>
+          <td style="padding: 2px">{{ operational_restriction }}</td>
+          <td class="fb-value">{{ contracts_for_goods_services }}</td>
+          <td class="fb-value">{{ loans_and_guarantees }}</td>
+          <td class="fb-value">{{ transfer_payments }}</td>
+          <td class="fb-value">{{ authorization_for_travel }}</td>
+          <td class="fb-value">{{ request_for_goods_services }}</td>
+          <td class="fb-value">{{ assignment_authority }}</td>
+          <td class="fb-value">{{ s29_performance_limit }}</td>
+          <td class="fb-value">{{ s30_payment_limit }}</td>
+        </tr>
+        {{/each}}
+      </tbody>
     </table>
 
     <table style="margin-top: 5px; width: 100%; font-size: 11px" border="0" cellspacing="0" cellpadding="0">
-        <tr>
-            <td colspan="2" style="padding-bottom: 10px;">Every officer of the Department appointed to a position listed
-                above, including any officer appointed
-                officially on an acting basis, and upon completion of the Specimen Signature
-                Card for this position, is hereby granted financial signing authority in respect to the area of the
-                Department for the functions as indicated.</td>
-        </tr>
-        <tr>
-            <td style="width: 40%; vertical-align: top; font-size: 11px">
-                **Section 23 &/or Section 24 for Deputy Minister<br>
-                &nbsp;&nbsp;&nbsp;- Dollar amount must be typed in. (See 5.5.3.3)<br><br>
-                NL = No limit
-            </td>
-            <td style="width: 60%; vertical-align: top; font-size: 11px">
-
-                <div style="height: 100%">
-                    <table style="width: 100%;margin: 0 0 0 5px;" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                            <td style="width: 150px; padding-top: 10px; text-align: right; padding-right: 7px">
-                                Recommended:</td>
-                            <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px; padding-top: 25px;">
-                                <div style="border-top: 1px black solid; width: 80%">Date</div>
-                            </td>
-                            <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px; padding-top: 25px;">
-                                <div style="border-top: 1px black solid; width: 80%">Departmental Administrator</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding-top: 35px; text-align: right; padding-right: 7px">Approved:</td>
-                            <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px;padding-top: 50px">
-                                <div style="border-top: 1px black solid; width: 80%">Date</div>
-                            </td>
-                            <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px;padding-top: 50px">
-                                <div style="border-top: 1px black solid; width: 80%">Deputy Minister</div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-            </td>
-        </tr>
+      <tr>
+        <td colspan="2" style="padding-bottom: 10px">
+          Every officer of the Department appointed to a position listed above, including any officer appointed
+          officially on an acting basis, and upon completion of the Specimen Signature Card for this position, is hereby
+          granted financial signing authority in respect to the area of the Department for the functions as indicated.
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 40%; vertical-align: top; font-size: 11px"><br /><br /><br />NL = No limit</td>
+        <td style="width: 60%; vertical-align: top; font-size: 11px">
+          <div style="height: 100%">
+            <table style="width: 100%; margin: 0 0 0 5px" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td style="width: 150px; padding-top: 10px; text-align: right; padding-right: 7px">Recommended:</td>
+                <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px; padding-top: 25px">
+                  <div style="border-top: 1px black solid; width: 80%">Date</div>
+                </td>
+                <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px; padding-top: 25px">
+                  <div style="border-top: 1px black solid; width: 80%">Departmental Administrator</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding-top: 35px; text-align: right; padding-right: 7px">Approved:</td>
+                <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px; padding-top: 50px">
+                  <div style="border-top: 1px black solid; width: 80%">Date</div>
+                </td>
+                <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px; padding-top: 50px">
+                  <div style="border-top: 1px black solid; width: 80%">Deputy Minister</div>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
     </table>
-
-</body>
-
+  </body>
 </html>
