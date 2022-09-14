@@ -84,14 +84,14 @@ export default {
       });
     },
     async duplicateClick() {
-      await this.duplicateFormA(); //the await may not be needed but ¯\_(ツ)_/¯
-      this.$router.push(`/departments/${this.formA.department_code}/positions/${this.formA._id}/edit`);
+      let duplicate = await this.duplicateFormA();
+      this.$router.push(`/departments/${this.formA.department_code}/positions/${duplicate._id}/edit`);
     },
     async deleteClick() {
       let response = await this.deleteFormA(this.formA._id);
 
       if (response.status == 200) {
-        console.log("CRA");
+        this.$router.push(`/departments/${this.formA.department_code}/positions`);
       }
     },
     preview() {

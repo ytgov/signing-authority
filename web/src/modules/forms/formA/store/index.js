@@ -87,16 +87,15 @@ const actions = {
 
     let dupe = {};
     dupe.department_code = state.formA.department_code;
-    dupe.department_name = state.formA.department_descr;
+    dupe.department_descr = state.formA.department_descr;
     dupe.program_branch = state.formA.program_branch;
+    dupe.activity = state.formA.activity;
     dupe.position = `${state.formA.position} (Duplicate)`;
-    dupe.issue_date = new Date();
-    dupe.reviewed_by_department = false;
     dupe.authority_lines = state.formA.authority_lines;
     dupe.parentFormA = state.formA._id; //TODO: decide how to audit a clone
 
     const auth = getInstance();
-    return auth
+    return await auth
       .post(`${FORMA_URL}`, dupe)
       .then((resp) => {
         commit("setFormA", resp.data.data);
@@ -202,7 +201,8 @@ const mutations = {
 function cleanCoding(input) {
   input = input || "";
   input = input.toLowerCase().replace(/[^0-9|x]/g, "");
-  return input;
+
+  return formatCoding(input);
 }
 
 function cleanZeros(input) {
@@ -216,6 +216,25 @@ function cleanZeros(input) {
   input = input.replace(/[^0-9]/g, "");
 
   return input;
+}
+
+function formatCoding(input = "") {
+  let account = `${input.replace(/[^0-9|x]/g, "")}ZZZZZZZZZZZZZZZZZZZZZZZZZ`;
+  let dept = account.substring(0, 2);
+  let vote = account.substring(2, 3);
+  let prog = account.substring(3, 5);
+  let activity = account.substring(5, 7);
+  let element = account.substring(7, 9);
+  let object = account.substring(9, 13);
+  let ledger1 = account.substring(13, 17);
+  let ledger2 = account.substring(17, 22);
+
+  let output = `${dept}${vote}-${prog}${activity}${element}-${object}-${ledger1}-${ledger2}`;
+
+  output = output.replace(/[Z]/g, "");
+  output = output.replace(/[-]*$/g, "");
+
+  return output;
 }
 
 export default {

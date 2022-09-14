@@ -343,7 +343,7 @@ export default {
       return true;
     },
     canDownload() {
-      return this.item.finance_review_complete != null && this.item.stepperValue < 5;
+      return this.item.finance_review_complete;
     },
     financeReviewRejected() {
       return this.item.finance_review_reject ? true : false;
@@ -460,7 +460,9 @@ export default {
       });
     },
     async downloadPDF() {
-      window.open(this.pdfURL);
+      if (this.item.upload_signatures)
+        window.open(`${AUTHORITY_URL}/uploads/${this.item.upload_signatures.file_id}/file`);
+      else window.open(this.pdfURL);
     },
 
     startFinanceReview() {

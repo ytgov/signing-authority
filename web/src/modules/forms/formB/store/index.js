@@ -3,7 +3,7 @@ import _ from "lodash";
 import { getInstance } from "@/auth/auth0-plugin";
 
 const state = {
-  formB: { employee: {}, supervisor: {}, department: {}, form_a: {}, authority_lines:[] },
+  formB: { employee: {}, supervisor: {}, department: {}, form_a: {}, authority_lines: [] },
 };
 
 const getters = {
@@ -60,7 +60,6 @@ const actions = {
       })
       .catch(() => {});
   },
-
 
   async downloadFormB(state, id) {
     const auth = getInstance();
@@ -126,7 +125,7 @@ const mutations = {
 function cleanCoding(input) {
   input = input || "";
   input = input.toLowerCase().replace(/[^0-9|x]/g, "");
-  return input;
+  return formatCoding(input);
 }
 
 function cleanZeros(input) {
@@ -137,6 +136,25 @@ function cleanZeros(input) {
   input = input.replace(/[^0-9]/g, "");
 
   return input;
+}
+
+function formatCoding(input = "") {
+  let account = `${input.replace(/[^0-9|x]/g, "")}ZZZZZZZZZZZZZZZZZZZZZZZZZ`;
+  let dept = account.substring(0, 2);
+  let vote = account.substring(2, 3);
+  let prog = account.substring(3, 5);
+  let activity = account.substring(5, 7);
+  let element = account.substring(7, 9);
+  let object = account.substring(9, 13);
+  let ledger1 = account.substring(13, 17);
+  let ledger2 = account.substring(17, 22);
+
+  let output = `${dept}${vote}-${prog}${activity}${element}-${object}-${ledger1}-${ledger2}`;
+
+  output = output.replace(/[Z]/g, "");
+  output = output.replace(/[-]*$/g, "");
+
+  return output;
 }
 
 export default {
