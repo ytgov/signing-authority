@@ -6,7 +6,8 @@ import _ from "lodash";
 import { getInstance } from "@/auth/auth0-plugin";
 
 const state = {
-  formA: { employee: {}, department: {}, audit_lines: [], status: "" },
+  formA: { employee: {}, department: {}, audit_lines: [], status: "", authority_lines: [] },
+  is_loading: false,
 };
 
 const getters = {
@@ -35,7 +36,10 @@ const getters = {
 
 const actions = {
   async loadFormA({ commit }, { id }) {
+    commit("setFormA", { employee: {}, department: {}, audit_lines: [], status: "", authority_lines: [] });
+    commit("setLoading", true);
     const auth = getInstance();
+
     return auth
       .get(`${FORMA_URL}/${id}`)
       .then((resp) => {
@@ -195,6 +199,10 @@ const mutations = {
     }
 
     state.formA = value;
+    state.is_loading = false;
+  },
+  setLoading(state, value) {
+    state.is_loading = value;
   },
 };
 

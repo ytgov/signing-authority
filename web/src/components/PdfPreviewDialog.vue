@@ -23,7 +23,7 @@ export default {
   components: { pdf },
   data: () => ({
     dialog: false,
-    pdfUrl: null,
+    pdfUrl: "",
     title: "",
     loading: false,
     previewHeight: "200px",

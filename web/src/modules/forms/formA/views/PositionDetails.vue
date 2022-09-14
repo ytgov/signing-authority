@@ -15,8 +15,7 @@
         >
         </actions-menu>
       </template>
-
-      <v-overlay absolute :value="loading">
+      <v-overlay :value="is_loading">
         <v-progress-circular indeterminate size="64"></v-progress-circular
       ></v-overlay>
 
@@ -122,7 +121,6 @@ export default {
     PdfPreviewDialog,
   },
   data: () => ({
-    loading: false,
     page: {
       title: "",
     },
@@ -152,7 +150,7 @@ export default {
   }),
   computed: {
     ...mapState("department", ["departments"]),
-    ...mapState("authority/formA", ["formA"]),
+    ...mapState("authority/formA", ["formA", "is_loading"]),
     ...mapGetters("authority/formA", ["isActive", "isLocked", "status"]),
     activationDate() {
       if (this.formA.activation) return moment(this.formA.activation.date).format("MMM D, YYYY @ h:mm a");
@@ -160,7 +158,6 @@ export default {
     },
   },
   async mounted() {
-    this.loading = true;
     this.id = this.$route.params.id;
     let departmentId = this.$route.params.departmentId;
     this.department = await this.getDepartment({ id: departmentId });
@@ -172,7 +169,6 @@ export default {
     let formA = await this.loadFormA({ id: this.$route.params.formAId });
     this.page.title = `${formA.program_branch}: ${formA.position}`;
     this.breadcrumbs[3].text = this.page.title;
-    this.loading = false;
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
@@ -182,6 +178,7 @@ export default {
       this.$router.push(`/form-b/${item._id}`);
     },
     showPreview() {
+      console.log("SHOW CALLED", this.formA)
       this.$refs.pdfPreview.show("Signed Form A", `${AUTHORITY_URL}/uploads/${this.formA.activation.file_id}/file`);
     },
   },
