@@ -4,6 +4,7 @@ import { getInstance } from "@/auth/auth0-plugin";
 
 const state = {
   formB: { employee: {}, supervisor: {}, department: {}, form_a: {}, authority_lines: [] },
+  is_loading: false,
 };
 
 const getters = {
@@ -12,6 +13,8 @@ const getters = {
 
 const actions = {
   async loadFormB({ commit }, id) {
+    commit("setFormB", { employee: {}, supervisor: {}, department: {}, form_a: {}, authority_lines: [] });
+    commit("setLoading", true);
     const auth = getInstance();
 
     return auth
@@ -119,6 +122,10 @@ const mutations = {
     }
 
     state.formB = value;
+    state.is_loading = false;
+  },
+  setLoading(state, value) {
+    state.is_loading = value;
   },
 };
 

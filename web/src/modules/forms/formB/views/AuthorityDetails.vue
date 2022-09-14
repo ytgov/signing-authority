@@ -6,9 +6,9 @@
       </template>
     </BaseBreadcrumb>
 
-    <v-overlay absolute :value="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular
-    ></v-overlay>
+    <v-overlay absolute :value="is_loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
 
     <BaseCard :showHeader="false">
       <template slot="right"> </template>
@@ -120,7 +120,7 @@
           <authority-supervisor-card :formB="formB" class="mb-5" />
 
           <v-card class="default">
-            <v-card-title>Related Form A</v-card-title>
+            <v-card-title>Related Form A Position</v-card-title>
             <v-card-text>
               <v-text-field
                 v-model="formB.form_a.program_branch"
@@ -150,7 +150,7 @@
                 append-icon="mdi-lock"
               ></v-text-field>
 
-              <v-btn color="primary" small class="my-0" @click="openFormA">View details</v-btn>
+              <v-btn color="primary" small class="my-0" @click="openFormA">Preview Signed Form A</v-btn>
             </v-card-text>
           </v-card>
         </v-col>
@@ -242,7 +242,7 @@
 <script>
 import { AUTHORITY_URL } from "@/urls";
 import moment from "moment";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapState } from "vuex";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
 
 // import uploadFormModal from "../components/uploadFormModal.vue";
@@ -263,7 +263,6 @@ export default {
     FormBTable,
   },
   data: () => ({
-    loading: false,
     id: "",
     authority: {},
     showUpload: false,
@@ -274,6 +273,7 @@ export default {
   }),
   computed: {
     ...mapGetters("authority/formB", ["formB"]),
+    ...mapState("authority/formB", ["is_loading"]),
 
     breadcrumbs: function() {
       if (this.formB) {
@@ -418,11 +418,9 @@ export default {
     },
   },
   async mounted() {
-    this.loading = true;
     this.id = this.$route.params.formBId;
     this.loadFormB(this.id);
     this.page.title = "Form B Details";
-    this.loading = false;
   },
   methods: {
     ...mapActions("authority/formB", ["loadFormB", "deleteFormB", "saveFormB", "saveFormBWithFile"]),
