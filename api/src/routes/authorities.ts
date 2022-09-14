@@ -4,7 +4,7 @@ import { uploadsRouter } from "./uploads";
 import fs from "fs";
 import { param } from "express-validator";
 import { ReturnValidationErrors } from "../middleware";
-import { GenericService } from "../services";
+import { EmailService, GenericService, UserService } from "../services";
 import _ from "lodash";
 import { Authority, Position, ReviewResultType, StoredFile } from "../data/models";
 import { FileStore } from "../utils/file-store";
@@ -15,6 +15,8 @@ import { FormatCoding } from "../utils/formatters";
 import { ExpressHandlebars } from "express-handlebars";
 import { checkJwt, loadUser } from "../middleware/authz.middleware";
 import { API_PORT } from "../config";
+
+const emailService = new EmailService();
 
 export const authoritiesRouter = express.Router();
 
@@ -49,7 +51,7 @@ authoritiesRouter.get(
     let item = await loadSingleAuthority(req, id);
 
     if (item) {
-      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormBTemplate.html");
+      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormBTemplate.html");
 
       (item as any).API_PORT = API_PORT;
 
@@ -77,6 +79,7 @@ authoritiesRouter.put(
     const { id } = req.params;
     const { save_action, comments } = req.body;
     let db = req.store.Authorities as GenericService<Authority>;
+    let userDb = req.store.Users as UserService;
     let fileStore = req.store.Files as FileStore;
 
     let existing = await db.getById(id);
@@ -106,6 +109,15 @@ authoritiesRouter.put(
           previous_value: {},
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
+
+        let creator = await userDb.getAll({ _id: existing.created_by_id });
+
+        await emailService.sendFormBNotification(
+          existing,
+          creator,
+          "Upload Signatures",
+          `${req.user.first_name} ${req.user.last_name}`
+        );
 
         await db.update(id, existing);
       } else if (save_action == "Reset") {
@@ -156,6 +168,15 @@ authoritiesRouter.put(
               file_id: fileInfo._id,
             };
 
+            let emailUsers = await userDb.getAll({ roles: "Finance Admin" });
+
+            await emailService.sendFormBNotification(
+              existing,
+              emailUsers,
+              "Finance Approve",
+              `${req.user.first_name} ${req.user.last_name}`
+            );
+
             await db.update(id, existing);
           }
         }
@@ -179,6 +200,15 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
+        let creator = await userDb.getAll({ _id: existing.created_by_id });
+
+        await emailService.sendFormBNotification(
+          existing,
+          creator,
+          "Activate Form B",
+          `${req.user.first_name} ${req.user.last_name}`
+        );
+
         await db.update(id, existing);
       } else if (save_action == "FinanceApproveReject") {
         existing.department_reviews = undefined;
@@ -194,6 +224,15 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
+        let creator = await userDb.getAll({ _id: existing.created_by_id });
+
+        await emailService.sendFormBNotification(
+          existing,
+          creator,
+          "Finance Approve Rejected",
+          `${req.user.first_name} ${req.user.last_name}`
+        );
+
         await db.update(id, existing);
       }
 
@@ -206,7 +245,7 @@ authoritiesRouter.put(
 
       req.body.audit_lines.push({
         date: new Date(),
-        user_name: req.user.email,
+        user_name: `${req.user.first_name} ${req.user.last_name}`,
         action: "Update",
         previous_value: existing,
       });
@@ -259,7 +298,7 @@ authoritiesRouter.post("/", checkJwt, loadUser, async (req: Request, res: Respon
   req.body.audit_lines = [
     {
       date: new Date(),
-      user_name: req.user.email,
+      user_name: `${req.user.first_name} ${req.user.last_name}`,
       action: "Form B created",
     },
   ];

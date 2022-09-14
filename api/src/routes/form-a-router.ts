@@ -2,13 +2,13 @@ import express, { Request, Response } from "express";
 import { body, param } from "express-validator";
 
 import moment from "moment";
-import _ from "lodash";
+import _, { create } from "lodash";
 import fs from "fs";
 import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
-import { GenericService, QuestService } from "../services";
+import { EmailService, GenericService, QuestService, UserService } from "../services";
 
-import { Authority, Position, OperationalRestrictions, PositionGroup, StoredFile } from "../data/models";
+import { Authority, Position, OperationalRestrictions, PositionGroup, StoredFile, User } from "../data/models";
 import { ObjectId } from "mongodb";
 
 import { ExpressHandlebars } from "express-handlebars";
@@ -22,6 +22,7 @@ import { API_PORT } from "../config";
 // formARouter.use('/uploads', uploadsRouter)
 
 const questService = new QuestService();
+const emailService = new EmailService();
 
 formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
@@ -140,12 +141,14 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
 formARouter.post("/department/:department_code", checkJwt, loadUser, async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+  let userDb = req.store.Users as UserService;
   let { program, activity, items, department_descr } = req.body;
   let { department_code } = req.params;
 
   let group: PositionGroup = {
     create_date: new Date(),
     created_by: `${req.user.first_name} ${req.user.last_name}`,
+    created_by_id: req.user._id,
     department_code,
     department_descr,
     status: "Locked for Signatures",
@@ -155,6 +158,11 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
 
   let result = await groupDb.create(group);
   if (result.insertedId) {
+    group._id = result.insertedId;
+
+    let emailUsers = await userDb.getAll({ roles: "Finance Admin" });
+    await emailService.sendFormANotification(group, emailUsers, "Finance Review", group.created_by);
+
     for (let item of items) {
       let position = await db.getById(item);
 
@@ -236,6 +244,7 @@ formARouter.put(
     let { department_code, id } = req.params;
     let { save_action, comments } = req.body;
     let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+    let userDb = req.store.Users as UserService;
     let fileStore = req.store.Files as FileStore;
 
     let item = await groupDb.getById(id);
@@ -287,6 +296,21 @@ formARouter.put(
           }
         }
 
+        let creator: User[];
+
+        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        else {
+          let allUsers = await userDb.getAll();
+          creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
+        }
+
+        await emailService.sendFormANotification(
+          item,
+          creator,
+          "Form A Activation",
+          `${req.user.first_name} ${req.user.last_name}`
+        );
+
         delete item._id;
         await groupDb.update(id, item);
       } else if (save_action == "FinanceApproveReject") {
@@ -297,6 +321,21 @@ formARouter.put(
           date: new Date(),
           comments,
         };
+
+        let creator: User[];
+
+        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        else {
+          let allUsers = await userDb.getAll();
+          creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
+        }
+
+        await emailService.sendFormANotification(
+          item,
+          creator,
+          "Finance Approve Rejected",
+          `${req.user.first_name} ${req.user.last_name}`
+        );
 
         delete item._id;
         groupDb.update(id, item);
@@ -309,6 +348,21 @@ formARouter.put(
           comments,
         };
 
+        let creator: User[];
+
+        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        else {
+          let allUsers = await userDb.getAll();
+          creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
+        }
+
+        await emailService.sendFormANotification(
+          item,
+          creator,
+          "Upload Signatures",
+          `${req.user.first_name} ${req.user.last_name}`
+        );
+
         delete item._id;
         groupDb.update(id, item);
       } else if (save_action == "FinanceReviewReject") {
@@ -319,6 +373,21 @@ formARouter.put(
           date: new Date(),
           comments,
         };
+
+        let creator: User[];
+
+        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        else {
+          let allUsers = await userDb.getAll();
+          creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
+        }
+
+        await emailService.sendFormANotification(
+          item,
+          creator,
+          "Finance Review Rejected",
+          `${req.user.first_name} ${req.user.last_name}`
+        );
 
         delete item._id;
         groupDb.update(id, item);
@@ -349,6 +418,15 @@ formARouter.put(
               deputy_minister_name: req.body.deputy_minister_name,
               file_id: fileInfo._id,
             };
+
+            let emailUsers = await userDb.getAll({ roles: "Finance Admin" });
+
+            await emailService.sendFormANotification(
+              item,
+              emailUsers,
+              "Finance Approve",
+              `${req.user.first_name} ${req.user.last_name}`
+            );
 
             delete item._id;
             await groupDb.update(id, item);
@@ -526,7 +604,7 @@ formARouter.get(
 
       item.authority_lines = lines;
 
-      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/FormATemplate.html");
+      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormATemplate.html");
 
       (item as any).API_PORT = API_PORT;
 

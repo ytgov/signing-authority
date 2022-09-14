@@ -9,6 +9,7 @@ export interface PositionGroup extends MongoEntity {
 
   create_date: Date;
   created_by: string;
+  created_by_id: ObjectId;
 
   status: string;
 
