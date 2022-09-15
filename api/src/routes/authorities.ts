@@ -35,6 +35,8 @@ authoritiesRouter.get(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let item = await loadSingleAuthority(req, id);
+    
+    if (!item.authority_type) item.authority_type = "substantive"; // polyfill for late model change
 
     if (item) return res.json({ data: item });
 
@@ -87,6 +89,8 @@ authoritiesRouter.put(
     if (!existing) return res.status(404).send();
     //if (req.body.department_id) req.body.department_id = new ObjectId(req.body.department_id);
     //if (req.body.employee_id) req.body.employee_id = new ObjectId(req.body.employee_id);
+
+    if (!existing.authority_type) existing.authority_type = "substantive"; // polyfill for late model change
 
     //this is workflow stuff
     if (save_action) {

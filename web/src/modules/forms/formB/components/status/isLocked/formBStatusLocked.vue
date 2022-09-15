@@ -1,5 +1,5 @@
 <template>
-  <v-chip dark class="mr-4 mb-1" color="yg_lichen" v-on="on">
+  <v-chip dark class="mr-4 mb-1" color="yg_lichen">
     <v-icon small>mdi-lock</v-icon>
   </v-chip>
   <!-- <v-dialog

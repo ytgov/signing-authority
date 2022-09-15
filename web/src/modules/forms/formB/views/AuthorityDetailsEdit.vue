@@ -365,16 +365,17 @@ export default {
     breadcrumbs: function() {
       let b = [{ text: "Signing Authorities Home", to: "/dashboard" }];
 
-      b.push({
-        text: `${this.formB.employee.name}`,
-        to: `/employee/${this.formB.employee_id}`,
-      });
-      b.push({
-        text: `${this.formB.program_branch} / ${this.formB.employee.title}`,
-        to: `/form-b/${this.formB._id}`,
-        exact: true,
-      });
-      b.push({ text: "Edit" });
+        b.push({
+          text: `${this.formB.department_descr}`,
+          to: `/departments/${this.formB.department_code}`,
+        });
+        b.push({
+          text: `Form B Authorizations`,
+          to: `/departments/${this.formB.department_code}/form-b`,
+        });
+        b.push({
+          text: `${this.formB.employee.title} (${this.formB.employee.name}) - Edit`,
+        });
       return b;
     },
 

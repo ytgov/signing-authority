@@ -32,6 +32,8 @@ export interface Authority extends MongoEntity {
   department_descr: string;
   program_branch: string;
 
+  authority_type: string; // substantive or temp/memo
+
   authority_lines: FormBAuthorityLine[];
   audit_lines?: FormBAuditLine[];
 
