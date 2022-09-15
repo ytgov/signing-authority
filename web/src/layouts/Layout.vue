@@ -61,7 +61,7 @@
               </v-list-item-icon>
               <v-list-item-title>My profile</v-list-item-title>
             </v-list-item>
-            <v-list-item to="/administration" v-if="showAdmin">
+            <v-list-item to="/administration" v-if="canAdminister">
               <v-list-item-icon>
                 <v-icon>mdi-cogs</v-icon>
               </v-list-item-icon>
@@ -97,7 +97,7 @@
 
 <script>
 import router from "@/router";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import * as config from "@/config";
 import { LOGOUT_URL } from "@/urls";
 import { getInstance } from "@/auth/auth0-plugin";
@@ -119,16 +119,24 @@ export default {
     hasSidebar: false, //config.hasSidebar,
     hasSidebarClosable: config.hasSidebarClosable,
     search: "",
-    showAdmin: true,
     showOverlay: true,
   }),
   computed: {
+    ...mapState("home", ["profile"]),
+
     username() {
       return this.$auth.user.name;
     },
 
     returnTo: function() {
       return auth.options.logout_redirect;
+    },
+
+    canAdminister() {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+      }
+      return false;
     },
   },
   async mounted() {
@@ -148,10 +156,6 @@ export default {
         this.sections = [];
         this.hasSidebar = false;
       }
-    },
-    roles: function(val) {
-      this.showAdmin = false;
-      if (val.indexOf("Admin") >= 0) this.showAdmin = true;
     },
   },
   methods: {

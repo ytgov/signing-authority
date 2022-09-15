@@ -1,5 +1,9 @@
 <template>
-  <v-dialog
+  <v-chip dark class="mr-4 mb-1" color="yg_lichen">
+    <v-icon small>mdi-lock</v-icon>
+  </v-chip>
+
+  <!-- <v-dialog
       v-model="dialog"
       max-width="500px"
       persistent
@@ -33,19 +37,18 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
 </template>
 
 <script>
 import { mapState } from "vuex";
 export default {
-  name:"formAStatusLocked",
+  name: "formAStatusLocked",
   computed: {
     ...mapState("authority/formA", ["formA"]),
   },
   data: () => ({
     dialog: false,
   }),
-}
+};
 </script>
-

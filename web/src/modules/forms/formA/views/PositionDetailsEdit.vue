@@ -69,6 +69,7 @@ export default {
         text: "Edit",
       },
     ],
+    departmentId: "",
     department: {},
     authority: {},
     showUpload: false,
@@ -76,6 +77,7 @@ export default {
   computed: {
     ...mapState("department", ["departments"]),
     ...mapState("authority/formA", ["formA"]),
+    ...mapState("home", ["profile"]),
 
     canSave() {
       if (this.formA && this.formA.authority_lines) {
@@ -87,15 +89,29 @@ export default {
       }
       return false;
     },
+
+    canAdminister() {
+      if (this.profile && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        if (
+          this.profile.roles.includes("Department Admin") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+      }
+
+      return false;
+    },
   },
   async mounted() {
     this.id = this.$route.params.formAId;
-    let departmentId = this.$route.params.departmentId;
-    this.department = await this.getDepartment({ id: departmentId });
+    this.departmentId = this.$route.params.departmentId;
+    this.department = await this.getDepartment({ id: this.departmentId });
 
     this.breadcrumbs[1].text = this.department.descr;
-    this.breadcrumbs[1].to = `/departments/${departmentId}`;
-    this.breadcrumbs[2].to = `/departments/${departmentId}/positions`;
+    this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
+    this.breadcrumbs[2].to = `/departments/${this.departmentId}/positions`;
 
     // this.breadcrumbs[4].text = "Positions";
     //this.page.title = this.department.descr;
@@ -103,7 +119,9 @@ export default {
 
     this.page.title = `${formA.program_branch}: ${formA.position}`;
     this.breadcrumbs[3].text = this.page.title;
-    this.breadcrumbs[3].to = `/departments/${departmentId}/positions/${this.id}`;
+    this.breadcrumbs[3].to = `/departments/${this.departmentId}/positions/${this.id}`;
+
+    if (!this.canAdminister || this.formA.status == "Active") this.$router.push(this.breadcrumbs[3].to);
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),

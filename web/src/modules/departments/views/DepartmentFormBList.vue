@@ -1,10 +1,6 @@
 <template>
   <v-container fluid class="down-top-padding">
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    >
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs">
       <template v-slot:right>
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
       </template>
@@ -12,25 +8,24 @@
 
     <BaseCard :showHeader="true">
       <template v-slot:left>
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
       </template>
       <template v-slot:right>
-        <create-form-b :department="item"></create-form-b>
+        <create-form-b :department="item" v-if="canAdminister"></create-form-b>
       </template>
 
-      <department-form-b-list :search="search"> </department-form-b-list>
+      <v-card class="default">
+        <v-card-title>Active Form B Authorizations</v-card-title>
+        <v-card-text>
+          <department-form-b-list :search="search"> </department-form-b-list>
+        </v-card-text>
+      </v-card>
     </BaseCard>
   </v-container>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import departmentFormBList from "../components/departmentFormBList.vue";
 import createFormB from "@/modules/forms/formB/components/createFormB.vue";
 
@@ -63,14 +58,30 @@ export default {
     item: {},
     departmentId: "",
   }),
-  mounted: async function () {
+  mounted: async function() {
     this.departmentId = this.$route.params.departmentId;
     this.item = await this.getDepartment({ id: this.departmentId });
 
     this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
     this.breadcrumbs[1].text = this.item.descr;
   },
-  computed: {},
+  computed: {
+    ...mapState("home", ["profile"]),
+
+    canAdminister() {
+      if (this.profile && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        if (
+          this.profile.roles.includes("Department Admin") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+      }
+
+      return false;
+    },
+  },
   methods: {
     ...mapActions("department", ["getDepartment"]),
   },

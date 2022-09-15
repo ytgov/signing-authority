@@ -17,7 +17,17 @@
           <department-form-a-list :search="search" :pendingGroups="pendingGroups" />
         </v-col>
         <v-col>
-          <department-form-b-list :search="search" />
+          <v-card class="default">
+            <v-card-title>Active Form B Authorizations</v-card-title>
+            <v-card-text>
+              <department-form-b-summary :actingCount="actingFormB" :activeFormBCount="activeFormB" />
+
+              <department-form-b-list :search="search" />
+              <div class="mt-4 ml-2">
+                <router-link :to="`/departments/${this.departmentId}/form-b`">View all</router-link>
+              </div>
+            </v-card-text>
+          </v-card>
         </v-col>
       </v-row>
     </BaseCard>
@@ -28,11 +38,13 @@
 import { mapActions, mapState } from "vuex";
 import departmentFormAList from "../components/departmentFormAList";
 import departmentFormBList from "../components/departmentFormBList";
+import departmentFormBSummary from "../components/departmentFormBSummary";
 
 export default {
   components: {
     departmentFormAList,
     departmentFormBList,
+    departmentFormBSummary,
   },
   name: "DepartmentDetail",
   data: () => ({
@@ -57,6 +69,7 @@ export default {
     item: {},
     loadingFormB: true,
     pendingGroups: [],
+    formBList: [],
   }),
   mounted: async function() {
     this.departmentId = this.$route.params.departmentId;
@@ -64,9 +77,16 @@ export default {
   },
   computed: {
     ...mapState("department", ["departments"]),
+
+    actingFormB() {
+      return 0;
+    },
+    activeFormB() {
+      return this.formBList.filter((f) => f.status == "Active").length;
+    },
   },
   methods: {
-    ...mapActions("department", ["getDepartment", "getPendingGroups"]),
+    ...mapActions("department", ["getDepartment", "getPendingGroups", "getFormBList"]),
 
     async loadList() {
       this.item = await this.getDepartment({ id: this.departmentId });
@@ -80,6 +100,7 @@ export default {
       });
 
       this.pendingGroups = groups.filter((g) => g.status != "Active");
+      this.formBList = await this.getFormBList({ id: this.departmentId });
     },
   },
 };

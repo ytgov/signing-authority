@@ -67,7 +67,7 @@
       <v-row>
         <v-col cols="12">
           <v-card class="default">
-            <div style="float: right; margin-right: 15px; margin-top: 15px">
+            <div style="float: right; margin-right: 15px; margin-top: 15px" v-if="canAdminister">
               <v-menu offset-y left>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-2">
@@ -105,7 +105,7 @@
               </v-menu>
             </div>
 
-            <div style="float: right;margin-right: 15px;margin-top: 20px;">
+            <div style="float: right;margin-right: 15px;margin-top: 20px;" v-if="canAdminister">
               <div
                 class="mr-3"
                 style="line-height: 16px; text-align:right"
@@ -236,7 +236,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import moment from "moment";
 import { AUTHORITY_URL, FORMA_URL } from "@/urls";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
@@ -299,6 +299,22 @@ export default {
     this.loadFormA();
   },
   computed: {
+    ...mapState("home", ["profile"]),
+
+    canAdminister() {
+      if (this.profile && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        if (
+          this.profile.roles.includes("Department Admin") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+      }
+
+      return false;
+    },
+
     pdfURL: function() {
       return `${FORMA_URL}/${this.item._id}/pdf`;
     },

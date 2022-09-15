@@ -51,7 +51,7 @@
         <div style="float: right; margin-right: 15px; margin-top: 15px">
           <form-b-status :isLocked="isLocked" :isActive="isActive"> </form-b-status>
 
-          <v-menu offset-y left>
+          <v-menu offset-y left v-if="canAdminister">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-2">
                 Actions <v-icon>mdi-chevron-down</v-icon>
@@ -274,6 +274,21 @@ export default {
   computed: {
     ...mapGetters("authority/formB", ["formB"]),
     ...mapState("authority/formB", ["is_loading"]),
+    ...mapState("home", ["profile"]),
+
+    canAdminister() {
+      if (this.profile && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        if (
+          this.profile.roles.includes("Department Admin") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+      }
+
+      return false;
+    },
 
     breadcrumbs: function() {
       if (this.formB) {

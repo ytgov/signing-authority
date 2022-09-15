@@ -1,33 +1,23 @@
 <template>
-  <v-card class="default">
-    <v-card-title>Active Form B Authorizations</v-card-title>
-    <v-card-text>
-      <department-form-b-summary :actingCount="actingFormB" :activeFormBCount="activeFormB" />
-      <v-data-table
-        class="mt-5 row-clickable"
-        :headers="headers"
-        :search="search"
-        :items="formBItems"
-        :loading="loadingFormB"
-        @click:row="openFormB"
-        dense
-        :footer-props="{
-          'items-per-page-options': [25, 50, 75, -1],
-        }"
-        :items-per-page="50"
-      >
-      </v-data-table>
-      <div class="mt-4 ml-2">
-        <router-link :to="formBLink">View all</router-link>
-      </div>
-    </v-card-text>
-  </v-card>
+  <v-data-table
+    class="mt-5 row-clickable"
+    :headers="headers"
+    :search="search"
+    :items="formBItems"
+    :loading="loadingFormB"
+    @click:row="openFormB"
+    dense
+    :footer-props="{
+      'items-per-page-options': [25, 50, 75, -1],
+    }"
+    :items-per-page="50"
+  >
+  </v-data-table>
 </template>
 <script>
 import { mapActions } from "vuex";
-import departmentFormBSummary from "./departmentFormBSummary.vue";
+
 export default {
-  components: { departmentFormBSummary },
   name: "FormBList",
   props: {
     search: {

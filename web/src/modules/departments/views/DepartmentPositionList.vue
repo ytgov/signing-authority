@@ -21,6 +21,7 @@
       </template>
       <template v-slot:right>
         <create-form-a-button
+          v-if="canAdminister"
           :department="item"
           :programList="programList"
           :activityList="activityList"
@@ -57,7 +58,12 @@
                   />
                 </v-col>
                 <v-col>
-                  <v-btn :disabled="!canGenerate" color="secondary" class="my-0" @click="generateFormAClick"
+                  <v-btn
+                    :disabled="!canGenerate"
+                    color="secondary"
+                    class="my-0"
+                    @click="generateFormAClick"
+                    v-if="canAdminister"
                     >Generate Form A</v-btn
                   ></v-col
                 >
@@ -190,13 +196,28 @@ export default {
     this.breadcrumbs[1].text = this.item.descr;
 
     await this.loadFormA();
-    
+
     this.loading = false;
   },
   watch: {},
   computed: {
     ...mapState("department", ["departments"]),
     ...mapGetters("department", ["getDepartmentDetails"]),
+    ...mapState("home", ["profile"]),
+
+    canAdminister() {
+      if (this.profile && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        if (
+          this.profile.roles.includes("Department Admin") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+      }
+
+      return false;
+    },
 
     programListAny() {
       let list = _.clone(this.programList);

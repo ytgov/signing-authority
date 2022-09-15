@@ -6,18 +6,18 @@
       <template slot="right">
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
         <form-a-status :isLocked="isLocked" :isActive="isActive" :status="status"> </form-a-status>
+
         <actions-menu
           :formA="formA"
           :isLocked="isLocked"
           :isActive="isActive"
           :status="status"
           :showPreview="showPreview"
+          v-if="canAdminister"
         >
         </actions-menu>
       </template>
-      <v-overlay :value="is_loading">
-        <v-progress-circular indeterminate size="64"></v-progress-circular
-      ></v-overlay>
+      <v-overlay :value="is_loading"> <v-progress-circular indeterminate size="64"></v-progress-circular></v-overlay>
 
       <v-card class="default">
         <v-card-text>
@@ -144,6 +144,7 @@ export default {
         to: "",
       },
     ],
+    departmentId: "",
     department: {},
     authority: {},
     showUpload: false,
@@ -152,19 +153,35 @@ export default {
     ...mapState("department", ["departments"]),
     ...mapState("authority/formA", ["formA", "is_loading"]),
     ...mapGetters("authority/formA", ["isActive", "isLocked", "status"]),
+    ...mapState("home", ["profile"]),
+
     activationDate() {
       if (this.formA.activation) return moment(this.formA.activation.date).format("MMM D, YYYY @ h:mm a");
       return "";
     },
+
+    canAdminister() {
+      if (this.profile && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        if (
+          this.profile.roles.includes("Department Admin") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+      }
+
+      return false;
+    },
   },
   async mounted() {
     this.id = this.$route.params.id;
-    let departmentId = this.$route.params.departmentId;
-    this.department = await this.getDepartment({ id: departmentId });
+    this.departmentId = this.$route.params.departmentId;
+    this.department = await this.getDepartment({ id: this.departmentId });
 
     this.breadcrumbs[1].text = this.department.descr;
-    this.breadcrumbs[1].to = `/departments/${departmentId}`;
-    this.breadcrumbs[2].to = `/departments/${departmentId}/positions`;
+    this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
+    this.breadcrumbs[2].to = `/departments/${this.departmentId}/positions`;
 
     let formA = await this.loadFormA({ id: this.$route.params.formAId });
     this.page.title = `${formA.program_branch}: ${formA.position}`;
@@ -178,7 +195,7 @@ export default {
       this.$router.push(`/form-b/${item._id}`);
     },
     showPreview() {
-      console.log("SHOW CALLED", this.formA)
+      console.log("SHOW CALLED", this.formA);
       this.$refs.pdfPreview.show("Signed Form A", `${AUTHORITY_URL}/uploads/${this.formA.activation.file_id}/file`);
     },
   },
