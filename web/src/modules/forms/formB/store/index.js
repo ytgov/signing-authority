@@ -92,33 +92,35 @@ const mutations = {
   async setFormB(state, value) {
     const auth = getInstance();
 
-    for (let line of value.authority_lines) {
-      line.coding_invalid = false;
-      line.coding = cleanCoding(line.coding);
+    if (value.authority_lines) {
+      for (let line of value.authority_lines) {
+        line.coding_invalid = false;
+        line.coding = cleanCoding(line.coding);
 
-      if (line.coding) {
-        let validationResult = await auth.post(`${FORMA_URL}/department/${value.department_code}/validate-line`, {
-          authority_line: line,
-        });
+        if (line.coding) {
+          let validationResult = await auth.post(`${FORMA_URL}/department/${value.department_code}/validate-line`, {
+            authority_line: line,
+          });
 
-        line.coding_invalid = !validationResult.data;
+          line.coding_invalid = !validationResult.data;
+        }
+
+        line.loans_limit = cleanZeros(line.loans_limit);
+        line.other_limit = cleanZeros(line.other_limit);
+        line.s23_procure_goods_limit = cleanZeros(line.s23_procure_goods_limit);
+        line.s23_procure_services_limit = cleanZeros(line.s23_procure_services_limit);
+        line.s23_transfer_limit = cleanZeros(line.s23_transfer_limit);
+        line.s24_procure_assignment_limit = cleanZeros(line.s24_procure_assignment_limit);
+        line.s24_procure_goods_limit = cleanZeros(line.s24_procure_goods_limit);
+        line.s24_procure_request_limit = cleanZeros(line.s24_procure_request_limit);
+        line.s24_procure_services_limit = cleanZeros(line.s24_procure_services_limit);
+        line.s24_transfer_limit = cleanZeros(line.s24_transfer_limit);
+        line.s24_travel_limit = cleanZeros(line.s24_travel_limit);
+        line.s29_performance_limit = cleanZeros(line.s29_performance_limit);
+        line.s30_payment_limit = cleanZeros(line.s30_payment_limit);
+        line.trust_limit = cleanZeros(line.trust_limit);
+        line.is_working = false;
       }
-
-      line.loans_limit = cleanZeros(line.loans_limit);
-      line.other_limit = cleanZeros(line.other_limit);
-      line.s23_procure_goods_limit = cleanZeros(line.s23_procure_goods_limit);
-      line.s23_procure_services_limit = cleanZeros(line.s23_procure_services_limit);
-      line.s23_transfer_limit = cleanZeros(line.s23_transfer_limit);
-      line.s24_procure_assignment_limit = cleanZeros(line.s24_procure_assignment_limit);
-      line.s24_procure_goods_limit = cleanZeros(line.s24_procure_goods_limit);
-      line.s24_procure_request_limit = cleanZeros(line.s24_procure_request_limit);
-      line.s24_procure_services_limit = cleanZeros(line.s24_procure_services_limit);
-      line.s24_transfer_limit = cleanZeros(line.s24_transfer_limit);
-      line.s24_travel_limit = cleanZeros(line.s24_travel_limit);
-      line.s29_performance_limit = cleanZeros(line.s29_performance_limit);
-      line.s30_payment_limit = cleanZeros(line.s30_payment_limit);
-      line.trust_limit = cleanZeros(line.trust_limit);
-      line.is_working = false;
     }
 
     state.formB = value;

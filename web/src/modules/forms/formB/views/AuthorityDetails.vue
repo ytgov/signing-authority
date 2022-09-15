@@ -306,7 +306,7 @@ export default {
       return 2;
     },
     canDelete() {
-      return true;
+      return !this.isActive;
     },
     canDownload() {
       if (this.formB.department_reviews) return true;
@@ -337,27 +337,6 @@ export default {
     },
     canArchive() {
       return false;
-    },
-
-    nextStep() {
-      if (this.stepperValue == 2) return "Finance Review";
-      if (this.stepperValue == 3) return "Upload Signatures";
-      if (this.stepperValue == 4) return "Finance Approve";
-      return "Active";
-    },
-    nextAction() {
-      if (this.stepperValue == 2) return this.startFinanceReview;
-      if (this.stepperValue == 3) return this.startUploadReview;
-      if (this.stepperValue == 4) return this.startFinanceApprove;
-      return () => {
-        console.log("UNSURE");
-      };
-    },
-    nextActor() {
-      if (this.stepperValue == 2) return "Finance Admin";
-      if (this.stepperValue == 3) return "Department Admin";
-      if (this.stepperValue == 4) return "Finance Admin";
-      return "Finance Admin";
     },
 
     createDate() {
@@ -398,16 +377,16 @@ export default {
     },
 
     financeApproveDate() {
-      if (this.formB.finance_approval_complete) {
-        return "Approved " + moment(this.formB.finance_approval_complete.date).format("MMM D, YYYY @ h:mm a");
-      } else if (this.formB.finance_approval_reject) {
+      if (this.formB.finance_reviews) {
+        return "Approved " + moment(this.formB.finance_reviews[0].date).format("MMM D, YYYY @ h:mm a");
+      } else if (this.formB.finance_reviews) {
         return "Rejected " + moment(this.formB.finance_approval_reject.date).format("MMM D, YYYY @ h:mm a");
       }
       return "";
     },
     financeApproveName() {
-      if (this.formB.finance_approval_complete) {
-        return "By " + this.formB.finance_approval_complete.name;
+      if (this.formB.finance_reviews) {
+        return "By " + this.formB.finance_reviews[0].name;
       } else if (this.formB.finance_approval_reject) {
         return "By " + this.formB.finance_approval_reject.name;
       }
