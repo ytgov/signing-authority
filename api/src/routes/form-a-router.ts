@@ -685,8 +685,6 @@ formARouter.put(
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
-      console.log("CODING IS VALID: ", codingIsValid);
-
       line.contracts_for_goods_services =
         line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
