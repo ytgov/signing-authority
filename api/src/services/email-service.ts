@@ -34,6 +34,7 @@ export class EmailService {
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
 
+      console.log("-- EMAIL FORM-A SENDING", recipient.email);
       return this.sendEmail(fullName, recipient.email, "Form A Workflow Notification", content);
     }
   }
@@ -52,6 +53,7 @@ export class EmailService {
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
 
+      console.log("-- EMAIL FORM-B SENDING", recipient.email);
       return this.sendEmail(fullName, recipient.email, "Form B Workflow Notification", content);
     }
   }
