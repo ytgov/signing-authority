@@ -162,8 +162,6 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
 
     let emailUsers = await userDb.getAll({ roles: "Finance Admin" });
 
-    console.log("FINANCE ADMIN ROLE: ", emailUsers)
-
     await emailService.sendFormANotification(group, emailUsers, "Finance Review", group.created_by);
 
     for (let item of items) {
