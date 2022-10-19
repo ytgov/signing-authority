@@ -8,6 +8,7 @@ import { getInstance } from "@/auth/auth0-plugin";
 const state = {
   formA: { employee: {}, department: {}, audit_lines: [], status: "", authority_lines: [] },
   is_loading: false,
+  version: 0,
 };
 
 const getters = {
@@ -47,7 +48,6 @@ const actions = {
         return resp.data.data;
       })
       .catch((err) => {
-        console.log("ERRROR FOUND INHGERE", err);
         commit("setFormA", {});
       });
   },
@@ -172,17 +172,12 @@ const mutations = {
   async setFormA(state, value) {
     if (value.program_branch == "") value.program_branch = "ALL";
 
-    const auth = getInstance();
-
     for (let line of value.authority_lines) {
       line.coding_invalid = false;
       line.coding = cleanCoding(line.coding);
 
       if (line.coding) {
-        let validationResult = await auth.post(`${FORMA_URL}/department/${state.formA.department_code}/validate-line`, {
-          authority_line: line,
-        });
-
+        let validationResult = await validateCoding(line);
         line.coding_invalid = !validationResult.data;
       }
 
@@ -200,6 +195,7 @@ const mutations = {
 
     state.formA = value;
     state.is_loading = false;
+    state.version++;
   },
   setLoading(state, value) {
     state.is_loading = value;
@@ -243,6 +239,23 @@ function formatCoding(input = "") {
   output = output.replace(/[-]*$/g, "");
 
   return output;
+}
+
+const cache = new Map();
+
+async function validateCoding(input) {
+  if (cache.has(input.coding)) {
+    return cache.get(input.coding);
+  }
+
+  const auth = getInstance();
+  let result = await auth.post(`${FORMA_URL}/department/${state.formA.department_code}/validate-line`, {
+    authority_line: input,
+  });
+
+  cache.set(input.coding, result);
+
+  return result;
 }
 
 export default {

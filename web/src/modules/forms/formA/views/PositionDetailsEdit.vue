@@ -6,6 +6,7 @@
       <template slot="right">
         <v-btn color="primary" small class="mr-5" text @click="close">Cancel</v-btn>
         <v-btn color="primary" @click="save" :disabled="!canSave">Save</v-btn>
+        <div style="display:none">{{ version }}</div>
       </template>
       <v-row>
         <v-col>
@@ -71,18 +72,20 @@ export default {
     ],
     departmentId: "",
     department: {},
-    authority: {},
+    //authority: {},
     showUpload: false,
   }),
   computed: {
     ...mapState("department", ["departments"]),
-    ...mapState("authority/formA", ["formA"]),
+    ...mapState("authority/formA", ["formA", "version"]),
     ...mapState("home", ["profile"]),
 
     canSave() {
       if (this.formA && this.formA.authority_lines) {
         for (let line of this.formA.authority_lines) {
-          if (line.coding_invalid || line.is_working) return false;
+          if (line.coding_invalid || line.is_working) {
+            return false;
+          }
         }
 
         return true;

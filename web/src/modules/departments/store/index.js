@@ -25,7 +25,7 @@ const actions = {
       return;
     }
 
-    const auth = getInstance();
+    const auth = await getInstance();
 
     await auth
       .get(`${DEPARTMENT_URL}`)

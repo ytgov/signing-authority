@@ -80,7 +80,7 @@ export const useAuth0 = ({
         },
 
         async created() {
-            this.options = await getAuthConfig(apiConfigUrl)
+            this.options = await getAuthConfig(apiConfigUrl);
 
             this.auth0Client = await createAuth0Client({
                 ...this.options,

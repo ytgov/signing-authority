@@ -1,35 +1,38 @@
 import { PROFILE_URL, EMPLOYEE_URL } from "@/urls";
-import { secureGet, securePost } from "@/store/jwt";
+import { getInstance } from "@/auth/auth0-plugin";
 
 const state = {
-    profile: {},
+  profile: {},
 };
 
 const actions = {
-    async initialize(store) {
-        console.log("-- Initializing Home Store")
-        await store.dispatch("loadProfile")
-    },
-    async loadProfile({ commit }) {
-        await secureGet(PROFILE_URL)
-            .then(resp => {
-                commit("setProfile", resp.data.data);
-            });
-    },
-    async employeeSearch(store, terms) {
-        return await securePost(`${EMPLOYEE_URL}/search`, { terms })
-    }
+  async initialize(store) {
+    console.log("-- Initializing Home Store");
+    await store.dispatch("loadProfile");
+  },
+  async loadProfile({ commit }) {
+    const auth = getInstance();
+
+    await auth.get(PROFILE_URL).then((resp) => {
+      commit("setProfile", resp.data.data);
+    });
+  },
+  async employeeSearch(store, terms) {
+    const auth = getInstance();
+
+    return await auth.post(`${EMPLOYEE_URL}/search`, { terms });
+  },
 };
 
 const mutations = {
-    setProfile(state, value) {
-        state.profile = value;
-    }
+  setProfile(state, value) {
+    state.profile = value;
+  },
 };
 
 export default {
-    namespaced: true,
-    state,
-    actions,
-    mutations
+  namespaced: true,
+  state,
+  actions,
+  mutations,
 };

@@ -27,6 +27,7 @@
               width="3"
               style="margin-top: 2px"
             ></v-progress-circular>
+            <div style="display:none">{{version}}</div>
           </template>
         </v-text-field>
       </td>
@@ -129,7 +130,7 @@ export default {
     items: [],
   }),
   computed: {
-    ...mapState("authority/formA", ["formA"]),
+    ...mapState("authority/formA", ["formA", "version"]),
   },
   methods: {
     ...mapActions("authority", ["getOperationalRestictions"]),

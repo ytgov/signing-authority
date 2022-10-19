@@ -5,6 +5,7 @@ import { getInstance } from "@/auth/auth0-plugin";
 const state = {
   formB: { employee: {}, supervisor: {}, department: {}, form_a: {}, authority_lines: [] },
   is_loading: false,
+  version: 0,
 };
 
 const getters = {
@@ -90,17 +91,13 @@ const actions = {
 
 const mutations = {
   async setFormB(state, value) {
-    const auth = getInstance();
-
     if (value.authority_lines) {
       for (let line of value.authority_lines) {
         line.coding_invalid = false;
         line.coding = cleanCoding(line.coding);
 
         if (line.coding) {
-          let validationResult = await auth.post(`${FORMA_URL}/department/${value.department_code}/validate-line`, {
-            authority_line: line,
-          });
+          let validationResult = await validateCoding(line);
 
           line.coding_invalid = !validationResult.data;
         }
@@ -121,6 +118,8 @@ const mutations = {
         line.trust_limit = cleanZeros(line.trust_limit);
         line.is_working = false;
       }
+
+      state.version++;
     }
 
     state.formB = value;
@@ -164,6 +163,23 @@ function formatCoding(input = "") {
   output = output.replace(/[-]*$/g, "");
 
   return output;
+}
+
+const cache = new Map();
+
+async function validateCoding(input) {
+  if (cache.has(input.coding)) {
+    return cache.get(input.coding);
+  }
+
+  const auth = getInstance();
+  let result = await auth.post(`${FORMA_URL}/department/${state.formB.department_code}/validate-line`, {
+    authority_line: input,
+  });
+
+  cache.set(input.coding, result);
+
+  return result;
 }
 
 export default {

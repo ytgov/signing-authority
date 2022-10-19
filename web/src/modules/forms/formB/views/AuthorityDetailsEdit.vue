@@ -2,6 +2,10 @@
   <v-container fluid class="down-top-padding">
     <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs"> </BaseBreadcrumb>
 
+    <v-overlay absolute :value="is_loading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+
     <BaseCard :showHeader="true" :heading="`Form B for ${formB.employee.name}`">
       <template slot="right">
         <v-btn color="primary" small class="mr-5" text @click="closeClick">Cancel</v-btn>
@@ -156,6 +160,7 @@
                             width="3"
                             style="margin-top: 2px"
                           ></v-progress-circular>
+                          <div style="display:none">{{ version }}</div>
                         </template>
                       </v-text-field>
                     </td>
@@ -344,7 +349,7 @@
 </style>
 
 <script>
-import { mapGetters, mapActions, mapMutations } from "vuex";
+import { mapGetters, mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   name: "AuthorityDetails",
@@ -353,31 +358,43 @@ export default {
     page: {
       title: "",
     },
+    breadcrumbs: [
+      {
+        text: "Signing Authorities Home",
+        to: "/dashboard",
+      },
+      {
+        text: "",
+        to: "",
+        exact: true,
+      },
+      {
+        text: "Form B Authorizations",
+        to: "",
+        exact: true,
+      },
+      {
+        text: "",
+        to: "",
+        exact: true,
+      },
+      {
+        text: "Edit",
+      },
+    ],
+
     id: "",
+    departmentId: "",
+    department: {},
 
     authority: {},
     showUpload: false,
     items: [],
   }),
   computed: {
-    ...mapGetters("authority/formB", ["formB"]),
+    ...mapState("authority/formB", ["formB", "version", "is_loading"]),
+    ...mapState(["initializationComplete"]),
     ...mapGetters("department", ["departments"]),
-    breadcrumbs: function() {
-      let b = [{ text: "Signing Authorities Home", to: "/dashboard" }];
-
-        b.push({
-          text: `${this.formB.department_descr}`,
-          to: `/departments/${this.formB.department_code}`,
-        });
-        b.push({
-          text: `Form B Authorizations`,
-          to: `/departments/${this.formB.department_code}/form-b`,
-        });
-        b.push({
-          text: `${this.formB.employee.title} (${this.formB.employee.name}) - Edit`,
-        });
-      return b;
-    },
 
     canSave() {
       if (this.formB && this.formB.authority_lines) {
@@ -390,17 +407,41 @@ export default {
       return false;
     },
   },
+  watch: {
+    initializationComplete(val) {
+      if (val) {
+        this.loadScreen();
+      }
+    },
+  },
+
   async mounted() {
     this.id = this.$route.params.id;
-    let p = await this.loadFormB(this.id);
 
-    this.page.title = `Form B for ${p.employee.name}`;
-    this.items = Object.keys(await this.getOperationalRestictions());
+    if (this.initializationComplete) this.loadScreen();
   },
   methods: {
+    ...mapActions("department", ["getDepartment"]),
     ...mapActions("authority/formB", ["loadFormB", "saveFormB"]),
     ...mapActions("authority", ["getOperationalRestictions"]),
     ...mapMutations("authority/formB", ["setFormB"]),
+
+    async loadScreen() {
+      let p = await this.loadFormB(this.id);
+
+      this.departmentId = p.department_code;
+      this.department = await this.getDepartment({ id: this.departmentId });
+
+      this.page.title = `Form B Details - Edit`;
+      this.items = Object.keys(await this.getOperationalRestictions());
+
+      this.breadcrumbs[1].text = this.department.descr;
+      this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
+      this.breadcrumbs[2].to = `/departments/${this.departmentId}/form-b`;
+
+      this.breadcrumbs[3].text = `${p.employee.title} (${p.employee.name})`;
+      this.breadcrumbs[3].to = `/form-b/${this.id}`;
+    },
 
     addLine() {
       this.formB.authority_lines.push({ coding: `${this.formB.department_code}` });

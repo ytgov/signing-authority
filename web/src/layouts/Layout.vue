@@ -120,6 +120,8 @@ export default {
     hasSidebarClosable: config.hasSidebarClosable,
     search: "",
     showOverlay: true,
+
+    interval: null,
   }),
   computed: {
     ...mapState("home", ["profile"]),
@@ -140,10 +142,17 @@ export default {
     },
   },
   async mounted() {
-    //let auth = await getInstance();
-    //await auth.getTokenSilently();
-    await this.initialize();
-    this.showOverlay = false;
+    if (auth.auth0Client) {
+      this.doInitialize();
+      return;
+    }
+
+    this.interval = window.setInterval(() => {
+      if (auth.auth0Client) {
+        window.clearInterval(this.interval);
+        this.doInitialize();
+      }
+    }, 200);
   },
   watch: {
     $route(to) {
@@ -172,6 +181,10 @@ export default {
     },
     signOut: function() {
       window.location = LOGOUT_URL;
+    },
+    async doInitialize() {
+      await this.initialize();
+      this.showOverlay = false;
     },
   },
 };
