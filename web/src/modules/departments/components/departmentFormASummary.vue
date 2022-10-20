@@ -17,7 +17,7 @@
       </v-card>
     </v-col>
     <v-col>
-      <v-card :to="positionsLink">
+      <v-card :to="awaitingPositionsLink">
         <v-card-text class="text-h4 mb-0 pb-0">
           {{ awaitingPositionCount }}
         </v-card-text>
@@ -55,6 +55,13 @@ export default {
       return {
         name: "DepartmentPositionList",
         params: { departmentId: this.$route.params.departmentId },
+      };
+    },
+    awaitingPositionsLink() {
+      return {
+        name: "DepartmentPositionList",
+        params: { departmentId: this.$route.params.departmentId },
+        query: { status: "Locked" },
       };
     },
   },

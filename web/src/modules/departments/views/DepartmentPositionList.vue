@@ -173,7 +173,7 @@ export default {
         disabled: true,
       },
     ],
-    statusOptions: ["Any", "Active", "Inactive"],
+    statusOptions: ["Any", "Active", "Locked", "Inactive"],
     allItems: [],
     formAItems: [],
     item: {},
@@ -196,6 +196,13 @@ export default {
     this.breadcrumbs[1].text = this.item.descr;
 
     await this.loadFormA();
+
+    let status = this.$route.query.status || "";
+
+    if (status) {
+      this.statusFilter = status;
+      this.filterList();
+    }
 
     this.loading = false;
   },
@@ -278,6 +285,7 @@ export default {
         list = list.filter((i) => {
           if (this.statusFilter == "Active" && i.status == "Active") return true;
           else if (this.statusFilter == "Inactive" && i.status.indexOf("Inactive") == 0) return true;
+          else if (this.statusFilter == "Locked" && i.status.indexOf("Locked") == 0) return true;
 
           return false;
         });

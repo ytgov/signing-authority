@@ -5,7 +5,7 @@
       <department-form-a-summary
         :positionCount="positions.length"
         :awaitingFormACount="pendingGroups.length"
-        :awaitingPositionCount="0"
+        :awaitingPositionCount="lockedPositions.length"
       />
 
       <v-data-table
@@ -58,6 +58,9 @@ export default {
     },
     positions() {
       return this.formAItems;
+    },
+    lockedPositions() {
+      return this.formAItems.filter((p) => p.status == "Locked");
     },
   },
   mounted: async function() {
