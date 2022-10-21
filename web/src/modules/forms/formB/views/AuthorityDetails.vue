@@ -303,7 +303,7 @@ export default {
           to: `/departments/${this.formB.department_code}/form-b`,
         });
 
-       /*  b.push({
+        /*  b.push({
           text: `${this.formB.employee.name}`,
           to: `/employee/${this.formB.employee.ynet_id}`,
         }); */
@@ -347,7 +347,10 @@ export default {
       return true;
     },
     canUnlock() {
-      if (this.formB.department_reviews && !this.formB.finance_reviews) return true;
+      if (this.formB.department_reviews && !this.formB.finance_reviews) {
+        if (this.profile.roles.includes("System Admin")) return true;
+        if (this.profile.roles.includes("Department Admin")) return true;
+      }
       return false;
     },
     canUpload() {

@@ -65,7 +65,7 @@
                                     No results matching "<strong>{{
                                         activitySearch
                                     }}</strong
-                                    >". Press <kbd>enter</kbd> to create a new
+                                    >". Press <kbd>Tab</kbd> to create a new
                                     one
                                 </v-list-item-title>
                             </v-list-item-content>
