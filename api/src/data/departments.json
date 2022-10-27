@@ -1,0 +1,102 @@
+[
+  {
+    "dept": "01",
+    "descr": "LEGISLATIVE ASSEMBLY OFFICE"
+  },
+  {
+    "dept": "02",
+    "descr": "EXECUTIVE COUNCIL OFFICE"
+  },
+  {
+    "dept": "03",
+    "descr": "EDUCATION"
+  },
+  {
+    "dept": "07",
+    "descr": "ECONOMIC DEVELOPMENT"
+  },
+  {
+    "dept": "08",
+    "descr": "JUSTICE"
+  },
+  {
+    "dept": "10",
+    "descr": "PUBLIC SERVICE COMMISSION"
+  },
+  {
+    "dept": "11",
+    "descr": "WOMEN AND GENDER EQUITY DIRECTORATE"
+  },
+  {
+    "dept": "12",
+    "descr": "FINANCE"
+  },
+  {
+    "dept": "15",
+    "descr": "HEALTH & SOCIAL SERVICES"
+  },
+  {
+    "dept": "23",
+    "descr": "OFFICE OF THE OMBUDSMAN"
+  },
+  {
+    "dept": "24",
+    "descr": "ELECTIONS OFFICE"
+  },
+  {
+    "dept": "26",
+    "descr": "CHILD & YOUTH ADVOCATE OFFICE"
+  },
+  {
+    "dept": "27",
+    "descr": "FRENCH LANGUAGE SERVICES DIRECTORATE"
+  },
+  {
+    "dept": "51",
+    "descr": "COMMUNITY SERVICES"
+  },
+  {
+    "dept": "52",
+    "descr": "DEPARTMENT OF ENVIRONMENT"
+  },
+  {
+    "dept": "53",
+    "descr": "ENERGY MINES & RESOURCE"
+  },
+  {
+    "dept": "54",
+    "descr": "TOURISM AND CULTURE"
+  },
+  {
+    "dept": "55",
+    "descr": "HIGHWAYS & PUBLIC WORKS"
+  },
+  {
+    "dept": "64",
+    "descr": "QUEEN'S PRINTER AGENCY-SOA"
+  },
+  {
+    "dept": "65",
+    "descr": "FLEET VEHICLES - SOA"
+  },
+  {
+    "dept": "66",
+    "descr": "PROPERTY MANAGEMENT AGENCY"
+  },
+  {
+    "dept": "93",
+    "descr": "LOTTERIES CORPORATION"
+  },
+  {
+    "dept": "95",
+    "descr": "WORKER'S COMPENSATION BOARD"
+  },
+  {
+    "dept": "96",
+    "descr": "YUKON HOUSING CORPORATION"
+  },
+  {
+    "dept": "97",
+    "descr": "YUKON LIQUOR CORPORATION"
+  }
+]

@@ -9,6 +9,7 @@ const FROM_ADDRESS = "";
 const BASE_TEMPLATE = "../templates/email/base.html";
 const FORMA_WORKFLOW_TEMPLATE = "../templates/email/form_a_notification.html";
 const FORMB_WORKFLOW_TEMPLATE = "../templates/email/form_b_notification.html";
+const FORMB_ACTIVATE_TEMPLATE = "../templates/email/form_b_activate.html";
 
 export class EmailService {
   TRANSPORT: Transporter;
@@ -56,6 +57,16 @@ export class EmailService {
       console.log("-- EMAIL FORM-B SENDING", recipient.email);
       await this.sendEmail(fullName, recipient.email, "Form B Workflow Notification", content);
     }
+  }
+
+  async sendFormBActiveNotice(formB: Authority, effectiveDate: string): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_ACTIVATE_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+    let fullName = formB.employee.name;
+
+    content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+
+    await this.sendEmail(fullName, formB.employee.email, "Form B Activation", content);
   }
 
   async sendEmail(toName: string, toEmail: string, subject: string, customContent: string): Promise<any> {

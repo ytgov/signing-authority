@@ -90,13 +90,13 @@
 
     <v-dialog v-model="showGenerateDialog" persistent width="600">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Gererate Form A</v-toolbar-title>
+        <v-toolbar-title>Generate Form A</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showGenerateDialog = false">mdi-close</v-icon>
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
-          <p v-if="programFilter == 'All'">
+          <!-- <p v-if="programFilter == 'All'">
             This will generate a new Form A that includes all
             <strong>'Non Archived'</strong> position records.
           </p>
@@ -108,7 +108,7 @@
           <p v-else>
             This will generate a new Form A that includes all
             <strong>'Non Archived'</strong> position records within the <strong>'{{ programFilter }}'</strong> Program.
-          </p>
+          </p> -->
           <p>The following {{ matchingItems.length }} position(s) will be included:</p>
           <ul class="mb-3">
             <li v-for="(item, idx) of matchingItems" :key="idx">
@@ -116,16 +116,17 @@
             </li>
           </ul>
 
-          <p>
-            When you click 'Proceed' below, these positions will be placed into a 'Locked' state. You may then download
-            the Form A PDF for approval and signatures. Once this is complete, you must upload the signed PDF to make
-            these Delegations active.
-          </p>
+          <p>By clicking 'Proceed' below, these positions will be locked from further edits.</p>
+          <p>A notification will be sent to the Department of Finance to review the form.</p>
 
           <v-btn color="primary" class="mb-0" @click="doGenerateFormA">Proceed</v-btn>
+          <v-btn color="secondary" class="mb-0 ml-5" @click="doGeneratePreview">Form A Preview</v-btn>
+
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <pdf-preview-dialog ref="pdfPreview"></pdf-preview-dialog>
   </v-container>
 </template>
 
@@ -135,9 +136,11 @@
 import _ from "lodash";
 import { mapActions, mapGetters, mapState } from "vuex";
 import createFormAButton from "../../forms/formA/components/createFormAButton.vue";
+import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
+import { FORMA_URL } from "@/urls";
 
 export default {
-  components: { createFormAButton },
+  components: { createFormAButton, PdfPreviewDialog },
   name: "DepartmentDetail",
   componenets: {
     createFormAButton,
@@ -153,7 +156,6 @@ export default {
       { text: "Activity", value: "activity" },
       { text: "Position", value: "position" },
       { text: "Status", value: "status" },
-      { text: "Reviewed", value: "reviewed_by_department" },
     ],
     page: {
       title: "Delegations by Position",
@@ -337,6 +339,12 @@ export default {
       });
 
       this.$router.push(`/departments/${this.departmentId}/form-a/${answer}`);
+    },
+
+    async doGeneratePreview() {
+      let ids = this.matchingItems.map((i) => i._id).join(",");
+      let previewUrl = `${FORMA_URL}/temp-pdf-preview?ids=${ids}&department_code=${this.departmentId}&department_descr=${this.item.descr}&program=${this.programFilter}&activity=${this.activityFilter}`;
+      this.$refs.pdfPreview.show("Form A Preview", previewUrl);
     },
   },
 };

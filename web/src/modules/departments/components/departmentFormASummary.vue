@@ -21,7 +21,7 @@
         <v-card-text class="text-h4 mb-0 pb-0">
           {{ awaitingPositionCount }}
         </v-card-text>
-        <v-card-text class="mt-0 pt-0">Positions awaiting Authorization</v-card-text>
+        <v-card-text class="mt-0 pt-0">Positions Awaiting Authorization</v-card-text>
       </v-card>
     </v-col>
   </v-row>

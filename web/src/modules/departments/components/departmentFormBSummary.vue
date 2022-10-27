@@ -11,9 +11,9 @@
     <v-col>
       <v-card :to="formBLink">
         <v-card-text class="text-h4 mb-0 pb-0">
-          {{ actingCount }}
+          {{ pendingCount }}
         </v-card-text>
-        <v-card-text class="mt-0 pt-0">Acting</v-card-text>
+        <v-card-text class="mt-0 pt-0">Pending Form B's</v-card-text>
       </v-card>
     </v-col>
   </v-row>
@@ -27,7 +27,7 @@ export default {
       type: Number,
       default: 0,
     },
-    actingCount: {
+    pendingCount: {
       type: Number,
       default: 0,
     },

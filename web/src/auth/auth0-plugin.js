@@ -45,6 +45,9 @@ export const useAuth0 = ({
                 try {
                     await this.auth0Client.handleRedirectCallback();
                     this.user = await this.auth0Client.getUser();
+
+                    console.log("REDIRECT CALLBACK: ", this.redirectUri)
+
                     this.isAuthenticated = true;
                 } catch (error) {
                     this.error = error;

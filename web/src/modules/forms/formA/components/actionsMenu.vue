@@ -22,7 +22,7 @@
           <-- <upload-form-modal></upload-form-modal> ->
           <v-list-item-title>Upload Signed PDF</v-list-item-title>
         </v-list-item> -->
-        <v-list-item v-if="formA.status.indexOf('Archived') == -1">
+        <v-list-item v-if="formA.status == 'Active'">
           <archive-form-a> </archive-form-a>
           <!-- <v-list-item-title>Archive</v-list-item-title> -->
         </v-list-item>

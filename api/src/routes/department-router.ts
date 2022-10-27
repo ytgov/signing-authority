@@ -11,10 +11,13 @@ departmentRouter.use(RequiresData);
 const questService = new QuestService();
 const departmentService = new DepartmentService();
 
+const departList = require("../data/departments.json");
+
 departmentRouter.get("/", async (req: Request, res: Response) => {
   console.log;
 
-  let depts = await departmentService.getDepartmentList();
+  //let depts = await departmentService.getDepartmentList();
+  let depts = departList
 
   // if (depts.length === 0) {
   //   depts = await departmentService.getOfflineDepartmentList();

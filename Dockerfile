@@ -47,5 +47,6 @@ COPY --chown=node:node api/src/templates/* /home/node/app/dist/templates/
 COPY --chown=node:node api/src/templates/email/* /home/node/app/dist/templates/email/
 COPY --chown=node:node api/src/templates/pdf/* /home/node/app/dist/templates/pdf/
 COPY --chown=node:node api/src/web/*.png /home/node/app/dist/web/
+COPY --chown=node:node api/src/data/departments.json /home/node/app/dist/data/departments.json
 
 CMD ["node", "./dist/index.js"]

@@ -40,6 +40,85 @@ formARouter.get("/count", async (req: Request, res: Response) => {
   res.json({ form_a_count: count });
 });
 
+formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
+  const ids = req.query.ids as string;
+  const { department_code, department_descr, program, activity } = req.query;
+
+  let db = req.store.FormA as GenericService<Position>;
+  let positions = new Array<Position>();
+
+  for (let id of ids.split(",")) {
+    let p = await db.getById(id);
+    if (p) positions.push(p);
+  }
+
+  positions.sort((a, b) => {
+    if (a.program_branch == b.program_branch) {
+      if (a.activity == b.activity) {
+        return (a.position || "") > (b.position || "") ? -1 : (a.position || "") < (b.position || "") ? 1 : 0;
+      } else {
+        return (a.activity || "") > (b.activity || "") ? -1 : (a.activity || "") < (b.activity || "") ? 1 : 0;
+      }
+    }
+
+    return (a.program_branch || "") > (b.program_branch || "")
+      ? -1
+      : (a.program_branch || "") < (b.program_branch || "")
+      ? 1
+      : 0;
+  });
+
+  let item = {
+    department_code,
+    department_descr,
+    create_date: new Date(),
+    created_by: "",
+    created_by_id: ObjectId.createFromTime(123),
+    status: "Preview",
+    program,
+    activity,
+  } as PositionGroup;
+
+  let lines = new Array();
+
+  for (let position of positions) {
+    let title = position.position;
+    let lineList = position.authority_lines || [];
+
+    for (let line of lineList) {
+      lines.push({
+        position: title,
+        coding: line.coding,
+        coding_display: FormatCoding(line.coding),
+        operational_restriction: line.operational_restriction,
+        contracts_for_goods_services: line.contracts_for_goods_services,
+        loans_and_guarantees: line.loans_and_guarantees,
+        transfer_payments: line.transfer_payments,
+        authorization_for_travel: line.authorization_for_travel,
+        request_for_goods_services: line.request_for_goods_services,
+        assignment_authority: line.assignment_authority,
+        s29_performance_limit: line.s29_performance_limit,
+        s30_payment_limit: line.s30_payment_limit,
+      });
+    }
+
+    item.authority_lines = lines;
+  }
+
+  const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormATemplate.html");
+
+  (item as any).API_PORT = API_PORT;
+
+  let t = new ExpressHandlebars();
+  const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
+  let data = template(item);
+
+  let pdf = await generatePDF(data);
+  res.setHeader("Content-disposition", 'attachment; filename="FormA.pdf"');
+  res.setHeader("Content-type", "application/pdf");
+  res.send(pdf);
+});
+
 formARouter.get(
   "/:id",
   [param("id").isMongoId().notEmpty()],
@@ -287,7 +366,7 @@ formARouter.put(
             position.audit_lines?.push({
               date: new Date(),
               user_name: `${req.user.first_name} ${req.user.last_name}`,
-              action: "Activate",
+              action: "Activated",
               previous_value: {},
             });
 
@@ -374,6 +453,8 @@ formARouter.put(
           date: new Date(),
           comments,
         };
+
+        item.upload_signatures = undefined;
 
         let creator: User[];
 
@@ -578,6 +659,21 @@ formARouter.get(
 
     if (item) {
       item.positions = await db.getAll({ position_group_id: item._id });
+      item.positions.sort((a, b) => {
+        if (a.program_branch == b.program_branch) {
+          if (a.activity == b.activity) {
+            return (a.position || "") > (b.position || "") ? -1 : (a.position || "") < (b.position || "") ? 1 : 0;
+          } else {
+            return (a.activity || "") > (b.activity || "") ? -1 : (a.activity || "") < (b.activity || "") ? 1 : 0;
+          }
+        }
+
+        return (a.program_branch || "") > (b.program_branch || "")
+          ? -1
+          : (a.program_branch || "") < (b.program_branch || "")
+          ? 1
+          : 0;
+      });
 
       let lines = new Array();
 

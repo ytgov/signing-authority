@@ -41,18 +41,7 @@ export interface Authority extends MongoEntity {
   finance_reviews?: ReviewResults[];
   upload_signatures?: any;
 
-  activation?: [
-    {
-      date: Date;
-      expire_date?: Date;
-      activate_reason: string;
-      archive_reason?: string;
-      activate_user_id: ObjectId;
-
-      file?: StoredFile;
-      memo?: StoredFile;
-    }
-  ];
+  activation?: ActivationRecord[];
 
   // used in DTO only
   department?: Department;
@@ -63,6 +52,17 @@ export interface Authority extends MongoEntity {
   issue_date_display?: string;
   created_by?: User;
   status?: string;
+}
+
+export interface ActivationRecord {
+  date: Date;
+  expire_date?: Date;
+  activate_reason: string;
+  archive_reason?: string;
+  activate_user_id: ObjectId;
+
+  file?: StoredFile;
+  memo?: StoredFile;
 }
 
 export interface ReviewResults {

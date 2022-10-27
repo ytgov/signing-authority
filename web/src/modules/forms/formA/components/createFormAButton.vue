@@ -12,7 +12,7 @@
         </template>
 
         <v-app-bar dark color="#0097A9">
-            <v-toolbar-title>Add Form A Position</v-toolbar-title>
+            <v-toolbar-title>Add Position</v-toolbar-title>
             <v-spacer />
             <v-icon title="Close" @click="show = false">mdi-close</v-icon>
         </v-app-bar>
@@ -73,7 +73,7 @@
                     </template>
                 </v-combobox>
                 <v-text-field
-                    label="Position"
+                    label="Position name"
                     dense
                     outlined
                     v-model="newFormA.position"

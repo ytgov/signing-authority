@@ -18,9 +18,9 @@
         </v-col>
         <v-col>
           <v-card class="default">
-            <v-card-title>Active Form B Authorizations</v-card-title>
+            <v-card-title>Form B Authorizations</v-card-title>
             <v-card-text>
-              <department-form-b-summary :actingCount="actingFormB" :activeFormBCount="activeFormB" />
+              <department-form-b-summary :actingCount="actingFormB" :pendingCount="pendingFormB" />
 
               <department-form-b-list :search="search" />
               <div class="mt-4 ml-2">
@@ -78,8 +78,9 @@ export default {
   computed: {
     ...mapState("department", ["departments"]),
 
-    actingFormB() {
-      return 0;
+    pendingFormB() {
+      let pendingStates = ["Locked for Signatures", "Upload Signatures"];
+      return this.formBList.filter((f) => pendingStates.indexOf(f.status) >= 0).length;
     },
     activeFormB() {
       return this.formBList.filter((f) => f.status == "Active").length;

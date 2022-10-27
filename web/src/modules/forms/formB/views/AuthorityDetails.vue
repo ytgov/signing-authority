@@ -62,10 +62,6 @@
                 <v-list-item-title>Edit</v-list-item-title>
               </v-list-item>
 
-              <v-list-item @click="unlockClick" v-if="canUnlock">
-                <v-list-item-title>Unlock and Rewind</v-list-item-title>
-              </v-list-item>
-
               <v-list-item @click="generateClick" v-if="canLock">
                 <v-list-item-title>Lock for Signatures</v-list-item-title>
               </v-list-item>
@@ -80,6 +76,10 @@
 
               <v-list-item @click="startUploadReview" v-if="canUpload">
                 <v-list-item-title>Upload Signed PDF</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="unlockClick" v-if="canUnlock">
+                <v-list-item-title>Unlock and Rewind</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="startFinanceApprove" v-if="canApprove">
@@ -178,7 +178,7 @@
 
     <v-dialog v-model="showUploadDialog" persistent width="700">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Upload Signatures</v-toolbar-title>
+        <v-toolbar-title>Upload Signed Form B for {{ formB.employee.name }}</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showUploadDialog = false">mdi-close</v-icon>
       </v-app-bar>
@@ -186,19 +186,14 @@
         <v-card-text class="pt-3">
           <p>Please type the names of the individuals that signed this form.</p>
           <v-checkbox
-            :label="`Supervisor signed (${formB.supervisor.name} as ${formB.supervisor.title})`"
+            label="Supervisor signed"
             dense
             outlined
             hide-details
             v-model="formB.supervisor_signed"
           ></v-checkbox>
 
-          <v-checkbox
-            :label="`Employee signed (${formB.employee.name} as ${formB.employee.title})`"
-            dense
-            outlined
-            v-model="formB.employee_signed"
-          ></v-checkbox>
+          <v-checkbox label="Employee signed" dense outlined v-model="formB.employee_signed"></v-checkbox>
           <v-file-input
             dense
             outlined
@@ -207,7 +202,7 @@
             v-model="formB.file"
           ></v-file-input>
 
-          <p>Finance admins will recieve an email notification that you have completed this step.</p>
+          <p>Department of Finance Admins will receive an email notification that this Form B is ready for review.</p>
           <v-btn @click="uploadSigned" color="primary" class="mb-0" :disabled="!uploadIsValid">Upload</v-btn>
         </v-card-text>
       </v-card>
@@ -215,17 +210,22 @@
 
     <v-dialog v-model="showFinanceApproveDialog" persistent width="600">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Finance Approve</v-toolbar-title>
+        <v-toolbar-title>Department of Finance Approval</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showFinanceApproveDialog = false">mdi-close</v-icon>
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
           <p>
-            By clicking the 'Approve' button below, you are verifying that you have reviewed the signed Form B and that
-            it is ready to be activated.
+            By clicking the 'Approve' button below, you are verifying that you have reviewed the uploaded Form B.
+            Clicking 'Approve' will activate the Form B.
           </p>
-          <p>Department admins will recieve an email notification that you have completed this step.</p>
+          <p>
+            If the Form B has errors, provide detail in the dialogue box below for the department to rectify the errors,
+            then click 'Reject'.
+          </p>
+
+          <p>Departmental finance admins will receive an email notification when you complete this step.</p>
 
           <v-textarea rows="3" dense outlined label="Comments" hide-details v-model="formB.comments"></v-textarea>
 

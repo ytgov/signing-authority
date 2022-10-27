@@ -23,14 +23,14 @@
             :rules="[() => !financeReviewRejected]"
             error
           >
-            Finance Review
+            Dept of Finance Review
             <small class="mt-1">{{ financeReviewDate }}</small>
             <small>{{ financeReviewName }}</small>
           </v-stepper-step>
           <v-divider></v-divider>
 
           <v-stepper-step step="3" :complete="stepperValue > 3">
-            Upload Signatures
+            Upload Signed Form A
             <small class="mt-1">{{ signatureDate }}</small>
             <small class="mt-1">{{ signatureName }}</small>
           </v-stepper-step>
@@ -42,7 +42,7 @@
             :color="financeApproveRejected ? 'error' : 'primary'"
             :rules="[() => !financeApproveRejected]"
           >
-            Finance Approve
+            Dept of Finance Approval
             <small class="mt-1">{{ financeApproveDate }}</small>
             <small>{{ financeApproveName }}</small>
           </v-stepper-step>
@@ -55,12 +55,12 @@
       </v-stepper>
 
       <v-alert dense v-if="this.item.finance_review_reject" type="error">
-        Finance Review Comments: <br />
+        Department of Finance comments: <br />
         <span style="font-weight: 300">{{ this.item.finance_review_reject.comments }}</span>
       </v-alert>
 
       <v-alert dense v-if="this.item.finance_approval_reject" type="error">
-        Finance Approve Comments: <br />
+        Department of Finance comments:: <br />
         <span style="font-weight: 300">{{ this.item.finance_approval_reject.comments }}</span>
       </v-alert>
 
@@ -89,7 +89,7 @@
                   </v-list-item>
 
                   <v-list-item @click="startUploadReview" v-if="canUpload">
-                    <v-list-item-title>Upload Signatures</v-list-item-title>
+                    <v-list-item-title>Upload Signed Form A</v-list-item-title>
                   </v-list-item>
 
                   <v-list-item @click="showPreview">
@@ -147,30 +147,33 @@
 
     <v-dialog v-model="showFinanceReviewDialog" persistent width="600">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Finance Review</v-toolbar-title>
+        <v-toolbar-title>Department of Finance Review</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showFinanceReviewDialog = false">mdi-close</v-icon>
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
           <p>
-            By clicking the 'Approve' button below, you are verifying that you have reviewed this draft Form A and that
-            it is ready to move forward to the next step, where the department downloads the PDF, obtain signatures and
-            uploads the signed copy.
+            By clicking the 'Approve' button below, you are verifying that you have reviewed the draft Form A, and that
+            it is ready to move forward in the process.
           </p>
-          <p>Department admins will recieve an email notification that you have completed this step.</p>
+          <p>
+            If the Form A has errors, provide detail in the dialogue box below for the department to rectify the errors,
+            then click 'Reject'.
+          </p>
+          <p>Departmental finance admins will receive an email notification when you complete this step.</p>
 
           <v-textarea rows="3" dense outlined label="Comments" hide-details v-model="item.comments"></v-textarea>
 
           <v-btn @click="financeReviewApprove" color="primary" class="mb-0 mr-5">Approve</v-btn>
-          <v-btn @click="financeReviewReject" color="error" class="mb-0">Reject</v-btn>
+          <v-btn @click="financeReviewReject" color="error" class="mb-0" :disabled="!item.comments">Reject</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <v-dialog v-model="showUploadDialog" persistent width="600">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Upload Signatures</v-toolbar-title>
+        <v-toolbar-title>Upload Signed Form A</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showUploadDialog = false">mdi-close</v-icon>
       </v-app-bar>
@@ -200,22 +203,22 @@
 
     <v-dialog v-model="showFinanceApproveDialog" persistent width="600">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Finance Approve</v-toolbar-title>
+        <v-toolbar-title>Department of Finance Approval</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showFinanceApproveDialog = false">mdi-close</v-icon>
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
           <p>
-            By clicking the 'Approve' button below, you are verifying that you have reviewed the signed Form A and that
-            it is ready to be activated.
+            By clicking the 'Approve' button below, you are verifying that you have reviewed the uploaded Form A.
+            Clicking Approve will activate the Form A and all positions contained within.
           </p>
           <p>Department admins will recieve an email notification that you have completed this step.</p>
 
           <v-textarea rows="3" dense outlined label="Comments" hide-details v-model="item.comments"></v-textarea>
 
           <v-btn @click="financeApproveApprove" color="primary" class="mb-0 mr-5">Approve</v-btn>
-          <v-btn @click="financeApproveReject" color="error" class="mb-0">Reject</v-btn>
+          <v-btn @click="financeApproveReject" color="error" class="mb-0" :disabled="!item.comments">Reject</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>

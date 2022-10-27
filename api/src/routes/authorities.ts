@@ -35,7 +35,7 @@ authoritiesRouter.get(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let item = await loadSingleAuthority(req, id);
-    
+
     if (!item.authority_type) item.authority_type = "substantive"; // polyfill for late model change
 
     if (item) return res.json({ data: item });
@@ -108,7 +108,7 @@ authoritiesRouter.put(
         existing.audit_lines = existing.audit_lines || [];
 
         existing.audit_lines.push({
-          action: "Lock for Signatures",
+          action: "Locked for Signatures",
           date: new Date(),
           previous_value: {},
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -195,10 +195,17 @@ authoritiesRouter.put(
           },
         ];
 
-        existing.audit_lines = existing.audit_lines || [];
+        existing.activation = existing.activation || [];
+        let activation = {
+          date: new Date(), // this date should be configurable
+          activate_reason: "Activation",
+          activate_user_id: req.user._id,
+        };
+        existing.activation.push(activation);
 
+        existing.audit_lines = existing.audit_lines || [];
         existing.audit_lines.push({
-          action: "Finance Approve",
+          action: "Finance Approved",
           date: new Date(),
           previous_value: {},
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -212,6 +219,8 @@ authoritiesRouter.put(
           "Activate Form B",
           `${req.user.first_name} ${req.user.last_name}`
         );
+
+        await emailService.sendFormBActiveNotice(existing, moment(activation.date).format("MMMM D, YYYY"));
 
         await db.update(id, existing);
       } else if (save_action == "FinanceApproveReject") {

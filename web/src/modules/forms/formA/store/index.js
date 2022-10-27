@@ -13,7 +13,7 @@ const state = {
 
 const getters = {
   isActive: (state) => {
-    if (state.formA.reviewed_by_department) {
+    if (state.formA.status == "Active") {
       //we might consider a check on issue date and if a form is uploaded.
       return true;
     }
