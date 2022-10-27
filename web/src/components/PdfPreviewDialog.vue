@@ -10,7 +10,7 @@
     </v-app-bar>
     <v-card tile :height="previewHeight" style="overflow: scroll">
       <v-card-text>
-        <pdf :src="pdfUrl" @loaded="doneLoading"></pdf>
+        <pdf v-for="i in numPages" :src="loadingTask" :key="i" :page="i" @loaded="doneLoading"></pdf>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -27,6 +27,9 @@ export default {
     title: "",
     loading: false,
     previewHeight: "200px",
+
+    loadingTask: undefined,
+    numPages: undefined,
   }),
   methods: {
     show(title, url) {
@@ -34,6 +37,12 @@ export default {
       this.title = title;
       this.pdfUrl = url;
       this.dialog = true;
+
+      this.loadingTask = pdf.createLoadingTask(this.pdfUrl);
+
+      this.loadingTask.promise.then((pdf) => {
+        this.numPages = pdf.numPages;
+      });
 
       let windowHeight = window.innerHeight;
 
