@@ -20,7 +20,7 @@
           <v-card class="default">
             <v-card-title>Form B Authorizations</v-card-title>
             <v-card-text>
-              <department-form-b-summary :actingCount="actingFormB" :pendingCount="pendingFormB" />
+              <department-form-b-summary :activeFormBCount="activeFormB" :pendingCount="pendingFormB" />
 
               <department-form-b-list :search="search" />
               <div class="mt-4 ml-2">

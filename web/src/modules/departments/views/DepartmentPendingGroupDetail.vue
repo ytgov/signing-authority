@@ -55,12 +55,12 @@
       </v-stepper>
 
       <v-alert dense v-if="this.item.finance_review_reject" type="error">
-        Department of Finance comments: <br />
+        Department of Finance comments:<br />
         <span style="font-weight: 300">{{ this.item.finance_review_reject.comments }}</span>
       </v-alert>
 
       <v-alert dense v-if="this.item.finance_approval_reject" type="error">
-        Department of Finance comments:: <br />
+        Department of Finance comments:<br />
         <span style="font-weight: 300">{{ this.item.finance_approval_reject.comments }}</span>
       </v-alert>
 
@@ -94,6 +94,10 @@
 
                   <v-list-item @click="showPreview">
                     <v-list-item-title>Show Preview</v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item @click="startUnlock" v-if="canUnlock">
+                    <v-list-item-title>Unlock and Rewind</v-list-item-title>
                   </v-list-item>
 
                   <v-list-item color="warning" @click="deleteGrouping" v-if="canDelete">
@@ -386,7 +390,13 @@ export default {
       if (this.item.department_administrator_name && this.item.deputy_minister_name && this.item.file) return true;
       return false;
     },
-
+    canUnlock() {
+      if (this.stepperValue >= 3) {
+        if (this.profile.roles.includes("System Admin")) return true;
+        if (this.profile.roles.includes("Department Admin")) return true;
+      }
+      return false;
+    },
     lockDate() {
       return "On " + moment(this.item.create_date).format("MMM D, YYYY @ h:mm a");
     },
@@ -534,6 +544,14 @@ export default {
       this.savePendingGroup(this.item).then(() => {
         this.loadFormA();
         this.showFinanceApproveDialog = false;
+      });
+    },
+
+    startUnlock() {
+      this.item.save_action = "Reset";
+
+      this.savePendingGroup(this.item).then(() => {
+        this.loadFormA();
       });
     },
 

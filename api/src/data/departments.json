@@ -1,7 +1,7 @@
 [
   {
     "dept": "01",
-    "descr": "LEGISLATIVE ASSEMBLY OFFICE"
+    "descr": "LEGISLATIVE ASSEMBLY"
   },
   {
     "dept": "02",
@@ -77,7 +77,7 @@
   },
   {
     "dept": "65",
-    "descr": "FLEET VEHICLES - SOA"
+    "descr": "FLEET VEHICLES"
   },
   {
     "dept": "66",

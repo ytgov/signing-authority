@@ -514,6 +514,15 @@ formARouter.put(
             await groupDb.update(id, item);
           }
         }
+      } else if (save_action == "Reset") {
+        item.upload_signatures = undefined;
+        item.finance_approval_complete = undefined;
+        item.finance_approval_reject = undefined;
+        item.finance_review_complete = undefined;
+        item.finance_review_reject = undefined;
+        item.status = "Locked for Signatures";
+
+        groupDb.update(id, item);
       }
     }
 
