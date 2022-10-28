@@ -27,7 +27,30 @@
               width="3"
               style="margin-top: 2px"
             ></v-progress-circular>
-            <div style="display:none">{{version}}</div>
+            <div style="display:none">{{ version }}</div>
+
+            <v-menu bottom left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon small v-bind="attrs" v-on="on" class="my-0">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+
+              <v-list dense>
+                <v-list-item @click="moveLineUp(idx)" :disabled="idx == 0">
+                  <v-list-item-icon><v-icon>mdi-arrow-up</v-icon></v-list-item-icon>
+                  <v-list-item-title>Move up</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="moveLineDown(idx)" :disabled="idx == formA.authority_lines.length - 1">
+                  <v-list-item-icon><v-icon>mdi-arrow-down</v-icon></v-list-item-icon>
+                  <v-list-item-title>Move down</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="duplicateLine(idx)">
+                  <v-list-item-icon><v-icon>mdi-content-copy</v-icon></v-list-item-icon>
+                  <v-list-item-title>Duplicate</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </template>
         </v-text-field>
       </td>
@@ -120,6 +143,7 @@
 </template>
 <script>
 import { mapActions, mapState, mapMutations } from "vuex";
+import _ from "lodash";
 
 export default {
   name: "formATable",
@@ -146,6 +170,19 @@ export default {
     codingChanged(line) {
       line.is_working = true;
       this.itemChanged();
+    },
+    moveLineUp(idx) {
+      let item = this.formA.authority_lines.splice(idx, 1)[0];
+      this.formA.authority_lines.splice(idx - 1, 0, item);
+    },
+    moveLineDown(idx) {
+      let item = this.formA.authority_lines.splice(idx, 1)[0];
+      this.formA.authority_lines.splice(idx + 1, 0, item);
+    },
+    duplicateLine(idx) {
+      console.log("DUP", idx);
+      let item = _.clone(this.formA.authority_lines[idx]);
+      this.formA.authority_lines.splice(idx + 1, 0, item);
     },
   },
   async mounted() {
