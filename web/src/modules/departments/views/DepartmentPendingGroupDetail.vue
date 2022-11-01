@@ -183,14 +183,18 @@
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
-          <p>Please type the names of the individuals that signed this form.</p>
-          <v-text-field
-            label="Departmental Administrator"
+          <p>Please ensure both signatures are on the uploaded Form A.</p>
+
+          <v-checkbox
+            label="Signed by Departmental Finance Director or equivalent"
             dense
             outlined
-            v-model="item.department_administrator_name"
-          ></v-text-field>
-          <v-text-field label="Deputy Minister" dense outlined v-model="item.deputy_minister_name"></v-text-field>
+            hide-details
+            v-model="item.supervisor_signed"
+          ></v-checkbox>
+
+          <v-checkbox label="Signed by Deputy Minister or equivalent" dense outlined v-model="item.employee_signed"></v-checkbox>
+
           <v-file-input
             dense
             outlined
@@ -387,7 +391,7 @@ export default {
       return false;
     },
     uploadIsValid() {
-      if (this.item.department_administrator_name && this.item.deputy_minister_name && this.item.file) return true;
+      if (this.item.supervisor_signed && this.item.employee_signed && this.item.file) return true;
       return false;
     },
     canUnlock() {

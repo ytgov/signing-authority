@@ -184,7 +184,7 @@
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
-          <p>Please type the names of the individuals that signed this form.</p>
+          <p>Please ensure both the Supervisor and Employee have signed the form.</p>
           <v-checkbox
             label="Supervisor signed"
             dense
