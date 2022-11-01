@@ -161,6 +161,32 @@
                             style="margin-top: 2px"
                           ></v-progress-circular>
                           <div style="display:none">{{ version }}</div>
+
+                          <v-menu bottom left>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn icon small v-bind="attrs" v-on="on" class="my-0">
+                                <v-icon>mdi-dots-vertical</v-icon>
+                              </v-btn>
+                            </template>
+
+                            <v-list dense>
+                              <v-list-item @click="moveLineUp(idx)" :disabled="idx == 0">
+                                <v-list-item-icon><v-icon>mdi-arrow-up</v-icon></v-list-item-icon>
+                                <v-list-item-title>Move up</v-list-item-title>
+                              </v-list-item>
+                              <v-list-item
+                                @click="moveLineDown(idx)"
+                                :disabled="idx == formB.authority_lines.length - 1"
+                              >
+                                <v-list-item-icon><v-icon>mdi-arrow-down</v-icon></v-list-item-icon>
+                                <v-list-item-title>Move down</v-list-item-title>
+                              </v-list-item>
+                              <v-list-item @click="duplicateLine(idx)">
+                                <v-list-item-icon><v-icon>mdi-content-copy</v-icon></v-list-item-icon>
+                                <v-list-item-title>Duplicate</v-list-item-title>
+                              </v-list-item>
+                            </v-list>
+                          </v-menu>
                         </template>
                       </v-text-field>
                     </td>
@@ -350,6 +376,7 @@
 
 <script>
 import { mapGetters, mapActions, mapState, mapMutations } from "vuex";
+import _ from "lodash";
 
 export default {
   name: "AuthorityDetails",
@@ -449,6 +476,19 @@ export default {
     removeLine(idx) {
       this.formB.authority_lines.splice(idx, 1);
       this.saveFormB(this.formB);
+    },
+    moveLineUp(idx) {
+      let item = this.formB.authority_lines.splice(idx, 1)[0];
+      this.formB.authority_lines.splice(idx - 1, 0, item);
+    },
+    moveLineDown(idx) {
+      let item = this.formB.authority_lines.splice(idx, 1)[0];
+      this.formB.authority_lines.splice(idx + 1, 0, item);
+    },
+    duplicateLine(idx) {
+      console.log("DUP", idx);
+      let item = _.clone(this.formB.authority_lines[idx]);
+      this.formB.authority_lines.splice(idx + 1, 0, item);
     },
     itemChanged() {
       this.setFormB(this.formB);
