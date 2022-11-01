@@ -40,8 +40,8 @@ export interface SignaturesApproval {
   name: string;
   comments?: string;
   date: Date;
-  deputy_minister_name: string;
-  department_administrator_name: string;
+  //deputy_minister_name: string;
+  //department_administrator_name: string;
   date_display?: string;
   file_id: ObjectId;
 }

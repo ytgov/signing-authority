@@ -357,8 +357,8 @@ formARouter.put(
 
             position.activation = {
               activate_user_id: req.user._id,
-              approver_name: item.upload_signatures.deputy_minister_name,
-              recommender_name: item.upload_signatures.department_administrator_name,
+              //approver_name: item.upload_signatures.deputy_minister_name,
+              //recommender_name: item.upload_signatures.department_administrator_name,
               date: new Date(),
               file_id: item.upload_signatures.file_id,
             };
@@ -496,8 +496,8 @@ formARouter.put(
               id: req.user._id,
               name: `${req.user.first_name} ${req.user.last_name}`,
               date: new Date(),
-              department_administrator_name: req.body.department_administrator_name,
-              deputy_minister_name: req.body.deputy_minister_name,
+              //department_administrator_name: req.body.department_administrator_name,
+              //deputy_minister_name: req.body.deputy_minister_name,
               file_id: fileInfo._id,
             };
 

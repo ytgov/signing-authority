@@ -193,7 +193,12 @@
             v-model="item.supervisor_signed"
           ></v-checkbox>
 
-          <v-checkbox label="Signed by Deputy Minister or equivalent" dense outlined v-model="item.employee_signed"></v-checkbox>
+          <v-checkbox
+            label="Signed by Deputy Minister or equivalent"
+            dense
+            outlined
+            v-model="item.employee_signed"
+          ></v-checkbox>
 
           <v-file-input
             dense
@@ -219,9 +224,15 @@
         <v-card-text class="pt-3">
           <p>
             By clicking the 'Approve' button below, you are verifying that you have reviewed the uploaded Form A.
-            Clicking Approve will activate the Form A and all positions contained within.
+            Clicking 'Approve' will activate the Form A and all positions contained within.
           </p>
-          <p>Department admins will recieve an email notification that you have completed this step.</p>
+
+          <p>
+            If the Form A has errors, provide detail in the dialogue box below for the department to rectify the errors,
+            then click 'Reject'
+          </p>
+
+          <p>Departmental Finance Administrators will receive an email notification when you complete this step.</p>
 
           <v-textarea rows="3" dense outlined label="Comments" hide-details v-model="item.comments"></v-textarea>
 

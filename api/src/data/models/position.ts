@@ -20,8 +20,8 @@ export interface Position extends MongoEntity {
   activation?: {
     date: Date;
     activate_user_id: ObjectId;
-    recommender_name: string;
-    approver_name: string;
+    //recommender_name: string;
+    //approver_name: string;
     file_id: ObjectId; //maybe this should be an array?
   };
 
