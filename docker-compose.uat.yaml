@@ -30,6 +30,7 @@ services:
       - AD_TENANT_ID=${AD_TENANT_ID}
       - FM_ACCOUNT_LOOKUP_URL=${FM_ACCOUNT_LOOKUP_URL}
       - FM_ACCOUNT_LOOKUP_KEY=${FM_ACCOUNT_LOOKUP_KEY}
+      - APPLICATION_NAME=${APPLICATION_NAME}
 
   mongodb:
     image: mongo:5.0.6
