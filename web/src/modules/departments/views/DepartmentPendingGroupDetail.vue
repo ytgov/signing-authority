@@ -208,7 +208,7 @@
             v-model="item.file"
           ></v-file-input>
 
-          <p>Finance admins will recieve an email notification that you have completed this step.</p>
+          <p>Department of Finance admins will receive an email notification that you have completed this step.</p>
           <v-btn @click="uploadSigned" color="primary" class="mb-0" :disabled="!uploadIsValid">Upload</v-btn>
         </v-card-text>
       </v-card>
