@@ -16,6 +16,7 @@
 </template>
 <script>
 import { mapActions } from "vuex";
+import _ from "lodash";
 
 export default {
   name: "FormBList",
@@ -24,10 +25,15 @@ export default {
       type: String,
       default: "",
     },
+    status: {
+      type: String,
+      default: "",
+    },
   },
   data: () => ({
     departmentId: "",
     formBLink: "",
+    allItems: [],
     formBItems: [],
     loadingFormB: false,
     headers: [
@@ -44,11 +50,19 @@ export default {
       return 0;
     },
   },
+  watch: {
+    status: function(val) {
+      console.log("CHANGE", val);
+      this.filterList();
+    },
+  },
   mounted: async function() {
     this.loadingFormB = true;
     this.departmentId = this.$route.params.departmentId;
     this.formBLink = `/departments/${this.departmentId}/form-b`;
-    this.formBItems = await this.getFormBList({ id: this.departmentId });
+    this.allItems = await this.getFormBList({ id: this.departmentId });
+
+    this.filterList();
     this.loadingFormB = false;
   },
   methods: {
@@ -58,6 +72,23 @@ export default {
         name: "FormBDetails",
         params: { formBId: item._id },
       });
+    },
+    filterList() {
+      let list = _.clone(this.allItems);
+
+      let pendingStates = ["Locked for Signatures", "Upload Signatures"];
+
+      if (this.status && this.status != "Any") {
+        list = list.filter((i) => {
+          if (i.status == this.status) return true;
+          else if (this.status == "Inactive" && i.status.indexOf("Inactive") >= 0) return true;
+          else if (this.status == "Pending" && pendingStates.indexOf(i.status) >= 0) return true;
+
+          return false;
+        });
+      }
+
+      this.formBItems = list;
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col>
-      <v-card :to="formBLink">
+      <v-card :to="activeFormBLink">
         <v-card-text class="text-h4 mb-0 pb-0">
           {{ activeFormBCount }}
         </v-card-text>
@@ -9,7 +9,7 @@
       </v-card>
     </v-col>
     <v-col>
-      <v-card :to="formBLink">
+      <v-card :to="pendingFormBLink">
         <v-card-text class="text-h4 mb-0 pb-0">
           {{ pendingCount }}
         </v-card-text>
@@ -33,10 +33,18 @@ export default {
     },
   },
   computed: {
-    formBLink() {
+    activeFormBLink() {
       return {
         name: "DepartmentFormBList",
         params: { departmentId: this.$route.params.departmentId },
+        query: { status: "Active" },
+      };
+    },
+    pendingFormBLink() {
+      return {
+        name: "DepartmentFormBList",
+        params: { departmentId: this.$route.params.departmentId },
+        query: { status: "Pending" },
       };
     },
   },

@@ -9,6 +9,17 @@
     <BaseCard :showHeader="true">
       <template v-slot:left>
         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+
+        <v-select
+          label="Status"
+          v-model="statusFilter"
+          :items="['Active', 'Pending', 'Inactive', 'Archived']"
+          @change="filterList"
+          single-line
+          hide-details
+          background-color="white"
+          class="ml-5"
+        />
       </template>
       <template v-slot:right>
         <create-form-b :department="item" v-if="canAdminister"></create-form-b>
@@ -17,7 +28,7 @@
       <v-card class="default">
         <v-card-title>Active Form B Authorizations</v-card-title>
         <v-card-text>
-          <department-form-b-list :search="search"> </department-form-b-list>
+          <department-form-b-list :search="search" :status="statusFilter"> </department-form-b-list>
         </v-card-text>
       </v-card>
     </BaseCard>
@@ -57,6 +68,7 @@ export default {
     ],
     item: {},
     departmentId: "",
+    statusFilter: "",
   }),
   mounted: async function() {
     this.departmentId = this.$route.params.departmentId;
@@ -64,6 +76,12 @@ export default {
 
     this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
     this.breadcrumbs[1].text = this.item.descr;
+
+    let status = this.$route.query.status || "";
+
+    if (status) {
+      this.statusFilter = status;
+    }
   },
   computed: {
     ...mapState("home", ["profile"]),
@@ -84,6 +102,9 @@ export default {
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
+    filterList() {
+
+    }
   },
 };
 </script>
