@@ -49,6 +49,7 @@ export default {
       return {
         name: "DepartmentPendingGroups",
         params: { departmentId: this.$route.params.departmentId },
+        query: { status: "Pending" },
       };
     },
     positionsLink() {

@@ -9,12 +9,23 @@
     <BaseCard :showHeader="true">
       <template v-slot:left>
         <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+
+        <v-select
+          label="Status"
+          v-model="statusFilter"
+          :items="['Active', 'Pending', 'Archived']"
+          @change="filterList"
+          single-line
+          hide-details
+          background-color="white"
+          class="ml-5"
+        />
       </template>
 
       <v-row>
         <v-col>
           <v-card class="default">
-            <v-card-title>Pending Form As</v-card-title>
+            <v-card-title>Form As</v-card-title>
             <v-card-text>
               <v-data-table
                 :headers="headers"
@@ -33,22 +44,12 @@
         </v-col>
       </v-row>
     </BaseCard>
-
-    <v-dialog v-model="showGenerateDialog" persistent width="600">
-      <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Gererate Form A</v-toolbar-title>
-        <v-spacer />
-        <v-icon title="Close" @click="showGenerateDialog = false">mdi-close</v-icon>
-      </v-app-bar>
-      <v-card tile>
-        <v-card-text class="pt-3"> </v-card-text>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
+import _ from "lodash";
 
 export default {
   components: {},
@@ -65,7 +66,7 @@ export default {
       { text: "Positions", value: "positions.length" },
     ],
     page: {
-      title: "Pending Form As",
+      title: "Form As",
     },
     breadcrumbs: [
       {
@@ -78,14 +79,15 @@ export default {
         exact: true,
       },
       {
-        text: "Pending Form As",
+        text: "Form As",
         disabled: true,
       },
     ],
 
     items: [],
+    allItems: [],
     departmentId: null,
-    showGenerateDialog: false,
+    statusFilter: "",
   }),
   mounted: async function() {
     this.departmentId = this.$route.params.departmentId;
@@ -94,7 +96,14 @@ export default {
     this.breadcrumbs[1].to = `/departments/${this.departmentId}`;
     this.breadcrumbs[1].text = this.item.descr;
 
-    this.loadFormA();
+    await this.loadFormA();
+
+    let status = this.$route.query.status || "";
+
+    if (status) {
+      this.statusFilter = status;
+      this.filterList();
+    }
   },
   watch: {},
   computed: {
@@ -120,20 +129,29 @@ export default {
   methods: {
     ...mapActions("department", ["getDepartment", "getPendingGroups"]),
     async loadFormA() {
-      this.items = this.formAItems = await this.getPendingGroups({
+      this.allItems = this.formAItems = await this.getPendingGroups({
         id: this.departmentId,
       });
 
+      this.filterList();
       this.loading = false;
     },
     openFormA(item) {
       this.$router.push(`/departments/${this.departmentId}/form-a/${item._id}`);
     },
-    generateFormAClick() {
-      this.showGenerateDialog = true;
-    },
-    async doGenerateFormA() {
-      console.log("ANSWER");
+    filterList() {
+      let list = _.clone(this.allItems);
+
+      if (this.statusFilter != "Any") {
+        list = list.filter((i) => {
+          if (this.statusFilter != "Pending" && i.status == this.statusFilter) return true;
+          else if (this.statusFilter == "Pending" && i.status != "Active" && i.status != "Archived") return true;
+
+          return false;
+        });
+      }
+
+      this.items = list;
     },
   },
 };
