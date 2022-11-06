@@ -71,6 +71,46 @@ authoritiesRouter.get(
   }
 );
 
+authoritiesRouter.post(
+  "/:id/activate",
+  checkJwt,
+  loadUser,
+  [param("id").isMongoId().notEmpty()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let { date, expire_date, activate_reason, approve_user_email, approve_user_date } = req.body;
+    let db = req.store.Authorities as GenericService<Authority>;
+
+    let existing = await db.getById(id);
+
+    if (existing) {
+      existing.activation = existing.activation || [];
+      existing.activation.push({
+        date,
+        expire_date,
+        activate_reason,
+        approve_user_email,
+        activate_user_id: req.user._id,
+        approve_user_date,
+      });
+
+      existing.audit_lines = existing.audit_lines || [];
+
+      existing.audit_lines.push({
+        action: `${activate_reason} Scheduled`,
+        date: new Date(),
+        previous_value: {},
+        user_name: `${req.user.first_name} ${req.user.last_name}`,
+      });
+
+      await db.update(id, existing);
+    }
+    let item = await loadSingleAuthority(req, id);
+    return res.json({ data: item });
+  }
+);
+
 authoritiesRouter.put(
   "/:id",
   checkJwt,
@@ -195,13 +235,13 @@ authoritiesRouter.put(
           },
         ];
 
-        existing.activation = existing.activation || [];
+        /* existing.activation = existing.activation || [];
         let activation = {
           date: new Date(), // this date should be configurable
           activate_reason: "Activation",
           activate_user_id: req.user._id,
         };
-        existing.activation.push(activation);
+        existing.activation.push(activation); */
 
         existing.audit_lines = existing.audit_lines || [];
         existing.audit_lines.push({
@@ -216,11 +256,11 @@ authoritiesRouter.put(
         await emailService.sendFormBNotification(
           existing,
           creator,
-          "Activate Form B",
+          `Approved Form B for ${existing.employee.name}`,
           `${req.user.first_name} ${req.user.last_name}`
         );
 
-        await emailService.sendFormBActiveNotice(existing, moment(activation.date).format("MMMM D, YYYY"));
+        //await emailService.sendFormBActiveNotice(existing, moment(activation.date).format("MMMM D, YYYY"));
 
         await db.update(id, existing);
       } else if (save_action == "FinanceApproveReject") {
@@ -387,7 +427,8 @@ authoritiesRouter.get("/department/:department", async (req: Request, res: Respo
   for (let item of list) {
     item.status = "Inactive (Draft)";
 
-    if (item.finance_reviews) item.status = "Active";
+    if (item.activation) item.status = "Active";
+    if (item.finance_reviews) item.status = "Approved";
     else if (item.upload_signatures) item.status = "Upload Signatures";
     else if (item.department_reviews) item.status = "Locked for Signatures";
   }

@@ -43,7 +43,13 @@
           </v-stepper-step>
           <v-divider></v-divider>
 
-          <v-stepper-step step="5" :complete="stepperValue > 5"> Active </v-stepper-step>
+          <v-stepper-step step="5" :complete="stepperValue > 5">
+            Approved
+            <small class="mt-1">Ready to be activated</small>
+          </v-stepper-step>
+          <v-divider></v-divider>
+
+          <v-stepper-step step="6" :complete="stepperValue > 6"> Complete </v-stepper-step>
         </v-stepper-header>
       </v-stepper>
 
@@ -60,6 +66,10 @@
             <v-list dense>
               <v-list-item @click="editFormB" v-if="canEdit">
                 <v-list-item-title>Edit</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="startActivate" v-if="canActivate">
+                <v-list-item-title>Schedule Activation</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="generateClick" v-if="canLock">
@@ -84,6 +94,10 @@
 
               <v-list-item @click="startFinanceApprove" v-if="canApprove">
                 <v-list-item-title>Finance Approve</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="startCancel" v-if="canCancel">
+                <v-list-item-title>Cancel Form B</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="archiveClick" v-if="canArchive">
@@ -230,7 +244,142 @@
           <v-textarea rows="3" dense outlined label="Comments" hide-details v-model="formB.comments"></v-textarea>
 
           <v-btn @click="financeApproveApprove" color="primary" class="mb-0 mr-5">Approve</v-btn>
-          <v-btn @click="financeApproveReject" color="error" class="mb-0">Reject</v-btn>
+          <v-btn @click="financeApproveReject" color="error" class="mb-0" :disabled="!formB.comments">Reject</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="showActivateDialog" persistent width="700">
+      <v-app-bar dark color="#0097A9">
+        <v-toolbar-title>Schedule Activation</v-toolbar-title>
+        <v-spacer />
+        <v-icon title="Close" @click="showActivateDialog = false">mdi-close</v-icon>
+      </v-app-bar>
+      <v-card tile>
+        <v-card-text class="pt-3">
+          <h3 class="mb-3">Activation History</h3>
+
+          <div v-if="formB.activation && formB.activation.length > 0">
+            <v-alert v-for="(act, idx) of formB.activation" :key="idx" color="success" text dense>
+              <v-row>
+                <v-col cols="10">
+                  <strong>Status:</strong> Active<br />
+                  <strong>Type:</strong> {{ act.activate_reason }}<br />
+
+                  <strong>Effective</strong> {{ act.date }}
+                  <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
+                  <span v-else> until cancelled</span>
+                </v-col>
+                <v-col>
+                  <v-btn small class="my-0 float-right" color="secondary">Edit</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+          </div>
+          <div v-else>
+            <p class="text-warning">This Form B has never been activated</p>
+          </div>
+
+          <h3 class="mt-5">Schedule New Activation</h3>
+          <v-row>
+            <v-col cols="12">
+              <v-select
+                label="Activate for"
+                dense
+                outlined
+                hide-details
+                v-model="activateMethod"
+                :items="['Substantive Position', 'Temporary', 'Acting Appointment']"
+              ></v-select>
+            </v-col>
+            <v-col cols="6">
+              <v-menu
+                v-model="startDateMenu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                left
+                nudge-top="26"
+                offset-y
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="activateEffective"
+                    label="Effective date"
+                    append-icon="mdi-calendar"
+                    readonly
+                    outlined
+                    hide-details
+                    dense
+                    background-color="white"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="activateEffective"
+                  @input="startDateMenu = false"
+                  @change="startDateChanged"
+                  :min="today"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="6">
+              <v-menu
+                v-model="endDateMenu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                left
+                nudge-top="26"
+                offset-y
+                min-width="auto"
+                v-if="activateMethod != 'Substantive Position'"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-model="activateExpiry"
+                    label="Expiration date"
+                    append-icon="mdi-calendar"
+                    readonly
+                    outlined
+                    hide-details
+                    dense
+                    background-color="white"
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="activateExpiry"
+                  @input="endDateMenu = false"
+                  :min="activateEffective"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+
+            <v-col cols="12">
+              <employee-lookup
+                actionName="Select"
+                label="Supervisor to approve Acting Appointment : "
+                :select="pickEmployee"
+                v-if="!activateEmployee.email && activateMethod == 'Acting Appointment'"
+              ></employee-lookup>
+
+              <v-text-field
+                v-model="activateEmployee.display_name"
+                readonly
+                dense
+                outlined
+                label="Employee"
+                append-icon="mdi-lock"
+                v-if="activateEmployee.email && activateMethod == 'Acting Appointment'"
+                append-outer-icon="mdi-close-circle"
+                @click:append-outer="unselectEmployee"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <v-btn @click="doScheduleActivate" color="primary" class="mb-0" :disabled="!activateValid">Schedule</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -244,6 +393,7 @@ import { AUTHORITY_URL } from "@/urls";
 import moment from "moment";
 import { mapGetters, mapActions, mapState } from "vuex";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
+import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
 
 // import uploadFormModal from "../components/uploadFormModal.vue";
 //import AuthorityMetadataCard from "../components/cards/authorityMetadataCard.vue";
@@ -261,6 +411,7 @@ export default {
     FormBStatus,
     PdfPreviewDialog,
     FormBTable,
+    EmployeeLookup,
   },
   data: () => ({
     id: "",
@@ -270,6 +421,15 @@ export default {
 
     showUploadDialog: false,
     showFinanceApproveDialog: false,
+    showActivateDialog: false,
+
+    activateMethod: "Substantive Position",
+    activateEffective: null,
+    activateExpiry: null,
+    startDateMenu: null,
+    endDateMenu: null,
+    activateEmployee: {},
+    today: moment().format("YYYY-MM-DD"),
   }),
   computed: {
     ...mapGetters("authority/formB", ["formB"]),
@@ -277,7 +437,7 @@ export default {
     ...mapState("home", ["profile"]),
 
     canAdminister() {
-      if (this.profile && this.profile.roles.length > 0) {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
 
         if (
@@ -320,11 +480,12 @@ export default {
       return this.formB.department_reviews && this.formB.department_reviews.length > 0;
     },
     isActive() {
-      return this.formB.finance_reviews && this.formB.finance_reviews.length > 0;
+      // this needs more work
+      return this.formB.activation && this.formB.activation.length > 0;
     },
 
     stepperValue() {
-      if (this.formB.finance_reviews) return 6;
+      if (this.formB.finance_reviews) return 5;
       if (this.formB.upload_signatures) return 4;
       if (this.formB.department_reviews) return 3;
 
@@ -364,6 +525,14 @@ export default {
       return false;
     },
     canArchive() {
+      return false;
+    },
+    canActivate() {
+      if (this.formB.finance_reviews) return true;
+      return false;
+    },
+    canCancel() {
+      if (this.formB.finance_reviews) return true;
       return false;
     },
 
@@ -423,6 +592,16 @@ export default {
     pdfURL: function() {
       return `${AUTHORITY_URL}/${this.formB._id}/pdf`;
     },
+
+    activateValid() {
+      //let today = new Date();
+
+      if (this.activateMethod == "Substantive Position" && this.activateEffective) return true;
+      else if (this.activateMethod == "Acting Appointment")
+        return this.activateEffective && this.activateExpiry && this.activateEmployee.email;
+      else if (this.activateMethod == "Temporary" && this.activateEffective && this.activateExpiry) return true;
+      return false;
+    },
   },
   async mounted() {
     this.id = this.$route.params.formBId;
@@ -430,7 +609,13 @@ export default {
     this.page.title = "Form B Details";
   },
   methods: {
-    ...mapActions("authority/formB", ["loadFormB", "deleteFormB", "saveFormB", "saveFormBWithFile"]),
+    ...mapActions("authority/formB", [
+      "loadFormB",
+      "deleteFormB",
+      "saveFormB",
+      "saveFormBWithFile",
+      "scheduleActivation",
+    ]),
 
     openFormA() {
       if (this.formB && this.formB.form_a && this.formB.form_a.activation)
@@ -523,6 +708,39 @@ export default {
         this.loadFormB(this.id);
         this.showFinanceApproveDialog = false;
       });
+    },
+    startActivate() {
+      this.activateMethod = "Substantive Position";
+      this.activateEffective = moment().format("YYYY-MM-DD");
+      this.activateExpiry = null;
+      this.activateEmployee = {};
+      this.showActivateDialog = true;
+    },
+    startCancel() {
+      console.log("START CANCEL");
+    },
+    startDateChanged() {
+      if (this.activateExpiry) this.activateExpiry = null;
+    },
+    doScheduleActivate() {
+      let body = {
+        date: this.activateEffective,
+        expire_date: this.activateMethod == "Substantive Position" ? null : this.activateExpiry,
+        activate_reason: this.activateMethod,
+        approve_user_email: this.activateEmployee.email,
+        approve_user_date: this.activateMethod == "Acting Appointment" ? null : new Date(),
+      };
+
+      this.scheduleActivation({ id: this.formB._id, body }).then(() => {
+        this.loadFormB(this.id);
+        this.showActivateDialog = false;
+      });
+    },
+    unselectEmployee() {
+      this.activateEmployee = {};
+    },
+    pickEmployee(item) {
+      this.activateEmployee = item;
     },
   },
 };

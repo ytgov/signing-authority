@@ -51,8 +51,7 @@ export default {
     },
   },
   watch: {
-    status: function(val) {
-      console.log("CHANGE", val);
+    status: function() {
       this.filterList();
     },
   },

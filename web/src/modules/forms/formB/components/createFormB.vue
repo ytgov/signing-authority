@@ -12,14 +12,6 @@
       </v-app-bar>
       <v-card tile>
         <v-card-text class="mt-5 pb-0">
-          <v-radio-group v-model="authorityType">
-            <template v-slot:label>
-              <div>This authorization is active...</div>
-            </template>
-            <v-radio value="substantive" label="Until cancelled (Substantive Position)"></v-radio>
-            <v-radio value="temporary" label="Temporarily or occasionally as required"></v-radio>
-          </v-radio-group>
-
           <employee-lookup
             actionName="Select"
             label="Employee : "
@@ -108,7 +100,6 @@ export default {
     supervisorId: "",
     formAId: "",
     position: "",
-    authorityType: "substantive",
 
     selectedEmployee: {},
     selectedSupervisor: {},
@@ -177,7 +168,6 @@ export default {
       this.formAId = "";
       this.position = "";
       this.supervisorTitle = "";
-      this.authorityType = "substantive";
 
       let formAItems = await this.getFormAList({
         id: this.department.dept,
@@ -218,7 +208,6 @@ export default {
       let resp = await this.createFormB({
         department_code: this.formAId.department_code,
         department_descr: this.formAId.department_descr,
-        authority_type: this.authorityType,
         employee: {
           name: this.selectedEmployee.display_name,
           title: this.position,

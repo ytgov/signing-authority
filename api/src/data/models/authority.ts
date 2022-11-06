@@ -60,6 +60,8 @@ export interface ActivationRecord {
   activate_reason: string;
   archive_reason?: string;
   activate_user_id: ObjectId;
+  approve_user_email: string;
+  approve_user_date?: Date;
 
   file?: StoredFile;
   memo?: StoredFile;

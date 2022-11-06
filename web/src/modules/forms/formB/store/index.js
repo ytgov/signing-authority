@@ -87,6 +87,17 @@ const actions = {
       return resp;
     });
   },
+  async scheduleActivation({commit}, {id, body}) {
+    const auth = getInstance();
+
+    return auth
+      .post(`${AUTHORITY_URL}/${id}/activate`, body)
+      .then((resp) => {
+        commit("setFormB", resp.data.data);
+        return resp.data.data;
+      })
+      .catch(() => {});
+  },
 };
 
 const mutations = {
