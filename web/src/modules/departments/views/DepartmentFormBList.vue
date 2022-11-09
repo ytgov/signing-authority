@@ -91,7 +91,7 @@ export default {
         if (this.profile.roles.includes("System Admin")) return true;
 
         if (
-          this.profile.roles.includes("Department Admin") &&
+          this.profile.roles.includes("Form B Administrator") &&
           this.profile.department_admin_for.includes(this.departmentId)
         )
           return true;

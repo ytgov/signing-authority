@@ -14,7 +14,7 @@ import { ObjectId } from "mongodb";
 import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
 
-import { checkJwt, loadUser, isDepartmentAdmin } from "../middleware/authz.middleware";
+import { checkJwt, loadUser, isFormAAdmin } from "../middleware/authz.middleware";
 import { FormatCoding } from "../utils/formatters";
 import { FileStore } from "../utils/file-store";
 import { API_PORT } from "../config";
@@ -239,7 +239,7 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
   if (result.insertedId) {
     group._id = result.insertedId;
 
-    let emailUsers = await userDb.getAll({ roles: "Finance Admin" });
+    let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
 
     await emailService.sendFormANotification(group, emailUsers, "Finance Review", group.created_by);
 
@@ -501,7 +501,7 @@ formARouter.put(
               file_id: fileInfo._id,
             };
 
-            let emailUsers = await userDb.getAll({ roles: "Finance Admin" });
+            let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
 
             await emailService.sendFormANotification(
               item,
@@ -747,7 +747,7 @@ formARouter.put(
   "/:id",
   checkJwt,
   loadUser,
-  isDepartmentAdmin,
+  isFormAAdmin,
   [param("id").isMongoId().notEmpty(), body("program_branch").notEmpty().trim(), body("activity").trim()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {

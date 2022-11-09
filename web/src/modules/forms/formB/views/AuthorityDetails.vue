@@ -45,7 +45,7 @@
 
           <v-stepper-step step="5" :complete="stepperValue > 5">
             Approved
-            <small class="mt-1">Ready to be activated</small>
+            <small class="mt-1" v-if="stepperValue > 4">Ready to be activated</small>
           </v-stepper-step>
           <v-divider></v-divider>
 
@@ -370,7 +370,7 @@
                 readonly
                 dense
                 outlined
-                label="Employee"
+                label="Supervisor to approve Acting Appointment"
                 append-icon="mdi-lock"
                 v-if="activateEmployee.email && activateMethod == 'Acting Appointment'"
                 append-outer-icon="mdi-close-circle"
@@ -379,7 +379,12 @@
             </v-col>
           </v-row>
 
-          <v-btn @click="doScheduleActivate" color="primary" class="mb-0" :disabled="!activateValid">Schedule</v-btn>
+          <v-btn @click="doScheduleActivate" color="primary" class="mb-0 mr-5" :disabled="!activateValid">Schedule</v-btn>
+
+          <v-btn @click="showActivateDialog = false" color="secondary" class="mb-0">Cancel</v-btn>
+
+
+
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -441,7 +446,7 @@ export default {
         if (this.profile.roles.includes("System Admin")) return true;
 
         if (
-          this.profile.roles.includes("Department Admin") &&
+          this.profile.roles.includes("Form B Administrator") &&
           this.profile.department_admin_for.includes(this.departmentId)
         )
           return true;
@@ -510,7 +515,7 @@ export default {
     canUnlock() {
       if (this.formB.department_reviews && !this.formB.finance_reviews) {
         if (this.profile.roles.includes("System Admin")) return true;
-        if (this.profile.roles.includes("Department Admin")) return true;
+        if (this.profile.roles.includes("Form B Administrator")) return true;
       }
       return false;
     },
@@ -594,8 +599,6 @@ export default {
     },
 
     activateValid() {
-      //let today = new Date();
-
       if (this.activateMethod == "Substantive Position" && this.activateEffective) return true;
       else if (this.activateMethod == "Acting Appointment")
         return this.activateEffective && this.activateExpiry && this.activateEmployee.email;
@@ -711,7 +714,7 @@ export default {
     },
     startActivate() {
       this.activateMethod = "Substantive Position";
-      this.activateEffective = moment().format("YYYY-MM-DD");
+      this.activateEffective = null;
       this.activateExpiry = null;
       this.activateEmployee = {};
       this.showActivateDialog = true;

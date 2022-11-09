@@ -19,15 +19,37 @@ export const checkJwt = jwt({
   algorithms: ["RS256"],
 });
 
-export async function isDepartmentAdmin(req: Request, res: Response, next: NextFunction) {
+export async function isFormAAdmin(req: Request, res: Response, next: NextFunction) {
   const { department_code } = req.body;
   const { roles, department_admin_for } = req.user;
 
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
-  if (roles.includes("Department Admin") && department_admin_for.includes(department_code)) return next();
+  if (roles.includes("Form A Administrator") && department_admin_for.includes(department_code)) return next();
 
-  return res.status(403).send(`You do not have department admin on ${department_code}`);
+  return res.status(403).send(`You do not have Form A Administrator on ${department_code}`);
+}
+
+export async function isFormBAdmin(req: Request, res: Response, next: NextFunction) {
+  const { department_code } = req.body;
+  const { roles, department_admin_for } = req.user;
+
+  // these folks can do it all!
+  if (roles.includes("System Admin")) return next();
+  if (roles.includes("Form B Administrator") && department_admin_for.includes(department_code)) return next();
+
+  return res.status(403).send(`You do not have Form B Administrator on ${department_code}`);
+}
+
+export async function isActingAdmin(req: Request, res: Response, next: NextFunction) {
+  const { department_code } = req.body;
+  const { roles, department_admin_for } = req.user;
+
+  // these folks can do it all!
+  if (roles.includes("System Admin")) return next();
+  if (roles.includes("Acting Appointment Administrator") && department_admin_for.includes(department_code)) return next();
+
+  return res.status(403).send(`You do not have Acting Appointment Administrator on ${department_code}`);
 }
 
 export async function loadUser(req: Request, res: Response, next: NextFunction) {

@@ -1,19 +1,18 @@
 import express, { Request, Response } from "express";
-import { Storage } from "../data";
-import { uploadsRouter } from "./uploads";
 import fs from "fs";
+import _ from "lodash";
+import moment from "moment";
 import { param } from "express-validator";
+import { ExpressHandlebars } from "express-handlebars";
+import { uploadsRouter } from "./uploads";
 import { ReturnValidationErrors } from "../middleware";
 import { EmailService, GenericService, UserService } from "../services";
-import _ from "lodash";
 import { Authority, Position, ReviewResultType, StoredFile } from "../data/models";
 import { FileStore } from "../utils/file-store";
-import moment from "moment";
 import { generatePDF } from "../utils/pdf-generator";
 import { FormatCoding } from "../utils/formatters";
 
-import { ExpressHandlebars } from "express-handlebars";
-import { checkJwt, loadUser } from "../middleware/authz.middleware";
+import { checkJwt, loadUser, isFormBAdmin } from "../middleware/authz.middleware";
 import { API_PORT } from "../config";
 
 const emailService = new EmailService();
@@ -75,6 +74,7 @@ authoritiesRouter.post(
   "/:id/activate",
   checkJwt,
   loadUser,
+  isFormBAdmin,
   [param("id").isMongoId().notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -115,6 +115,7 @@ authoritiesRouter.put(
   "/:id",
   checkJwt,
   loadUser,
+  isFormBAdmin,
   [param("id").isMongoId().notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -212,7 +213,7 @@ authoritiesRouter.put(
               file_id: fileInfo._id,
             };
 
-            let emailUsers = await userDb.getAll({ roles: "Finance Admin" });
+            let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
 
             await emailService.sendFormBNotification(
               existing,
@@ -334,6 +335,7 @@ authoritiesRouter.put(
 authoritiesRouter.delete(
   "/:id",
   checkJwt,
+  isFormBAdmin,
   [param("id").isMongoId().notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -345,7 +347,7 @@ authoritiesRouter.delete(
   }
 );
 
-authoritiesRouter.post("/", checkJwt, loadUser, async (req: Request, res: Response) => {
+authoritiesRouter.post("/", checkJwt, loadUser, isFormBAdmin, async (req: Request, res: Response) => {
   let db = req.store.Authorities as GenericService<Authority>;
 
   req.body.audit_lines = [
@@ -371,7 +373,7 @@ authoritiesRouter.post("/", checkJwt, loadUser, async (req: Request, res: Respon
   return res.json({"TESTING": "crap"});
 }); */
 
-authoritiesRouter.get("/account/:account", async (req: Request, res: Response) => {
+/* authoritiesRouter.get("/account/:account", async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
   return res.json({ params: req.params });
 });
@@ -382,12 +384,12 @@ authoritiesRouter.post("/account/:account", async (req: Request, res: Response) 
   // await a.Authorities.create({"thing":"the other thing"})
   // -----------
   return res.json({});
-});
+}); */
 
-authoritiesRouter.get("/:myAuthorities", async (req: Request, res: Response) => {
+/* authoritiesRouter.get("/:myAuthorities", async (req: Request, res: Response) => {
   //return a list of all the authorites assigned to my (YNET username)
   return res.json({ params: req.params });
-});
+}); */
 
 async function loadSingleAuthority(req: Request, id: string): Promise<any> {
   let db = req.store.Authorities as GenericService<Authority>;

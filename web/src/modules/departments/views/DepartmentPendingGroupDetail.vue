@@ -328,7 +328,7 @@ export default {
         if (this.profile.roles.includes("System Admin")) return true;
 
         if (
-          this.profile.roles.includes("Department Admin") &&
+          this.profile.roles.includes("Form A Administrator") &&
           this.profile.department_admin_for.includes(this.departmentId)
         )
           return true;
@@ -372,10 +372,10 @@ export default {
       };
     },
     nextActor() {
-      if (this.stepperValue == 2) return "Finance Admin";
+      if (this.stepperValue == 2) return "Department of Finance";
       if (this.stepperValue == 3) return "Department Admin";
-      if (this.stepperValue == 4) return "Finance Admin";
-      return "Finance Admin";
+      if (this.stepperValue == 4) return "Department of Finance";
+      return "Department of Finance";
     },
     canDelete() {
       return true;
@@ -408,7 +408,7 @@ export default {
     canUnlock() {
       if (this.stepperValue >= 3) {
         if (this.profile.roles.includes("System Admin")) return true;
-        if (this.profile.roles.includes("Department Admin")) return true;
+        if (this.profile.roles.includes("Form A Administrator")) return true;
       }
       return false;
     },

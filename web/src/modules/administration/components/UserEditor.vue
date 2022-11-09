@@ -44,12 +44,22 @@ export default {
   data: () => ({
     showDialog: false,
     item: {},
-    roleOptions: ["System Admin", "Finance Admin", "Department Admin"],
+    roleOptions: [
+      "System Admin",
+      "Department of Finance",
+      "Form A Administrator",
+      "Form B Administrator",
+      "Acting Appointment Administrator",
+    ],
   }),
   computed: {
     isDepartmentAdmin: function() {
       if (this.item.roles) {
-        return this.item.roles.includes("Department Admin");
+        return (
+          this.item.roles.includes("Form A Administrator") ||
+          this.item.roles.includes("Form B Administrator") ||
+          this.item.roles.includes("Acting Appointment Administrator")
+        );
       }
       return false;
     },
