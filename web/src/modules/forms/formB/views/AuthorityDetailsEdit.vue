@@ -51,7 +51,8 @@
                       <v-text-field
                         v-model="formB.employee.title"
                         label="Position title"
-                        @change="itemChanged"
+                        readonly
+                        append-icon="mdi-lock"
                       ></v-text-field>
                     </th>
                     <th colspan="12">SPENDING AUTHORITY</th>

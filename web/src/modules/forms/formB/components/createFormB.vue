@@ -12,6 +12,18 @@
       </v-app-bar>
       <v-card tile>
         <v-card-text class="mt-5 pb-0">
+          <v-autocomplete
+            :items="formAItems"
+            item-text="display_name"
+            item-value="_id"
+            label="Form A Position"
+            dense
+            outlined
+            v-model="formAId"
+            return-object
+            @change="formAChanged"
+          ></v-autocomplete>
+
           <employee-lookup
             actionName="Select"
             label="Employee : "
@@ -31,18 +43,14 @@
             @click:append-outer="unselectEmployee"
           ></v-text-field>
 
-          <v-text-field label="Employee title" dense outlined v-model="position"></v-text-field>
-
-          <v-autocomplete
-            :items="formAItems"
-            item-text="display_name"
-            item-value="_id"
-            label="Form A Position"
+          <v-text-field
+            label="Employee title"
             dense
             outlined
-            v-model="formAId"
-            return-object
-          ></v-autocomplete>
+            v-model="position"
+            readonly
+            append-icon="mdi-lock"
+          ></v-text-field>
 
           <employee-lookup
             actionName="Select"
@@ -181,6 +189,9 @@ export default {
           });
         });
     },
+    formAChanged() {
+      this.position = this.formAId.position;
+    },
     async doCreate() {
       let lines = [];
 
@@ -233,7 +244,7 @@ export default {
     },
     pickEmployee(item) {
       this.selectedEmployee = item;
-      this.position = this.selectedEmployee.title;
+      //this.position = this.selectedEmployee.title;
     },
     unselectEmployee() {
       this.selectedEmployee = {};
