@@ -6,16 +6,18 @@ import { param } from "express-validator";
 import { ExpressHandlebars } from "express-handlebars";
 import { uploadsRouter } from "./uploads";
 import { ReturnValidationErrors } from "../middleware";
-import { EmailService, GenericService, UserService } from "../services";
+import { EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
 import { Authority, Position, ReviewResultType, StoredFile } from "../data/models";
 import { FileStore } from "../utils/file-store";
 import { generatePDF } from "../utils/pdf-generator";
-import { FormatCoding } from "../utils/formatters";
+import { CleanFilename, FormatCoding } from "../utils/formatters";
 
 import { checkJwt, loadUser, isFormBAdmin } from "../middleware/authz.middleware";
 import { API_PORT } from "../config";
 
+const questService = new QuestService();
 const emailService = new EmailService();
+const limitService = new LimitService();
 
 export const authoritiesRouter = express.Router();
 
@@ -35,7 +37,7 @@ authoritiesRouter.get(
     const { id } = req.params;
     let item = await loadSingleAuthority(req, id);
 
-    if (!item.authority_type) item.authority_type = "substantive"; // polyfill for late model change
+    //if (!item.authority_type) item.authority_type = "substantive"; // polyfill for late model change
 
     if (item) return res.json({ data: item });
 
@@ -60,8 +62,11 @@ authoritiesRouter.get(
       const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
       let data = template(item);
 
+      let name = CleanFilename(`${item.department_code}`);
+      if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
+
       let pdf = await generatePDF(data);
-      res.setHeader("Content-disposition", 'attachment; filename="FormB.pdf"');
+      res.setHeader("Content-disposition", `attachment; filename="FormB_${name}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
       res.send(pdf);
     }
@@ -124,6 +129,7 @@ authoritiesRouter.put(
     let db = req.store.Authorities as GenericService<Authority>;
     let userDb = req.store.Users as UserService;
     let fileStore = req.store.Files as FileStore;
+    let positionDb = req.store.FormA as GenericService<Position>;
 
     let existing = await db.getById(id);
 
@@ -295,37 +301,49 @@ authoritiesRouter.put(
     //this is basic editing
     else {
       let existing = await db.getById(id);
-      if (existing) delete existing.audit_lines;
 
-      req.body.audit_lines.push({
-        date: new Date(),
-        user_name: `${req.user.first_name} ${req.user.last_name}`,
-        action: "Update",
-        previous_value: existing,
-      });
+      if (existing) {
+        delete existing.audit_lines;
 
-      for (let line of req.body.authority_lines) {
-        line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit;
-        line.s24_procure_services_limit =
-          line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit;
-        line.s24_procure_request_limit = line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit;
-        line.s24_procure_assignment_limit =
-          line.s24_procure_assignment_limit === "0" ? "" : line.s24_procure_assignment_limit;
-        line.s23_procure_goods_limit = line.s23_procure_goods_limit === "0" ? "" : line.s23_procure_goods_limit;
-        line.s23_procure_services_limit =
-          line.s23_procure_services_limit === "0" ? "" : line.s23_procure_services_limit;
-        line.s24_transfer_limit = line.s24_transfer_limit === "0" ? "" : line.s24_transfer_limit;
-        line.s23_transfer_limit = line.s23_transfer_limit === "0" ? "" : line.s23_transfer_limit;
-        line.s24_travel_limit = line.s24_travel_limit === "0" ? "" : line.s24_travel_limit;
-        line.other_limit = line.other_limit === "0" ? "" : line.other_limit;
-        line.loans_limit = line.loans_limit === "0" ? "" : line.loans_limit;
-        line.trust_limit = line.trust_limit === "0" ? "" : line.trust_limit;
-        line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
-        line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Update",
+          previous_value: existing,
+        });
+
+        //let myFormA = await positionDb.getById(existing.form_a_id.toString());
+
+        for (let line of req.body.authority_lines) {
+          let codingIsValid = await questService.accountPatternIsValid(line.coding);
+
+          if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
+
+          line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit;
+          line.s24_procure_services_limit =
+            line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit;
+          line.s24_procure_request_limit = line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit;
+          line.s24_procure_assignment_limit =
+            line.s24_procure_assignment_limit === "0" ? "" : line.s24_procure_assignment_limit;
+          line.s23_procure_goods_limit = line.s23_procure_goods_limit === "0" ? "" : line.s23_procure_goods_limit;
+          line.s23_procure_services_limit =
+            line.s23_procure_services_limit === "0" ? "" : line.s23_procure_services_limit;
+          line.s24_transfer_limit = line.s24_transfer_limit === "0" ? "" : line.s24_transfer_limit;
+          line.s23_transfer_limit = line.s23_transfer_limit === "0" ? "" : line.s23_transfer_limit;
+          line.s24_travel_limit = line.s24_travel_limit === "0" ? "" : line.s24_travel_limit;
+          line.other_limit = line.other_limit === "0" ? "" : line.other_limit;
+          line.loans_limit = line.loans_limit === "0" ? "" : line.loans_limit;
+          line.trust_limit = line.trust_limit === "0" ? "" : line.trust_limit;
+          line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
+          line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+
+          /*  if (myFormA) {
+            await limitService.checkFormBLineLimits(myFormA, line);
+          } */
+        }
+
+        await db.update(id, req.body);
       }
-
-      await db.update(id, req.body);
-
       let item = await loadSingleAuthority(req, id);
       return res.json({ data: item });
     }
@@ -391,7 +409,7 @@ authoritiesRouter.post("/account/:account", async (req: Request, res: Response) 
   return res.json({ params: req.params });
 }); */
 
-async function loadSingleAuthority(req: Request, id: string): Promise<any> {
+async function loadSingleAuthority(req: Request, id: string): Promise<Authority | undefined> {
   let db = req.store.Authorities as GenericService<Authority>;
   let formADb = req.store.FormA as GenericService<Position>;
 

@@ -13,7 +13,7 @@
         <v-select
           label="Status"
           v-model="statusFilter"
-          :items="['Active', 'Pending', 'Inactive', 'Archived']"
+          :items="['Any', 'Active', 'Pending', 'Inactive', 'Archived']"
           @change="filterList"
           single-line
           hide-details
@@ -26,7 +26,7 @@
       </template>
 
       <v-card class="default">
-        <v-card-title>Active Form B Authorizations</v-card-title>
+        <v-card-title>Form B Authorizations</v-card-title>
         <v-card-text>
           <department-form-b-list :search="search" :status="statusFilter"> </department-form-b-list>
         </v-card-text>
@@ -102,9 +102,7 @@ export default {
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
-    filterList() {
-
-    }
+    filterList() {},
   },
 };
 </script>

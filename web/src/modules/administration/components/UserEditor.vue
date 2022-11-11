@@ -16,7 +16,16 @@
         ></v-text-field>
         <v-text-field v-model="item.email" label="Email" dense outlined readonly append-icon="mdi-lock"></v-text-field>
         <v-select label="Status" v-model="item.status" dense outlined :items="['Active', 'Inactive']"></v-select>
-        <v-select label="Role" dense outlined v-model="item.roles" :items="roleOptions" multiple clearable></v-select>
+        <v-select
+          label="Role"
+          dense
+          outlined
+          v-model="item.roles"
+          :items="roleOptions"
+          multiple
+          clearable
+          placeholder="Employee"
+        ></v-select>
         <v-autocomplete
           v-if="isDepartmentAdmin"
           label="Department"
@@ -45,6 +54,7 @@ export default {
     showDialog: false,
     item: {},
     roleOptions: [
+      "Employee",
       "System Admin",
       "Department of Finance",
       "Form A Administrator",

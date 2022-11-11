@@ -27,7 +27,7 @@
             </template>
         </v-autocomplete>
 
-        <v-card class="default mb-4" v-if="model.email">
+        <v-card class="default mb-4" v-if="model && model.email">
             <v-card-text>
                 <v-row>
                     <v-col cols="9">

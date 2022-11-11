@@ -47,7 +47,8 @@ export async function isActingAdmin(req: Request, res: Response, next: NextFunct
 
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
-  if (roles.includes("Acting Appointment Administrator") && department_admin_for.includes(department_code)) return next();
+  if (roles.includes("Acting Appointment Administrator") && department_admin_for.includes(department_code))
+    return next();
 
   return res.status(403).send(`You do not have Acting Appointment Administrator on ${department_code}`);
 }
@@ -80,7 +81,7 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
         } else {
           if (!email) email = `${first_name}.${last_name}@yukon-no-email.ca`;
 
-          u = await db.create({ email, sub, status: "Inactive", first_name, last_name });
+          u = await db.create({ email, sub, status: "Inactive", first_name, last_name, roles: ["Employee"] });
           console.log("CREATING USER FOR " + email);
           req.user = { ...req.user, ...u };
         }

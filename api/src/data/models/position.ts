@@ -86,4 +86,6 @@ export enum OperationalRestrictions {
   "Acquisition cards" = "Acquisition cards",
   "All department payments" = "All department payments",
   "Travel advance" = "Travel advance",
+  "Special delegation" = "Special delegation",
+  "Aircraft charter" = "Aircraft charter",
 }

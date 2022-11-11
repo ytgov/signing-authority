@@ -56,8 +56,8 @@
               dense
               outlined
               v-model="selectedEmployee.roles"
+              required
               :items="roleOptions"
-              clearable
             ></v-select>
             <v-select
               v-if="isDepartmentAdmin"
@@ -95,6 +95,7 @@ export default {
   components: { EmployeeLookup },
   data: () => ({
     roleOptions: [
+      "Employee",
       "System Admin",
       "Department of Finance",
       "Form A Administrator",
@@ -107,14 +108,8 @@ export default {
     isEmployeeLoading: false,
     employeeItems: [],
     employeeSearch: "",
-
     employeeId: "",
-    supervisorId: "",
-    position: "",
-
     selectedEmployee: {},
-    selectedSupervisor: {},
-    supervisorTitle: "",
   }),
   computed: {
     isDepartmentAdmin: function() {
@@ -163,13 +158,12 @@ export default {
     ...mapActions("administration", ["createUser"]),
 
     async doShow() {
-      // this.selectedEmployee = {};
-      // this.selectedSupervisor = {};
-      // this.supervisorId = "";
-      this.position = "";
-      // this.supervisorTitle = "";
+      this.selectedEmployee = {};
     },
     async doCreate() {
+      if (!this.selectedEmployee.roles || this.selectedEmployee.roles.length == 0)
+        this.selectedEmployee.roles = ["Employee"];
+
       let resp = await this.createUser(this.selectedEmployee);
       this.$emit("update");
       this.show = false;
@@ -177,17 +171,11 @@ export default {
     },
     pickEmployee(item) {
       this.selectedEmployee = item;
-      this.position = this.selectedEmployee.title;
+      this.selectedEmployee.roles = ["Employee"];
+      this.selectedEmployee.status = "Active";
     },
     unselectEmployee() {
       this.selectedEmployee = {};
-    },
-    pickSupervisor(item) {
-      this.selectedSupervisor = item;
-      this.supervisorTitle = this.selectedSupervisor.title;
-    },
-    unselectSupervisor() {
-      this.selectedSupervisor = {};
     },
   },
 };
