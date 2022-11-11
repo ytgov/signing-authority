@@ -15,7 +15,7 @@ import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
 
 import { checkJwt, loadUser, isFormAAdmin } from "../middleware/authz.middleware";
-import { FormatCoding } from "../utils/formatters";
+import { CleanFilename, FormatCoding } from "../utils/formatters";
 import { FileStore } from "../utils/file-store";
 import { API_PORT } from "../config";
 
@@ -113,8 +113,12 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
   const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
   let data = template(item);
 
+  let dept = CleanFilename(`${department_code}`);
+  if (program) dept = `${dept}-${CleanFilename(`${program}`)}`;
+  if (activity) dept = `${dept}-${CleanFilename(`${activity}`)}`;
+
   let pdf = await generatePDF(data);
-  res.setHeader("Content-disposition", 'attachment; filename="FormA.pdf"');
+  res.setHeader("Content-disposition", `attachment; filename="FormA_${dept}.pdf"`);
   res.setHeader("Content-type", "application/pdf");
   res.send(pdf);
 });
@@ -147,25 +151,6 @@ formARouter.get(
   }
 );
 
-// formARouter.get ("/department/form-count", async (req: Request, res: Response) => {
-//   let db = req.store.FormA as GenericService<FormA>;
-//   let pipeline =
-//     [
-//       {$match: {}},
-//       {$group:
-//         {
-//           _id:"$department_descr",
-//           count: {$sum:1 }
-//         }
-//       }
-//     ]
-
-//   let count = await db.aggregate(pipeline)
-
-//   // if (count)
-//     return res.json({ "form_a_count": count });
-//   // res.status(404).send();
-// })
 formARouter.get("/department/position-count", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let pipeline = [
@@ -284,6 +269,7 @@ formARouter.delete(
   "/department/:department_code/pending-groups/:id",
   checkJwt,
   loadUser,
+  isFormAAdmin,
   async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<Position>;
     let { department_code, id } = req.params;
@@ -319,6 +305,7 @@ formARouter.put(
   "/department/:department_code/pending-groups/:id",
   checkJwt,
   loadUser,
+  isFormAAdmin,
   async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<Position>;
     let { department_code, id } = req.params;
@@ -718,8 +705,12 @@ formARouter.get(
       const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
       let data = template(item);
 
+      let dept = CleanFilename(`${item.department_code}`);
+      if (item.program) dept = `${dept}-${CleanFilename(`${item.program}`)}`;
+      if (item.activity) dept = `${dept}-${CleanFilename(`${item.activity}`)}`;
+    
       let pdf = await generatePDF(data);
-      res.setHeader("Content-disposition", 'attachment; filename="FormA.pdf"');
+      res.setHeader("Content-disposition", `attachment; filename="FormA_${dept}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
       res.send(pdf);
     }
@@ -732,6 +723,7 @@ formARouter.delete(
   "/:id",
   checkJwt,
   loadUser,
+  isFormAAdmin,
   [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -791,6 +783,8 @@ formARouter.put(
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
+      if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
+
       line.contracts_for_goods_services =
         line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
@@ -800,6 +794,9 @@ formARouter.put(
       line.assignment_authority = line.assignment_authority === "0" ? "" : line.assignment_authority;
       line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
       line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+
+      // do check for limits here
+      //limitService.check
     }
 
     await db.update(id, req.body);
@@ -827,24 +824,6 @@ formARouter.post("/", checkJwt, loadUser, async (req: Request, res: Response) =>
   let item = await loadSinglePosition(req, created.insertedId.toString());
   res.json({ data: item });
 });
-
-// formARouter.get('/account/:account', async (req: Request, res: Response) => {
-//   //return all the authorites assigned to the account
-//   return res.json({ "params": req.params });
-// });
-// formARouter.post('/account/:account', async (req: Request, res: Response) => {
-//   //return all the authorites assigned to the account
-//   // -----------
-//   let a: any = req.store as Storage
-//   // await a.Authorities.create({"thing":"the other thing"})
-//   // -----------
-//   return res.json({});
-// });
-
-// formARouter.get('/:myAuthorities', async (req: Request, res: Response) => {
-//   //return a list of all the authorites assigned to my (YNET username)
-//   return res.json({ "params": req.params });
-// });
 
 async function loadSinglePosition(req: Request, id: string): Promise<Position | null> {
   let db = req.store.FormA as GenericService<Position>;
