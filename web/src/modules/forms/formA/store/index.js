@@ -212,9 +212,9 @@ function cleanCoding(input) {
 function cleanZeros(input) {
   input = input || "";
   input = `${input}`.trim().toUpperCase();
+  input = input.replace(/^0+/, "");
 
   if (input == "0" || input == "00" || input == "000" || input == "0000") return "";
-
   if (input == "NL") return "NL";
 
   input = input.replace(/[^0-9]/g, "");

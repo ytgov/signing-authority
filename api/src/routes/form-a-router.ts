@@ -812,15 +812,19 @@ formARouter.put(
       });
     }
 
+    let skipLimitChecks = false;
+
+    if (existing && existing.is_deputy_minister) skipLimitChecks = true;
+
     let myDMForms = await db.getAll({
       department_code: req.body.department_code,
       is_deputy_minister: true,
       activation: { $ne: null },
     });
 
-    if (myDMForms.length == 0) {
+    if (myDMForms.length == 0 && !skipLimitChecks) {
       return res.status(500).send("Cannot find any DM for this department");
-    } else if (myDMForms.length > 1) {
+    } else if (myDMForms.length > 1 && !skipLimitChecks) {
       return res.status(500).send("Found multiple DM for this department");
     }
 
@@ -844,9 +848,12 @@ formARouter.put(
       line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
 
       // do check for limits here
-      let limitIsValid = await limitService.checkFormALineLimits(myDMForm, line);
 
-      if (!limitIsValid) return res.status(400).send(`Invalid limit on account code '${line.coding}'`);
+      if (!skipLimitChecks) {
+        let limitIsValid = await limitService.checkFormALineLimits(myDMForm, line);
+
+        if (!limitIsValid) return res.status(400).send(`Invalid limit on account code '${line.coding}'`);
+      }
     }
 
     await db.update(id, req.body);

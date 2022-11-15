@@ -9,6 +9,8 @@ export interface Position extends MongoEntity {
 
   position: string;
 
+  is_deputy_minister?: Boolean;
+
   authority_lines?: PositionAuthorityLine[];
   audit_lines?: PositionAuditLine[];
 
