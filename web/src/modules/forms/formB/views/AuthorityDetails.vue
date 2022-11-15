@@ -55,7 +55,7 @@
 
       <v-card class="default">
         <div style="float: right; margin-right: 15px; margin-top: 15px">
-          <form-b-status :isLocked="isLocked" :isActive="isActive"> </form-b-status>
+          <form-b-status :isLocked="isLocked" :isActive="isActive" :authorityType="formB.authority_type"> </form-b-status>
 
           <v-menu offset-y left v-if="canAdminister">
             <template v-slot:activator="{ on, attrs }">

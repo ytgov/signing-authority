@@ -37,9 +37,10 @@ authoritiesRouter.get(
     const { id } = req.params;
     let item = await loadSingleAuthority(req, id);
 
-    //if (!item.authority_type) item.authority_type = "substantive"; // polyfill for late model change
-
-    if (item) return res.json({ data: item });
+    if (item) {
+      if (!item.authority_type) item.authority_type = "substantive"; // polyfill for late model change
+      return res.json({ data: item });
+    }
 
     res.status(404).send();
   }
@@ -57,6 +58,10 @@ authoritiesRouter.get(
       const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormBTemplate.html");
 
       (item as any).API_PORT = API_PORT;
+
+      if (item.authority_type == "temporary") item.authority_type = "TEMPORARY";
+      else if (item.authority_type == "acting") item.authority_type = "ACTIVATED BY APPOINTMENT";
+      else item.authority_type = "SUBSTANTIVE";
 
       let t = new ExpressHandlebars();
       const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});

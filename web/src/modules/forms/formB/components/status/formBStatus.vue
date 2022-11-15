@@ -1,5 +1,6 @@
 <template>
   <span>
+    <v-chip dark class="mr-4 mb-1" color="blue">{{ authorityString }}</v-chip>
 
     <v-chip v-if="isActive" dark class="mr-4 mb-1" color="yg_moss">Active</v-chip>
     <v-chip v-else class="mr-4 mb-1" dark color="yg_lichen">Inactive</v-chip>
@@ -18,20 +19,30 @@ export default {
   name: "formBStatus",
   components: {
     formBStatusLocked,
-    formBStatusUnlocked
+    formBStatusUnlocked,
   },
   props: {
     isActive: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     isLocked: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
+    },
+    authorityType: {
+      type: String,
+      default: "substantive",
     },
   },
-}
+  computed: {
+    authorityString() {
+      if (this.authorityType == "temporary") return "Temporary";
+      if (this.authorityType == "acting") return "Acting";
+      return "Substantive";
+    },
+  },
+};
 </script>
-

@@ -129,37 +129,20 @@
 
   <body>
     <table style="width: 100%" border="0" cellspacing="0" cellpadding="0">
-      <tr style="height: 100px">
-        <td style="width: 180px">
+      <tr>
+        <td style="width: 180px; padding-bottom: 10px">
           <img src="http://localhost:{{API_PORT}}/yukon-logo.png" style="height: 80px; width: 160px" />
         </td>
-        <td style="width: 160px; font-size: 1.3rem; vertical-align: middle">Specimen Signature Card</td>
-        <td style="vertical-align: bottom">
-          <table style="border: 1px black solid; border-bottom: none; width: 100%">
-            <tr>
-              <td>Issue Date:</td>
-              <td colspan="3" style="border-bottom: 1px black solid">March 12, 2002</td>
-            </tr>
-            <tr style="border-bottom: 1px black solid">
-              <td style="width: 25%; border-bottom: 1px black solid">Expiry Date:</td>
-              <td style="width: 25%; border-bottom: 1px black solid"></td>
-              <td colspan="2" style="width: 25%; border-bottom: 1px black solid">
-                or <input type="checkbox" /> Activated by Memo
-              </td>
-            </tr>
-            <tr>
-              <td>Date Cancelled:</td>
-              <td colspan="3" style="border-bottom: 1px black solid"></td>
-            </tr>
-            <tr>
-              <td>Reason Cancelled:</td>
-              <td colspan="3"></td>
-            </tr>
-          </table>
+        <td style="width: 160px; font-size: 1.3rem; vertical-align: bottom; padding-bottom: 10px">
+          Specimen Signature Card
         </td>
-        <td style="text-align: right; width: 160px">
-          <h4 style="font-size: 1.1rem; margin-bottom: 10px">FORM B</h4>
-          <p style="font-weight: 700">All values are in $000's</p>
+        <td style="vertical-align: bottom; text-align: left">
+          <!-- <span style="font-size: .95rem; font-weight: 700">{{authority_type}}</span> -->
+        </td>
+        <td style="vertical-align: bottom; text-align: right; width: 160px; font-weight: 700">
+          <div style="padding-bottom: 4px">{{authority_type}}</div>
+          <div style="font-size: 1.1rem; padding-bottom: 2px">FORM B</div>
+          <div>All values are in $000's</div>
         </td>
       </tr>
     </table>
@@ -235,7 +218,7 @@
             <div>S.24 Travel <br />authorization</div>
           </th>
           <th rowspan="3" class="rotate">
-            <div>Other contracts & <br />Expenditures **</div>
+            <div>Other contracts & <br />Expenditures</div>
           </th>
           <th rowspan="3" class="rotate">
             <div>Loans & <br />Guarantees</div>
