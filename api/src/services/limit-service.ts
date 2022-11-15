@@ -1,9 +1,10 @@
+import { listenerCount } from "nodemailer/lib/xoauth2";
 import { FormBAuthorityLine, Position, PositionAuthorityLine } from "../data/models";
 
 export class LimitService {
   constructor() {}
 
-  async findRelevantLimit(coding: string): Promise<PositionAuthorityLine> {
+  /*   async findRelevantLimit(coding: string): Promise<PositionAuthorityLine> {
     return {
       coding: "",
       contracts_for_goods_services: 100,
@@ -16,16 +17,17 @@ export class LimitService {
       s30_payment_limit: 100,
     };
   }
-
-  findRelevantFormALimits(dmForm: Position, line: PositionAuthorityLine): PositionAuthorityLine[] {
+ */
+  findRelevantFormALimits(dmForm: Position, line: GenericLine): PositionAuthorityLine[] {
     let coding = line.coding;
-    let restricts = line.operational_restriction;
-
+    let restricts = line.operational_restriction || undefined;
     let matches = new Array<PositionAuthorityLine>();
 
     for (let dmLine of dmForm.authority_lines || []) {
       // check for matching operational_restriction
-      if (restricts != dmLine.operational_restriction) break;
+      let dmRestricts = dmLine.operational_restriction || undefined;
+
+      if (restricts != dmRestricts) break;
 
       let chars = dmLine.coding.split("");
       let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
@@ -74,35 +76,35 @@ export class LimitService {
     return true;
   }
 
-  async findRelevantFormALines(formA: Position, coding: string): Promise<FormBAuthorityLine[]> {
-    let lines = formA.authority_lines || [];
-    let matches = new Array<FormBAuthorityLine>();
-
-    console.log("WORKING ON LINE", coding);
-
-    for (let line of lines) {
-      console.log("   ", line.coding, "to", coding);
-    }
-
-    return matches;
-  }
-
   async checkFormBLineLimits(formA: Position, line: FormBAuthorityLine): Promise<Boolean> {
-    let matches = await this.findRelevantFormALines(formA, line.coding);
+    let limits = await this.findRelevantFormALimits(formA, line);
 
-    for (let limit of matches) {
-      if (!this.compareLimit(limit.s24_procure_goods_limit, line.s24_procure_goods_limit)) return false;
-      if (!this.compareLimit(limit.s24_procure_services_limit, line.s24_procure_services_limit)) return false;
-      if (!this.compareLimit(limit.s24_procure_request_limit, line.s24_procure_request_limit)) return false;
-      if (!this.compareLimit(limit.s24_procure_assignment_limit, line.s24_procure_assignment_limit)) return false;
-      if (!this.compareLimit(limit.s23_procure_goods_limit, line.s23_procure_goods_limit)) return false;
-      if (!this.compareLimit(limit.s23_procure_services_limit, line.s23_procure_services_limit)) return false;
-      if (!this.compareLimit(limit.s24_transfer_limit, line.s24_transfer_limit)) return false;
-      if (!this.compareLimit(limit.s23_transfer_limit, line.s23_transfer_limit)) return false;
-      if (!this.compareLimit(limit.s24_travel_limit, line.s24_travel_limit)) return false;
-      if (!this.compareLimit(limit.other_limit, line.other_limit)) return false;
-      if (!this.compareLimit(limit.loans_limit, line.loans_limit)) return false;
-      if (!this.compareLimit(limit.trust_limit, line.trust_limit)) return false;
+    if (limits.length == 0) return false;
+
+    for (let limit of limits) {
+      if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_goods_limit)) return false;
+      if (!this.compareLimit(limit.contracts_for_goods_services, line.s23_procure_goods_limit)) return false;
+
+      if (
+        line.s24_procure_goods_limit &&
+        parseInt(line.s24_procure_goods_limit + "") > 1 &&
+        line.operational_restriction != "Special delegation"
+      ) {
+        return false;
+      }
+      if (line.s23_procure_goods_limit > 1 && line.operational_restriction != "Special delegation") {
+        return false;
+      }
+
+      if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_services_limit)) return false;
+      if (!this.compareLimit(limit.request_for_goods_services, line.s24_procure_request_limit)) return false;
+      if (!this.compareLimit(limit.assignment_authority, line.s24_procure_assignment_limit)) return false;
+      if (!this.compareLimit(limit.contracts_for_goods_services, line.s23_procure_services_limit)) return false;
+      if (!this.compareLimit(limit.transfer_payments, line.s24_transfer_limit)) return false;
+      if (!this.compareLimit(limit.transfer_payments, line.s23_transfer_limit)) return false;
+      if (!this.compareLimit(limit.authorization_for_travel, line.s24_travel_limit)) return false;
+      if (!this.compareLimit(limit.contracts_for_goods_services, line.other_limit)) return false;
+      if (!this.compareLimit(limit.loans_and_guarantees, line.loans_limit)) return false;
       if (!this.compareLimit(limit.s29_performance_limit, line.s29_performance_limit)) return false;
       if (!this.compareLimit(limit.s30_payment_limit, line.s30_payment_limit)) return false;
     }
@@ -123,4 +125,9 @@ export class LimitService {
 
     return limitNum >= valueNum;
   }
+}
+
+interface GenericLine {
+  coding: string;
+  operational_restriction?: string;
 }

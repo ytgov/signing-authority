@@ -312,7 +312,7 @@ authoritiesRouter.put(
           previous_value: existing,
         });
 
-        //let myFormA = await positionDb.getById(existing.form_a_id.toString());
+        let myFormA = await positionDb.getById(existing.form_a_id.toString());
 
         for (let line of req.body.authority_lines) {
           let codingIsValid = await questService.accountPatternIsValid(line.coding);
@@ -337,9 +337,12 @@ authoritiesRouter.put(
           line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
           line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
 
-          /*  if (myFormA) {
+          if (myFormA) {
+            let limitIsValid = await limitService.checkFormBLineLimits(myFormA, line);
+
+            if (!limitIsValid) return res.status(400).send(`Invalid limit on account code '${line.coding}'`);
             await limitService.checkFormBLineLimits(myFormA, line);
-          } */
+          }
         }
 
         await db.update(id, req.body);

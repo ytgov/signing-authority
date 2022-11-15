@@ -46,7 +46,9 @@ const actions = {
         commit("setFormB", resp.data.data);
         return resp.data.data;
       })
-      .catch(() => {});
+      .catch((e) => {
+        window.alert(`Save failed - ${e.response.data}`);
+      });
   },
 
   async saveFormBWithFile(store, item) {

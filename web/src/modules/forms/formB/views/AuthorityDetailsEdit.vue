@@ -487,7 +487,6 @@ export default {
       this.formB.authority_lines.splice(idx + 1, 0, item);
     },
     duplicateLine(idx) {
-      console.log("DUP", idx);
       let item = _.clone(this.formB.authority_lines[idx]);
       this.formB.authority_lines.splice(idx + 1, 0, item);
     },
@@ -498,9 +497,10 @@ export default {
       line.is_working = true;
       this.itemChanged();
     },
-    saveClick() {
-      this.saveFormB(this.formB);
-      this.closeClick();
+    async saveClick() {
+      let resp = await this.saveFormB(this.formB);
+
+      if (resp) this.closeClick();
     },
     closeClick() {
       this.$router.push(`/form-b/${this.id}`);
