@@ -314,6 +314,10 @@ authoritiesRouter.put(
 
         let myFormA = await positionDb.getById(existing.form_a_id.toString());
 
+        if (!myFormA) {
+          return res.status(500).send("Cannot find FormA for this FormB");
+        }
+
         for (let line of req.body.authority_lines) {
           let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
