@@ -146,6 +146,7 @@ const mutations = {
 function cleanCoding(input) {
   input = input || "";
   input = input.toLowerCase().replace(/[^0-9|x]/g, "");
+  input = input.toLowerCase().replace(/x+$/, "");
   return formatCoding(input);
 }
 
