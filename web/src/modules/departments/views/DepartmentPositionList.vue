@@ -25,6 +25,7 @@
           :department="item"
           :programList="programList"
           :activityList="activityList"
+          :listLength="allItems.length"
         ></create-form-a-button>
       </template>
 
@@ -121,7 +122,6 @@
 
           <v-btn color="primary" class="mb-0" @click="doGenerateFormA">Proceed</v-btn>
           <v-btn color="secondary" class="mb-0 ml-5" @click="doGeneratePreview">Form A Preview</v-btn>
-
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -215,7 +215,7 @@ export default {
     ...mapState("home", ["profile"]),
 
     canAdminister() {
-      if (this.profile && this.profile.roles.length > 0) {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
 
         if (

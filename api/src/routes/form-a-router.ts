@@ -6,7 +6,7 @@ import _, { create } from "lodash";
 import fs from "fs";
 import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
-import { EmailService, GenericService, QuestService, UserService } from "../services";
+import { EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
 
 import { Authority, Position, OperationalRestrictions, PositionGroup, StoredFile, User } from "../data/models";
 import { ObjectId } from "mongodb";
@@ -23,6 +23,7 @@ import { API_PORT } from "../config";
 
 const questService = new QuestService();
 const emailService = new EmailService();
+const limitService = new LimitService();
 
 formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
@@ -708,7 +709,7 @@ formARouter.get(
       let dept = CleanFilename(`${item.department_code}`);
       if (item.program) dept = `${dept}-${CleanFilename(`${item.program}`)}`;
       if (item.activity) dept = `${dept}-${CleanFilename(`${item.activity}`)}`;
-    
+
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="FormA_${dept}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
@@ -755,6 +756,40 @@ formARouter.put(
 
     if (req.body.activity && req.body.activity.length == 0) delete req.body.activity;
 
+    let saveAction = req.body.save_action;
+    delete req.body.save_action;
+
+    if (saveAction) {
+      if (saveAction == "DMLock") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Locked for Approval",
+          previous_value: existing,
+        });
+
+        req.body.position_group_id = "-1";
+      } else if (saveAction == "DMApprove") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Approved & Activated",
+          previous_value: existing,
+        });
+
+        req.body.activation = {
+          activate_user_id: req.user._id,
+          date: new Date(),
+          file_id: null,
+        };
+      }
+
+      await db.update(id, req.body);
+
+      let item = await loadSinglePosition(req, id);
+      return res.json({ data: item });
+    }
+
     // If archiving a form note the details
     if (req.query.archive == "true") {
       if (!req.body.deactivation) req.body.deactivation = {};
@@ -777,16 +812,29 @@ formARouter.put(
       });
     }
 
+    let myDMForms = await db.getAll({
+      department_code: req.body.department_code,
+      is_deputy_minister: true,
+      activation: { $ne: null },
+    });
+
+    if (myDMForms.length == 0) {
+      return res.status(500).send("Cannot find any DM for this department");
+    } else if (myDMForms.length > 1) {
+      return res.status(500).send("Found multiple DM for this department");
+    }
+
+    let myDMForm = myDMForms[0];
+
     //RA: this should be the ID of the person creating the FormA I think
     if (req.body.employee_id) req.body.employee_id = new ObjectId(req.body.employee_id);
     // console.log(req.body.authority_lines[0])
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
-      if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
-
-      line.contracts_for_goods_services =
-        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
+      if (!codingIsValid)
+        line.contracts_for_goods_services =
+          line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
       line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments;
       line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel;
@@ -796,7 +844,9 @@ formARouter.put(
       line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
 
       // do check for limits here
-      //limitService.check
+      let limitIsValid = await limitService.checkFormALineLimits(myDMForm, line);
+
+      if (!limitIsValid) return res.status(400).send(`Invalid limit on account code '${line.coding}'`);
     }
 
     await db.update(id, req.body);

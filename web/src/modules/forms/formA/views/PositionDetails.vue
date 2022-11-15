@@ -5,6 +5,8 @@
     <BaseCard :showHeader="true" heading="Delegation of Financial Signing Authority">
       <template slot="right">
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
+
+        <v-chip color="#f2a900" v-if="formA.is_deputy_minister" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
         <form-a-status :isLocked="isLocked" :isActive="isActive" :status="status"> </form-a-status>
 
         <actions-menu

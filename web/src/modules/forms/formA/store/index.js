@@ -78,9 +78,8 @@ const actions = {
         commit("setFormA", resp.data.data);
         return resp.data.data;
       })
-      .catch(() => {
-        window.alert("Save failed");
-        //commit("setFormA", {});
+      .catch((e) => {
+        window.alert(`Save failed - ${e.response.data}`);
       });
   },
   async duplicateFormA({ commit, state }) {
@@ -97,6 +96,7 @@ const actions = {
     dupe.position = `${state.formA.position} (Duplicate)`;
     dupe.authority_lines = state.formA.authority_lines;
     dupe.parentFormA = state.formA._id; //TODO: decide how to audit a clone
+    dupe.is_deputy_minister = false;
 
     const auth = getInstance();
     return await auth

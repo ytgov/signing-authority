@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getInstance } from "@/auth/auth0-plugin"
+import { getInstance } from "@/auth/auth0-plugin";
 
 export async function prepareAxios() {
   const auth = await getInstance();
@@ -7,9 +7,9 @@ export async function prepareAxios() {
 
   return axios.create({
     headers: {
-      "Authorization": `Bearer ${token}`,
-      "Content-Type": 'application/json'
-    }
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
   });
 }
 

@@ -11,8 +11,16 @@
           <v-list-item-title>Edit </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="formA.activation" @click="preview">
-          <v-list-item-title>View Form A </v-list-item-title>
+        <v-list-item v-if="formA.is_deputy_minister && !isLocked" @click="dmStartApprove">
+          <v-list-item-title>DM - Lock for Approval</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="formA.is_deputy_minister && isLocked && !isActive" @click="dmApprove">
+          <v-list-item-title>DM - Approve</v-list-item-title>
+        </v-list-item>
+
+        <v-list-item v-if="formA.activation && !formA.is_deputy_minister" @click="preview">
+          <v-list-item-title>View Form A</v-list-item-title>
         </v-list-item>
         <!--    <v-list-item @click="generateClick">
           <v-list-item-title>Lock for Signatures</v-list-item-title>
@@ -67,7 +75,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("authority/formA", ["duplicateFormA", "deleteFormA"]),
+    ...mapActions("authority/formA", ["duplicateFormA", "deleteFormA", "saveFormA"]),
     editClick() {
       this.$router.push(`/departments/${this.formA.department_code}/positions/${this.formA._id}/edit`);
     },
@@ -96,6 +104,16 @@ export default {
     },
     preview() {
       this.showPreview();
+    },
+    dmStartApprove() {
+      this.formA.save_action = "DMLock";
+
+      this.saveFormA(this.formA);
+    },
+    dmApprove() {
+      this.formA.save_action = "DMApprove";
+
+      this.saveFormA(this.formA);
     },
   },
 };
