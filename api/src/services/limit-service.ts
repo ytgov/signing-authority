@@ -1,23 +1,8 @@
-import { listenerCount } from "nodemailer/lib/xoauth2";
 import { FormBAuthorityLine, Position, PositionAuthorityLine } from "../data/models";
 
 export class LimitService {
   constructor() {}
 
-  /*   async findRelevantLimit(coding: string): Promise<PositionAuthorityLine> {
-    return {
-      coding: "",
-      contracts_for_goods_services: 100,
-      loans_and_guarantees: 100,
-      transfer_payments: 100,
-      authorization_for_travel: 100,
-      request_for_goods_services: 100,
-      assignment_authority: 100,
-      s29_performance_limit: 100,
-      s30_payment_limit: 100,
-    };
-  }
- */
   findRelevantFormALimits(dmForm: Position, line: GenericLine): PositionAuthorityLine[] {
     let coding = line.coding;
     let restricts = line.operational_restriction || undefined;
