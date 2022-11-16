@@ -41,6 +41,18 @@ export async function isFormBAdmin(req: Request, res: Response, next: NextFuncti
   return res.status(403).send(`You do not have Form B Administrator on ${department_code}`);
 }
 
+export async function isFormBOrActingAdmin(req: Request, res: Response, next: NextFunction) {
+  const { department_code } = req.body;
+  const { roles, department_admin_for } = req.user;
+
+  // these folks can do it all!
+  if (roles.includes("System Admin")) return next();
+  if (roles.includes("Form B Administrator") && department_admin_for.includes(department_code)) return next();
+  if (roles.includes("Acting Appointment Administrator") && department_admin_for.includes(department_code)) return next();
+
+  return res.status(403).send(`You do not have Form B Administrator on ${department_code}`);
+}
+
 export async function isActingAdmin(req: Request, res: Response, next: NextFunction) {
   const { department_code } = req.body;
   const { roles, department_admin_for } = req.user;

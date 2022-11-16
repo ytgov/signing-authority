@@ -65,6 +65,7 @@ export interface ActivationRecord {
 
   file?: StoredFile;
   memo?: StoredFile;
+  current_status?: string;
 }
 
 export interface ReviewResults {

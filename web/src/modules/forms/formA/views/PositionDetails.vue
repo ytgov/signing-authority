@@ -45,7 +45,7 @@
             </v-card-text>
           </v-card>
 
-          <v-card class="default mt-5" v-if="formA.activation">
+          <!-- <v-card class="default mt-5" v-if="formA.activation">
             <v-card-title>Activation Details</v-card-title>
             <v-card-text>
               <v-text-field
@@ -78,7 +78,7 @@
 
               <v-btn small color="primary" class="my-0" @click="showPreview">View Form A</v-btn>
             </v-card-text>
-          </v-card>
+          </v-card> -->
         </v-col>
         <v-col cols="6">
           <v-card class="default">

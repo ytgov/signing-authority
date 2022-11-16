@@ -55,7 +55,8 @@
 
       <v-card class="default">
         <div style="float: right; margin-right: 15px; margin-top: 15px">
-          <form-b-status :isLocked="isLocked" :isActive="isActive" :authorityType="formB.authority_type"> </form-b-status>
+          <form-b-status :isLocked="isLocked" :isActive="isActive" :authorityType="formB.authority_type">
+          </form-b-status>
 
           <v-menu offset-y left v-if="canAdminister">
             <template v-slot:activator="{ on, attrs }">
@@ -68,8 +69,16 @@
                 <v-list-item-title>Edit</v-list-item-title>
               </v-list-item>
 
-              <v-list-item @click="startActivate" v-if="canActivate">
+              <v-list-item @click="showHistory" v-if="canCancel">
+                <v-list-item-title>Acivation History</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="startActivate" v-if="canSchedule">
                 <v-list-item-title>Schedule Activation</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item @click="startActivate" v-if="canActivate">
+                <v-list-item-title>Activate</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="generateClick" v-if="canLock">
@@ -257,40 +266,26 @@
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
-          <h3 class="mb-3">Activation History</h3>
-
-          <div v-if="formB.activation && formB.activation.length > 0">
-            <v-alert v-for="(act, idx) of formB.activation" :key="idx" color="success" text dense>
-              <v-row>
-                <v-col cols="10">
-                  <strong>Status:</strong> Active<br />
-                  <strong>Type:</strong> {{ act.activate_reason }}<br />
-
-                  <strong>Effective</strong> {{ act.date }}
-                  <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
-                  <span v-else> until cancelled</span>
-                </v-col>
-                <v-col>
-                  <v-btn small class="my-0 float-right" color="secondary">Edit</v-btn>
-                </v-col>
-              </v-row>
-            </v-alert>
-          </div>
-          <div v-else>
-            <p class="text-warning">This Form B has never been activated</p>
-          </div>
-
-          <h3 class="mt-5">Schedule New Activation</h3>
           <v-row>
             <v-col cols="12">
-              <v-select
-                label="Activate for"
-                dense
-                outlined
-                hide-details
-                v-model="activateMethod"
-                :items="['Substantive Position', 'Temporary', 'Acting Appointment']"
-              ></v-select>
+              <div v-if="formB.authority_type == 'substantive'">
+                <p>
+                  A Substantive Form B is active until cancelled which is done by viewing the activation history and
+                  clicking the 'Edit' button.
+                </p>
+              </div>
+              <div v-if="formB.authority_type == 'temporary'">
+                <p>
+                  A Temporary Form B can be activated multiple times. An activation can be extended or expired early by
+                  viewing the activation history and clicking the 'Edit' button.
+                </p>
+              </div>
+              <div v-if="formB.authority_type == 'acting'">
+                <p>
+                  Acting Appointments can be activated multiple times. An activation can be extended or expired early by
+                  viewing the activation history and clicking the 'Edit' button.
+                </p>
+              </div>
             </v-col>
             <v-col cols="6">
               <v-menu
@@ -333,7 +328,7 @@
                 nudge-top="26"
                 offset-y
                 min-width="auto"
-                v-if="activateMethod != 'Substantive Position'"
+                v-if="formB.authority_type != 'substantive'"
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
@@ -362,7 +357,7 @@
                 actionName="Select"
                 label="Supervisor to approve Acting Appointment : "
                 :select="pickEmployee"
-                v-if="!activateEmployee.email && activateMethod == 'Acting Appointment'"
+                v-if="!activateEmployee.email && formB.authority_type == 'acting'"
               ></employee-lookup>
 
               <v-text-field
@@ -372,19 +367,58 @@
                 outlined
                 label="Supervisor to approve Acting Appointment"
                 append-icon="mdi-lock"
-                v-if="activateEmployee.email && activateMethod == 'Acting Appointment'"
+                v-if="activateEmployee.email && formB.authority_type == 'acting'"
                 append-outer-icon="mdi-close-circle"
                 @click:append-outer="unselectEmployee"
               ></v-text-field>
             </v-col>
           </v-row>
 
-          <v-btn @click="doScheduleActivate" color="primary" class="mb-0 mr-5" :disabled="!activateValid">Schedule</v-btn>
+          <v-btn @click="doScheduleActivate" color="primary" class="mb-0 mr-5" :disabled="!activateValid"
+            >Schedule</v-btn
+          >
 
           <v-btn @click="showActivateDialog = false" color="secondary" class="mb-0">Cancel</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
 
+    <v-dialog v-model="showHistoryDialog" persistent width="700">
+      <v-app-bar dark color="#0097A9">
+        <v-toolbar-title>Activation History</v-toolbar-title>
+        <v-spacer />
+        <v-icon title="Close" @click="showHistoryDialog = false">mdi-close</v-icon>
+      </v-app-bar>
+      <v-card tile>
+        <v-card-text class="pt-3">
+          <div v-if="formB.activation && formB.activation.length > 0">
+            <v-alert
+              v-for="(act, idx) of formB.activation"
+              :key="idx"
+              :color="act.current_status == 'Active' ? 'success' : 'warning'"
+              text
+              dense
+            >
+              <v-row>
+                <v-col cols="10">
+                  <strong>Current status:</strong> {{ act.current_status }}<br />
+                  <span v-if="!act.approve_user_date"><strong>Not yet approved</strong><br /></span>
 
+                  <strong>Effective:</strong> {{ act.date }}
+                  <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
+                  <span v-else> until cancelled</span>
+                </v-col>
+                <v-col>
+                  <v-btn small class="my-0 float-right" color="secondary">Edit</v-btn>
+                </v-col>
+              </v-row>
+            </v-alert>
+          </div>
+          <div v-else>
+            <p class="text-warning">This Form B has never been activated</p>
+          </div>
 
+          <v-btn @click="showHistoryDialog = false" color="secondary" class="mb-0">Close</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -427,6 +461,7 @@ export default {
     showUploadDialog: false,
     showFinanceApproveDialog: false,
     showActivateDialog: false,
+    showHistoryDialog: false,
 
     activateMethod: "Substantive Position",
     activateEffective: null,
@@ -486,7 +521,13 @@ export default {
     },
     isActive() {
       // this needs more work
-      return this.formB.activation && this.formB.activation.length > 0;
+      let result = false;
+
+      if (this.formB.activation && this.formB.activation.length > 0) {
+        for (let act of this.formB.activation) if (act.current_status == "Active") return true;
+      }
+
+      return result;
     },
 
     stepperValue() {
@@ -533,7 +574,11 @@ export default {
       return false;
     },
     canActivate() {
-      if (this.formB.finance_reviews) return true;
+      if (this.formB.finance_reviews && this.formB.authority_type == "substantive") return true;
+      return false;
+    },
+    canSchedule() {
+      if (this.formB.finance_reviews && this.formB.authority_type != "substantive") return true;
       return false;
     },
     canCancel() {
@@ -599,10 +644,10 @@ export default {
     },
 
     activateValid() {
-      if (this.activateMethod == "Substantive Position" && this.activateEffective) return true;
-      else if (this.activateMethod == "Acting Appointment")
+      if (this.formB.authority_type == "substantive" && this.activateEffective) return true;
+      else if (this.formB.authority_type == "acting")
         return this.activateEffective && this.activateExpiry && this.activateEmployee.email;
-      else if (this.activateMethod == "Temporary" && this.activateEffective && this.activateExpiry) return true;
+      else if (this.formB.authority_type == "temporary" && this.activateEffective && this.activateExpiry) return true;
       return false;
     },
   },
@@ -713,7 +758,7 @@ export default {
       });
     },
     startActivate() {
-      this.activateMethod = "Substantive Position";
+      this.activateMethod = this.formB.authority_type;
       this.activateEffective = null;
       this.activateExpiry = null;
       this.activateEmployee = {};
@@ -728,10 +773,10 @@ export default {
     doScheduleActivate() {
       let body = {
         date: this.activateEffective,
-        expire_date: this.activateMethod == "Substantive Position" ? null : this.activateExpiry,
-        activate_reason: this.activateMethod,
+        expire_date: this.formB.authority_type == "substantive" ? null : this.activateExpiry,
+        activate_reason: this.formB.authority_type,
         approve_user_email: this.activateEmployee.email,
-        approve_user_date: this.activateMethod == "Acting Appointment" ? null : new Date(),
+        approve_user_date: this.formB.authority_type == "acting" ? null : new Date(),
       };
 
       this.scheduleActivation({ id: this.formB._id, body }).then(() => {
@@ -744,6 +789,9 @@ export default {
     },
     pickEmployee(item) {
       this.activateEmployee = item;
+    },
+    showHistory() {
+      this.showHistoryDialog = true;
     },
   },
 };

@@ -12,7 +12,7 @@ import { FileStore } from "../utils/file-store";
 import { generatePDF } from "../utils/pdf-generator";
 import { CleanFilename, FormatCoding } from "../utils/formatters";
 
-import { checkJwt, loadUser, isFormBAdmin } from "../middleware/authz.middleware";
+import { checkJwt, loadUser, isFormBAdmin, isFormBOrActingAdmin } from "../middleware/authz.middleware";
 import { API_PORT } from "../config";
 
 const questService = new QuestService();
@@ -26,6 +26,11 @@ authoritiesRouter.use("/uploads", uploadsRouter);
 authoritiesRouter.get("/", async (req: Request, res: Response) => {
   let db = req.store.Authorities as GenericService<Authority>;
   let list = await db.getAll({});
+
+  for (let item of list) {
+    setStatus(item);
+  }
+
   res.json({ data: list });
 });
 
@@ -84,7 +89,7 @@ authoritiesRouter.post(
   "/:id/activate",
   checkJwt,
   loadUser,
-  isFormBAdmin,
+  isFormBOrActingAdmin,
   [param("id").isMongoId().notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -107,8 +112,16 @@ authoritiesRouter.post(
 
       existing.audit_lines = existing.audit_lines || [];
 
+      let activationType = "Substantive position";
+      if (activate_reason == "temporary") activationType = "Temporary / term position";
+      else if (activate_reason == "acting") activationType = "Acting appointment";
+
+      if (activate_reason == "acting") {
+        await emailService.sendFormBActingNotice(existing, approve_user_email);
+      }
+
       existing.audit_lines.push({
-        action: `${activate_reason} Scheduled`,
+        action: `${activationType} Scheduled`,
         date: new Date(),
         previous_value: {},
         user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -420,6 +433,36 @@ authoritiesRouter.post("/account/:account", async (req: Request, res: Response) 
   return res.json({ params: req.params });
 }); */
 
+function setStatus(item: Authority) {
+  let now = moment().format("YYYYMMDD");
+  item.status = "";
+
+  if (item.activation && item.activation.length > 0) {
+    for (let a of item.activation) {
+      let start = moment(a.date).format("YYYYMMDD");
+      let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
+
+      a.current_status = "Inactive";
+
+      if (a.approve_user_date && start <= now && (a.expire_date == undefined || expire >= now)) {
+        a.current_status = "Active";
+        item.status = "Active";
+      } else if (a.approve_user_date && start > now) {
+        a.current_status = "Scheduled";
+        item.status = "Scheduled";
+      }
+    }
+  }
+
+  if (item.status == "") {
+    item.status = "Inactive (Draft)";
+
+    if (item.finance_reviews) item.status = "Approved";
+    else if (item.upload_signatures) item.status = "Upload Signatures";
+    else if (item.department_reviews) item.status = "Locked for Signatures";
+  }
+}
+
 async function loadSingleAuthority(req: Request, id: string): Promise<Authority | undefined> {
   let db = req.store.Authorities as GenericService<Authority>;
   let formADb = req.store.FormA as GenericService<Position>;
@@ -435,14 +478,16 @@ async function loadSingleAuthority(req: Request, id: string): Promise<Authority 
 
     item.form_a = await formADb.getById(item.form_a_id.toString());
 
-    if (item.activation && item.activation.length > 0) {
-      let lastActiviation = item.activation[item.activation.length - 1];
-      item.issue_date_display = moment(lastActiviation.date).format("YYYY-MM-DD");
-    }
     for (let line of item.authority_lines) {
       line.coding_display = FormatCoding(line.coding);
     }
 
+    setStatus(item);
+
+    if (item.activation && item.activation.length > 0) {
+      let lastActiviation = item.activation[item.activation.length - 1];
+      item.issue_date_display = moment(lastActiviation.date).format("YYYY-MM-DD");
+    }
     return item;
   }
 
@@ -456,12 +501,7 @@ authoritiesRouter.get("/department/:department", async (req: Request, res: Respo
   let list = await db.getAll({ department_code: department_code });
 
   for (let item of list) {
-    item.status = "Inactive (Draft)";
-
-    if (item.activation) item.status = "Active";
-    if (item.finance_reviews) item.status = "Approved";
-    else if (item.upload_signatures) item.status = "Upload Signatures";
-    else if (item.department_reviews) item.status = "Locked for Signatures";
+    setStatus(item);
   }
 
   res.json({ data: list });
