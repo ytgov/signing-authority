@@ -347,10 +347,9 @@ authoritiesRouter.put(
           line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
 
           if (myFormA) {
-            let limitIsValid = await limitService.checkFormBLineLimits(myFormA, line);
+            let limitError = limitService.checkFormBLineLimits(myFormA, line);
 
-            if (!limitIsValid) return res.status(400).send(`Invalid limit on account code '${line.coding}'`);
-            await limitService.checkFormBLineLimits(myFormA, line);
+            if (limitError) return res.status(400).send(limitError);
           }
         }
 

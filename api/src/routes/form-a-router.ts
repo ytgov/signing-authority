@@ -850,9 +850,9 @@ formARouter.put(
       // do check for limits here
 
       if (!skipLimitChecks) {
-        let limitIsValid = await limitService.checkFormALineLimits(myDMForm, line);
+        let limitError = limitService.checkFormALineLimits(myDMForm, line);
 
-        if (!limitIsValid) return res.status(400).send(`Invalid limit on account code '${line.coding}'`);
+        if (limitError) return res.status(400).send(limitError);
       }
     }
 
