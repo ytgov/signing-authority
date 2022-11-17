@@ -130,7 +130,6 @@ const actions = {
       .put(`${FORMA_URL}/${state.formA._id}/?archive=true`, body)
       .then((resp) => {
         commit("setFormA", { authority_lines: [] });
-        console.log("got a 200 response");
         return resp.code;
       })
       .catch(() => {

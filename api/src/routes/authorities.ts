@@ -135,6 +135,45 @@ authoritiesRouter.post(
 );
 
 authoritiesRouter.put(
+  "/:id/cancel",
+  checkJwt,
+  loadUser,
+  isFormBAdmin,
+  [param("id").isMongoId().notEmpty()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let db = req.store.Authorities as GenericService<Authority>;
+    let existing = await db.getById(id);
+
+    if (existing) {
+      existing.audit_lines = existing.audit_lines || [];
+
+      existing.audit_lines.push({
+        action: "Cancelled",
+        date: new Date(),
+        previous_value: {},
+        user_name: `${req.user.first_name} ${req.user.last_name}`,
+      });
+
+      for (let act of existing.activation || []) {
+        act.archive_reason = "Form B Cancelled";
+      }
+
+      existing.cancel_by_name = `${req.user.first_name} ${req.user.last_name}`;
+      existing.cancel_date = new Date();
+
+      await db.update(id, existing);
+
+      let item = await loadSingleAuthority(req, id);
+      return res.json({ data: item });
+    }
+
+    res.status(404).send();
+  }
+);
+
+authoritiesRouter.put(
   "/:id",
   checkJwt,
   loadUser,

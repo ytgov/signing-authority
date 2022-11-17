@@ -3,6 +3,7 @@
     <v-chip dark class="mr-4 mb-1" color="blue">{{ authorityString }}</v-chip>
 
     <v-chip v-if="isActive" dark class="mr-4 mb-1" color="yg_moss">Active</v-chip>
+    <v-chip v-else-if="isCancelled" class="mr-4 mb-1" dark color="purple">Cancelled</v-chip>
     <v-chip v-else class="mr-4 mb-1" dark color="yg_lichen">Inactive</v-chip>
     <!-- <v-chip v-if="isLocked" dark class="mr-4 mb-1" color="yg_lichen">
           <v-icon small>mdi-lock</v-icon>
@@ -28,6 +29,11 @@ export default {
       default: false,
     },
     isLocked: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    isCancelled: {
       type: Boolean,
       required: false,
       default: false,

@@ -175,7 +175,7 @@ export default {
         disabled: true,
       },
     ],
-    statusOptions: ["Any", "Active", "Locked", "Inactive"],
+    statusOptions: ["Any", "Active", "Locked", "Inactive", "Archived"],
     allItems: [],
     formAItems: [],
     item: {},
@@ -288,6 +288,7 @@ export default {
           if (this.statusFilter == "Active" && i.status == "Active") return true;
           else if (this.statusFilter == "Inactive" && i.status.indexOf("Inactive") == 0) return true;
           else if (this.statusFilter == "Locked" && i.status.indexOf("Locked") == 0) return true;
+          else if (this.statusFilter == "Archived" && i.status == "Archived") return true;
 
           return false;
         });

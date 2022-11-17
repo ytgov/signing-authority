@@ -50,7 +50,6 @@ const actions = {
         window.alert(`Save failed - ${e.response.data}`);
       });
   },
-
   async saveFormBWithFile(store, item) {
     const auth = getInstance();
 
@@ -66,7 +65,6 @@ const actions = {
       })
       .catch(() => {});
   },
-
   async downloadFormB(state, id) {
     const auth = getInstance();
 
@@ -99,6 +97,19 @@ const actions = {
         return resp.data.data;
       })
       .catch(() => {});
+  },
+  async cancelFormB({commit}, item) {
+    const auth = getInstance();
+
+    return auth
+      .put(`${AUTHORITY_URL}/${item._id}/cancel`, {})
+      .then((resp) => {
+        commit("setFormB", resp.data.data);
+        return resp.data.data;
+      })
+      .catch((e) => {
+        window.alert(`Save failed - ${e.response.data}`);
+      });
   },
 };
 

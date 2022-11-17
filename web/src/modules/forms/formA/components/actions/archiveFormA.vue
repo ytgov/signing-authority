@@ -13,9 +13,12 @@
     </v-app-bar>
     <v-card tile>
       <v-card-text class="pt-6">
-        <p>
+        <p v-if="nonCancelledCount > 0">
           This Position currently has {{ nonCancelledCount }} related Form B records and cannot be archived until all of
           them have been cancelled.
+        </p>
+        <p v-else>
+            An archived position cannot be re-activated and cannot be used to generate any further Form B authorities.
         </p>
 
         <v-btn @click="doArchive" color="error" class="mr-5" :disabled="nonCancelledCount > 0">Archive</v-btn>
@@ -49,7 +52,7 @@ export default {
 
     doArchive: async function() {
       await this.archiveFormA(this.archiveDetails);
-      this.$router.push(`/departments/${this.position.department_code}/form-a`);
+      this.$router.push(`/departments/${this.position.department_code}/positions`);
     },
   },
   async mounted() {

@@ -55,7 +55,7 @@
 
       <v-card class="default">
         <div style="float: right; margin-right: 15px; margin-top: 15px">
-          <form-b-status :isLocked="isLocked" :isActive="isActive" :authorityType="formB.authority_type">
+          <form-b-status :isLocked="isLocked" :isActive="isActive" :isCancelled="formB.cancel_date ? true : false" :authorityType="formB.authority_type">
           </form-b-status>
 
           <v-menu offset-y left v-if="canAdminister">
@@ -69,7 +69,7 @@
                 <v-list-item-title>Edit</v-list-item-title>
               </v-list-item>
 
-              <v-list-item @click="showHistory" v-if="canCancel">
+              <v-list-item @click="showHistory" v-if="canHistory">
                 <v-list-item-title>Activation History</v-list-item-title>
               </v-list-item>
 
@@ -423,6 +423,26 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog v-model="showCancelDialog" persistent width="700">
+      <v-app-bar dark color="#0097A9">
+        <v-toolbar-title>Cancel Form B</v-toolbar-title>
+        <v-spacer />
+        <v-icon title="Close" @click="showCancelDialog = false">mdi-close</v-icon>
+      </v-app-bar>
+      <v-card tile>
+        <v-card-text class="pt-3">
+          <p>
+            A cancelled Form B cannot be re-activated and any current or future activations will be expired as of today.
+          </p>
+
+          <p>This action cannot be undone. Click 'Cancel' to proceed.</p>
+
+          <v-btn @click="doCancel" color="primary" class="mb-0 mr-5">Cancel</v-btn>
+          <v-btn @click="showCancelDialog = false" color="secondary" class="mb-0">Close</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <pdf-preview-dialog ref="pdfPreview"></pdf-preview-dialog>
   </v-container>
 </template>
@@ -462,6 +482,7 @@ export default {
     showFinanceApproveDialog: false,
     showActivateDialog: false,
     showHistoryDialog: false,
+    showCancelDialog: false,
 
     activateMethod: "Substantive Position",
     activateEffective: null,
@@ -538,15 +559,15 @@ export default {
       return 2;
     },
     canDelete() {
-      return !this.isActive;
+      return !this.formB.finance_reviews;
     },
     canDownload() {
-      if (this.formB.department_reviews) return true;
+      if (this.formB.department_reviews || this.formB.cancel_date) return true;
       return false;
     },
 
     canEdit() {
-      if (this.formB.department_reviews) return false;
+      if (this.formB.department_reviews || this.formB.cancel_date) return false;
       return true;
     },
     canLock() {
@@ -561,11 +582,11 @@ export default {
       return false;
     },
     canUpload() {
-      if (this.formB.department_reviews && !this.formB.upload_signatures) return true;
+      if (this.formB.department_reviews && !this.formB.upload_signatures && !this.formB.cancel_date) return true;
       return false;
     },
     canApprove() {
-      return this.formB.upload_signatures && !this.formB.finance_reviews;
+      return this.formB.upload_signatures && !this.formB.finance_reviews && !this.formB.cancel_date;
     },
     canDuplicate() {
       return false;
@@ -574,15 +595,19 @@ export default {
       return false;
     },
     canActivate() {
-      if (this.formB.finance_reviews && this.formB.authority_type == "substantive") return true;
+      if (this.formB.finance_reviews && this.formB.authority_type == "substantive" && !this.formB.cancel_date) return true;
+      return false;
+    },
+    canHistory() {
+      if (this.formB.finance_reviews) return true;
       return false;
     },
     canSchedule() {
-      if (this.formB.finance_reviews && this.formB.authority_type != "substantive") return true;
+      if (this.formB.finance_reviews && this.formB.authority_type != "substantive" && !this.formB.cancel_date) return true;
       return false;
     },
     canCancel() {
-      if (this.formB.finance_reviews) return true;
+      if (this.formB.finance_reviews && !this.formB.cancel_date) return true;
       return false;
     },
 
@@ -663,6 +688,7 @@ export default {
       "saveFormB",
       "saveFormBWithFile",
       "scheduleActivation",
+      "cancelFormB",
     ]),
 
     openFormA() {
@@ -765,7 +791,7 @@ export default {
       this.showActivateDialog = true;
     },
     startCancel() {
-      console.log("START CANCEL");
+      this.showCancelDialog = true;
     },
     startDateChanged() {
       if (this.activateExpiry) this.activateExpiry = null;
@@ -792,6 +818,12 @@ export default {
     },
     showHistory() {
       this.showHistoryDialog = true;
+    },
+    doCancel() {
+      this.cancelFormB(this.formB).then(() => {
+        this.loadFormB(this.id);
+        this.showCancelDialog = false;
+      });
     },
   },
 };

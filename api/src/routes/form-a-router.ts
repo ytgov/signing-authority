@@ -192,7 +192,7 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   let department_code = req.params.department;
 
   let list = await db.getAll(
-    { department_code: department_code, deactivation: { $eq: null } },
+    { department_code: department_code, /* deactivation: { $eq: null } */ },
     { program_branch: 1, activity: 1, position: 1 }
   );
 

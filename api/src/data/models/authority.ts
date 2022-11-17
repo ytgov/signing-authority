@@ -6,6 +6,8 @@ export interface Authority extends MongoEntity {
   created_by_id: ObjectId;
   created_by_name: string;
   create_date: Date;
+  cancel_date?: Date;
+  cancel_by_name?: string;
 
   employee: {
     name: string;
@@ -47,8 +49,6 @@ export interface Authority extends MongoEntity {
   // used in DTO only
   department?: Department;
   form_a: Position | null;
-  //employee?: Employee;
-  //supervisor?: Employee;
 
   issue_date_display?: string;
   created_by?: User;
@@ -129,8 +129,17 @@ export function setAuthorityStatus(item: Authority) {
   let now = moment().format("YYYYMMDD");
   item.status = "";
 
+  if (item.cancel_date) {
+    item.status = "Cancelled";
+  }
+
   if (item.activation && item.activation.length > 0) {
     for (let a of item.activation) {
+      if (item.status == "Cancelled") {
+        a.current_status = "Cancelled";
+        continue;
+      }
+
       let start = moment(a.date).format("YYYYMMDD");
       let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
 
