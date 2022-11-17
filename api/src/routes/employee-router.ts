@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import _, { join } from "lodash";
 import { DirectoryService, GenericService } from "../services";
-import { Authority, Department, Employee, setAuthorityStatus } from "../data/models";
+import { Authority, Department, Employee, Position, setAuthorityStatus } from "../data/models";
 import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
 import moment from "moment";
@@ -74,6 +74,7 @@ employeeRouter.post(
 
 employeeRouter.get("/:id", [param("id").notEmpty()], ReturnValidationErrors, async (req: Request, res: Response) => {
   let autDb = req.store.Authorities as GenericService<Authority>;
+  let positionDb = req.store.FormA as GenericService<Position>;
   let { id } = req.params;
   let authorities = await autDb.getAll({ "employee.ynet_id": id });
 
@@ -82,6 +83,7 @@ employeeRouter.get("/:id", [param("id").notEmpty()], ReturnValidationErrors, asy
     item.authorities = authorities;
 
     for (let auth of item.authorities) {
+      auth.form_a = await positionDb.getById(auth.form_a_id.toString());
       setAuthorityStatus(auth);
     }
     return res.json({ data: item });

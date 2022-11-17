@@ -280,7 +280,7 @@ export default {
       this.activityFilter = "All";
       this.filterList();
     },
-    filterList() {
+    filterList(excludeArchived = false) {
       let list = _.clone(this.allItems);
 
       if (this.statusFilter != "Any") {
@@ -300,6 +300,10 @@ export default {
 
       if (this.activityFilter != "All") {
         list = list.filter((i) => i.activity == this.activityFilter);
+      }
+
+      if (excludeArchived) {
+        list = list.filter((i) => i.status != "Archived");
       }
 
       this.matchingItems = list;
@@ -325,7 +329,7 @@ export default {
     },
     generateFormAClick() {
       this.statusFilter = "Any";
-      this.filterList();
+      this.filterList(true);
       this.showGenerateDialog = true;
     },
     async doGenerateFormA() {

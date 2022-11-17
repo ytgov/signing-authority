@@ -416,6 +416,7 @@ authoritiesRouter.put(
 authoritiesRouter.delete(
   "/:id",
   checkJwt,
+  loadUser,
   isFormBAdmin,
   [param("id").isMongoId().notEmpty()],
   ReturnValidationErrors,

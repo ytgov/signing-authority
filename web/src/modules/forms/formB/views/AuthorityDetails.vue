@@ -47,15 +47,17 @@
             Approved
             <small class="mt-1" v-if="stepperValue > 4">Ready to be activated</small>
           </v-stepper-step>
-          <v-divider></v-divider>
-
-          <v-stepper-step step="6" :complete="stepperValue > 6"> Complete </v-stepper-step>
         </v-stepper-header>
       </v-stepper>
 
       <v-card class="default">
         <div style="float: right; margin-right: 15px; margin-top: 15px">
-          <form-b-status :isLocked="isLocked" :isActive="isActive" :isCancelled="formB.cancel_date ? true : false" :authorityType="formB.authority_type">
+          <form-b-status
+            :isLocked="isLocked"
+            :isActive="isActive"
+            :isCancelled="formB.cancel_date ? true : false"
+            :authorityType="formB.authority_type"
+          >
           </form-b-status>
 
           <v-menu offset-y left v-if="canAdminister">
@@ -126,7 +128,12 @@
           </v-menu>
         </div>
 
-        <v-card-title>Form B for <router-link :to="`/employee/${formB.employee.ynet_id}`" class="ml-1">{{ formB.employee.name }}</router-link></v-card-title>
+        <v-card-title
+          >Form B for
+          <router-link :to="`/employee/${formB.employee.ynet_id}`" class="ml-1">{{
+            formB.employee.name
+          }}</router-link></v-card-title
+        >
 
         <v-card-subtitle>
           Department: <strong>{{ formB.department_descr }}</strong> &nbsp; &nbsp; Form A Position:
@@ -595,7 +602,8 @@ export default {
       return false;
     },
     canActivate() {
-      if (this.formB.finance_reviews && this.formB.authority_type == "substantive" && !this.formB.cancel_date) return true;
+      if (this.formB.finance_reviews && this.formB.authority_type == "substantive" && !this.formB.cancel_date)
+        return true;
       return false;
     },
     canHistory() {
@@ -603,7 +611,8 @@ export default {
       return false;
     },
     canSchedule() {
-      if (this.formB.finance_reviews && this.formB.authority_type != "substantive" && !this.formB.cancel_date) return true;
+      if (this.formB.finance_reviews && this.formB.authority_type != "substantive" && !this.formB.cancel_date)
+        return true;
       return false;
     },
     canCancel() {

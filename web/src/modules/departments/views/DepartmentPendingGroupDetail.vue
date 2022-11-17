@@ -109,15 +109,13 @@
               </v-menu>
             </div>
 
-            <div v-if="item.status == 'Archived'" style="float: right;margin-right: 15px;margin-top: 20px;">
-              <p style="font-size: 12px; ">This Form A is Archived</p>
-            </div>
-
             <div style="float: right;margin-right: 15px;margin-top: 20px;" v-if="canAdminister">
               <div
                 class="mr-3"
                 style="line-height: 16px; text-align:right"
-                v-if="!financeReviewRejected && !financeApproveRejected && stepperValue < 6"
+                v-if="
+                  !financeReviewRejected && !financeApproveRejected && stepperValue < 6 && item.status != 'Archived'
+                "
               >
                 <small>
                   Next Action:
@@ -329,8 +327,6 @@ export default {
     ...mapState("home", ["profile"]),
 
     canAdminister() {
-      if (this.item.status == "Archived") return "";
-
       if (this.profile && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
 
@@ -385,7 +381,7 @@ export default {
       return "Department of Finance";
     },
     canDelete() {
-      return true;
+      return this.item.status != "Archived";
     },
     canDownload() {
       return this.item.finance_review_complete;
@@ -397,15 +393,21 @@ export default {
       return this.item.finance_approval_reject ? true : false;
     },
     canFinanceReview() {
-      if (this.stepperValue == 2 && !this.item.finance_review_reject) return true;
+      if (this.stepperValue == 2 && !this.item.finance_review_reject && this.item.status != "Archived") return true;
       return false;
     },
     canUpload() {
-      if (this.stepperValue == 3 && !this.item.finance_review_reject) return true;
+      if (this.stepperValue == 3 && !this.item.finance_review_reject && this.item.status != "Archived") return true;
       return false;
     },
     canFinanceApprove() {
-      if (this.stepperValue == 4 && !this.item.finance_review_reject && !this.item.finance_approval_reject) return true;
+      if (
+        this.stepperValue == 4 &&
+        !this.item.finance_review_reject &&
+        !this.item.finance_approval_reject &&
+        this.item.status != "Archived"
+      )
+        return true;
       return false;
     },
     uploadIsValid() {
@@ -413,7 +415,7 @@ export default {
       return false;
     },
     canUnlock() {
-      if (this.stepperValue >= 3) {
+      if (this.stepperValue >= 3 && !this.item.finance_approval_complete) {
         if (this.profile.roles.includes("System Admin")) return true;
         if (this.profile.roles.includes("Form A Administrator")) return true;
       }

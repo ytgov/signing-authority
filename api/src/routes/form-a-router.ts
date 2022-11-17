@@ -295,11 +295,6 @@ formARouter.get("/department/:department_code/pending-groups", async (req: Reque
     }
   }
 
-  console.log(
-    "ENDING: ",
-    list.flatMap((i) => i.positions?.map((p) => p.status))
-  );
-
   return res.json({ data: list });
 });
 
