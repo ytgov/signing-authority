@@ -126,7 +126,7 @@
           </v-menu>
         </div>
 
-        <v-card-title>Form B for {{ formB.employee.name }}</v-card-title>
+        <v-card-title>Form B for <router-link :to="`/employee/${formB.employee.ynet_id}`" class="ml-1">{{ formB.employee.name }}</router-link></v-card-title>
 
         <v-card-subtitle>
           Department: <strong>{{ formB.department_descr }}</strong> &nbsp; &nbsp; Form A Position:
