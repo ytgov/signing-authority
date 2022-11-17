@@ -7,7 +7,7 @@ import { ExpressHandlebars } from "express-handlebars";
 import { uploadsRouter } from "./uploads";
 import { ReturnValidationErrors } from "../middleware";
 import { EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
-import { Authority, Position, ReviewResultType, StoredFile } from "../data/models";
+import { Authority, Position, ReviewResultType, setAuthorityStatus, StoredFile } from "../data/models";
 import { FileStore } from "../utils/file-store";
 import { generatePDF } from "../utils/pdf-generator";
 import { CleanFilename, FormatCoding } from "../utils/formatters";
@@ -28,7 +28,7 @@ authoritiesRouter.get("/", async (req: Request, res: Response) => {
   let list = await db.getAll({});
 
   for (let item of list) {
-    setStatus(item);
+    setAuthorityStatus(item);
   }
 
   res.json({ data: list });
@@ -433,36 +433,6 @@ authoritiesRouter.post("/account/:account", async (req: Request, res: Response) 
   return res.json({ params: req.params });
 }); */
 
-function setStatus(item: Authority) {
-  let now = moment().format("YYYYMMDD");
-  item.status = "";
-
-  if (item.activation && item.activation.length > 0) {
-    for (let a of item.activation) {
-      let start = moment(a.date).format("YYYYMMDD");
-      let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
-
-      a.current_status = "Inactive";
-
-      if (a.approve_user_date && start <= now && (a.expire_date == undefined || expire >= now)) {
-        a.current_status = "Active";
-        item.status = "Active";
-      } else if (a.approve_user_date && start > now) {
-        a.current_status = "Scheduled";
-        item.status = "Scheduled";
-      }
-    }
-  }
-
-  if (item.status == "") {
-    item.status = "Inactive (Draft)";
-
-    if (item.finance_reviews) item.status = "Approved";
-    else if (item.upload_signatures) item.status = "Upload Signatures";
-    else if (item.department_reviews) item.status = "Locked for Signatures";
-  }
-}
-
 async function loadSingleAuthority(req: Request, id: string): Promise<Authority | undefined> {
   let db = req.store.Authorities as GenericService<Authority>;
   let formADb = req.store.FormA as GenericService<Position>;
@@ -482,7 +452,7 @@ async function loadSingleAuthority(req: Request, id: string): Promise<Authority 
       line.coding_display = FormatCoding(line.coding);
     }
 
-    setStatus(item);
+    setAuthorityStatus(item);
 
     if (item.activation && item.activation.length > 0) {
       let lastActiviation = item.activation[item.activation.length - 1];
@@ -501,7 +471,7 @@ authoritiesRouter.get("/department/:department", async (req: Request, res: Respo
   let list = await db.getAll({ department_code: department_code });
 
   for (let item of list) {
-    setStatus(item);
+    setAuthorityStatus(item);
   }
 
   res.json({ data: list });

@@ -1,3 +1,4 @@
+import moment from "moment";
 import { ObjectId } from "mongodb";
 import { Position, MongoEntity, User, Department, Employee, StoredFile } from ".";
 
@@ -122,4 +123,34 @@ export interface FormBAuditLine {
   previous_value: Object;
 
   date_display?: string;
+}
+
+export function setAuthorityStatus(item: Authority) {
+  let now = moment().format("YYYYMMDD");
+  item.status = "";
+
+  if (item.activation && item.activation.length > 0) {
+    for (let a of item.activation) {
+      let start = moment(a.date).format("YYYYMMDD");
+      let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
+
+      a.current_status = "Inactive";
+
+      if (a.approve_user_date && start <= now && (a.expire_date == undefined || expire >= now)) {
+        a.current_status = "Active";
+        item.status = "Active";
+      } else if (a.approve_user_date && start > now) {
+        a.current_status = "Scheduled";
+        item.status = "Scheduled";
+      }
+    }
+  }
+
+  if (item.status == "") {
+    item.status = "Inactive (Draft)";
+
+    if (item.finance_reviews) item.status = "Approved";
+    else if (item.upload_signatures) item.status = "Upload Signatures";
+    else if (item.department_reviews) item.status = "Locked for Signatures";
+  }
 }

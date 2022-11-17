@@ -31,7 +31,7 @@
           <v-list-item-title>Upload Signed PDF</v-list-item-title>
         </v-list-item> -->
         <v-list-item v-if="formA.status == 'Active'">
-          <archive-form-a> </archive-form-a>
+          <archive-form-a :position="formA"> </archive-form-a>
           <!-- <v-list-item-title>Archive</v-list-item-title> -->
         </v-list-item>
 

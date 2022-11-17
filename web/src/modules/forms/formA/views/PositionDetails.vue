@@ -37,6 +37,7 @@
                 :headers="[
                   { text: 'Name', value: 'employee.name' },
                   { text: 'Title', value: 'employee.title' },
+                  { text: 'Status', value: 'status' },
                 ]"
                 :items="formA.active_authorities"
                 @click:row="openFormB"

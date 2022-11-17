@@ -8,7 +8,15 @@ import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
 import { EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
 
-import { Authority, Position, OperationalRestrictions, PositionGroup, StoredFile, User } from "../data/models";
+import {
+  Authority,
+  Position,
+  OperationalRestrictions,
+  PositionGroup,
+  StoredFile,
+  User,
+  setAuthorityStatus,
+} from "../data/models";
 import { ObjectId } from "mongodb";
 
 import { ExpressHandlebars } from "express-handlebars";
@@ -143,6 +151,10 @@ formARouter.get(
         form_a_id: item._id.toString(),
       });
 
+      for (let conn of connectedAuthorizations) {
+        setAuthorityStatus(conn);
+      }
+
       item.active_authorities = connectedAuthorizations; //.filter((f) => f.activation);
 
       return res.json({ data: item });
@@ -234,12 +246,15 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
 
       if (position) {
         position.position_group_id = result.insertedId;
-        position.audit_lines?.push({
-          date: new Date(),
-          user_name: `${req.user.first_name} ${req.user.last_name}`,
-          action: "Locked",
-          previous_value: {},
-        });
+
+        if (position.status != "Active") {
+          position.audit_lines?.push({
+            date: new Date(),
+            user_name: `${req.user.first_name} ${req.user.last_name}`,
+            action: "Locked",
+            previous_value: {},
+          });
+        }
 
         await db.update(item, position);
       }
@@ -253,7 +268,6 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
 
       if (groupPositions.length == 0) {
         if (group._id) {
-          console.log("SETTING group to ARhive", group._id);
           group.status = "Archived";
           await groupDb.update(group._id.toString(), group);
         }
