@@ -12,6 +12,9 @@
     }"
     :items-per-page="50"
   >
+  <template v-slot:item.authority_type="{ item }">
+    {{convertType(item.authority_type)}}
+  </template>
   </v-data-table>
 </template>
 <script>
@@ -40,6 +43,7 @@ export default {
       { text: "Position", value: "employee.title" },
       { text: "Employee", value: "employee.name" },
       { text: "Status", value: "status" },
+      { text: "Type", value: "authority_type" },
     ],
   }),
   computed: {
@@ -89,6 +93,11 @@ export default {
 
       this.formBItems = list;
     },
+    convertType(input) {
+      if (input == "temporary") return "Temporary";
+      if (input == "acting") return "Acting";
+      return "Substantive";
+    }
   },
 };
 </script>

@@ -211,6 +211,7 @@ export default {
 
         lines.push({
           coding: line.coding,
+          operational_restriction: line.operational_restriction,
           s24_procure_goods_limit: useOne, // line.contracts_for_goods_services,
           s24_procure_services_limit: line.contracts_for_goods_services,
           s24_procure_request_limit: line.request_for_goods_services,

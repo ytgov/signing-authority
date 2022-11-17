@@ -87,7 +87,7 @@ export default {
     ...mapState("home", ["profile"]),
 
     canAdminister() {
-      if (this.profile && this.profile.roles.length > 0) {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
 
         if (
