@@ -16,6 +16,7 @@ import {
   StoredFile,
   User,
   setAuthorityStatus,
+  setPositionStatus,
 } from "../data/models";
 import { ObjectId } from "mongodb";
 
@@ -141,10 +142,13 @@ formARouter.get(
     let item = await loadSinglePosition(req, id);
 
     if (item && item._id) {
+      setPositionStatus(item);
+
+      /* 
       if (item.deactivation) item.status = "Archived";
       else if (item.activation) {
         item.status = "Active";
-      } else item.status = "Inactive (Draft)";
+      } else item.status = "Inactive (Draft)"; */
 
       let db = req.store.Authorities as GenericService<Authority>;
       let connectedAuthorizations = await db.getAll({
@@ -192,18 +196,13 @@ formARouter.get("/department/:department", async (req: Request, res: Response) =
   let department_code = req.params.department;
 
   let list = await db.getAll(
-    { department_code: department_code, /* deactivation: { $eq: null } */ },
+    { department_code: department_code /* deactivation: { $eq: null } */ },
     { program_branch: 1, activity: 1, position: 1 }
   );
 
   if (list) {
     for (let item of list) {
-      if (item.deactivation) item.status = "Archived";
-      else if (item.activation) {
-        item.status = "Active";
-      } else if (item.position_group_id) {
-        item.status = "Locked";
-      } else item.status = "Inactive (Draft)";
+      setPositionStatus(item);
 
       if (item.activity) item.program_activity = `${item.program_branch} : ${item.activity}`;
       else item.program_activity = item.program_branch;
@@ -290,7 +289,16 @@ formARouter.get("/department/:department_code/pending-groups", async (req: Reque
 
     if (item.activated_positions) item.positions = item.activated_positions;
     else item.positions = await db.getAll({ position_group_id: item._id });
+
+    for (let position of item.positions) {
+      setPositionStatus(position);
+    }
   }
+
+  console.log(
+    "ENDING: ",
+    list.flatMap((i) => i.positions?.map((p) => p.status))
+  );
 
   return res.json({ data: list });
 });
@@ -365,6 +373,9 @@ formARouter.put(
             program_branch: p.program_branch,
             activity: p.activity,
             authority_lines: p.authority_lines,
+            deactivation: p.deactivation,
+            activation: p.activation,
+            position_group_id: p.position_group_id,
           };
         });
 

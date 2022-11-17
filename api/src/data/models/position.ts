@@ -91,3 +91,12 @@ export enum OperationalRestrictions {
   "Special delegation" = "Special delegation",
   "Aircraft charter" = "Aircraft charter",
 }
+
+export function setPositionStatus(item: Position) {
+  if (item.deactivation) item.status = "Archived";
+  else if (item.activation) {
+    item.status = "Active";
+  } else if (item.position_group_id) {
+    item.status = "Locked";
+  } else item.status = "Inactive (Draft)";
+}

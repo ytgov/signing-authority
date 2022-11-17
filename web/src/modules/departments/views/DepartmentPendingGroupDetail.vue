@@ -109,6 +109,10 @@
               </v-menu>
             </div>
 
+            <div v-if="item.status == 'Archived'" style="float: right;margin-right: 15px;margin-top: 20px;">
+              <p style="font-size: 12px; ">This Form A is Archived</p>
+            </div>
+
             <div style="float: right;margin-right: 15px;margin-top: 20px;" v-if="canAdminister">
               <div
                 class="mr-3"
@@ -271,10 +275,11 @@ export default {
     headers: [
       { text: "Program : Activity", value: "program_branch" },
       { text: "Position", value: "position" },
+      { text: "Status", value: "status" },
       { text: "Authority Lines", value: "authority_lines.length" },
     ],
     page: {
-      title: "Pending Form As",
+      title: "Form As",
     },
     breadcrumbs: [
       {
@@ -287,7 +292,7 @@ export default {
         exact: true,
       },
       {
-        text: "Pending Form As",
+        text: "Form As",
         to: "",
         exact: true,
       },
@@ -324,6 +329,8 @@ export default {
     ...mapState("home", ["profile"]),
 
     canAdminister() {
+      if (this.item.status == "Archived") return "";
+
       if (this.profile && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
 
