@@ -100,7 +100,7 @@ export default {
         id: this.departmentId,
       });
 
-      this.pendingGroups = groups.filter((g) => g.status != "Active");
+      this.pendingGroups = groups.filter((g) => g.status != "Active" && g.status != "Archived");
       this.formBList = await this.getFormBList({ id: this.departmentId });
     },
   },

@@ -87,7 +87,7 @@ export default {
     items: [],
     allItems: [],
     departmentId: null,
-    statusFilter: "",
+    statusFilter: "Active",
   }),
   mounted: async function() {
     this.departmentId = this.$route.params.departmentId;

@@ -89,11 +89,6 @@ const actions = {
 
     return auth.get(`${FORMA_URL}/department/${id}/pending-groups`).then((resp) => resp.data.data);
   },
-  async deletePendingGroup(store, { id, groupId }) {
-    const auth = getInstance();
-
-    return auth.delete(`${FORMA_URL}/department/${id}/pending-groups/${groupId}`).then((resp) => resp.data.data);
-  },
   async savePendingGroup(store, item) {
     const auth = getInstance();
 

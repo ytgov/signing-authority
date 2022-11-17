@@ -102,7 +102,7 @@
 
                   <v-list-item color="warning" @click="deleteGrouping" v-if="canDelete">
                     <v-list-item-title>
-                      Delete
+                      Archive
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -496,11 +496,9 @@ export default {
       }
     },
     async deleteGrouping() {
-      this.deletePendingGroup({
-        id: this.departmentId,
-        groupId: this.item._id,
-      }).then(() => {
-        this.$router.push(`/departments/${this.departmentId}`);
+      this.item.status = "Archived";
+      this.savePendingGroup(this.item).then(() => {
+        this.$router.push(`/departments/${this.departmentId}/form-a`);
       });
     },
     async downloadPDF() {
@@ -572,9 +570,6 @@ export default {
 
     generateFormAClick() {
       this.showGenerateDialog = true;
-    },
-    async doGenerateFormA() {
-      console.log("ANSWER");
     },
   },
 };

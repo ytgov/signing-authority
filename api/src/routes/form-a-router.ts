@@ -244,6 +244,21 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
         await db.update(item, position);
       }
     }
+
+    // find groups to archive if they are empty
+    let allGroups = await groupDb.getAll({ department_code, status: { $ne: "Archived" } });
+
+    for (let group of allGroups) {
+      let groupPositions = await db.getAll({ position_group_id: group._id });
+
+      if (groupPositions.length == 0) {
+        if (group._id) {
+          console.log("SETTING group to ARhive", group._id);
+          group.status = "Archived";
+          await groupDb.update(group._id.toString(), group);
+        }
+      }
+    }
   }
 
   return res.json({ data: result.insertedId });
@@ -310,7 +325,7 @@ formARouter.put(
   async (req: Request, res: Response) => {
     let db = req.store.FormA as GenericService<Position>;
     let { department_code, id } = req.params;
-    let { save_action, comments } = req.body;
+    let { save_action, comments, status } = req.body;
     let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
     let userDb = req.store.Users as UserService;
     let fileStore = req.store.Files as FileStore;
@@ -511,6 +526,10 @@ formARouter.put(
         item.status = "Locked for Signatures";
 
         groupDb.update(id, item);
+      } else {
+        item.status = status;
+
+        await groupDb.update(id, item);
       }
     }
 
