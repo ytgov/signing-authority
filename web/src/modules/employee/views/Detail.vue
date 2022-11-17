@@ -1,158 +1,89 @@
 <template>
   <v-container fluid class="down-top-padding">
-    <BaseBreadcrumb
-      :title="page.title"
-      :icon="page.icon"
-      :breadcrumbs="breadcrumbs"
-    >
+    <BaseBreadcrumb :title="page.title" :icon="page.icon" :breadcrumbs="breadcrumbs">
       <template v-slot:right>
         <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
       </template>
     </BaseBreadcrumb>
 
-    <BaseCard
-      :showHeader="true"
-      :heading="`${employee.name} (${employee.ynet_id})`"
-    >
+    <BaseCard :showHeader="true">
+      <template slot="left">
+        <div class="display: inline-block">
+          Employee details for {{ employee.name }}<br />
+
+          <span style="font-size: 90%; color: rgba(0,0,0,.6)">
+            YNET Id: <strong>{{ employee.ynet_id }}</strong> &nbsp; &nbsp; Email:
+            <a :href="`mailto:${employee.email}`"
+              ><strong>{{ employee.email }}</strong></a
+            ></span
+          >
+        </div>
+      </template>
+
       <v-row>
-        <v-col cols="12" sm="6">
-          <h3>Employee Details</h3>
+        <v-col cols="12">
           <v-card class="default">
+            <v-card-title>Authority History</v-card-title>
             <v-card-text>
-              <v-row>
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="employee.name"
-                    dense
-                    outlined
-                    background-color="white"
-                    label="Name"
-                    hide-details
-                    readonly
-                    append-icon="mdi-lock"
+              <v-data-table
+                :items="employee.authorities"
+                :headers="[
+                  { text: 'Status', value: 'status' },
+                  { text: 'Department', value: 'department_descr' },
+                  { text: 'Program', value: 'program' },
+                  { text: 'Type', value: 'type' },
+                  { text: 'Position', value: 'employee.title' },
+                  { text: 'Form A', value: 'formA' },
+                  { text: 'Form B', value: 'formB' },
+                ]"
+                @click:row="openFormB"
+              >
+                <template v-slot:item.type="{ item }">
+                  {{ cleanType(item.authority_type) }}
+                </template>
+                <template v-slot:item.program="{ item }">
+                  {{ item.program_branch }} <span v-if="item.activity">: {{ item.activity }}</span>
+                </template>
+                <template v-slot:item.formA="{ item }">
+                  <v-btn icon color="primary" class="my-0" @click.stop="showFormAPdf(item)"
+                    ><v-icon>mdi-file-pdf-box</v-icon></v-btn
                   >
-                  </v-text-field>
-                </v-col>
-               <!--  <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="employee.last_name"
-                    dense
-                    outlined
-                    background-color="white"
-                    label="Last name"
-                    hide-details
-                  ></v-text-field>
-                </v-col> -->
-                <!-- <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="employee.employee_id"
-                    dense
-                    outlined
-                    background-color="white"
-                    label="Employee Id"
-                    hide-details
-                  ></v-text-field>
-                </v-col> -->
-                <v-col cols="12" sm="6">
-                  <v-text-field
-                    v-model="employee.ynet_id"
-                    dense
-                    outlined
-                    background-color="white"
-                    label="YNET Id"
-                    hide-details
-                    readonly
-                    append-icon="mdi-lock"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="12">
-                  <v-text-field
-                    v-model="employee.email"
-                    dense
-                    outlined
-                    background-color="white"
-                    label="Email"
-                    hide-details
-                    readonly
-                    append-icon="mdi-lock"
-                  ></v-text-field>
-                </v-col>
-               <!--  <v-col cols="12" sm="12">
-                  <v-select
-                    v-model="employee.primary_department"
-                    dense
-                    outlined
-                    background-color="white"
-                    label="Primary department"
-                    hide-details
-                    :items="departments"
-                    item-text="descr"
-                    item-value="dept"
-                  ></v-select>
-                </v-col> -->
-              </v-row>
-              <v-row>
-                <!--<v-col>
-                  <v-btn
-                    color="primary"
-                    class="mb-0 mt-5"
-                    @click="saveEmployee"
+                </template>
+                <template v-slot:item.formB="{ item }">
+                  <v-btn icon color="primary" class="my-0" @click.stop="showFormBPdf(item)"
+                    ><v-icon>mdi-file-pdf-box</v-icon></v-btn
                   >
-                    Save
-                  </v-btn>
-                </v-col>
-                <v-spacer></v-spacer>
-                 <v-col>
-                  <v-btn
-                    class="mb-0 mt-5 mr-0"
-                    color="primary"
-                    @click="createNewAuthority()"
-                  >
-                    Create New Authority
-                  </v-btn>
-                </v-col> -->
-              </v-row>
+                </template>
+              </v-data-table>
             </v-card-text>
           </v-card>
-
-          <!--  <list-files></list-files> -->
-        </v-col>
-
-        <v-col cols="12" sm="6">
-          <h3>Authorities:</h3>
-
-          <div v-for="(item, idx) in employee.authorities" :key="idx">
-            <AuthorityRenderer :authority="item"></AuthorityRenderer>
-          </div>
         </v-col>
       </v-row>
     </BaseCard>
+
+    <pdf-preview-dialog ref="pdfPreview"></pdf-preview-dialog>
   </v-container>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapState } from "vuex";
 import { AUTHORITY_URL } from "@/urls";
-import AuthorityRenderer from "@/modules/forms/components/AuthorityRenderer.vue";
-import axios from "axios";
-//import ListFiles from "../../components/forms/listFiles.vue";
+import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
 
 export default {
-  components: { AuthorityRenderer },
+  components: { PdfPreviewDialog },
   computed: {
     ...mapState("department", ["departments"]),
     ...mapGetters("employee", ["employee"]),
-    breadcrumbs: function () {
+    breadcrumbs: function() {
       let b = [{ text: "Dashboard", to: "/dashboard" }];
       b.push({
         text: `${this.employee.name}`,
       });
       return b;
     },
-    employee_department_name: function () {
-      return this.departments.find(
-        (d) => d.dept === this.employee.primary_department
-      );
+    employee_department_name: function() {
+      return this.departments.find((d) => d.dept === this.employee.primary_department);
     },
   },
   watch: {},
@@ -163,38 +94,28 @@ export default {
     this.loadEmployee(this.$route.params.id);
   },
   methods: {
-    ...mapActions("employee", ["loadEmployee", "saveEmployee"]),
+    ...mapActions("employee", ["loadEmployee"]),
 
-    createNewAuthority() {
-      let authItem = {
-        // department_id: this.employee.primary_department,
-        department_code: this.employee_primary_department,
-        department_descr: this.employee_department_name.descr,
-        employee_id: this.employee._id,
-        issue_date: new Date(),
-        title: "",
-        program: "",
-        supervisor_name: "",
-        reviewed_by_department: false,
-        employee_signed: false,
-        supervisor_signed: false,
-        supervisor_title: "",
-        authority_lines: [],
-      };
-
-      axios
-        .post(AUTHORITY_URL, authItem, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          //  this.$refs.notifier.showAPIMessages(response.data)
-          if (response.status == 200) {
-            console.log("Create Successful");
-            this.loadEmployee(this.employee.ynet_id);
-          }
-        });
+    showFormAPdf(item) {
+      if (item && item.form_a && item.form_a.activation)
+        this.$refs.pdfPreview.show("Signed Form A", `${AUTHORITY_URL}/uploads/${item.form_a.activation.file_id}/file`);
+      else console.log("No form attached");
+    },
+    showFormBPdf(item) {
+      if (item.upload_signatures) {
+        this.$refs.pdfPreview.show("Signed Form B", `${AUTHORITY_URL}/uploads/${item.upload_signatures.file_id}/file`);
+      } else {
+        this.$refs.pdfPreview.show("Form B Preview", `${AUTHORITY_URL}/${item._id}/pdf`);
+      }
+    },
+    openFormB(item) {
+      console.log("OPENING ITEM", item);
+      this.$router.push(`/form-b/${item._id}`);
+    },
+    cleanType(value) {
+      if (value == "substantive") return "Substantive Position";
+      else if (value == "temporary") return "Temporary";
+      if (value == "acting") return "Acting Assignment";
     },
   },
 };

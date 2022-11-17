@@ -126,6 +126,9 @@ export interface FormBAuditLine {
 }
 
 export function setAuthorityStatus(item: Authority) {
+  //polyfill for Type
+  if (!item.authority_type) item.authority_type = "substantive";
+
   let now = moment().format("YYYYMMDD");
   item.status = "";
 

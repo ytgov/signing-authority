@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import _, { join } from "lodash";
 import { DirectoryService, GenericService } from "../services";
-import { Authority, Department, Employee } from "../data/models";
+import { Authority, Department, Employee, setAuthorityStatus } from "../data/models";
 import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
 import moment from "moment";
@@ -73,17 +73,8 @@ employeeRouter.post(
 );
 
 employeeRouter.get("/:id", [param("id").notEmpty()], ReturnValidationErrors, async (req: Request, res: Response) => {
-  let empDb = req.store.Employees as GenericService<Employee>;
   let autDb = req.store.Authorities as GenericService<Authority>;
-
-  //departments are no longer stored in the DB
-  // let depDb = req.store.Departments as GenericService<Department>;
-
   let { id } = req.params;
-  //let item = await empDb.getOne({ ynet_id: id });
-
-  //if (item) {
-  let item = { authorities: new Array<any>() };
   let authorities = await autDb.getAll({ "employee.ynet_id": id });
 
   if (authorities.length > 0) {
@@ -91,16 +82,10 @@ employeeRouter.get("/:id", [param("id").notEmpty()], ReturnValidationErrors, asy
     item.authorities = authorities;
 
     for (let auth of item.authorities) {
-      // auth.department = await depDb.getOne({ _id: new ObjectId(auth.department_id) });
-      /*  if (auth.issue_date)
-           auth.issue_date_display = moment(auth.issue_date).format("YYYY-MM-DD"); */
+      setAuthorityStatus(auth);
     }
     return res.json({ data: item });
   }
-
-  //return res.json({ data: item });
-  //}
-
   res.status(404).send();
 });
 
