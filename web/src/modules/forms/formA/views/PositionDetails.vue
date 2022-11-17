@@ -186,7 +186,7 @@ export default {
     this.breadcrumbs[2].to = `/departments/${this.departmentId}/positions`;
 
     let formA = await this.loadFormA({ id: this.$route.params.formAId });
-    this.page.title = `${formA.program_branch}: ${formA.position}`;
+    this.page.title = formA.program_branch ? `${formA.program_branch}: ${formA.position}` : formA.position;
     this.breadcrumbs[3].text = this.page.title;
   },
   methods: {

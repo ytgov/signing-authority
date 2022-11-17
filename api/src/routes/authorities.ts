@@ -65,7 +65,7 @@ authoritiesRouter.get(
       (item as any).API_PORT = API_PORT;
 
       if (item.authority_type == "temporary") item.authority_type = "TEMPORARY";
-      else if (item.authority_type == "acting") item.authority_type = "ACTIVATED BY APPOINTMENT";
+      else if (item.authority_type == "acting") item.authority_type = "ACTING";
       else item.authority_type = "SUBSTANTIVE";
 
       let t = new ExpressHandlebars();

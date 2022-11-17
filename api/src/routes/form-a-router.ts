@@ -217,8 +217,8 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
     department_code,
     department_descr,
     status: "Locked for Signatures",
-    program: program || "All",
-    activity: activity || "All",
+    program: program || "",
+    activity: activity || "",
   };
 
   let result = await groupDb.create(group);
@@ -741,7 +741,7 @@ formARouter.put(
   checkJwt,
   loadUser,
   isFormAAdmin,
-  [param("id").isMongoId().notEmpty(), body("program_branch").notEmpty().trim(), body("activity").trim()],
+  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;

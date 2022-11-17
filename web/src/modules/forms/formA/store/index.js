@@ -170,7 +170,7 @@ const actions = {
 
 const mutations = {
   async setFormA(state, value) {
-    if (value.program_branch == "") value.program_branch = "ALL";
+    //if (value.program_branch == "") value.program_branch = "ALL";
 
     for (let line of value.authority_lines) {
       line.coding_invalid = false;

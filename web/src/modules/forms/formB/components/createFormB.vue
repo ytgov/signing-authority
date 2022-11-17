@@ -18,7 +18,7 @@
             </template>
             <v-radio value="substantive" label="Substantive position"></v-radio>
             <v-radio value="temporary" label="Temporary / term position"></v-radio>
-            <v-radio value="acting" label="Activation by appointment"></v-radio>
+            <v-radio value="acting" label="Acting position"></v-radio>
           </v-radio-group>
 
           <v-autocomplete

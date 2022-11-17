@@ -12,7 +12,7 @@ export class LimitService {
       // check for matching operational_restriction
       let dmRestricts = dmLine.operational_restriction || undefined;
 
-      if (restricts != dmRestricts) break;
+      if (restricts != dmRestricts) continue;
 
       let chars = dmLine.coding.split("");
       let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
@@ -49,14 +49,22 @@ export class LimitService {
     if (limits.length == 0) return `No parent rows match ${line.coding}`;
 
     for (let limit of limits) {
-      if (!this.compareLimit(limit.contracts_for_goods_services, line.contracts_for_goods_services)) return `${line.coding} - Contracts limit invalid`;
-      if (!this.compareLimit(limit.loans_and_guarantees, line.loans_and_guarantees)) return `${line.coding} - Loans limit invalid`;
-      if (!this.compareLimit(limit.transfer_payments, line.transfer_payments)) return `${line.coding} - Transfer limit invalid`;
-      if (!this.compareLimit(limit.authorization_for_travel, line.authorization_for_travel)) return `${line.coding} - Travel limit invalid`;
-      if (!this.compareLimit(limit.request_for_goods_services, line.request_for_goods_services)) return `${line.coding} - Request limit invalid`;
-      if (!this.compareLimit(limit.assignment_authority, line.assignment_authority)) return `${line.coding} - Assignment limit invalid`;
-      if (!this.compareLimit(limit.s29_performance_limit, line.s29_performance_limit)) return `${line.coding} - S29 Performance limit invalid`;
-      if (!this.compareLimit(limit.s30_payment_limit, line.s30_payment_limit)) return `${line.coding} - S30 Payment limit invalid`;
+      if (!this.compareLimit(limit.contracts_for_goods_services, line.contracts_for_goods_services))
+        return `${line.coding} - Contracts limit invalid`;
+      if (!this.compareLimit(limit.loans_and_guarantees, line.loans_and_guarantees))
+        return `${line.coding} - Loans limit invalid`;
+      if (!this.compareLimit(limit.transfer_payments, line.transfer_payments))
+        return `${line.coding} - Transfer limit invalid`;
+      if (!this.compareLimit(limit.authorization_for_travel, line.authorization_for_travel))
+        return `${line.coding} - Travel limit invalid`;
+      if (!this.compareLimit(limit.request_for_goods_services, line.request_for_goods_services))
+        return `${line.coding} - Request limit invalid`;
+      if (!this.compareLimit(limit.assignment_authority, line.assignment_authority))
+        return `${line.coding} - Assignment limit invalid`;
+      if (!this.compareLimit(limit.s29_performance_limit, line.s29_performance_limit))
+        return `${line.coding} - S29 Performance limit invalid`;
+      if (!this.compareLimit(limit.s30_payment_limit, line.s30_payment_limit))
+        return `${line.coding} - S30 Payment limit invalid`;
     }
     return undefined;
   }

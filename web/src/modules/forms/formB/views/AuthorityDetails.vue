@@ -70,7 +70,7 @@
               </v-list-item>
 
               <v-list-item @click="showHistory" v-if="canCancel">
-                <v-list-item-title>Acivation History</v-list-item-title>
+                <v-list-item-title>Activation History</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="startActivate" v-if="canSchedule">

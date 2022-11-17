@@ -121,7 +121,7 @@ export default {
     //this.page.title = this.department.descr;
     let formA = await this.loadFormA({ id: this.$route.params.formAId });
 
-    this.page.title = `${formA.program_branch}: ${formA.position}`;
+    this.page.title = formA.program_branch ? `${formA.program_branch}: ${formA.position}` : formA.position;
     this.breadcrumbs[3].text = this.page.title;
     this.breadcrumbs[3].to = `/departments/${this.departmentId}/positions/${this.id}`;
 
