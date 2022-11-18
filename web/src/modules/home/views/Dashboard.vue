@@ -18,6 +18,7 @@
               hint="Enter a Name, YNET ID or Employee ID"
               v-model="search"
               hide-details
+              class="mb-2"
             ></v-text-field>
             <!-- 
                         <v-card-actions class="mt-2">
@@ -40,6 +41,7 @@
               item-text="display_name"
               item-value="dept"
               hide-details
+              label="Select department"
               @change="selectDepartment"
               :search-input.sync="searchTerm"
               @keyup.enter="shortCutSelectDepartment(searchTerm)"

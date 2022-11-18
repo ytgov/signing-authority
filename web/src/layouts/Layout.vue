@@ -154,19 +154,6 @@ export default {
       }
     }, 200);
   },
-  watch: {
-    $route(to) {
-      let meta = to.meta || {};
-
-      if (meta.children) {
-        this.sections = meta.children;
-        this.hasSidebar = true;
-      } else {
-        this.sections = [];
-        this.hasSidebar = false;
-      }
-    },
-  },
   methods: {
     ...mapActions(["initialize"]),
     nav: function(location) {

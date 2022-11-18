@@ -409,7 +409,9 @@
               <v-row>
                 <v-col cols="10">
                   <strong>Current status:</strong> {{ act.current_status }}<br />
-                  <span v-if="!act.approve_user_date && !act.reject_user_date"><strong>Not yet approved</strong><br /></span>
+                  <span v-if="!act.approve_user_date && !act.reject_user_date"
+                    ><strong>Not yet approved</strong><br
+                  /></span>
                   <span v-else-if="act.reject_user_date"><strong>Rejected</strong><br /></span>
 
                   <strong>Effective:</strong> {{ act.date }}
@@ -417,7 +419,14 @@
                   <span v-else> until cancelled</span>
                 </v-col>
                 <v-col>
-                  <v-btn v-if="canAdminister && !act.reject_user_date" small class="my-0 float-right" color="secondary">Edit</v-btn>
+                  <v-btn
+                    v-if="canAdminister && (act.current_status == 'Active' || act.current_status == 'Scheduled')"
+                    small
+                    class="my-0 float-right"
+                    color="secondary"
+                    @click="startEditActivation(idx)"
+                    >Edit</v-btn
+                  >
                 </v-col>
               </v-row>
 
@@ -455,6 +464,163 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="showActivationEditDialog" persistent width="600">
+      <v-app-bar dark color="#0097A9">
+        <v-toolbar-title>Edit Activation</v-toolbar-title>
+        <v-spacer />
+        <v-icon title="Close" @click="showActivationEditDialog = false">mdi-close</v-icon>
+      </v-app-bar>
+      <v-card tile>
+        <v-card-text class="pt-3">
+          <div v-if="editActivation.current_status == 'Scheduled'">
+            <p>
+              Since this activation is currently 'Scheduled' for the future, you can change the dates or remove it
+              entirely.
+            </p>
+
+            <v-row>
+              <v-col cols="6">
+                <v-menu
+                  v-model="startDateMenu1"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  left
+                  nudge-top="26"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="editActivation.date"
+                      label="Effective date"
+                      append-icon="mdi-calendar"
+                      readonly
+                      outlined
+                      hide-details
+                      dense
+                      background-color="white"
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="editActivation.date"
+                    @input="startDateMenu1 = false"
+                    @change="startDate1Changed"
+                    :min="today"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="6">
+                <v-menu
+                  v-model="endDateMenu2"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  left
+                  nudge-top="26"
+                  offset-y
+                  min-width="auto"
+                  v-if="formB.authority_type != 'substantive'"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="editActivation.expire_date"
+                      label="Expiration date"
+                      append-icon="mdi-calendar"
+                      readonly
+                      outlined
+                      hide-details
+                      dense
+                      background-color="white"
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="editActivation.expire_date"
+                    @input="endDateMenu2 = false"
+                    :min="activateEffective"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+            </v-row>
+
+            <v-btn
+              @click="doActivationEditSave"
+              color="primary"
+              class="mb-0 mr-5"
+              :disabled="!(editActivation.date && editActivation.expire_date)"
+              >Save</v-btn
+            >
+            <v-btn @click="doActivationEditRemove" color="warning" class="mb-0 mr-5">Remove</v-btn>
+            <v-btn @click="showActivationEditDialog = false" color="secondary" class="mb-0">Close</v-btn>
+          </div>
+
+          <div v-if="editActivation.current_status == 'Active'">
+            <p>
+              Since this activation is currently 'Active', you can only change the Expiration date. To expire this
+              activation immediately, set the Expiration date to yesterday's date (<a
+                @click="editActivation.expire_date = yesterday"
+                >{{ yesterday }}</a
+              >).
+            </p>
+
+            <v-text-field
+              dense
+              outlined
+              v-model="editActivation.date"
+              label="Effective date"
+              readonly
+              append-icon="mdi-lock"
+            ></v-text-field>
+
+            <v-menu
+              v-model="endDateMenu1"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              left
+              nudge-top="26"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="editActivation.expire_date"
+                  label="Expiration date"
+                  append-icon="mdi-calendar"
+                  readonly
+                  outlined
+                  hide-details
+                  dense
+                  background-color="white"
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="editActivation.expire_date"
+                @input="endDateMenu1 = false"
+                :min="yesterday"
+              ></v-date-picker>
+            </v-menu>
+
+            <v-btn @click="doActivationEditSave" color="primary" class="mb-0 mr-5">Save</v-btn>
+            <v-btn @click="showActivationEditDialog = false" color="secondary" class="mb-0">Close</v-btn>
+          </div>
+
+          <div v-if="editActivation.current_status == 'temporary'">
+            if it has started {{ editActivationHasStarted }}, then can only move expiration date. To expire as of today,
+            if hasn't started
+
+            <p>Temporary</p>
+
+            Expire
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <pdf-preview-dialog ref="pdfPreview"></pdf-preview-dialog>
   </v-container>
 </template>
@@ -491,14 +657,25 @@ export default {
     showHistoryDialog: false,
     showCancelDialog: false,
     showSupervisorDialog: false,
+    showActivationEditDialog: false,
 
     activateMethod: "Substantive Position",
     activateEffective: null,
     activateExpiry: null,
     startDateMenu: null,
+    startDateMenu1: null,
     endDateMenu: null,
+    endDateMenu1: null,
+    endDateMenu2: null,
     activateEmployee: {},
     today: moment().format("YYYY-MM-DD"),
+    yesterday: moment()
+      .subtract(1, "day")
+      .format("YYYY-MM-DD"),
+    editActivation: {},
+    editActivationIndex: -1,
+
+    editActivationHasStarted: true,
   }),
   computed: {
     ...mapGetters("authority/formB", ["formB"]),
@@ -819,6 +996,9 @@ export default {
     startDateChanged() {
       if (this.activateExpiry) this.activateExpiry = null;
     },
+    startDate1Changed() {
+      if (this.editActivation.expire_date) this.editActivation.expire_date = null;
+    },
     doScheduleActivate() {
       let body = {
         date: this.activateEffective,
@@ -850,7 +1030,12 @@ export default {
     },
 
     canShowSupervisor(activation) {
-      if (this.formB.finance_reviews && this.formB.authority_type == "acting" && !activation.approve_user_date && !activation.reject_user_date) {
+      if (
+        this.formB.finance_reviews &&
+        this.formB.authority_type == "acting" &&
+        !activation.approve_user_date &&
+        !activation.reject_user_date
+      ) {
         if (activation.approve_user_email.toLowerCase() == this.profile.email.toLowerCase()) {
           return true;
         } else if (this.profile.email.toLowerCase() == "michael@icefoganalytics.com") {
@@ -891,8 +1076,29 @@ export default {
         this.loadFormB(this.id);
         this.showHistoryDialog = false;
       });
+    },
+    startEditActivation(index) {
+      this.editActivationIndex = index;
+      this.editActivation = this.formB.activation[this.editActivationIndex];
+      this.showActivationEditDialog = true;
+    },
+    doActivationEditSave() {
+      this.formB.activation[this.editActivationIndex] = this.editActivation;
 
+      this.saveFormB(this.formB).then(() => {
+        this.loadFormB(this.id);
+        this.showHistoryDialog = false;
+        this.showActivationEditDialog = false;
+      });
+    },
+    doActivationEditRemove() {
+      this.formB.activation.splice(this.editActivationIndex, 1);
 
+      this.saveFormB(this.formB).then(() => {
+        this.loadFormB(this.id);
+        this.showHistoryDialog = false;
+        this.showActivationEditDialog = false;
+      });
     },
   },
 };

@@ -54,9 +54,7 @@ router.beforeEach(async (to, from, next) => {
     if (authService.isAuthenticated) {
       return next();
     }
-
-    console.log("BUMPING TO LOGIN WITH REDIRECT")
-
+    
     authService.loginWithRedirect({ appState: { targetUrl: to.fullPath } });
   };
 
