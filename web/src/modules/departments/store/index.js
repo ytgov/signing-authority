@@ -103,6 +103,16 @@ const actions = {
       })
       .catch(() => {});
   },
+  async deletePendingGroup(store, item) {
+    const auth = getInstance();
+
+    return auth
+      .delete(`${FORMA_URL}/department/${item.department_code}/pending-groups/${item._id}`)
+      .then((resp) => {
+        return resp.data.data;
+      })
+      .catch(() => {});
+  },
   async savePendingGroupWithFile(store, item) {
     const auth = getInstance();
 

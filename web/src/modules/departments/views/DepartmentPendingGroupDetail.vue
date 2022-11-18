@@ -100,9 +100,14 @@
                     <v-list-item-title>Unlock and Rewind</v-list-item-title>
                   </v-list-item>
 
-                  <v-list-item color="warning" @click="deleteGrouping" v-if="canDelete">
+                  <v-list-item color="warning" @click="archiveGrouping" v-if="canArchive">
                     <v-list-item-title>
                       Archive
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item color="warning" @click="deleteGrouping" v-if="canDelete">
+                    <v-list-item-title>
+                      Delete
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -380,8 +385,11 @@ export default {
       if (this.stepperValue == 4) return "Department of Finance";
       return "Department of Finance";
     },
-    canDelete() {
+    canArchive() {
       return this.item.status != "Archived";
+    },
+    canDelete() {
+      return this.item.status != "Active" && this.item.status != "Archived";
     },
     canDownload() {
       return this.item.finance_review_complete;
@@ -504,9 +512,14 @@ export default {
         this.$refs.pdfPreview.show("Form A Preview", this.pdfURL);
       }
     },
-    async deleteGrouping() {
+    async archiveGrouping() {
       this.item.status = "Archived";
       this.savePendingGroup(this.item).then(() => {
+        this.$router.push(`/departments/${this.departmentId}/form-a`);
+      });
+    },
+    async deleteGrouping() {
+      this.deletePendingGroup(this.item).then(() => {
         this.$router.push(`/departments/${this.departmentId}/form-a`);
       });
     },
