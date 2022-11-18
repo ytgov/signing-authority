@@ -161,15 +161,6 @@
                 append-icon="mdi-lock"
               ></v-text-field>
               <v-text-field
-                v-model="formB.form_a.activity"
-                label="Activity"
-                dense
-                outlined
-                readonly
-                background-color="white"
-                append-icon="mdi-lock"
-              ></v-text-field>
-              <v-text-field
                 v-model="formB.form_a.position"
                 label="Position"
                 dense
@@ -179,7 +170,15 @@
                 append-icon="mdi-lock"
               ></v-text-field>
 
-              <v-btn color="primary" small class="my-0" @click="openFormA">Preview Signed Form A</v-btn>
+              <v-row>
+                <v-col>
+                  <v-btn color="primary" small class="my-0" @click="openFormA">Preview Signed Form A</v-btn>
+                </v-col>
+                <v-spacer />
+                <v-col style="text-align: right">
+                  <router-link :to="`/departments/${formB.department_code}/positions/${formB.form_a_id}`">Show Position</router-link>
+                </v-col>
+              </v-row>
             </v-card-text>
           </v-card>
         </v-col>
@@ -685,7 +684,7 @@ export default {
     },
     formAProgram() {
       return this.formB.form_a.program_branch + (this.formB.form_a.activity ? `: ${this.formB.form_a.activity}` : "");
-    }
+    },
   },
   async mounted() {
     this.id = this.$route.params.formBId;
