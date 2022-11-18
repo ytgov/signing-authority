@@ -1,10 +1,7 @@
 <template>
   <span>
-    <v-chip v-if="isActive" dark class="mr-4 mb-1" color="yg_moss">Active</v-chip>
-    <v-chip v-else class="mr-4 mb-1" dark color="yg_lichen">{{ status }}</v-chip>
-    <!-- <v-chip v-if="isLocked" dark class="mr-4 mb-1" color="yg_lichen">
-          <v-icon small>mdi-lock</v-icon>
-        </v-chip> -->
+    <v-chip dark class="mr-4 mb-1" :color="status == 'Active' ? 'yg_moss' : 'yg_lichen'">{{ status }}</v-chip>
+
     <form-a-status-locked v-if="isLocked"> </form-a-status-locked>
     <form-a-status-unlocked v-else></form-a-status-unlocked>
   </span>
@@ -13,18 +10,21 @@
 <script>
 import formAStatusLocked from "./isLocked/formAStatusLocked.vue";
 import formAStatusUnlocked from "./isLocked/formAStatusUnlocked.vue";
+import { mapState } from "vuex";
+
 export default {
   name: "formAStatus",
   components: {
     formAStatusLocked,
     formAStatusUnlocked,
   },
-  props: {
-    isActive: {
-      type: Boolean,
-      required: false,
-      default: false,
+  computed: {
+    ...mapState("authority/formA", ["formA"]),
+    isActive() {
+      return this.formA.status == "Active";
     },
+  },
+  props: {
     isLocked: {
       type: Boolean,
       required: false,

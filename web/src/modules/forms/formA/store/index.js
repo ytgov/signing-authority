@@ -12,12 +12,8 @@ const state = {
 };
 
 const getters = {
-  isActive: (state) => {
-    if (state.formA.status == "Active") {
-      //we might consider a check on issue date and if a form is uploaded.
-      return true;
-    }
-    return false;
+  isActive: () => {
+    return state.formA.status == "Active";
   },
   isLocked: () => {
     //Decide what is the test a locked form A. In the meantime

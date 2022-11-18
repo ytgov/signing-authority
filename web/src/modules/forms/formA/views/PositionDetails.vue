@@ -4,10 +4,8 @@
 
     <BaseCard :showHeader="true" heading="Delegation of Financial Signing Authority">
       <template slot="right">
-        <!-- <timed-message ref="messager" class="mr-4"></timed-message> -->
-
         <v-chip color="#f2a900" v-if="formA.is_deputy_minister" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
-        <form-a-status :isLocked="isLocked" :isActive="isActive" :status="status"> </form-a-status>
+        <form-a-status :isLocked="isLocked" :status="status"> </form-a-status>
 
         <actions-menu
           :formA="formA"
@@ -45,41 +43,6 @@
               />
             </v-card-text>
           </v-card>
-
-          <!-- <v-card class="default mt-5" v-if="formA.activation">
-            <v-card-title>Activation Details</v-card-title>
-            <v-card-text>
-              <v-text-field
-                label="Recommender"
-                v-model="formA.activation.recommender_name"
-                dense
-                outlined
-                readonly
-                append-icon="mdi-lock"
-                background-color="white"
-              ></v-text-field>
-              <v-text-field
-                label="Approver"
-                v-model="formA.activation.approver_name"
-                dense
-                outlined
-                readonly
-                append-icon="mdi-lock"
-                background-color="white"
-              ></v-text-field>
-              <v-text-field
-                label="Date"
-                v-model="activationDate"
-                dense
-                outlined
-                readonly
-                append-icon="mdi-lock"
-                background-color="white"
-              ></v-text-field>
-
-              <v-btn small color="primary" class="my-0" @click="showPreview">View Form A</v-btn>
-            </v-card-text>
-          </v-card> -->
         </v-col>
         <v-col cols="6">
           <v-card class="default">

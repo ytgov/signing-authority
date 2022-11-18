@@ -18,7 +18,7 @@
           them have been cancelled.
         </p>
         <p v-else>
-            An archived position cannot be re-activated and cannot be used to generate any further Form B authorities.
+          An archived position cannot be re-activated and cannot be used to generate any further Form B authorities.
         </p>
 
         <v-btn @click="doArchive" color="error" class="mr-5" :disabled="nonCancelledCount > 0">Archive</v-btn>
@@ -54,9 +54,6 @@ export default {
       await this.archiveFormA(this.archiveDetails);
       this.$router.push(`/departments/${this.position.department_code}/positions`);
     },
-  },
-  async mounted() {
-    console.log(this.position.active_authorities.length);
   },
 };
 </script>
