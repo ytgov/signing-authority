@@ -112,10 +112,10 @@ const actions = {
       });
   },
 
-  async accountSearch(state, term) {
+  async accountSearch(state, {term, date}) {
     const auth = getInstance();
     
-    return auth.post(`${AUTHORITY_URL}/account-search`, {term}).then((resp) => {
+    return auth.post(`${AUTHORITY_URL}/account-search`, {term, date}).then((resp) => {
       return resp.data.data;
     });
   },

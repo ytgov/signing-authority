@@ -126,11 +126,14 @@ export interface FormBAuditLine {
   date_display?: string;
 }
 
-export function setAuthorityStatus(item: Authority) {
+export function setAuthorityStatus(item: Authority, asAtDate?: string) {
   //polyfill for Type
   if (!item.authority_type) item.authority_type = "substantive";
 
   let now = moment().format("YYYYMMDD");
+
+  if (asAtDate) now = moment(asAtDate).format("YYYYMMDD");
+
   item.status = "";
 
   if (item.cancel_date) {

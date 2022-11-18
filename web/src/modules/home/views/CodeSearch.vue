@@ -61,7 +61,7 @@ export default {
       let cleanSearch = this.search.trim().toLowerCase();
       if (cleanSearch.length == 0) return;
 
-      this.searchResults = await this.accountSearch(cleanSearch);
+      this.searchResults = await this.accountSearch({term: cleanSearch});
     },
     selectAuthority(item) {
       this.$router.push(`/form-b/${item._id}`);

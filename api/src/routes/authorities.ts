@@ -90,14 +90,24 @@ authoritiesRouter.post(
   checkJwt,
   loadUser,
   isFormBOrActingAdmin,
-  [body("term").notEmpty().isLength({ min: 5 }).withMessage("Minimum 5 digits").bail().isNumeric().withMessage("Only number are allowed")],
+  [
+    body("term")
+      .notEmpty()
+      .isLength({ min: 5 })
+      .withMessage("Minimum 5 digits")
+      .bail()
+      .isNumeric()
+      .withMessage("Only number are allowed"),
+  ],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
-    let { term } = req.body;
+    let { term, date } = req.body;
     let db = req.store.Authorities as GenericService<Authority>;
     let searchService = new CodeSearchService(db);
 
-    let results = await searchService.search(term);
+    if (!date) date = moment().startOf("day").format("YYYY-MM-DD");
+
+    let results = await searchService.search(term, date);
 
     for (let item of results) {
       setAuthorityStatus(item);
