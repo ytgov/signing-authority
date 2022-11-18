@@ -1,3 +1,4 @@
+export * from "./codesearch-service";
 export * from "./directory-service";
 export * from "./email-service";
 export * from "./file-service";

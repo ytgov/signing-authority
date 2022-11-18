@@ -22,17 +22,8 @@
         <v-list-item v-if="formA.activation && !formA.is_deputy_minister" @click="preview">
           <v-list-item-title>View Form A</v-list-item-title>
         </v-list-item>
-        <!--    <v-list-item @click="generateClick">
-          <v-list-item-title>Lock for Signatures</v-list-item-title>
-        </v-list-item>
- -->
-        <!-- <v-list-item @click="uploadClick">
-          <-- <upload-form-modal></upload-form-modal> ->
-          <v-list-item-title>Upload Signed PDF</v-list-item-title>
-        </v-list-item> -->
         <v-list-item v-if="formA.status == 'Active'">
           <archive-form-a :position="formA"> </archive-form-a>
-          <!-- <v-list-item-title>Archive</v-list-item-title> -->
         </v-list-item>
 
         <v-list-item @click="duplicateClick">
@@ -46,50 +37,29 @@
   </div>
 </template>
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import archiveFormA from "./actions/archiveFormA.vue";
 export default {
   components: { archiveFormA },
   name: "actionsMenu",
   props: {
-    formA: {
-      type: Object,
-      required: true,
-    },
-    isActive: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     isLocked: {
       type: Boolean,
       required: false,
       default: false,
     },
-    status: { type: String },
     showPreview: { type: Function },
   },
-  data() {
-    return {
-      //
-    };
+  computed: {
+    ...mapState("authority/formA", ["formA"]),
+    isActive() {
+      return this.formA.status == "Active";
+    },
   },
   methods: {
     ...mapActions("authority/formA", ["duplicateFormA", "deleteFormA", "saveFormA"]),
     editClick() {
       this.$router.push(`/departments/${this.formA.department_code}/positions/${this.formA._id}/edit`);
-    },
-    generateClick() {
-      this.$router.push({
-        name: "FormAGenerate",
-        params: { id: this.formA._id },
-      });
-    },
-    uploadClick() {
-      this.$router.push({
-        name: "FormAUpload",
-        params: { id: this.formA._id },
-      });
     },
     async duplicateClick() {
       let duplicate = await this.duplicateFormA();
@@ -105,15 +75,15 @@ export default {
     preview() {
       this.showPreview();
     },
-    dmStartApprove() {
+    async dmStartApprove() {
       this.formA.save_action = "DMLock";
 
-      this.saveFormA(this.formA);
+      await this.saveFormA(this.formA);
     },
-    dmApprove() {
+    async dmApprove() {
       this.formA.save_action = "DMApprove";
 
-      this.saveFormA(this.formA);
+      await this.saveFormA(this.formA);
     },
   },
 };

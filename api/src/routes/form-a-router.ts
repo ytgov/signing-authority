@@ -928,6 +928,8 @@ async function loadSinglePosition(req: Request, id: string): Promise<Position | 
 
   if (!item) return null;
 
+  setPositionStatus(item);
+
   if (item.activation && item.activation.date)
     item.issue_date_display = moment(item.activation.date).format("YYYY-MM-DD");
 

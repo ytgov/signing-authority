@@ -87,7 +87,7 @@ const actions = {
       return resp;
     });
   },
-  async scheduleActivation({commit}, {id, body}) {
+  async scheduleActivation({ commit }, { id, body }) {
     const auth = getInstance();
 
     return auth
@@ -98,7 +98,7 @@ const actions = {
       })
       .catch(() => {});
   },
-  async cancelFormB({commit}, item) {
+  async cancelFormB({ commit }, item) {
     const auth = getInstance();
 
     return auth
@@ -110,6 +110,14 @@ const actions = {
       .catch((e) => {
         window.alert(`Save failed - ${e.response.data}`);
       });
+  },
+
+  async accountSearch(state, term) {
+    const auth = getInstance();
+    
+    return auth.post(`${AUTHORITY_URL}/account-search`, {term}).then((resp) => {
+      return resp.data.data;
+    });
   },
 };
 

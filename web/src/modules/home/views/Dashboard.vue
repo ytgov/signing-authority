@@ -3,8 +3,8 @@
     <h1>Signing Authorities Home</h1>
 
     <v-row>
-      <v-col
-        ><v-card class="mt-5" color="#fff2d5">
+      <v-col>
+        <v-card class="mt-5" color="#fff2d5">
           <v-card-title>Authorities by Employee</v-card-title>
           <v-card-text>
             <v-text-field
@@ -15,9 +15,8 @@
               append-icon="mdi-magnify"
               @click:append="doSearch"
               @keydown="searchKeyUp"
-              hint="Enter a Name, YNET ID or Employee ID"
+              hint="Enter a Name, YNET ID or Employee ID and press Enter"
               v-model="search"
-              hide-details
               class="mb-2"
             ></v-text-field>
             <!-- 
@@ -27,8 +26,31 @@
                             >
                         </v-card-actions> -->
           </v-card-text>
-        </v-card></v-col
-      >
+        </v-card>
+        <v-card class="mt-5" color="#fff2d5">
+          <v-card-title>Authorities by Account Code</v-card-title>
+          <v-card-text>
+            <v-text-field
+              dense
+              outlined
+              background-color="white"
+              label="Enter a posting level account"
+              append-icon="mdi-magnify"
+              @click:append="doCodeSearch"
+              @keydown="codeSearchKeyUp"
+              hint="Enter a posting level account and press Enter"
+              v-model="codeSearch"
+              class="mb-2"
+            ></v-text-field>
+            <!-- 
+                        <v-card-actions class="mt-2">
+                            <router-link to="/search"
+                                >Advanced search</router-link
+                            >
+                        </v-card-actions> -->
+          </v-card-text>
+        </v-card>
+      </v-col>
       <v-col>
         <v-card class="mt-5 pb-2" color="#fff2d5">
           <v-card-title>Authorities by Department</v-card-title>
@@ -54,8 +76,6 @@
       </v-col>
     </v-row>
 
-    <!--         <employee-lookup actionName="Authorities" label="" :select="pickPerson"></employee-lookup>
- -->
     <v-navigation-drawer v-model="drawer" absolute right temporary width="600" loading>
       <v-list-item loading>
         <v-list-item-content>
@@ -96,20 +116,17 @@
         </v-data-table>
       </div>
     </v-navigation-drawer>
-    <!-- repalce with a recent work component -->
   </div>
 </template>
 
 <script>
-//import createEmployeeModal from "@/components/employee/createEmployeeModal.vue";
-//import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
 import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Home",
-  //components: { createEmployeeModal, EmployeeLookup },
   data: () => ({
     search: "",
+    codeSearch: "",
     drawer: null,
     searchResults: [],
     loading: false,
@@ -153,10 +170,14 @@ export default {
     selectDepartment(item) {
       this.$router.push(`/departments/${item}`);
     },
-    pickPerson(item) {
-      console.log("PICKED", item);
+    codeSearchKeyUp(event) {
+      if (event.key == "Enter") this.doCodeSearch();
+    },
+    async doCodeSearch() {
+      let cleanSearch = this.codeSearch.trim().toLowerCase();
+      if (cleanSearch.length == 0) return;
 
-      this.drawer = true;
+      this.$router.push(`/code-search?query=${cleanSearch}`);
     },
   },
 };

@@ -2,11 +2,11 @@ import express, { Request, Response } from "express";
 import fs from "fs";
 import _ from "lodash";
 import moment from "moment";
-import { param } from "express-validator";
+import { body, param } from "express-validator";
 import { ExpressHandlebars } from "express-handlebars";
 import { uploadsRouter } from "./uploads";
 import { ReturnValidationErrors } from "../middleware";
-import { EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
+import { CodeSearchService, EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
 import { Authority, Position, ReviewResultType, setAuthorityStatus, StoredFile } from "../data/models";
 import { FileStore } from "../utils/file-store";
 import { generatePDF } from "../utils/pdf-generator";
@@ -82,6 +82,28 @@ authoritiesRouter.get(
     }
 
     res.status(404).send();
+  }
+);
+
+authoritiesRouter.post(
+  "/account-search",
+  checkJwt,
+  loadUser,
+  isFormBOrActingAdmin,
+  [body("term").notEmpty().isLength({ min: 5 }).withMessage("Minimum 5 digits").bail().isNumeric().withMessage("Only number are allowed")],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    let { term } = req.body;
+    let db = req.store.Authorities as GenericService<Authority>;
+    let searchService = new CodeSearchService(db);
+
+    let results = await searchService.search(term);
+
+    for (let item of results) {
+      setAuthorityStatus(item);
+    }
+
+    res.json({ data: results });
   }
 );
 
