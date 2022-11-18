@@ -176,7 +176,9 @@
                 </v-col>
                 <v-spacer />
                 <v-col style="text-align: right">
-                  <router-link :to="`/departments/${formB.department_code}/positions/${formB.form_a_id}`">Show Position</router-link>
+                  <router-link :to="`/departments/${formB.department_code}/positions/${formB.form_a_id}`"
+                    >Show Position</router-link
+                  >
                 </v-col>
               </v-row>
             </v-card-text>
@@ -407,16 +409,22 @@
               <v-row>
                 <v-col cols="10">
                   <strong>Current status:</strong> {{ act.current_status }}<br />
-                  <span v-if="!act.approve_user_date"><strong>Not yet approved</strong><br /></span>
+                  <span v-if="!act.approve_user_date && !act.reject_user_date"><strong>Not yet approved</strong><br /></span>
+                  <span v-else-if="act.reject_user_date"><strong>Rejected</strong><br /></span>
 
                   <strong>Effective:</strong> {{ act.date }}
                   <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
                   <span v-else> until cancelled</span>
                 </v-col>
                 <v-col>
-                  <v-btn small class="my-0 float-right" color="secondary">Edit</v-btn>
+                  <v-btn v-if="canAdminister && !act.reject_user_date" small class="my-0 float-right" color="secondary">Edit</v-btn>
                 </v-col>
               </v-row>
+
+              <div v-if="canShowSupervisor(act)">
+                <v-btn @click="doSupervisorApprove(act)" color="primary" class="mb-0 mr-5">Approve</v-btn>
+                <v-btn @click="doSupervisorReject(act)" color="warning" class="mb-0 mr-5">Reject</v-btn>
+              </div>
             </v-alert>
           </div>
           <div v-else>
@@ -447,7 +455,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-
     <pdf-preview-dialog ref="pdfPreview"></pdf-preview-dialog>
   </v-container>
 </template>
@@ -458,12 +465,7 @@ import moment from "moment";
 import { mapGetters, mapActions, mapState } from "vuex";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
 import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
-
-// import uploadFormModal from "../components/uploadFormModal.vue";
-//import AuthorityMetadataCard from "../components/cards/authorityMetadataCard.vue";
-//import AuthoritySupervisorCard from "../components/cards/authoritySupervisorCard.vue";
 import FormBStatus from "../components/status/formBStatus.vue";
-//import actionsMenu from "../components/menus/actionsMenu.vue";
 import FormBTable from "../components/formBTable.vue";
 
 export default {
@@ -488,6 +490,7 @@ export default {
     showActivateDialog: false,
     showHistoryDialog: false,
     showCancelDialog: false,
+    showSupervisorDialog: false,
 
     activateMethod: "Substantive Position",
     activateEffective: null,
@@ -609,7 +612,17 @@ export default {
       return false;
     },
     canSchedule() {
-      if (this.formB.finance_reviews && this.formB.authority_type != "substantive" && !this.formB.cancel_date)
+      if (this.formB.finance_reviews && this.formB.authority_type == "acting") {
+        if (
+          this.profile.roles.includes("Acting Appointment Administrator") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        return false;
+      } else if (this.formB.finance_reviews && this.formB.authority_type != "substantive" && !this.formB.cancel_date)
         return true;
       return false;
     },
@@ -834,6 +847,52 @@ export default {
         this.loadFormB(this.id);
         this.showCancelDialog = false;
       });
+    },
+
+    canShowSupervisor(activation) {
+      if (this.formB.finance_reviews && this.formB.authority_type == "acting" && !activation.approve_user_date && !activation.reject_user_date) {
+        if (activation.approve_user_email.toLowerCase() == this.profile.email.toLowerCase()) {
+          return true;
+        } else if (this.profile.email.toLowerCase() == "michael@icefoganalytics.com") {
+          console.log("ELSE YER");
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    doSupervisorApprove(activation) {
+      this.formB.activation.forEach((act) => {
+        if (
+          act.activate_reason == activation.activate_reason &&
+          act.date == activation.date &&
+          act.approve_user_email == activation.approve_user_email
+        )
+          act.approve_user_date = new Date();
+      });
+
+      this.saveFormB(this.formB).then(() => {
+        this.loadFormB(this.id);
+        this.showHistoryDialog = false;
+      });
+    },
+    doSupervisorReject(activation) {
+      this.formB.activation.forEach((act) => {
+        if (
+          act.activate_reason == activation.activate_reason &&
+          act.date == activation.date &&
+          act.approve_user_email == activation.approve_user_email
+        )
+          act.reject_user_date = new Date();
+      });
+
+      this.saveFormB(this.formB).then(() => {
+        this.loadFormB(this.id);
+        this.showHistoryDialog = false;
+      });
+
+
     },
   },
 };

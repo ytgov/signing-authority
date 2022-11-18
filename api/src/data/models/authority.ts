@@ -63,6 +63,7 @@ export interface ActivationRecord {
   activate_user_id: ObjectId;
   approve_user_email: string;
   approve_user_date?: Date;
+  reject_user_date?: Date;
 
   file?: StoredFile;
   memo?: StoredFile;
@@ -148,6 +149,9 @@ export function setAuthorityStatus(item: Authority) {
 
       a.current_status = "Inactive";
 
+      if (a.reject_user_date) {
+        item.status = "Rejected";
+      }
       if (a.approve_user_date && start <= now && (a.expire_date == undefined || expire >= now)) {
         a.current_status = "Active";
         item.status = "Active";

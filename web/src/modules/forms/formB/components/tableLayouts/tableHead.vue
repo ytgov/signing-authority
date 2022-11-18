@@ -53,7 +53,7 @@
                 <div>S.24 Travel <br />authorization</div>
             </th>
             <th rowspan="3" class="rotate">
-                <div>OTher contracts & <br />Expenditures **</div>
+                <div>OTher contracts & <br />Expenditures</div>
             </th>
             <th rowspan="3" class="rotate">
                 <div>Loans & <br />Guarantees</div>
