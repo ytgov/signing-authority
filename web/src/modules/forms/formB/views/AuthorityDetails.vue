@@ -136,8 +136,7 @@
         >
 
         <v-card-subtitle>
-          Department: <strong>{{ formB.department_descr }}</strong> &nbsp; &nbsp; Form A Position:
-          <strong>{{ formB.form_a.position }}</strong>
+          Department: <strong>{{ formB.department_descr }}</strong>
         </v-card-subtitle>
 
         <v-card-text>
@@ -147,13 +146,13 @@
 
       <v-row class="mt-3">
         <v-col cols="6">
-          <authority-supervisor-card :formB="formB" class="mb-5" />
-
+          <!--  <authority-supervisor-card :formB="formB" class="mb-5" />
+ -->
           <v-card class="default">
-            <v-card-title>Related Form A Position</v-card-title>
+            <v-card-title>Related Position</v-card-title>
             <v-card-text>
               <v-text-field
-                v-model="formB.form_a.program_branch"
+                v-model="formAProgram"
                 label="Program"
                 dense
                 outlined
@@ -463,7 +462,7 @@ import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
 
 // import uploadFormModal from "../components/uploadFormModal.vue";
 //import AuthorityMetadataCard from "../components/cards/authorityMetadataCard.vue";
-import AuthoritySupervisorCard from "../components/cards/authoritySupervisorCard.vue";
+//import AuthoritySupervisorCard from "../components/cards/authoritySupervisorCard.vue";
 import FormBStatus from "../components/status/formBStatus.vue";
 //import actionsMenu from "../components/menus/actionsMenu.vue";
 import FormBTable from "../components/formBTable.vue";
@@ -473,7 +472,7 @@ export default {
   components: {
     // uploadFormModal,
     //AuthorityMetadataCard,
-    AuthoritySupervisorCard,
+    //AuthoritySupervisorCard,
     FormBStatus,
     PdfPreviewDialog,
     FormBTable,
@@ -684,6 +683,9 @@ export default {
       else if (this.formB.authority_type == "temporary" && this.activateEffective && this.activateExpiry) return true;
       return false;
     },
+    formAProgram() {
+      return this.formB.form_a.program_branch + (this.formB.form_a.activity ? `: ${this.formB.form_a.activity}` : "");
+    }
   },
   async mounted() {
     this.id = this.$route.params.formBId;
