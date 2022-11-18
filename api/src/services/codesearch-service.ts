@@ -1,4 +1,5 @@
-import { Authority, setAuthorityStatus } from "../data/models";
+import moment from "moment";
+import { Authority, setAuthorityStatus, setHistoricAuthorityStatus } from "../data/models";
 import { GenericService } from "./generic-service";
 
 export class CodeSearchService {
@@ -9,16 +10,15 @@ export class CodeSearchService {
   }
 
   async search(code: string, asAtDate: string): Promise<Authority[]> {
-    console.log("SEARCHING FOR ", code, asAtDate);
-
     let department_code = code.substring(0, 2);
 
-    let bigList = await this.db.getAll({ department_code });
+    let today = moment().startOf("day").format("YYYY-MM-DD");
+    let date = moment(asAtDate).toDate();
+
+    let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
     let littleList = new Array<Authority>();
 
     for (let item of bigList) {
-      setAuthorityStatus(item, asAtDate);
-
       let foundMatch = false;
 
       for (let line of item.authority_lines) {
@@ -28,7 +28,14 @@ export class CodeSearchService {
         }
       }
 
-      if (foundMatch) littleList.push(item);
+      if (foundMatch) {
+        item.status = "";
+
+        if (today == moment(date).startOf("day").format("YYYY-MM-DD")) setAuthorityStatus(item);
+        else setHistoricAuthorityStatus(item, date);
+
+        littleList.push(item);
+      }
     }
 
     return littleList;

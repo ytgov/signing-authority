@@ -126,14 +126,11 @@ export interface FormBAuditLine {
   date_display?: string;
 }
 
-export function setAuthorityStatus(item: Authority, asAtDate?: string) {
+export function setAuthorityStatus(item: Authority) {
   //polyfill for Type
   if (!item.authority_type) item.authority_type = "substantive";
 
   let now = moment().format("YYYYMMDD");
-
-  if (asAtDate) now = moment(asAtDate).format("YYYYMMDD");
-
   item.status = "";
 
   if (item.cancel_date) {
@@ -147,7 +144,7 @@ export function setAuthorityStatus(item: Authority, asAtDate?: string) {
         continue;
       }
 
-      let start = moment(a.date).format("YYYYMMDD");
+      let start = moment(a.approve_user_date).format("YYYYMMDD");
       let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
 
       a.current_status = "Inactive";
@@ -155,10 +152,10 @@ export function setAuthorityStatus(item: Authority, asAtDate?: string) {
       if (a.reject_user_date) {
         a.current_status = "Rejected";
       }
-      if (a.approve_user_date && start <= now && (a.expire_date == undefined || expire >= now)) {
+      if (start <= now && (a.expire_date == undefined || expire >= now)) {
         a.current_status = "Active";
         item.status = "Active";
-      } else if (a.approve_user_date && start > now) {
+      } else if (start > now) {
         a.current_status = "Scheduled";
         item.status = "Scheduled";
       }
@@ -171,5 +168,36 @@ export function setAuthorityStatus(item: Authority, asAtDate?: string) {
     if (item.finance_reviews) item.status = "Approved";
     else if (item.upload_signatures) item.status = "Upload Signatures";
     else if (item.department_reviews) item.status = "Locked for Signatures";
+  }
+}
+
+export function setHistoricAuthorityStatus(item: Authority, asAtDate: Date) {
+  //polyfill for Type
+  if (!item.authority_type) item.authority_type = "substantive";
+
+  let now = moment(asAtDate).format("YYYYMMDD");
+
+  item.status = "Inactive";
+
+  if (item.cancel_date && moment(item.cancel_date).format("YYYYMMDD") < now) {
+    item.status = "Cancelled";
+    return;
+  }
+
+  if (item.activation && item.activation.length > 0) {
+    for (let a of item.activation) {
+      if (a.reject_user_date) {
+        continue;
+      }
+
+      let start = moment(a.approve_user_date).format("YYYYMMDD");
+      let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
+
+      if (start <= now) {
+        if (a.expire_date == undefined || expire >= now) {
+          item.status = "Active";
+        }
+      }
+    }
   }
 }

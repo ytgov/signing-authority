@@ -162,7 +162,7 @@ const mutations = {
   },
 };
 
-function cleanCoding(input) {
+export function cleanCoding(input) {
   input = input || "";
   input = input.toLowerCase().replace(/[^0-9|x]/g, "");
   input = input.toLowerCase().replace(/x+$/, "");
@@ -179,7 +179,7 @@ function cleanZeros(input) {
   return input;
 }
 
-function formatCoding(input = "") {
+export function formatCoding(input = "") {
   let account = `${input.replace(/[^0-9|x]/g, "")}ZZZZZZZZZZZZZZZZZZZZZZZZZ`;
   let dept = account.substring(0, 2);
   let vote = account.substring(2, 3);

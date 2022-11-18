@@ -109,10 +109,6 @@ authoritiesRouter.post(
 
     let results = await searchService.search(term, date);
 
-    for (let item of results) {
-      setAuthorityStatus(item);
-    }
-
     res.json({ data: results });
   }
 );
