@@ -80,7 +80,7 @@
       <v-list-item loading>
         <v-list-item-content>
           <v-list-item-title>
-            <div class="float-right">
+            <!--  <div class="float-right">
               <v-btn
                 x-small
                 color="primary"
@@ -91,7 +91,7 @@
               >
                 Advanced search</v-btn
               >
-            </div>
+            </div> -->
             <div class="float-left">Employees ({{ searchResults.length }} matches)</div>
           </v-list-item-title>
         </v-list-item-content>

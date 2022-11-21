@@ -17,10 +17,10 @@ const actions = {
       commit("setProfile", resp.data.data);
     });
   },
-  async employeeSearch(store, terms) {
+  async employeeSearch(store, { term }) {
     const auth = getInstance();
 
-    return await auth.post(`${EMPLOYEE_URL}/search`, { terms });
+    return await auth.post(`${EMPLOYEE_URL}/search`, { term });
   },
 };
 

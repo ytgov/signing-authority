@@ -55,7 +55,7 @@ export class EmailService {
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
 
-      console.log("-- EMAIL FORM-B SENDING", recipient.email);
+      console.log("-- EMAIL FORM-B SENDING", recipient.email, action);
       await this.sendEmail(fullName, recipient.email, "Form B Workflow Notification", content);
     }
   }

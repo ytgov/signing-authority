@@ -32,8 +32,9 @@
           <v-col cols="6" style="vertical-align: bottom">
             <div v-if="isActive">
               <v-chip v-if="isActive" dark class="" color="success"
-                >Active
-                <span class="ml-1" v-if="authority.authority_type != 'substantive'"> - {{ expiresIn }}</span>
+                >Active<span class="ml-1" v-if="authority.authority_type != 'substantive' && expiresIn">{{
+                  expiresIn
+                }}</span>
               </v-chip>
             </div>
             <v-chip v-else-if="isCancelled" class="" dark color="purple">Cancelled</v-chip>
@@ -91,15 +92,20 @@ export default {
       return "Substantive";
     },
     expiresIn() {
+      let hasExpire = false;
       let longest = moment().startOf("day");
       let actives = this.authority.activation.filter((a) => a.current_status == "Active");
 
       for (let active of actives) {
-        let expire = moment(active.expire_date).startOf("day");
-        if (longest.isBefore(expire)) longest = expire;
+        if (active.expire_date) {
+          hasExpire = true;
+          let expire = moment(active.expire_date).startOf("day");
+          if (longest.isBefore(expire)) longest = expire;
+        }
       }
 
-      return `Expires ${longest.from(moment().startOf("day"))}`;
+      if (hasExpire) return `- Expires ${longest.from(moment().startOf("day"))}`;
+      return "";
     },
     scheduledIn() {
       if (!this.isScheduled) return "";
