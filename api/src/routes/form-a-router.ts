@@ -361,19 +361,6 @@ formARouter.put(
 
         let positions = await db.getAll({ position_group_id: item._id });
 
-        item.activated_positions = positions.map((p) => {
-          return {
-            _id: p._id,
-            position: p.position,
-            program_branch: p.program_branch,
-            activity: p.activity,
-            authority_lines: p.authority_lines,
-            deactivation: p.deactivation,
-            activation: p.activation,
-            position_group_id: p.position_group_id,
-          };
-        });
-
         if (item.upload_signatures) {
           for (let position of positions) {
             position.position_group_id = undefined;
@@ -398,6 +385,19 @@ formARouter.put(
             await db.update(posId, position);
           }
         }
+
+        item.activated_positions = positions.map((p) => {
+          return {
+            _id: p._id,
+            position: p.position,
+            program_branch: p.program_branch,
+            activity: p.activity,
+            authority_lines: p.authority_lines,
+            deactivation: p.deactivation,
+            activation: p.activation,
+            position_group_id: p.position_group_id,
+          };
+        });
 
         let creator: User[];
 
