@@ -15,7 +15,7 @@
               append-icon="mdi-magnify"
               @click:append="doSearch"
               @keydown="searchKeyUp"
-              hint="Enter a Name, YNET ID or Employee ID and press Enter"
+              hint="Enter a Name or YNET Id and press Enter"
               v-model="search"
               class="mb-2"
             ></v-text-field>
