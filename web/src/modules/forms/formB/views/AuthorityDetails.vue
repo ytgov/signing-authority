@@ -685,6 +685,8 @@ export default {
     canAdminister() {
       if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
+        if (this.profile.roles.includes("Department of Finance")) return true;
+
 
         if (
           this.profile.roles.includes("Form B Administrator") &&
