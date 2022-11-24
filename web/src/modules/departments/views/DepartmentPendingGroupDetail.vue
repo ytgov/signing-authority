@@ -64,8 +64,6 @@
         <span style="font-weight: 300">{{ this.item.finance_approval_reject.comments }}</span>
       </v-alert>
 
-      {{ isNextActor }} - {{ canAdminister }}
-
       <v-row>
         <v-col cols="12">
           <v-card class="default">
