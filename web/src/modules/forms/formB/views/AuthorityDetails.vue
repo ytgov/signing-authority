@@ -691,6 +691,17 @@ export default {
           this.profile.department_admin_for.includes(this.departmentId)
         )
           return true;
+        if (
+          this.profile.roles.includes("Acting Appointment Administrator") &&
+          this.profile.department_admin_for.includes(this.departmentId)
+        )
+          return true;
+      }
+
+      if (this.formB && this.formB.activation) {
+        for (let act of this.formB.activation) {
+          if (this.canShowSupervisor(act)) return true;
+        }
       }
 
       return false;
