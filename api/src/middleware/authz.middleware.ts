@@ -25,6 +25,7 @@ export async function isFormAAdmin(req: Request, res: Response, next: NextFuncti
 
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
+  if (roles.includes("Department of Finance")) return next();
   if (roles.includes("Form A Administrator") && department_admin_for.includes(department_code)) return next();
 
   return res.status(403).send(`You do not have Form A Administrator on ${department_code}`);
@@ -36,6 +37,7 @@ export async function isFormBAdmin(req: Request, res: Response, next: NextFuncti
 
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
+  if (roles.includes("Department of Finance")) return next();
   if (roles.includes("Form B Administrator") && department_admin_for.includes(department_code)) return next();
 
   return res.status(403).send(`You do not have Form B Administrator on ${department_code}`);

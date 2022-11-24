@@ -120,6 +120,7 @@ const actions = {
     form.append("deputy_minister_name", item.deputy_minister_name);
     form.append("department_administrator_name", item.department_administrator_name);
     form.append("file", item.file);
+    form.append("department_code", item.department_code);
     form.append("save_action", item.save_action);
 
     return auth

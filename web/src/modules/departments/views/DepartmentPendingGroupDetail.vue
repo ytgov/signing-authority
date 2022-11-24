@@ -64,6 +64,8 @@
         <span style="font-weight: 300">{{ this.item.finance_approval_reject.comments }}</span>
       </v-alert>
 
+      {{ isNextActor }} - {{ canAdminister }}
+
       <v-row>
         <v-col cols="12">
           <v-card class="default">
@@ -114,7 +116,7 @@
               </v-menu>
             </div>
 
-            <div style="float: right;margin-right: 15px;margin-top: 20px;" v-if="canAdminister">
+            <div style="float: right;margin-right: 15px;margin-top: 20px;" v-if="isNextActor">
               <div
                 class="mr-3"
                 style="line-height: 16px; text-align:right"
@@ -130,6 +132,23 @@
                 </small>
               </div>
             </div>
+            <div v-else style="float: right;margin-right: 15px;margin-top: 20px;">
+              <div
+                class="mr-3"
+                style="line-height: 16px; text-align:right"
+                v-if="
+                  !financeReviewRejected && !financeApproveRejected && stepperValue < 6 && item.status != 'Archived'
+                "
+              >
+                <small>
+                  Next Action:
+                  {{ nextStep }}
+                  <br />
+                  Taken by: {{ nextActor }}
+                </small>
+              </div>
+            </div>
+
             <v-card-title> Positions on this Form A </v-card-title>
             <v-card-subtitle>
               Program: <strong>{{ item.program }}</strong> &nbsp; &nbsp; Activity:
@@ -334,6 +353,7 @@ export default {
     canAdminister() {
       if (this.profile && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
+        if (this.profile.roles.includes("Department of Finance")) return true;
 
         if (
           this.profile.roles.includes("Form A Administrator") &&
@@ -385,8 +405,30 @@ export default {
       if (this.stepperValue == 4) return "Department of Finance";
       return "Department of Finance";
     },
+    isNextActor() {
+      if (this.profile && this.profile.roles) {
+        if (this.profile.roles.includes("System Admin")) return true;
+
+        if (this.stepperValue == 2) {
+          if (this.profile.roles.includes("Department of Finance")) return true;
+        }
+        if (this.stepperValue == 3) {
+          if (
+            this.profile.roles.includes("Form A Administrator") &&
+            this.profile.department_admin_for.includes(this.departmentId)
+          )
+            return true;
+        }
+        if (this.stepperValue == 4) {
+          if (this.profile.roles.includes("Department of Finance")) return true;
+        }
+      }
+
+      return false;
+    },
+
     canArchive() {
-      return this.item.status != "Archived";
+      return this.item.status != "Archived" && this.stepperValue > 5;
     },
     canDelete() {
       return this.item.status != "Active" && this.item.status != "Archived";
@@ -401,11 +443,19 @@ export default {
       return this.item.finance_approval_reject ? true : false;
     },
     canFinanceReview() {
-      if (this.stepperValue == 2 && !this.item.finance_review_reject && this.item.status != "Archived") return true;
+      if (this.stepperValue == 2 && !this.item.finance_review_reject && this.item.status != "Archived") {
+        if (this.profile.roles.includes("Department of Finance")) return true;
+      }
       return false;
     },
     canUpload() {
-      if (this.stepperValue == 3 && !this.item.finance_review_reject && this.item.status != "Archived") return true;
+      if (
+        this.stepperValue == 3 &&
+        !this.item.finance_review_reject &&
+        this.item.status != "Archived" &&
+        this.isNextActor
+      )
+        return true;
       return false;
     },
     canFinanceApprove() {
@@ -414,8 +464,9 @@ export default {
         !this.item.finance_review_reject &&
         !this.item.finance_approval_reject &&
         this.item.status != "Archived"
-      )
-        return true;
+      ) {
+        if (this.profile.roles.includes("Department of Finance")) return true;
+      }
       return false;
     },
     uploadIsValid() {
