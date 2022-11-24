@@ -100,4 +100,27 @@ Authentication information is available anywhere in the Vue frontend via a call 
 User can authenticate using their corporate account.  This is handed via federation in the backend authentication configuration.
 
 
+## Clearing out the MongoDB collecions from a command line
 
+```
+docker exec -it <docker_container_name> bash
+
+use authorities
+
+show collections
+
+db.runCommand({count: 'PositionGroups'})
+db.PositionGroups.remove({})
+
+db.runCommand({count: 'Authorities'})
+db.Authorities.remove({})
+
+db.runCommand({count: 'FormA'})
+db.FormA.remove({})
+
+db.runCommand({count: 'SAA-FILES.chunks'})
+db['SAA-FILES.chunks'].remove({})
+
+db.runCommand({count: 'SAA-FILES.files'})
+db['SAA-FILES.files'].remove({})
+```
