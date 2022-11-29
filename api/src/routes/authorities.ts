@@ -352,7 +352,18 @@ authoritiesRouter.put(
           `${req.user.first_name} ${req.user.last_name}`
         );
 
-        //await emailService.sendFormBActiveNotice(existing, moment(activation.date).format("MMMM D, YYYY"));
+        if (existing.authority_type == "substantive") {
+          existing.activation = existing.activation || [];
+          existing.activation.push({
+            date: moment().format("YYYY-MM-DD"),
+            activate_reason: existing.authority_type,
+            approve_user_email: req.user.email,
+            activate_user_id: req.user._id,
+            approve_user_date: new Date(),
+          });
+        }
+
+        await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"));
 
         await db.update(id, existing);
       } else if (save_action == "FinanceApproveReject") {

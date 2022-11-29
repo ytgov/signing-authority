@@ -148,6 +148,55 @@
         <v-col cols="6">
           <!--  <authority-supervisor-card :formB="formB" class="mb-5" />
  -->
+
+          <v-card class="default mb-5">
+            <v-card-title>History</v-card-title>
+            <v-card-text class="pb-0">
+              <div v-if="formB.activation && formB.activation.length > 0">
+                <v-alert
+                  v-for="(act, idx) of formB.activation"
+                  :key="idx"
+                  text
+                  dense
+                  outlined
+                  style="border-color: #9e9e9e !important"
+                >
+                  <v-row>
+                    <v-col cols="10" :class="act.current_status == 'Active' ? 'green--text' : 'warning--text'">
+                      <strong>Current status:</strong> {{ act.current_status }}<br />
+                      <span v-if="!act.approve_user_date && !act.reject_user_date"
+                        ><strong>Not yet approved</strong><br
+                      /></span>
+                      <span v-else-if="act.reject_user_date"><strong>Rejected</strong><br /></span>
+
+                      <strong>Effective:</strong> {{ act.date }}
+                      <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
+                      <span v-else> until cancelled</span>
+                    </v-col>
+                    <v-col>
+                      <v-btn
+                        v-if="canAdminister && (act.current_status == 'Active' || act.current_status == 'Scheduled')"
+                        small
+                        class="my-0 float-right"
+                        color="secondary"
+                        @click="startEditActivation(idx)"
+                        >Edit</v-btn
+                      >
+                    </v-col>
+                  </v-row>
+
+                  <div v-if="canShowSupervisor(act)">
+                    <v-btn @click="doSupervisorApprove(act)" color="primary" class="mb-0 mr-5">Approve</v-btn>
+                    <v-btn @click="doSupervisorReject(act)" color="warning" class="mb-0 mr-5">Reject</v-btn>
+                  </div>
+                </v-alert>
+              </div>
+              <div v-else>
+                This Form B has never been activated.
+              </div>
+            </v-card-text></v-card
+          >
+
           <v-card class="default">
             <v-card-title>Related Position</v-card-title>
             <v-card-text>
@@ -683,19 +732,18 @@ export default {
     ...mapState("home", ["profile"]),
 
     canAdminister() {
-      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
+      if (this.profile && this.profile.roles) {
         if (this.profile.roles.includes("System Admin")) return true;
         if (this.profile.roles.includes("Department of Finance")) return true;
 
-
         if (
           this.profile.roles.includes("Form B Administrator") &&
-          this.profile.department_admin_for.includes(this.departmentId)
+          this.profile.department_admin_for.includes(this.formB.department_code)
         )
           return true;
         if (
           this.profile.roles.includes("Acting Appointment Administrator") &&
-          this.profile.department_admin_for.includes(this.departmentId)
+          this.profile.department_admin_for.includes(this.formB.department_code)
         )
           return true;
       }
@@ -805,7 +853,7 @@ export default {
       if (this.formB.finance_reviews && this.formB.authority_type == "acting") {
         if (
           this.profile.roles.includes("Acting Appointment Administrator") &&
-          this.profile.department_admin_for.includes(this.departmentId)
+          this.profile.department_admin_for.includes(this.formB.department_code)
         )
           return true;
 

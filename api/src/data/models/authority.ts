@@ -56,7 +56,7 @@ export interface Authority extends MongoEntity {
 }
 
 export interface ActivationRecord {
-  date: Date;
+  date: Date | string;
   expire_date?: Date;
   activate_reason: string;
   archive_reason?: string;

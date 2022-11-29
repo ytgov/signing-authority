@@ -1,7 +1,7 @@
 import nodemailer, { Transporter, TransportOptions } from "nodemailer";
 import { MailOptions } from "nodemailer/lib/json-transport";
 import { MAIL_CONFIG, MAIL_FROM, NODE_ENV, FRONTEND_URL, APPLICATION_NAME, MAIL_CONFIG_DEV } from "../config";
-import { Authority, PositionGroup, User } from "../data/models";
+import { Authority, Position, PositionGroup, User } from "../data/models";
 import fs from "fs";
 import path from "path";
 
@@ -11,6 +11,7 @@ const FORMA_WORKFLOW_TEMPLATE = "../templates/email/form_a_notification.html";
 const FORMB_WORKFLOW_TEMPLATE = "../templates/email/form_b_notification.html";
 const FORMB_ACTIVATE_TEMPLATE = "../templates/email/form_b_activate.html";
 const FORMB_ACTING_TEMPLATE = "../templates/email/form_b_acting.html";
+const FORMA_DM_TEMPLATE = "../templates/email/form_a_dm_notification.html";
 
 export class EmailService {
   TRANSPORT: Transporter;
@@ -38,6 +39,24 @@ export class EmailService {
 
       console.log("-- EMAIL FORM-A SENDING", recipient.email, action);
       await this.sendEmail(fullName, recipient.email, "Form A Workflow Notification", content);
+    }
+  }
+
+  async sendDMNotification(position: Position, users: User[]): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_DM_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${position.department_code}/positions/${position._id}`
+    );
+    content = content.replace(/``DEPARTMENT``/, position.department_descr);
+
+    for (let recipient of users) {
+      let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+      console.log("-- EMAIL FORM-A_DM SENDING", recipient.email, position.department_code);
+      await this.sendEmail(fullName, recipient.email, "DM Form A Workflow Notification", content);
     }
   }
 

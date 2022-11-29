@@ -785,6 +785,7 @@ formARouter.put(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let db = req.store.FormA as GenericService<Position>;
+    let userDb = req.store.Users as UserService;
 
     req.body.updated_on = new Date();
     req.body.updated_by = req.user.email;
@@ -806,6 +807,10 @@ formARouter.put(
           action: "Locked for Approval",
           previous_value: existing,
         });
+
+        let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
+
+        if (existing) await emailService.sendDMNotification(existing, emailUsers);
 
         req.body.position_group_id = "-1";
       } else if (saveAction == "DMApprove") {

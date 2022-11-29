@@ -127,8 +127,9 @@ export default {
     },
 
     canAdminister() {
-      if (this.profile && this.profile.roles.length > 0) {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
+        if (this.profile.roles.includes("Department of Finance")) return true;
 
         if (
           this.profile.roles.includes("Form A Administrator") &&
@@ -161,7 +162,6 @@ export default {
       this.$router.push(`/form-b/${item._id}`);
     },
     showPreview() {
-      console.log("SHOW CALLED", this.formA);
       this.$refs.pdfPreview.show("Signed Form A", `${AUTHORITY_URL}/uploads/${this.formA.activation.file_id}/file`);
     },
   },

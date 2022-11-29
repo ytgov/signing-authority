@@ -11,17 +11,18 @@
           <v-list-item-title>Edit </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="formA.is_deputy_minister && !isLocked" @click="dmStartApprove">
+        <v-list-item v-if="canDMLock" @click="dmStartApprove">
           <v-list-item-title>DM - Lock for Approval</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="formA.is_deputy_minister && isLocked && !isActive" @click="dmApprove">
+        <v-list-item v-if="canDMApprove" @click="dmApprove">
           <v-list-item-title>DM - Approve</v-list-item-title>
         </v-list-item>
 
         <v-list-item v-if="formA.activation && !formA.is_deputy_minister" @click="preview">
           <v-list-item-title>View Form A</v-list-item-title>
         </v-list-item>
+
         <v-list-item v-if="formA.status == 'Active'">
           <archive-form-a :position="formA"> </archive-form-a>
         </v-list-item>
@@ -29,6 +30,7 @@
         <v-list-item @click="duplicateClick">
           <v-list-item-title>Duplicate</v-list-item-title>
         </v-list-item>
+
         <v-list-item @click="deleteClick" v-if="!isActive && !isLocked">
           <v-list-item-title>Delete</v-list-item-title>
         </v-list-item>
@@ -52,8 +54,32 @@ export default {
   },
   computed: {
     ...mapState("authority/formA", ["formA"]),
+    ...mapState("home", ["profile"]),
     isActive() {
       return this.formA.status == "Active";
+    },
+
+    canDMLock() {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
+        if (this.formA.is_deputy_minister && !this.isLocked) {
+          if (this.profile.roles.includes("System Admin")) return true;
+          if (
+            this.profile.roles.includes("Form A Administrator") &&
+            this.profile.department_admin_for.includes(this.formA.department_code)
+          )
+            return true;
+        }
+      }
+      return false;
+    },
+    canDMApprove() {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
+        if (this.formA.is_deputy_minister && this.isLocked && !this.isActive) {
+          if (this.profile.roles.includes("System Admin")) return true;
+          if (this.profile.roles.includes("Department of Finance")) return true;
+        }
+      }
+      return false;
     },
   },
   methods: {

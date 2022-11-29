@@ -26,8 +26,10 @@ export async function isFormAAdmin(req: Request, res: Response, next: NextFuncti
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
   if (roles.includes("Department of Finance")) return next();
-  if (roles.includes("Form A Administrator") && department_admin_for.includes(department_code)) return next();
-
+  if (roles.includes("Form A Administrator")) {
+    if (!department_code) return next();
+    if (department_code && department_admin_for.includes(department_code)) return next();
+  }
   return res.status(403).send(`You do not have Form A Administrator on ${department_code}`);
 }
 
@@ -50,7 +52,8 @@ export async function isFormBOrActingAdmin(req: Request, res: Response, next: Ne
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
   if (roles.includes("Form B Administrator") && department_admin_for.includes(department_code)) return next();
-  if (roles.includes("Acting Appointment Administrator") && department_admin_for.includes(department_code)) return next();
+  if (roles.includes("Acting Appointment Administrator") && department_admin_for.includes(department_code))
+    return next();
 
   return res.status(403).send(`You do not have Form B Administrator on ${department_code}`);
 }
@@ -95,7 +98,7 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
         } else {
           if (!email) email = `${first_name}.${last_name}@yukon-no-email.ca`;
 
-          u = await db.create({ email, sub, status: "Inactive", first_name, last_name, roles: ["Employee"] });
+          u = await db.create({ email, sub, status: "Active", first_name, last_name, roles: ["Employee"] });
           console.log("CREATING USER FOR " + email);
           req.user = { ...req.user, ...u };
         }

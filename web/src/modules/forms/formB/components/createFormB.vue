@@ -61,27 +61,28 @@
             append-icon="mdi-lock"
           ></v-text-field>
 
-          <employee-lookup
-            actionName="Select"
-            label="Supervisor : "
-            :select="pickSupervisor"
-            v-if="!selectedSupervisor.email"
-          ></employee-lookup>
+          <div v-if="!isDMFormA">
+            <employee-lookup
+              actionName="Select"
+              label="Supervisor : "
+              :select="pickSupervisor"
+              v-if="!selectedSupervisor.email"
+            ></employee-lookup>
 
-          <v-text-field
-            v-model="selectedSupervisor.display_name"
-            readonly
-            dense
-            outlined
-            label="Supervisor"
-            append-icon="mdi-lock"
-            v-if="selectedSupervisor.email"
-            append-outer-icon="mdi-close-circle"
-            @click:append-outer="unselectSupervisor"
-          ></v-text-field>
+            <v-text-field
+              v-model="selectedSupervisor.display_name"
+              readonly
+              dense
+              outlined
+              label="Supervisor"
+              append-icon="mdi-lock"
+              v-if="selectedSupervisor.email"
+              append-outer-icon="mdi-close-circle"
+              @click:append-outer="unselectSupervisor"
+            ></v-text-field>
 
-          <v-text-field label="Supervisor title" dense outlined v-model="supervisorTitle"></v-text-field>
-
+            <v-text-field label="Supervisor title" dense outlined v-model="supervisorTitle"></v-text-field>
+          </div>
           <div>
             <v-btn @click="doCreate" color="primary" class="float-left" :disabled="!isValid">Add</v-btn>
             <v-btn @click="show = false" color="secondary" class="float-right">Close</v-btn>
@@ -125,8 +126,20 @@ export default {
   }),
   computed: {
     isValid() {
-      if (this.selectedEmployee.email && this.selectedSupervisor.email && this.formAId && this.position.length > 0)
+      if (
+        this.selectedEmployee.email &&
+        this.formAId &&
+        this.position.length > 0 &&
+        (this.isDMFormA || this.selectedSupervisor.email)
+      )
         return true;
+
+      return false;
+    },
+    isDMFormA() {
+      if (this.formAId.is_deputy_minister) {
+        return true;
+      }
 
       return false;
     },
