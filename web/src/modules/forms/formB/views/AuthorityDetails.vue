@@ -1097,11 +1097,10 @@ export default {
         !activation.approve_user_date &&
         !activation.reject_user_date
       ) {
-        if (activation.approve_user_email.toLowerCase() == this.profile.email.toLowerCase()) {
-          return true;
-        } else if (this.profile.email.toLowerCase() == "michael@icefoganalytics.com") {
-          console.log("ELSE YER");
-          return true;
+        if (activation.approve_user_email && this.profile && this.profile.email) {
+          if (activation.approve_user_email.toLowerCase() == this.profile.email.toLowerCase()) {
+            return true;
+          }
         }
       }
 
