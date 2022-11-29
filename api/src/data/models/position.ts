@@ -82,14 +82,20 @@ export interface PositionAuditLine {
 export enum OperationalRestrictions {
   "" = "",
   "Journal only" = "Journal only",
-  "Bank deposit" = "Bank deposit",
-  "Period 14 only" = "Period 14 only",
-  "Personnel pay actions" = "Personnel pay actions",
   "Acquisition cards" = "Acquisition cards",
-  "All department payments" = "All department payments",
+  "Personnel pay action" = "Personnel pay action",
   "Travel advance" = "Travel advance",
   "Special delegation" = "Special delegation",
-  "Aircraft charter" = "Aircraft charter",
+  "Bank deposit" = "Bank deposit",
+  "Period 14 only" = "Period 14 only",
+  "Aircraft Charters S23 only" = "Aircraft Charters S23 only",
+  "Purchase Contracts S23 only" = "Purchase Contracts S23 only",
+  "Travel Warrant S23 only" = "Travel Warrant S23 only",
+  "Print Contracts S23 only" = "Print Contracts S23 only",
+  "GL Revision only" = "GL Revision only",
+  "Q journals only" = "Q journals only",
+  "V journals only" = "V journals only",
+  "CDPITNEYWORK only" = "CDPITNEYWORK only",
 }
 
 export function setPositionStatus(item: Position) {

@@ -72,7 +72,7 @@
               </v-list-item>
 
               <v-list-item @click="showHistory" v-if="canHistory">
-                <v-list-item-title>Activation History</v-list-item-title>
+                <v-list-item-title>Show History</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="startActivate" v-if="canSchedule">
@@ -316,7 +316,8 @@
 
     <v-dialog v-model="showActivateDialog" persistent width="700">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Schedule Activation</v-toolbar-title>
+        <v-toolbar-title v-if="formB.authority_type == 'acting'">Create Acting Appointment</v-toolbar-title>
+        <v-toolbar-title v-else>Schedule Activation</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showActivateDialog = false">mdi-close</v-icon>
       </v-app-bar>
@@ -338,8 +339,8 @@
               </div>
               <div v-if="formB.authority_type == 'acting'">
                 <p>
-                  Acting Appointments can be activated multiple times. An activation can be extended or expired early by
-                  viewing the activation history and clicking the 'Edit' button.
+                  Acting appointments can be created multiple times. An acting appointment can be extended or expired
+                  early by viewing the acting history and clicking the 'Edit' button.
                 </p>
               </div>
             </v-col>
@@ -441,7 +442,7 @@
 
     <v-dialog v-model="showHistoryDialog" persistent width="700">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Activation History</v-toolbar-title>
+        <v-toolbar-title>History</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="showHistoryDialog = false">mdi-close</v-icon>
       </v-app-bar>
