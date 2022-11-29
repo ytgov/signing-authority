@@ -437,7 +437,8 @@ formARouter.put(
           item,
           creator,
           "Finance Approve Rejected",
-          `${req.user.first_name} ${req.user.last_name}`
+          `${req.user.first_name} ${req.user.last_name}`,
+          `<br><span style="color:red; font-weight:bold">Rejection Comment: ${comments}</span>`
         );
 
         delete item._id;
@@ -491,7 +492,8 @@ formARouter.put(
           item,
           creator,
           "Finance Review Rejected",
-          `${req.user.first_name} ${req.user.last_name}`
+          `${req.user.first_name} ${req.user.last_name}`,
+          `<br><span style="color:red; font-weight:bold">Rejection Comment: ${comments}</span>`
         );
 
         delete item._id;

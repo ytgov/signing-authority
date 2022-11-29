@@ -21,7 +21,7 @@ export class EmailService {
     else this.TRANSPORT = nodemailer.createTransport(MAIL_CONFIG_DEV as TransportOptions);
   }
 
-  async sendFormANotification(group: PositionGroup, users: User[], action: string, actor: string): Promise<any> {
+  async sendFormANotification(group: PositionGroup, users: User[], action: string, actor: string, extraHtml: string = ""): Promise<any> {
     let templatePath = path.join(__dirname, FORMA_WORKFLOW_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
@@ -33,6 +33,7 @@ export class EmailService {
     content = content.replace(/``DEPARTMENT``/, group.department_descr);
     content = content.replace(/``PROGRAM``/, `${group.program} / ${group.activity}`);
     content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
 
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
@@ -60,7 +61,7 @@ export class EmailService {
     }
   }
 
-  async sendFormBNotification(formB: Authority, users: User[], action: string, actor: string): Promise<any> {
+  async sendFormBNotification(formB: Authority, users: User[], action: string, actor: string, extraHtml: string = ""): Promise<any> {
     let templatePath = path.join(__dirname, FORMB_WORKFLOW_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
@@ -70,6 +71,7 @@ export class EmailService {
     content = content.replace(/``POSITION``/, formB.employee.title);
     content = content.replace(/``EMPLOYEE``/, formB.employee.name);
     content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
 
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
