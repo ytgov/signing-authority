@@ -2,12 +2,19 @@
   <div>
     <v-menu offset-y>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-3">
+        <v-btn
+          color="secondary"
+          small
+          v-bind="attrs"
+          v-on="on"
+          class="mt-3"
+          v-if="canEdit || canDMLock || canDMApprove || canPreview || canArchive || canDuplicate || canDelete"
+        >
           Actions <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
       </template>
       <v-list dense>
-        <v-list-item v-if="!isLocked" @click="editClick">
+        <v-list-item v-if="canEdit" @click="editClick">
           <v-list-item-title>Edit </v-list-item-title>
         </v-list-item>
 
@@ -19,19 +26,19 @@
           <v-list-item-title>DM - Approve</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="formA.activation && !formA.is_deputy_minister" @click="preview">
+        <v-list-item v-if="canPreview" @click="preview">
           <v-list-item-title>View Form A</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="formA.status == 'Active'">
+        <v-list-item v-if="canArchive">
           <archive-form-a :position="formA"> </archive-form-a>
         </v-list-item>
 
-        <v-list-item @click="duplicateClick">
+        <v-list-item v-if="canDuplicate" @click="duplicateClick">
           <v-list-item-title>Duplicate</v-list-item-title>
         </v-list-item>
 
-        <v-list-item @click="deleteClick" v-if="!isActive && !isLocked">
+        <v-list-item @click="deleteClick" v-if="canDelete">
           <v-list-item-title>Delete</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -45,11 +52,6 @@ export default {
   components: { archiveFormA },
   name: "actionsMenu",
   props: {
-    isLocked: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
     showPreview: { type: Function },
   },
   computed: {
@@ -57,6 +59,46 @@ export default {
     ...mapState("home", ["profile"]),
     isActive() {
       return this.formA.status == "Active";
+    },
+    isLocked() {
+      return this.formA.activation || this.formA.deactivation || this.formA.position_group_id;
+    },
+
+    userIsSysAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
+    },
+    userIsDeptAdmin() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Form A Administrator") &&
+        this.profile.department_admin_for.includes(this.formA.department_code)
+      );
+    },
+    userIsFinanceAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("Department of Finance");
+    },
+
+    canEdit() {
+      if (this.isLocked) return false;
+      if (this.userIsSysAdmin || this.userIsDeptAdmin) return true;
+
+      return false;
+    },
+    canDuplicate() {
+      return this.userIsSysAdmin || this.userIsDeptAdmin;
+    },
+    canPreview() {
+      return this.formA.activation && !this.formA.is_deputy_minister;
+    },
+    canArchive() {
+      return (this.userIsSysAdmin || this.userIsDeptAdmin) && this.formA.status == "Active";
+    },
+    canDelete() {
+      if (this.isActive || this.isLocked) return false;
+      if (this.userIsSysAdmin || this.userIsDeptAdmin) return true;
+
+      return false;
     },
 
     canDMLock() {

@@ -7,15 +7,7 @@
         <v-chip color="#f2a900" v-if="formA.is_deputy_minister" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
         <form-a-status :isLocked="isLocked" :status="status"> </form-a-status>
 
-        <actions-menu
-          :formA="formA"
-          :isLocked="isLocked"
-          :isActive="isActive"
-          :status="status"
-          :showPreview="showPreview"
-          v-if="canAdminister"
-        >
-        </actions-menu>
+        <actions-menu :showPreview="showPreview"> </actions-menu>
       </template>
       <v-overlay :value="is_loading"> <v-progress-circular indeterminate size="64"></v-progress-circular></v-overlay>
 
@@ -118,27 +110,12 @@ export default {
   computed: {
     ...mapState("department", ["departments"]),
     ...mapState("authority/formA", ["formA", "is_loading"]),
-    ...mapGetters("authority/formA", ["isActive", "isLocked", "status"]),
+    ...mapGetters("authority/formA", ["isLocked", "status"]),
     ...mapState("home", ["profile"]),
 
     activationDate() {
       if (this.formA.activation) return moment(this.formA.activation.date).format("MMM D, YYYY @ h:mm a");
       return "";
-    },
-
-    canAdminister() {
-      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
-        if (this.profile.roles.includes("System Admin")) return true;
-        if (this.profile.roles.includes("Department of Finance")) return true;
-
-        if (
-          this.profile.roles.includes("Form A Administrator") &&
-          this.profile.department_admin_for.includes(this.departmentId)
-        )
-          return true;
-      }
-
-      return false;
     },
   },
   async mounted() {
