@@ -658,15 +658,6 @@
             <v-btn @click="doActivationEditSave" color="primary" class="mb-0 mr-5">Save</v-btn>
             <v-btn @click="showActivationEditDialog = false" color="secondary" class="mb-0">Close</v-btn>
           </div>
-
-          <div v-if="editActivation.current_status == 'temporary'">
-            if it has started {{ editActivationHasStarted }}, then can only move expiration date. To expire as of today,
-            if hasn't started
-
-            <p>Temporary</p>
-
-            Expire
-          </div>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -929,9 +920,11 @@ export default {
 
     activateValid() {
       if (this.formB.authority_type == "substantive" && this.activateEffective) return true;
-      else if (this.formB.authority_type == "acting")
-        return this.activateEffective && this.activateExpiry && this.activateEmployee.email;
-      else if (this.formB.authority_type == "temporary" && this.activateEffective && this.activateExpiry) return true;
+      else if (this.formB.authority_type == "acting") {
+        if (this.activateEffective && this.activateExpiry && this.activateEmployee.email) {
+          if (this.activateEmployee.email != this.formB.employee.email) return true;
+        }
+      } else if (this.formB.authority_type == "temporary" && this.activateEffective && this.activateExpiry) return true;
       return false;
     },
     formAProgram() {
