@@ -1,15 +1,8 @@
 <template>
-  <div>
+  <div v-if="canEdit || canDMLock || canDMApprove || canPreview || canArchive || canDuplicate || canDelete">
     <v-menu offset-y>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="secondary"
-          small
-          v-bind="attrs"
-          v-on="on"
-          class="mt-3"
-          v-if="canEdit || canDMLock || canDMApprove || canPreview || canArchive || canDuplicate || canDelete"
-        >
+        <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-3">
           Actions <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
       </template>
@@ -60,8 +53,15 @@ export default {
     isActive() {
       return this.formA.status == "Active";
     },
+    isArchived() {
+      return this.formA.deactivation != undefined;
+    },
     isLocked() {
-      return this.formA.activation || this.formA.deactivation || this.formA.position_group_id;
+      return (
+        this.formA.activation != undefined ||
+        this.formA.deactivation != undefined ||
+        this.formA.position_group_id != undefined
+      );
     },
 
     userIsSysAdmin() {
@@ -80,7 +80,7 @@ export default {
     },
 
     canEdit() {
-      if (this.isLocked) return false;
+      if (this.isLocked || this.isArchived) return false;
       if (this.userIsSysAdmin || this.userIsDeptAdmin) return true;
 
       return false;
@@ -92,10 +92,12 @@ export default {
       return this.formA.activation && !this.formA.is_deputy_minister;
     },
     canArchive() {
+      if (this.formA.is_deputy_minister) return false;
       return (this.userIsSysAdmin || this.userIsDeptAdmin) && this.formA.status == "Active";
     },
     canDelete() {
-      if (this.isActive || this.isLocked) return false;
+      if (this.formA.is_deputy_minister) return false;
+      if (this.isActive || this.isLocked || this.isArchived) return false;
       if (this.userIsSysAdmin || this.userIsDeptAdmin) return true;
 
       return false;

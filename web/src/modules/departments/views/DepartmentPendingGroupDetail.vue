@@ -67,7 +67,10 @@
       <v-row>
         <v-col cols="12">
           <v-card class="default">
-            <div style="float: right; margin-right: 15px; margin-top: 15px" v-if="canAdminister">
+            <div
+              style="float: right; margin-right: 15px; margin-top: 15px"
+              v-if="userIsSysAdmin || userIsFinanceAdmin || userIsDeptAdmin"
+            >
               <v-menu offset-y left>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-2">
@@ -348,19 +351,19 @@ export default {
   computed: {
     ...mapState("home", ["profile"]),
 
-    canAdminister() {
-      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
-        if (this.profile.roles.includes("System Admin")) return true;
-        if (this.profile.roles.includes("Department of Finance")) return true;
-
-        if (
-          this.profile.roles.includes("Form A Administrator") &&
-          this.profile.department_admin_for.includes(this.departmentId)
-        )
-          return true;
-      }
-
-      return false;
+    userIsSysAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
+    },
+    userIsDeptAdmin() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Form A Administrator") &&
+        this.profile.department_admin_for.includes(this.departmentId)
+      );
+    },
+    userIsFinanceAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("Department of Finance");
     },
 
     pdfURL: function() {
@@ -404,32 +407,21 @@ export default {
       return "Department of Finance";
     },
     isNextActor() {
-      if (this.profile && this.profile.roles) {
-        if (this.profile.roles.includes("System Admin")) return true;
-
-        if (this.stepperValue == 2) {
-          if (this.profile.roles.includes("Department of Finance")) return true;
-        }
-        if (this.stepperValue == 3) {
-          if (
-            this.profile.roles.includes("Form A Administrator") &&
-            this.profile.department_admin_for.includes(this.departmentId)
-          )
-            return true;
-        }
-        if (this.stepperValue == 4) {
-          if (this.profile.roles.includes("Department of Finance")) return true;
-        }
-      }
+      if (this.userIsSysAdmin) return true;
+      if (this.stepperValue == 2 && this.userIsFinanceAdmin) return true;
+      if (this.stepperValue == 3 && this.userIsDeptAdmin) return true;
+      if (this.stepperValue == 4 && this.userIsFinanceAdmin) return true;
 
       return false;
     },
 
     canArchive() {
-      return this.item.status != "Archived" && this.stepperValue > 5;
+      return (this.userIsSysAdmin || this.userIsDeptAdmin) && this.item.status != "Archived" && this.stepperValue > 5;
     },
     canDelete() {
-      return this.item.status != "Active" && this.item.status != "Archived";
+      return (
+        (this.userIsSysAdmin || this.userIsDeptAdmin) && this.item.status != "Active" && this.item.status != "Archived"
+      );
     },
     canDownload() {
       return this.item.finance_review_complete;
@@ -442,7 +434,7 @@ export default {
     },
     canFinanceReview() {
       if (this.stepperValue == 2 && !this.item.finance_review_reject && this.item.status != "Archived") {
-        if (this.profile.roles.includes("Department of Finance")) return true;
+        if (this.userIsFinanceAdmin || this.userIsSysAdmin) return true;
       }
       return false;
     },
@@ -451,7 +443,7 @@ export default {
         this.stepperValue == 3 &&
         !this.item.finance_review_reject &&
         this.item.status != "Archived" &&
-        this.isNextActor
+        (this.userIsDeptAdmin || this.userIsSysAdmin)
       )
         return true;
       return false;
@@ -463,7 +455,7 @@ export default {
         !this.item.finance_approval_reject &&
         this.item.status != "Archived"
       ) {
-        if (this.profile.roles.includes("Department of Finance")) return true;
+        if (this.userIsFinanceAdmin || this.userIsSysAdmin) return true;
       }
       return false;
     },
@@ -473,8 +465,7 @@ export default {
     },
     canUnlock() {
       if (this.stepperValue >= 3 && !this.item.finance_approval_complete) {
-        if (this.profile.roles.includes("System Admin")) return true;
-        if (this.profile.roles.includes("Form A Administrator")) return true;
+        if (this.userIsSysAdmin || this.userIsDeptAdmin) return true;
       }
       return false;
     },
