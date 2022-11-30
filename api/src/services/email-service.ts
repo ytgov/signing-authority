@@ -15,7 +15,11 @@ const FORMA_FINAPPROVE_APPROVE_TEMPLATE = "../templates/email/form_a_finance_app
 const FORMA_FINAPPROVE_REJECT_TEMPLATE = "../templates/email/form_a_finance_approve_reject.html";
 const FORMA_UPLOAD_TEMPLATE = "../templates/email/form_a_upload.html";
 
-const FORMB_WORKFLOW_TEMPLATE = "../templates/email/form_b_notification.html";
+const FORMB_UPLOAD_TEMPLATE = "../templates/email/form_b_upload.html";
+const FORMB_REVIEW_TEMPLATE = "../templates/email/form_b_review.html";
+const FORMB_APPROVE_TEMPLATE = "../templates/email/form_b_approve.html";
+const FORMB_REJECT_TEMPLATE = "../templates/email/form_b_reject.html";
+
 const FORMB_ACTIVATE_TEMPLATE = "../templates/email/form_b_activate.html";
 const FORMB_ACTING_TEMPLATE = "../templates/email/form_b_acting.html";
 
@@ -234,14 +238,14 @@ export class EmailService {
     await this.sendEmail(fullName, recipient.email, "DM Form A Rejected", content);
   }
 
-  async sendFormBNotification(
+  async sendFormBUpload(
     formB: Authority,
     users: User[],
     action: string,
     actor: string,
     extraHtml: string = ""
   ): Promise<any> {
-    let templatePath = path.join(__dirname, FORMB_WORKFLOW_TEMPLATE);
+    let templatePath = path.join(__dirname, FORMB_UPLOAD_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
@@ -255,8 +259,86 @@ export class EmailService {
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
 
-      console.log("-- EMAIL FORM-B SENDING", recipient.email, action);
-      await this.sendEmail(fullName, recipient.email, "Form B Workflow Notification", content);
+      console.log("-- EMAIL FORM-B-UPLOAD SENDING", recipient.email, action);
+      await this.sendEmail(fullName, recipient.email, "Form B Upload Signatures", content);
+    }
+  }
+
+  async sendFormBReview(
+    formB: Authority,
+    users: User[],
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_REVIEW_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, formB.department_descr);
+    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``EMPLOYEE``/, formB.employee.name);
+    content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
+
+    for (let recipient of users) {
+      let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+      console.log("-- EMAIL FORM-B-REVIEW SENDING", recipient.email, action);
+      await this.sendEmail(fullName, recipient.email, "Form B Review", content);
+    }
+  }
+
+  async sendFormBApprove(
+    formB: Authority,
+    users: User[],
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_APPROVE_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, formB.department_descr);
+    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``EMPLOYEE``/, formB.employee.name);
+    content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
+
+    for (let recipient of users) {
+      let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+      console.log("-- EMAIL FORM-B_APPROVE SENDING", recipient.email, action);
+      await this.sendEmail(fullName, recipient.email, "Form B Approved", content);
+    }
+  }
+
+  async sendFormBReject(
+    formB: Authority,
+    users: User[],
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_REJECT_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, formB.department_descr);
+    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``EMPLOYEE``/, formB.employee.name);
+    content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
+
+    for (let recipient of users) {
+      let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+      console.log("-- EMAIL FORM-B-REJECT SENDING", recipient.email, action);
+      await this.sendEmail(fullName, recipient.email, "Form B Rejected", content);
     }
   }
 

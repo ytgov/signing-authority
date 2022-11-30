@@ -248,7 +248,7 @@ authoritiesRouter.put(
 
         let creator = await userDb.getAll({ _id: existing.created_by_id });
 
-        await emailService.sendFormBNotification(
+        await emailService.sendFormBUpload(
           existing,
           creator,
           "Upload Signatures",
@@ -306,7 +306,7 @@ authoritiesRouter.put(
 
             let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
 
-            await emailService.sendFormBNotification(
+            await emailService.sendFormBReview(
               existing,
               emailUsers,
               "Finance Approve",
@@ -327,14 +327,6 @@ authoritiesRouter.put(
           },
         ];
 
-        /* existing.activation = existing.activation || [];
-        let activation = {
-          date: new Date(), // this date should be configurable
-          activate_reason: "Activation",
-          activate_user_id: req.user._id,
-        };
-        existing.activation.push(activation); */
-
         existing.audit_lines = existing.audit_lines || [];
         existing.audit_lines.push({
           action: "Finance Approved",
@@ -345,7 +337,7 @@ authoritiesRouter.put(
 
         let creator = await userDb.getAll({ _id: existing.created_by_id });
 
-        await emailService.sendFormBNotification(
+        await emailService.sendFormBApprove(
           existing,
           creator,
           `Approved Form B for ${existing.employee.name}`,
@@ -382,7 +374,7 @@ authoritiesRouter.put(
 
         let creator = await userDb.getAll({ _id: existing.created_by_id });
 
-        await emailService.sendFormBNotification(
+        await emailService.sendFormBReject(
           existing,
           creator,
           "Finance Approve Rejected",
