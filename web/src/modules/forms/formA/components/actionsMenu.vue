@@ -11,11 +11,11 @@
           <v-list-item-title>Edit </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="canDMLock" @click="dmStartApprove">
+        <v-list-item v-if="canDMLock" @click="dmLock">
           <v-list-item-title>DM - Lock for Approval</v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="canDMApprove" @click="dmApprove">
+        <v-list-item v-if="canDMApprove" @click="startDMApprove">
           <v-list-item-title>DM - Approve</v-list-item-title>
         </v-list-item>
 
@@ -46,6 +46,7 @@ export default {
   name: "actionsMenu",
   props: {
     showPreview: { type: Function },
+    showDMApprove: { type: Function },
   },
   computed: {
     ...mapState("authority/formA", ["formA"]),
@@ -104,26 +105,15 @@ export default {
     },
 
     canDMLock() {
-      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
-        if (this.formA.is_deputy_minister && !this.isLocked) {
-          if (this.profile.roles.includes("System Admin")) return true;
-          if (
-            this.profile.roles.includes("Form A Administrator") &&
-            this.profile.department_admin_for.includes(this.formA.department_code)
-          )
-            return true;
-        }
-      }
-      return false;
+      return this.formA.is_deputy_minister && !this.isLocked && (this.userIsDeptAdmin || this.userIsSysAdmin);
     },
     canDMApprove() {
-      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
-        if (this.formA.is_deputy_minister && this.isLocked && !this.isActive) {
-          if (this.profile.roles.includes("System Admin")) return true;
-          if (this.profile.roles.includes("Department of Finance")) return true;
-        }
-      }
-      return false;
+      return (
+        this.formA.is_deputy_minister &&
+        this.isLocked &&
+        !this.isActive &&
+        (this.userIsFinanceAdmin || this.userIsSysAdmin)
+      );
     },
   },
   methods: {
@@ -145,15 +135,14 @@ export default {
     preview() {
       this.showPreview();
     },
-    async dmStartApprove() {
+    async dmLock() {
       this.formA.save_action = "DMLock";
 
       await this.saveFormA(this.formA);
     },
-    async dmApprove() {
-      this.formA.save_action = "DMApprove";
 
-      await this.saveFormA(this.formA);
+    startDMApprove() {
+      this.showDMApprove();
     },
   },
 };

@@ -7,7 +7,7 @@
         <v-chip color="#f2a900" v-if="formA.is_deputy_minister" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
         <form-a-status :isLocked="isLocked" :status="status"> </form-a-status>
 
-        <actions-menu :showPreview="showPreview"> </actions-menu>
+        <actions-menu :showPreview="showPreview" :showDMApprove="showDMApprove"> </actions-menu>
       </template>
       <v-overlay :value="is_loading"> <v-progress-circular indeterminate size="64"></v-progress-circular></v-overlay>
 
@@ -56,6 +56,34 @@
         </v-col>
       </v-row>
     </BaseCard>
+
+    <v-dialog v-model="showDMApproveDialog" persistent width="600">
+      <v-app-bar dark color="#0097A9">
+        <v-toolbar-title>Deputy Minister or Equivalent Approval</v-toolbar-title>
+        <v-spacer />
+        <v-icon title="Close" @click="showDMApproveDialog = false">mdi-close</v-icon>
+      </v-app-bar>
+      <v-card tile>
+        <v-card-text class="pt-3">
+          <p>
+            By clicking the 'Approve' button below, you are verifying that you have reviewed the Deputy Minister or
+            Equivalent position. Clicking 'Approve' will activate this position.
+          </p>
+
+          <p>
+            If the Position has errors, provide detail in the dialogue box below for the department to rectify the
+            errors, then click 'Reject'
+          </p>
+
+          <p>Departmental Finance Administrators will receive an email notification when you complete this step.</p>
+
+          <v-textarea rows="3" dense outlined label="Comments" hide-details v-model="reviewComments"></v-textarea>
+
+          <v-btn @click="financeDMApprove" color="primary" class="mb-0 mr-5">Approve</v-btn>
+          <v-btn @click="financeDMReject" color="error" class="mb-0" :disabled="!reviewComments">Reject</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
 
     <pdf-preview-dialog ref="pdfPreview"></pdf-preview-dialog>
   </v-container>
@@ -106,6 +134,8 @@ export default {
     department: {},
     authority: {},
     showUpload: false,
+    showDMApproveDialog: false,
+    reviewComments: "",
   }),
   computed: {
     ...mapState("department", ["departments"]),
@@ -133,13 +163,32 @@ export default {
   },
   methods: {
     ...mapActions("department", ["getDepartment"]),
-    ...mapActions("authority/formA", ["loadFormA"]),
+    ...mapActions("authority/formA", ["loadFormA", "saveFormA"]),
 
     openFormB(item) {
       this.$router.push(`/form-b/${item._id}`);
     },
     showPreview() {
       this.$refs.pdfPreview.show("Signed Form A", `${AUTHORITY_URL}/uploads/${this.formA.activation.file_id}/file`);
+    },
+
+    showDMApprove() {
+      this.showDMApproveDialog = true;
+    },
+
+    async financeDMApprove() {
+      this.formA.save_action = "DMApprove";
+
+      await this.saveFormA(this.formA);
+      this.showDMApproveDialog = false;
+    },
+
+    async financeDMReject() {
+      this.formA.save_action = "DMReject";
+      this.formA.comments = this.reviewComments;
+
+      await this.saveFormA(this.formA);
+      this.showDMApproveDialog = false;
     },
   },
 };

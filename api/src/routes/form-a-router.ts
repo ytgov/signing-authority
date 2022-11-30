@@ -44,12 +44,6 @@ formARouter.get("/", async (req: Request, res: Response) => {
   res.json({ data: list });
 });
 
-formARouter.get("/count", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<Position>;
-  let count = await db.count({});
-  res.json({ form_a_count: count });
-});
-
 formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
   const ids = req.query.ids as string;
   const { department_code, department_descr, program, activity } = req.query;
@@ -167,29 +161,6 @@ formARouter.get(
     res.status(404).send();
   }
 );
-
-formARouter.get("/department/position-count", async (req: Request, res: Response) => {
-  let db = req.store.FormA as GenericService<Position>;
-  let pipeline = [
-    { $unwind: "$authority_lines" },
-    // {$match: {}},
-    {
-      $group: {
-        _id: {
-          department_code: "$department_code",
-          department_descr: "$department_descr",
-        },
-        position_count: { $sum: 1 },
-      },
-    },
-  ];
-
-  let count = await db.aggregate(pipeline);
-
-  // if (count)
-  return res.json({ form_a_count: count });
-  // res.status(404).send();
-});
 
 formARouter.get("/department/:department", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
@@ -811,7 +782,6 @@ formARouter.put(
         });
 
         let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
-
         if (existing) await emailService.sendDMNotification(existing, emailUsers);
 
         req.body.position_group_id = "-1";
@@ -828,6 +798,27 @@ formARouter.put(
           date: new Date(),
           file_id: null,
         };
+
+        if (existing) {
+          let creator = await userDb.getAll({ email: req.body.updated_by });
+          await emailService.sendDMApproved(existing, creator[0]);
+        }
+      } else if (saveAction == "DMReject") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Rejected",
+          previous_value: existing,
+        });
+
+        if (existing) {
+          let creator = await userDb.getAll({ email: req.body.updated_by });
+          await emailService.sendDMRejected(existing, creator[0], req.body.comments);
+        }
+
+        delete req.body.comments;
+        delete req.body.activation;
+        req.body.position_group_id = undefined;
       }
 
       await db.update(id, req.body);

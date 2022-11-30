@@ -11,7 +11,10 @@ const FORMA_WORKFLOW_TEMPLATE = "../templates/email/form_a_notification.html";
 const FORMB_WORKFLOW_TEMPLATE = "../templates/email/form_b_notification.html";
 const FORMB_ACTIVATE_TEMPLATE = "../templates/email/form_b_activate.html";
 const FORMB_ACTING_TEMPLATE = "../templates/email/form_b_acting.html";
+
 const FORMA_DM_TEMPLATE = "../templates/email/form_a_dm_notification.html";
+const FORMA_DM_APPROVE = "../templates/email/form_a_dm_approve.html";
+const FORMA_DM_REJECT = "../templates/email/form_a_dm_reject.html";
 
 export class EmailService {
   TRANSPORT: Transporter;
@@ -21,7 +24,13 @@ export class EmailService {
     else this.TRANSPORT = nodemailer.createTransport(MAIL_CONFIG_DEV as TransportOptions);
   }
 
-  async sendFormANotification(group: PositionGroup, users: User[], action: string, actor: string, extraHtml: string = ""): Promise<any> {
+  async sendFormANotification(
+    group: PositionGroup,
+    users: User[],
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
     let templatePath = path.join(__dirname, FORMA_WORKFLOW_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
@@ -61,7 +70,46 @@ export class EmailService {
     }
   }
 
-  async sendFormBNotification(formB: Authority, users: User[], action: string, actor: string, extraHtml: string = ""): Promise<any> {
+  async sendDMApproved(position: Position, recipient: User): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_DM_APPROVE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${position.department_code}/positions/${position._id}`
+    );
+    content = content.replace(/``DEPARTMENT``/, position.department_descr);
+
+    let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+    console.log("-- EMAIL FORM-A_DM SENDING", recipient.email, position.department_code);
+    await this.sendEmail(fullName, recipient.email, "DM Form A Approved", content);
+  }
+
+  async sendDMRejected(position: Position, recipient: User, comment: string): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_DM_REJECT);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${position.department_code}/positions/${position._id}`
+    );
+    content = content.replace(/``DEPARTMENT``/, position.department_descr);
+    content = content.replace(/``COMMENT``/, comment);
+
+    let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+    console.log("-- EMAIL FORM-A_DM SENDING", recipient.email, position.department_code);
+    await this.sendEmail(fullName, recipient.email, "DM Form A Rejected", content);
+  }
+
+  async sendFormBNotification(
+    formB: Authority,
+    users: User[],
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
     let templatePath = path.join(__dirname, FORMB_WORKFLOW_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
