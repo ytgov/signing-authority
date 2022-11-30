@@ -12,7 +12,10 @@ export class LimitService {
       // check for matching operational_restriction
       let dmRestricts = dmLine.operational_restriction || undefined;
 
-      if (restricts != dmRestricts) continue;
+      // if not special delegation, ignore the OR
+      if (dmRestricts) {
+        if (restricts != dmRestricts) continue;
+      }
 
       let chars = dmLine.coding.split("");
       let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
