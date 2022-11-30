@@ -60,7 +60,7 @@
           >
           </form-b-status>
 
-          <v-menu offset-y left v-if="canAdminister">
+          <v-menu offset-y left>
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="secondary" small v-bind="attrs" v-on="on" class="mt-2">
                 Actions <v-icon>mdi-chevron-down</v-icon>
@@ -71,11 +71,11 @@
                 <v-list-item-title>Edit</v-list-item-title>
               </v-list-item>
 
-              <v-list-item @click="showHistory" v-if="canHistory">
-                <v-list-item-title>Show History</v-list-item-title>
+              <v-list-item @click="startActivate" v-if="canSchedule && formB.authority_type == 'acting'">
+                <v-list-item-title>Acting Appointment</v-list-item-title>
               </v-list-item>
 
-              <v-list-item @click="startActivate" v-if="canSchedule">
+              <v-list-item @click="startActivate" v-if="canSchedule && formB.authority_type == 'temporary'">
                 <v-list-item-title>Schedule Activation</v-list-item-title>
               </v-list-item>
 
@@ -109,14 +109,6 @@
 
               <v-list-item @click="startCancel" v-if="canCancel">
                 <v-list-item-title>Cancel Form B</v-list-item-title>
-              </v-list-item>
-
-              <v-list-item @click="archiveClick" v-if="canArchive">
-                <v-list-item-title>Archive</v-list-item-title>
-              </v-list-item>
-
-              <v-list-item @click="duplicateClick" v-if="canDuplicate">
-                <v-list-item-title>Duplicate</v-list-item-title>
               </v-list-item>
 
               <v-list-item color="warning" @click="deleteClick" v-if="canDelete">
@@ -164,10 +156,19 @@
                   <v-row>
                     <v-col cols="10" :class="act.current_status == 'Active' ? 'green--text' : 'warning--text'">
                       <strong>Current status:</strong> {{ act.current_status }}<br />
-                      <span v-if="!act.approve_user_date && !act.reject_user_date"
-                        ><strong>Not yet approved</strong><br
-                      /></span>
-                      <span v-else-if="act.reject_user_date"><strong>Rejected</strong><br /></span>
+
+                      <span v-if="!act.approve_user_date && !act.reject_user_date">
+                        <strong>Awaiting approval from:</strong> {{ act.approve_user_email }} <br />
+                      </span>
+                      <span v-else-if="act.reject_user_date">
+                        <strong>Rejected by: </strong>{{ act.approve_user_email }} <br />
+                        <strong>Rejected on: </strong>{{ act.reject_user_date }} <br />
+                      </span>
+                      <span v-else-if="act.approve_user_date">
+                        <strong>Approved by:</strong> {{ act.approve_user_email }} <br />
+                        <strong>Approved on:</strong> {{ formatDate(act.approve_user_date) }}
+                        <br />
+                      </span>
 
                       <strong>Effective:</strong> {{ act.date }}
                       <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
@@ -175,7 +176,9 @@
                     </v-col>
                     <v-col>
                       <v-btn
-                        v-if="canAdminister && (act.current_status == 'Active' || act.current_status == 'Scheduled')"
+                        v-if="
+                          canEditActivations && (act.current_status == 'Active' || act.current_status == 'Scheduled')
+                        "
                         small
                         class="my-0 float-right"
                         color="secondary"
@@ -191,11 +194,11 @@
                   </div>
                 </v-alert>
               </div>
-              <div v-else>
+              <div v-else class="mb-4">
                 This Form B has never been activated.
               </div>
-            </v-card-text></v-card
-          >
+            </v-card-text>
+          </v-card>
 
           <v-card class="default">
             <v-card-title>Related Position</v-card-title>
@@ -440,61 +443,6 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="showHistoryDialog" persistent width="700">
-      <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>History</v-toolbar-title>
-        <v-spacer />
-        <v-icon title="Close" @click="showHistoryDialog = false">mdi-close</v-icon>
-      </v-app-bar>
-      <v-card tile>
-        <v-card-text class="pt-3">
-          <div v-if="formB.activation && formB.activation.length > 0">
-            <v-alert
-              v-for="(act, idx) of formB.activation"
-              :key="idx"
-              :color="act.current_status == 'Active' ? 'success' : 'warning'"
-              text
-              dense
-            >
-              <v-row>
-                <v-col cols="10">
-                  <strong>Current status:</strong> {{ act.current_status }}<br />
-                  <span v-if="!act.approve_user_date && !act.reject_user_date"
-                    ><strong>Not yet approved</strong><br
-                  /></span>
-                  <span v-else-if="act.reject_user_date"><strong>Rejected</strong><br /></span>
-
-                  <strong>Effective:</strong> {{ act.date }}
-                  <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
-                  <span v-else> until cancelled</span>
-                </v-col>
-                <v-col>
-                  <v-btn
-                    v-if="canAdminister && (act.current_status == 'Active' || act.current_status == 'Scheduled')"
-                    small
-                    class="my-0 float-right"
-                    color="secondary"
-                    @click="startEditActivation(idx)"
-                    >Edit</v-btn
-                  >
-                </v-col>
-              </v-row>
-
-              <div v-if="canShowSupervisor(act)">
-                <v-btn @click="doSupervisorApprove(act)" color="primary" class="mb-0 mr-5">Approve</v-btn>
-                <v-btn @click="doSupervisorReject(act)" color="warning" class="mb-0 mr-5">Reject</v-btn>
-              </div>
-            </v-alert>
-          </div>
-          <div v-else>
-            <p class="text-warning">This Form B has never been activated</p>
-          </div>
-
-          <v-btn @click="showHistoryDialog = false" color="secondary" class="mb-0">Close</v-btn>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <v-dialog v-model="showCancelDialog" persistent width="700">
       <v-app-bar dark color="#0097A9">
         <v-toolbar-title>Cancel Form B</v-toolbar-title>
@@ -678,9 +626,6 @@ import FormBTable from "../components/formBTable.vue";
 export default {
   name: "AuthorityDetails",
   components: {
-    // uploadFormModal,
-    //AuthorityMetadataCard,
-    //AuthoritySupervisorCard,
     FormBStatus,
     PdfPreviewDialog,
     FormBTable,
@@ -695,7 +640,6 @@ export default {
     showUploadDialog: false,
     showFinanceApproveDialog: false,
     showActivateDialog: false,
-    showHistoryDialog: false,
     showCancelDialog: false,
     showSupervisorDialog: false,
     showActivationEditDialog: false,
@@ -723,30 +667,53 @@ export default {
     ...mapState("authority/formB", ["is_loading"]),
     ...mapState("home", ["profile"]),
 
-    canAdminister() {
-      if (this.profile && this.profile.roles) {
-        if (this.profile.roles.includes("System Admin")) return true;
-        if (this.profile.roles.includes("Department of Finance")) return true;
+    userIsSysAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
+    },
+    userIsDeptAdmin() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Form B Administrator") &&
+        this.profile.department_admin_for.includes(this.formB.department_code)
+      );
+    },
+    userIsFinanceAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("Department of Finance");
+    },
+    userIsActingAdmin() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Acting Appointment Administrator") &&
+        this.profile.department_admin_for.includes(this.formB.department_code)
+      );
+    },
 
-        if (
-          this.profile.roles.includes("Form B Administrator") &&
-          this.profile.department_admin_for.includes(this.formB.department_code)
-        )
-          return true;
-        if (
-          this.profile.roles.includes("Acting Appointment Administrator") &&
-          this.profile.department_admin_for.includes(this.formB.department_code)
-        )
-          return true;
+    stepperValue() {
+      if (this.formB.finance_reviews) return 5;
+      if (this.formB.upload_signatures) return 4;
+      if (this.formB.department_reviews && this.formB.department_reviews.length > 0) return 3;
+      return 2;
+    },
+
+    isLocked() {
+      return this.stepperValue >= 3;
+    },
+    isCancelled() {
+      return this.formB.cancel_date ? true : false;
+    },
+    isApproved() {
+      return this.stepperValue >= 5;
+    },
+    isActive() {
+      let result = false;
+
+      if (this.formB.activation && this.formB.activation.length > 0) {
+        for (let act of this.formB.activation) if (act.current_status == "Active") return true;
       }
 
-      if (this.formB && this.formB.activation) {
-        for (let act of this.formB.activation) {
-          if (this.canShowSupervisor(act)) return true;
-        }
-      }
-
-      return false;
+      return result;
     },
 
     breadcrumbs: function() {
@@ -775,90 +742,62 @@ export default {
       return [];
     },
 
-    isLocked() {
-      return this.formB.department_reviews && this.formB.department_reviews.length > 0;
-    },
-    isActive() {
-      // this needs more work
-      let result = false;
-
-      if (this.formB.activation && this.formB.activation.length > 0) {
-        for (let act of this.formB.activation) if (act.current_status == "Active") return true;
-      }
-
-      return result;
-    },
-
-    stepperValue() {
-      if (this.formB.finance_reviews) return 5;
-      if (this.formB.upload_signatures) return 4;
-      if (this.formB.department_reviews) return 3;
-
-      return 2;
-    },
     canDelete() {
-      return !this.formB.finance_reviews;
+      return (this.userIsDeptAdmin || this.userIsSysAdmin) && !this.isApproved && !this.isCancelled;
     },
     canDownload() {
-      if (this.formB.department_reviews || this.formB.cancel_date) return true;
-      return false;
+      return this.isLocked || this.isCancelled;
     },
 
     canEdit() {
-      if (this.formB.department_reviews || this.formB.cancel_date) return false;
-      return true;
+      return (this.userIsDeptAdmin || this.userIsSysAdmin) && !this.isLocked && !this.isCancelled;
+    },
+    canEditActivations() {
+      if (this.isCancelled || !this.isApproved) return false;
+      if (this.formB.authority_type == "acting") {
+        return this.userIsActingAdmin || this.userIsSysAdmin;
+      } else {
+        return this.userIsDeptAdmin || this.userIsSysAdmin;
+      }
     },
     canLock() {
-      if (this.formB.department_reviews) return false;
-      return true;
+      return (this.userIsDeptAdmin || this.userIsSysAdmin) && !this.isLocked && !this.isCancelled;
     },
     canUnlock() {
-      if (this.formB.department_reviews && !this.formB.finance_reviews) {
-        if (this.profile.roles.includes("System Admin")) return true;
-        if (this.profile.roles.includes("Form B Administrator")) return true;
-      }
-      return false;
+      return (this.userIsDeptAdmin || this.userIsSysAdmin) && this.isLocked && !this.isApproved && !this.isCancelled;
     },
     canUpload() {
-      if (this.formB.department_reviews && !this.formB.upload_signatures && !this.formB.cancel_date) return true;
-      return false;
+      return (
+        (this.userIsDeptAdmin || this.userIsSysAdmin) && this.isLocked && !this.isCancelled && this.stepperValue == 3
+      );
     },
     canApprove() {
-      return this.formB.upload_signatures && !this.formB.finance_reviews && !this.formB.cancel_date;
+      return (this.userIsFinanceAdmin || this.userIsSysAdmin) && this.stepperValue == 4 && !this.isCancelled;
     },
-    canDuplicate() {
-      return false;
-    },
-    canArchive() {
-      return false;
-    },
+
     canActivate() {
-      if (this.formB.finance_reviews && this.formB.authority_type == "substantive" && !this.formB.cancel_date)
-        return true;
-      return false;
+      if (this.isActive && this.formB.authority_type == "substantive") return false;
+
+      return (
+        (this.userIsDeptAdmin || this.userIsSysAdmin) &&
+        this.isApproved &&
+        !this.isCancelled &&
+        this.formB.authority_type == "substantive"
+      );
     },
-    canHistory() {
-      if (this.formB.finance_reviews) return true;
-      return false;
-    },
+
     canSchedule() {
-      if (this.formB.finance_reviews && this.formB.authority_type == "acting") {
-        if (
-          this.profile.roles.includes("Acting Appointment Administrator") &&
-          this.profile.department_admin_for.includes(this.formB.department_code)
-        )
-          return true;
+      if (this.isCancelled) return false;
+      if (this.isActive && this.formB.authority_type == "substantive") return false;
 
-        if (this.profile.roles.includes("System Admin")) return true;
-
+      if (this.isApproved && this.formB.authority_type == "acting") {
+        if (this.userIsSysAdmin || this.userIsActingAdmin) return true;
         return false;
-      } else if (this.formB.finance_reviews && this.formB.authority_type != "substantive" && !this.formB.cancel_date)
-        return true;
+      } else if (this.isApproved && this.formB.authority_type != "substantive") return true;
       return false;
     },
     canCancel() {
-      if (this.formB.finance_reviews && !this.formB.cancel_date) return true;
-      return false;
+      return (this.userIsDeptAdmin || this.userIsSysAdmin) && !this.isCancelled && this.isApproved;
     },
 
     createDate() {
@@ -945,6 +884,9 @@ export default {
       "scheduleActivation",
       "cancelFormB",
     ]),
+    formatDate(input) {
+      return moment(input).format("YYYY-MM-DD");
+    },
 
     openFormA() {
       if (this.formB && this.formB.form_a && this.formB.form_a.activation)
@@ -967,7 +909,6 @@ export default {
       });
     },
 
-    duplicateClick() {},
     generateClick() {
       this.formB.save_action = "Lock";
 
@@ -976,7 +917,6 @@ export default {
       });
     },
     uploadClick() {},
-    archiveClick() {},
 
     unlockClick() {
       this.formB.save_action = "Reset";
@@ -1074,9 +1014,7 @@ export default {
     pickEmployee(item) {
       this.activateEmployee = item;
     },
-    showHistory() {
-      this.showHistoryDialog = true;
-    },
+
     doCancel() {
       this.cancelFormB(this.formB).then(() => {
         this.loadFormB(this.id);
@@ -1086,7 +1024,8 @@ export default {
 
     canShowSupervisor(activation) {
       if (
-        this.formB.finance_reviews &&
+        !this.isCancelled &&
+        this.isApproved &&
         this.formB.authority_type == "acting" &&
         !activation.approve_user_date &&
         !activation.reject_user_date
@@ -1111,9 +1050,10 @@ export default {
           act.approve_user_date = new Date();
       });
 
+      this.formB.save_action = "SupervisorApproveActing"
+
       this.saveFormB(this.formB).then(() => {
         this.loadFormB(this.id);
-        this.showHistoryDialog = false;
       });
     },
     doSupervisorReject(activation) {
@@ -1125,10 +1065,11 @@ export default {
         )
           act.reject_user_date = new Date();
       });
+      
+      this.formB.save_action = "SupervisorRejectActing"
 
       this.saveFormB(this.formB).then(() => {
         this.loadFormB(this.id);
-        this.showHistoryDialog = false;
       });
     },
     startEditActivation(index) {
@@ -1141,7 +1082,6 @@ export default {
 
       this.saveFormB(this.formB).then(() => {
         this.loadFormB(this.id);
-        this.showHistoryDialog = false;
         this.showActivationEditDialog = false;
       });
     },
@@ -1150,7 +1090,6 @@ export default {
 
       this.saveFormB(this.formB).then(() => {
         this.loadFormB(this.id);
-        this.showHistoryDialog = false;
         this.showActivationEditDialog = false;
       });
     },

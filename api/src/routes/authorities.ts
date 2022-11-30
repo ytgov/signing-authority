@@ -391,6 +391,24 @@ authoritiesRouter.put(
         );
 
         await db.update(id, existing);
+      } else if (save_action == "SupervisorApproveActing") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Supervisor Approved Acting Appointment",
+          previous_value: existing,
+        });
+
+        await db.update(id, req.body);
+      } else if (save_action == "SupervisorRejectActing") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Supervisor Rejected Acting Appointment",
+          previous_value: existing,
+        });
+
+        await db.update(id, req.body);
       }
 
       return res.send("WORKING");

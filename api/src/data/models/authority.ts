@@ -151,8 +151,7 @@ export function setAuthorityStatus(item: Authority) {
 
       if (a.reject_user_date) {
         a.current_status = "Rejected";
-      }
-      if (start <= now && (a.expire_date == undefined || expire >= now)) {
+      } else if (start <= now && (a.expire_date == undefined || expire >= now)) {
         a.current_status = "Active";
         item.status = "Active";
       } else if (start > now) {
