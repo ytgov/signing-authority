@@ -7,7 +7,14 @@ import path from "path";
 
 const FROM_ADDRESS = "";
 const BASE_TEMPLATE = "../templates/email/base.html";
-const FORMA_WORKFLOW_TEMPLATE = "../templates/email/form_a_notification.html";
+
+const FORMA_FINREVIEW_TEMPLATE = "../templates/email/form_a_finance_review.html";
+const FORMA_FINREVIEW_APPROVE_TEMPLATE = "../templates/email/form_a_finance_review_appove.html";
+const FORMA_FINREVIEW_REJECT_TEMPLATE = "../templates/email/form_a_finance_review_reject.html";
+const FORMA_FINAPPROVE_APPROVE_TEMPLATE = "../templates/email/form_a_finance_approve_appove.html";
+const FORMA_FINAPPROVE_REJECT_TEMPLATE = "../templates/email/form_a_finance_approve_reject.html";
+const FORMA_UPLOAD_TEMPLATE = "../templates/email/form_a_upload.html";
+
 const FORMB_WORKFLOW_TEMPLATE = "../templates/email/form_b_notification.html";
 const FORMB_ACTIVATE_TEMPLATE = "../templates/email/form_b_activate.html";
 const FORMB_ACTING_TEMPLATE = "../templates/email/form_b_acting.html";
@@ -24,14 +31,35 @@ export class EmailService {
     else this.TRANSPORT = nodemailer.createTransport(MAIL_CONFIG_DEV as TransportOptions);
   }
 
-  async sendFormANotification(
+  async sendFormAFinReview(group: PositionGroup, users: User[], action: string, actor: string): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_FINREVIEW_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${group.department_code}/form-a/${group._id}`
+    );
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, group.department_descr);
+    content = content.replace(/``PROGRAM``/, `${group.program} / ${group.activity}`);
+    content = content.replace(/``NEXT_ACTION``/, action);
+
+    for (let recipient of users) {
+      let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+      console.log("-- EMAIL FORM-A FINREVIEW SENDING", recipient.email, action);
+      await this.sendEmail(fullName, recipient.email, "Form A Ready for Review", content);
+    }
+  }
+
+  async sendFormAReviewApprove(
     group: PositionGroup,
-    users: User[],
+    recipient: User,
     action: string,
     actor: string,
     extraHtml: string = ""
   ): Promise<any> {
-    let templatePath = path.join(__dirname, FORMA_WORKFLOW_TEMPLATE);
+    let templatePath = path.join(__dirname, FORMA_FINREVIEW_APPROVE_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
     content = content.replace(
@@ -44,11 +72,114 @@ export class EmailService {
     content = content.replace(/``NEXT_ACTION``/, action);
     content = content.replace(/``EXTRA_HTML``/, extraHtml);
 
+    let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+    console.log("-- EMAIL FORM-A FINREVIEWED SENDING", recipient.email, action);
+    await this.sendEmail(fullName, recipient.email, "Form A Review Completed", content);
+  }
+
+  async sendFormAReviewReject(
+    group: PositionGroup,
+    recipient: User,
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_FINREVIEW_REJECT_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${group.department_code}/form-a/${group._id}`
+    );
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, group.department_descr);
+    content = content.replace(/``PROGRAM``/, `${group.program} / ${group.activity}`);
+    content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
+
+    let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+    console.log("-- EMAIL FORM-A FINREVIEWED SENDING", recipient.email, action);
+    await this.sendEmail(fullName, recipient.email, "Form A Review Rejected", content);
+  }
+
+  async sendFormAApproveApprove(
+    group: PositionGroup,
+    recipient: User,
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_FINAPPROVE_APPROVE_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${group.department_code}/form-a/${group._id}`
+    );
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, group.department_descr);
+    content = content.replace(/``PROGRAM``/, `${group.program} / ${group.activity}`);
+    content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
+
+    let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+    console.log("-- EMAIL FORM-A FINAPPROVE SENDING", recipient.email, action);
+    await this.sendEmail(fullName, recipient.email, "Form A Review Completed", content);
+  }
+
+  async sendFormAApproveReject(
+    group: PositionGroup,
+    recipient: User,
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_FINAPPROVE_REJECT_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${group.department_code}/form-a/${group._id}`
+    );
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, group.department_descr);
+    content = content.replace(/``PROGRAM``/, `${group.program} / ${group.activity}`);
+    content = content.replace(/``NEXT_ACTION``/, action);
+    content = content.replace(/``EXTRA_HTML``/, extraHtml);
+
+    let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+    console.log("-- EMAIL FORM-A FINREJECT SENDING", recipient.email, action);
+    await this.sendEmail(fullName, recipient.email, "Form A Review Completed", content);
+  }
+
+  async sendFormAUpload(
+    group: PositionGroup,
+    users: User[],
+    action: string,
+    actor: string,
+    extraHtml: string = ""
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMA_UPLOAD_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(
+      /``DESTINATION_URL``/,
+      `${FRONTEND_URL}/departments/${group.department_code}/form-a/${group._id}`
+    );
+    content = content.replace(/``ACTOR_NAME``/, actor);
+    content = content.replace(/``DEPARTMENT``/, group.department_descr);
+    content = content.replace(/``PROGRAM``/, `${group.program} / ${group.activity}`);
+    content = content.replace(/``NEXT_ACTION``/, action);
+
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
 
-      console.log("-- EMAIL FORM-A SENDING", recipient.email, action);
-      await this.sendEmail(fullName, recipient.email, "Form A Workflow Notification", content);
+      console.log("-- EMAIL FORM-A FINREJECT SENDING", recipient.email, action);
+      await this.sendEmail(fullName, recipient.email, "Form A PDF Upload", content);
     }
   }
 

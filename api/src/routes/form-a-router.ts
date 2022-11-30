@@ -1,8 +1,7 @@
 import express, { Request, Response } from "express";
 import { body, param } from "express-validator";
-
 import moment from "moment";
-import _, { create } from "lodash";
+import _ from "lodash";
 import fs from "fs";
 import { generatePDF } from "../utils/pdf-generator";
 import { ReturnValidationErrors } from "../middleware";
@@ -208,8 +207,7 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
     group._id = result.insertedId;
 
     let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
-
-    await emailService.sendFormANotification(group, emailUsers, "Finance Review", group.created_by);
+    await emailService.sendFormAFinReview(group, emailUsers, "Form A Finance Review", group.created_by);
 
     for (let item of items) {
       let position = await db.getById(item);
@@ -378,9 +376,9 @@ formARouter.put(
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
         }
 
-        await emailService.sendFormANotification(
+        await emailService.sendFormAApproveApprove(
           item,
-          creator,
+          creator[0],
           "Form A Activation",
           `${req.user.first_name} ${req.user.last_name}`
         );
@@ -404,9 +402,9 @@ formARouter.put(
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
         }
 
-        await emailService.sendFormANotification(
+        await emailService.sendFormAApproveReject(
           item,
-          creator,
+          creator[0],
           "Finance Approve Rejected",
           `${req.user.first_name} ${req.user.last_name}`,
           `<br><span style="color:red; font-weight:bold">Rejection Comment: ${comments}</span>`
@@ -431,9 +429,9 @@ formARouter.put(
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
         }
 
-        await emailService.sendFormANotification(
+        await emailService.sendFormAReviewApprove(
           item,
-          creator,
+          creator[0],
           "Upload Signatures",
           `${req.user.first_name} ${req.user.last_name}`
         );
@@ -459,12 +457,12 @@ formARouter.put(
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
         }
 
-        await emailService.sendFormANotification(
+        await emailService.sendFormAReviewReject(
           item,
-          creator,
+          creator[0],
           "Finance Review Rejected",
           `${req.user.first_name} ${req.user.last_name}`,
-          `<br><span style="color:red; font-weight:bold">Rejection Comment: ${comments}</span>`
+          `<br><span style="color:red; font-weight:bold">Rejection Reason: ${comments}</span>`
         );
 
         delete item._id;
@@ -499,7 +497,7 @@ formARouter.put(
 
             let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
 
-            await emailService.sendFormANotification(
+            await emailService.sendFormAUpload(
               item,
               emailUsers,
               "Finance Approve",
