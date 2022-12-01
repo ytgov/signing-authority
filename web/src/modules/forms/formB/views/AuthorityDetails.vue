@@ -999,7 +999,7 @@ export default {
         date: this.activateEffective,
         expire_date: this.formB.authority_type == "substantive" ? null : this.activateExpiry,
         activate_reason: this.formB.authority_type,
-        approve_user_email: this.formB.authority_type == "temporary" ? this.profile.email : this.activateEmployee.email,
+        approve_user_email: this.formB.authority_type != "acting" ? this.profile.email : this.activateEmployee.email,
         approve_user_date: this.formB.authority_type == "acting" ? null : new Date(),
       };
 
@@ -1078,13 +1078,7 @@ export default {
       this.showActivationEditDialog = true;
     },
     doActivationEditSave() {
-      let oldActivation = this.formB.activation[this.editActivationIndex];
-
-      if (oldActivation.date != this.editActivation.date) {
-        this.formB.save_action = "ActivationDateChange";
-      } else if (oldActivation.expire_date != this.editActivation.expire_date)
-        this.formB.save_action = "ActivationExpireChange";
-
+      this.formB.save_action = "ActivationChange";
       this.formB.activation[this.editActivationIndex] = this.editActivation;
 
       this.saveFormB(this.formB).then(() => {
@@ -1093,9 +1087,8 @@ export default {
       });
     },
     doActivationEditRemove() {
-      this.formB.activation.splice(this.editActivationIndex, 1);
-
       this.formB.save_action = "ActivationRemove";
+      this.formB.activation.splice(this.editActivationIndex, 1);
 
       this.saveFormB(this.formB).then(() => {
         this.loadFormB(this.id);

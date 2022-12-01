@@ -401,10 +401,29 @@ authoritiesRouter.put(
         });
 
         await db.update(id, req.body);
+      } else if (save_action == "ActivationChange") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Activation Expiration Changed",
+          previous_value: existing,
+        });
+
+        await db.update(id, req.body);
+      } else if (save_action == "ActivationRemove") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Future Activation Removed",
+          previous_value: existing,
+        });
+
+        await db.update(id, req.body);
       }
 
       return res.send("WORKING");
     }
+
     //this is basic editing
     else {
       let existing = await db.getById(id);
@@ -551,11 +570,11 @@ async function loadSingleAuthority(req: Request, id: string): Promise<Authority 
 
         if (a.current_status == "Active") aCompare = `1${aCompare}`;
         else if (a.current_status == "Scheduled") aCompare = `2${aCompare}`;
-        else  aCompare = `3${aCompare}`;
+        else aCompare = `3${aCompare}`;
 
         if (b.current_status == "Active") bCompare = `1${bCompare}`;
         else if (b.current_status == "Scheduled") bCompare = `2${bCompare}`;
-        else  bCompare = `3${bCompare}`;
+        else bCompare = `3${bCompare}`;
 
         return aCompare.localeCompare(bCompare);
       });
