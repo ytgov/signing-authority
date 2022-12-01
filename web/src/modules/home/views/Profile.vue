@@ -68,8 +68,8 @@ export default {
     methods: {
       ...mapActions("home", ["loadProfile"])
     },
-    mounted() {
-      this.loadProfile()
+    async mounted() {
+      await this.loadProfile()
     }
 };
 </script>

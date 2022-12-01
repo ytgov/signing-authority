@@ -103,6 +103,8 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
     return next();
   }
 
+  console.log("User not found in DB:", sub, "Looking up userinfo from Auth0")
+
   await axios
     .get(`${AUTH0_DOMAIN}userinfo`, { headers: { authorization: token } })
     .then(async (resp) => {
