@@ -545,6 +545,21 @@ async function loadSingleAuthority(req: Request, id: string): Promise<Authority 
     setAuthorityStatus(item);
 
     if (item.activation && item.activation.length > 0) {
+      item.activation.sort((a, b) => {
+        let aCompare = moment(a.date).format("YYYYMMDD");
+        let bCompare = moment(b.date).format("YYYYMMDD");
+
+        if (a.current_status == "Active") aCompare = `1${aCompare}`;
+        else if (a.current_status == "Scheduled") aCompare = `2${aCompare}`;
+        else  aCompare = `3${aCompare}`;
+
+        if (b.current_status == "Active") bCompare = `1${bCompare}`;
+        else if (b.current_status == "Scheduled") bCompare = `2${bCompare}`;
+        else  bCompare = `3${bCompare}`;
+
+        return aCompare.localeCompare(bCompare);
+      });
+
       let lastActiviation = item.activation[item.activation.length - 1];
       item.issue_date_display = moment(lastActiviation.date).format("YYYY-MM-DD");
     }
