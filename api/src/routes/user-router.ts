@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
-import { body, param } from "express-validator";
+import { param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
-import _, { isArray } from "lodash";
+import _ from "lodash";
 import { checkJwt, loadUser } from "../middleware/authz.middleware";
 import { ObjectId } from "mongodb";
 
