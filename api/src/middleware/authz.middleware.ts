@@ -122,7 +122,7 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
           if (!email) email = `${first_name}.${last_name}@yukon-no-email.ca`;
 
           u = await db.create({ email, sub, status: "Active", first_name, last_name, roles: ["Employee"] });
-          console.log("CREATING USER FOR " + email);
+          console.log("CREATING USER FOR " + email, sub, u);
           req.user = { ...req.user, ...u };
         }
       } else {
@@ -132,6 +132,6 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
       next();
     })
     .catch((err) => {
-      console.log("ERROR pulling userinfo", err);
+      console.log("ERROR pulling userinfo from Auth0", err);
     });
 }
