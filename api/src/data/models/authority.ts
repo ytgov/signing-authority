@@ -144,19 +144,22 @@ export function setAuthorityStatus(item: Authority) {
         continue;
       }
 
-      let start = moment(a.approve_user_date).format("YYYYMMDD");
+      let start = moment(a.date).format("YYYYMMDD");
+      if (item.authority_type == "acting") start = moment(a.approve_user_date).format("YYYYMMDD");
+
       let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
 
       a.current_status = "Inactive";
 
-      if (a.reject_user_date) {
+      if (item.authority_type == "substantive" && now > expire) a.current_status = "Suspended";
+      else if (a.reject_user_date) {
         a.current_status = "Rejected";
-      } else if (start <= now && (a.expire_date == undefined || expire >= now)) {
-        a.current_status = "Active";
-        item.status = "Active";
       } else if (start > now) {
         a.current_status = "Scheduled";
         item.status = "Scheduled";
+      } else if (start <= now && (a.expire_date == undefined || expire >= now)) {
+        a.current_status = "Active";
+        item.status = "Active";
       }
     }
   }
