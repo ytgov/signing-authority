@@ -336,8 +336,13 @@
               </div>
               <div v-if="formB.authority_type == 'temporary'">
                 <p>
-                  A Temporary Form B can be activated multiple times. An activation can be extended or expired early by
-                  viewing the activation history and clicking the 'Edit' button.
+                  A temporary From B must be scheduled to be activated. The effective date can be today or in the
+                  future. A temporary Form B will become active on the effective date and archived on the expiration
+                  date.
+                </p>
+                <p>
+                  An activation can be removed, extended or expired early by viewing the activation history and clicking
+                  the 'Edit' button.
                 </p>
               </div>
               <div v-if="formB.authority_type == 'acting'">
