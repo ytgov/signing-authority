@@ -145,7 +145,8 @@ export function setAuthorityStatus(item: Authority) {
       }
 
       let start = moment(a.date).format("YYYYMMDD");
-      if (item.authority_type == "acting") start = moment(a.approve_user_date).format("YYYYMMDD");
+
+      if (a.approve_user_date) start = moment.max(moment(a.date), moment(a.approve_user_date)).format("YYYYMMDD");
 
       let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
 
