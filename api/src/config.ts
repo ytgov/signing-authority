@@ -21,7 +21,7 @@ let obj = process.env;
 let pattern = "VUE_APP_";
 
 export const VUE_APP: any = Object.keys(obj)
-  .filter(k => k.includes(pattern))
+  .filter((k) => k.includes(pattern))
   .reduce((cur, key) => {
     return Object.assign(cur, { [key]: obj[key] });
   }, {});
@@ -31,7 +31,6 @@ export const apiBaseUrl = process.env.NODE_ENV == "production" ? "" : "http://lo
 export const API_PORT = process.env.API_PORT || "3000";
 export const FRONTEND_URL = process.env.FRONTEND_URL || "";
 export const AUTH_REDIRECT = process.env.AUTH_REDIRECT || "";
-
 
 export const AUTH0_DOMAIN = `${process.env.VUE_APP_AUTH_DOMAIN}/` || "";
 export const AUTH0_AUDIENCE = process.env.VUE_APP_AUTH_AUDIENCE || "";
@@ -65,7 +64,7 @@ export const MAIL_CONFIG_DEV = {
   auth: {
     user: MAIL_USER,
     pass: MAIL_PASS,
-  }
+  },
 };
 
 export const MAIL_CONFIG = {
@@ -73,3 +72,8 @@ export const MAIL_CONFIG = {
   port: MAIL_PORT,
   secure: false, // true for 465, false for other ports
 };
+
+export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || "";
+export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || "";
+export const AWS_SESSION_TOKEN = process.env.AWS_SESSION_TOKEN || "";
+export const VROOZI_ENDPOINT_URL = process.env.VROOZI_ENDPOINT_URL || "";

@@ -10,6 +10,8 @@
   "author": "Michael Johnson",
   "license": "ISC",
   "dependencies": {
+    "@aws-crypto/sha256-js": "^2.0.2",
+    "@aws-sdk/signature-v4": "^3.226.0",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
