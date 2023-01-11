@@ -19,7 +19,7 @@
     "express-session": "^1.17.2",
     "express-validator": "^6.11.1",
     "helmet": "^4.6.0",
-    "knex": "^0.95.6",
+    "knex": "^2.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mongodb": "^4.3.1",
