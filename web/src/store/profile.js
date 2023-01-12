@@ -1,5 +1,5 @@
-import axios from "axios";
 import { PROFILE_URL } from "../urls";
+import { secureGet } from "./jwt";
 
 const state = {
     firstName: "",
@@ -19,11 +19,10 @@ const getters = {
 };
 const actions = {
     async loadProfile({ commit }) {
-        await axios.get(PROFILE_URL)
+        console.log (`Loading Profile from ${PROFILE_URL}`)
+        await secureGet(PROFILE_URL)
             .then(resp => {
                 commit("setProfile", resp.data.data);
-            }).catch(() => {
-                commit("clearUser");
             });
     },
 };

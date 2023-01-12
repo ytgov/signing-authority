@@ -21,11 +21,10 @@ uploadsRouter.get('/poster/:user', async (req: Request, res: Response) => {
 
 uploadsRouter.get('/:id', async (req: Request, res: Response) => {
   let { id } = req.params;
+
   let fileStore = req.store.Files as FileStore;
   let file = await fileStore.getFile(id);
   file.content = Buffer.from([]);
-
-  console.log(file)
 
   return res.json({ data: file })
 });
@@ -36,7 +35,7 @@ uploadsRouter.get('/:id/file', async (req: Request, res: Response) => {
   let file = await fileStore.getFile(id);
 
   res.setHeader("Content-Disposition", "attachment; filename=" + file.filename);
-  return res.contentType(file.mimeType).send(file.content);
+  return res.contentType(file.mime_type).send(file.content);
 });
 
 uploadsRouter.post('/', async (req: Request, res: Response) => {
@@ -53,10 +52,10 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
     if (file) {
       let storedFile: StoredFile = {
         content: file.data,
-        fileSize: file.size,
+        file_size: file.size,
         filename: file.name,
-        mimeType: file.mimetype,
-        uploadedBy: req.body.user
+        mime_type: file.mimetype,
+        uploaded_by: req.body.user
       }
 
       let f = await fileStore.putFile(storedFile);

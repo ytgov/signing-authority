@@ -1,12 +1,34 @@
 version: "3"
 
 services:
+  #web:
+  #  image: ghcr.io/ryanjagar/signing-authority:latest
+  #  restart: unless-stopped
+  #  ports:
+  #    - 3000:3000
+  #  environment:
+  #    - AUTH_REDIRECT=${AUTH_REDIRECT}
+  #    - FRONTEND_URL=${FRONTEND_URL}
+  #    - BASE_URL=${BASE_URL}
+  #    - CLIENT_ID=${CLIENT_ID}
+  #    - CLIENT_SECRET=${CLIENT_SECRET}
+  #    - ISSUER_BASE_URL=${ISSUER_BASE_URL}
+  #    - SECRET=${SECRET}
+  #    - MONGO_HOST=${MONGO_HOST}
+  #    - MONGO_DB=${MONGO_DB}
+  #    - MONGO_FILEBUCKET=${MONGO_FILEBUCKET}
+  #    - MONGO_USERNAME=${MONGO_USERNAME}
+  #    - MONGO_PASSWORD=${MONGO_PASSWORD}
+  #    - NODE_ENV=${NODE_ENV}
+
+
   mongodb:
     image: mongo:5.0.6
     restart: unless-stopped
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - TZ=America/Whitehorse
     volumes:
       - mongo-data:/data/db
       - ./dump:/dump

@@ -1,24 +1,15 @@
 import express, { Request, Response } from "express";
-import { RequiresData } from "../middleware";
-import _ from "lodash";
-import { EnsureAuthenticated } from "./auth";
-import { GenericService } from "../services";
-import { Department } from "../data/models";
-import { ObjectId } from "mongodb";
 
 export const departmentRouter = express.Router();
-departmentRouter.use(RequiresData, EnsureAuthenticated);
 
-departmentRouter.get('/', async (req: Request, res: Response) => {
-  let db = req.store.Departments as GenericService<Department>;
+const departList = require("../data/departments.json");
 
-  return res.json({ data: await db.getAll({}, "name") });
-});
+departmentRouter.get("/", async (req: Request, res: Response) => {
+  let depts = departList;
 
-departmentRouter.get('/:id', async (req: Request, res: Response) => {
-  let db = req.store.Departments as GenericService<Department>;
-  let { id } = req.params;
-  let item = await db.getOne({ _id: new ObjectId(id) });
+  for (let d of depts) {
+    d.display_name = `(${d.dept}) ${d.descr}`;
+  }
 
-  return res.json({ data: item });
+  res.json({ data: depts });
 });

@@ -3,21 +3,23 @@ import { FileStore } from "../utils/file-store";
 import { MongoFileStore } from "../utils/mongo-file-store";
 import { MONGO_URL, MONGO_DB } from "../config";
 import { GenericService, UserService } from "../services";
-import { Authority, Department, Employee } from "./models";
+import { Authority, Employee, Position, PositionGroup } from "./models";
 
 let options: MongoClientOptions = {
     connectTimeoutMS: 3000,
     retryWrites: true
-}
+};
 
 export class Storage {
     mongoConnection!: MongoClient;
     isInitialized: boolean = false;
     Authorities!: GenericService<Authority>;
     Employees!: GenericService<Employee>;
-    Departments!: GenericService<Department>;
+    // Departments!: GenericService<Department>;
     Users!: UserService;
     Files!: FileStore;
+    FormA!: GenericService<Position>;
+    PositionGroups!: GenericService<PositionGroup>;
 
     constructor() {
     }
@@ -33,20 +35,21 @@ export class Storage {
 
                     //Subscriptions are from the old project
                     this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Authorities"));
+                    this.FormA = new GenericService(this.mongoConnection.db(MONGO_DB).collection("FormA"));
+                    this.PositionGroups = new GenericService(this.mongoConnection.db(MONGO_DB).collection("PositionGroups"));
                     this.Employees = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Employees"));
-                    this.Departments = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Departments"));
                     this.Users = new UserService(this.mongoConnection.db(MONGO_DB).collection("Users"));
                     this.Files = new MongoFileStore(this.mongoConnection.db(MONGO_DB));
-                    
+
                     this.isInitialized = true;
                     resolve("Connected");
                 })
                 .catch(err => {
-                    console.error("Can't connet to MongoDB @", MONGO_URL)
+                    console.error("Can't connet to MongoDB @", MONGO_URL);
                     console.error(err);
                     reject(err);
                 });
 
-        })
+        });
     }
 }

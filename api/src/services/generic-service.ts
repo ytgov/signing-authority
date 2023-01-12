@@ -1,4 +1,4 @@
-import { Collection, ObjectId, Filter, InsertOneResult, DeleteResult } from "mongodb";
+import { Collection, ObjectId, Filter, InsertOneResult, DeleteResult, Document } from "mongodb";
 import { MongoEntity } from "../data/models";
 
 export class GenericService<T extends MongoEntity> {
@@ -24,7 +24,7 @@ export class GenericService<T extends MongoEntity> {
             .catch(err => {
                 console.log("UPDATE ERROR");
                 return undefined;
-            })
+            });
     }
 
     async delete(id: string): Promise<DeleteResult> {
@@ -42,10 +42,21 @@ export class GenericService<T extends MongoEntity> {
     async deleteWhere(query: Filter<any>): Promise<DeleteResult> {
         return this.db.deleteMany(query);
     }
+    
+    async count(query: Filter<any>): Promise<Number> {
+        return this.db.countDocuments(query);
+    }
 
-    async getById(id: string): Promise<any | null> {
+    async aggregate(pipeline?: Document[]): Promise<Document[]> {
+
+        let aggCursor = await this.db.aggregate(pipeline);
+
+        return aggCursor.toArray();
+    }
+
+    async getById(id: string): Promise<T | null> {
         try {
-            return this.db.findOne<any>({ _id: new ObjectId(id) });
+            return this.db.findOne<T>({ _id: new ObjectId(id) });
         }
         catch (e) { }
 
