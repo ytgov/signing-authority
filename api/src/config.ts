@@ -8,7 +8,7 @@ switch (process.env.NODE_ENV) {
     path = `../../.env.test`;
     break;
   case "production":
-    path = `../.env.production`;
+    path = `.env.production`;
     break;
   default:
     path = `../.env.development`;
