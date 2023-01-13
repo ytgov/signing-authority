@@ -12,7 +12,6 @@ on:
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ uat, prod ]
-  workflow_dispatch:
 
 env:
   # Use docker.io for Docker Hub if empty
