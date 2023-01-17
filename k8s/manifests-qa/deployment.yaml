@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signing-authority-qa
+  labels:
+    app: vue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: signing-authority-qa
+  template:
+    metadata:
+      labels:
+        app: signing-authority-qa
+    spec:
+      containers:
+        - image: harbor.ynet.gov.yk.ca/yg-github/ytgov/signing-authority:v1.0.6
+          name: signing-authority-qa
+          ports:
+            - containerPort: 3000
+          resources: {}
+          volumeMounts:
+            - mountPath: "/home/node/app/.env.production"
+              subPath: .env
+              name: env-configmap-volume
+            - mountPath: "/home/node/web/.env.production"
+              subPath: .env
+              name: env-configmap-volume
+          
+      volumes:
+        - name: env-configmap-volume
+          configMap:
+            name: signing-auth-env
+      restartPolicy: Always
+status: {}
