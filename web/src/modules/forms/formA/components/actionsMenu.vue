@@ -105,11 +105,15 @@ export default {
     },
 
     canDMLock() {
-      return this.formA.is_deputy_minister && !this.isLocked && (this.userIsDeptAdmin || this.userIsSysAdmin);
+      return (
+        (this.formA.is_deputy_minister || this.formA.is_deputy_duplicate) &&
+        !this.isLocked &&
+        (this.userIsDeptAdmin || this.userIsSysAdmin)
+      );
     },
     canDMApprove() {
       return (
-        this.formA.is_deputy_minister &&
+        (this.formA.is_deputy_minister || this.formA.is_deputy_duplicate) &&
         this.isLocked &&
         !this.isActive &&
         (this.userIsFinanceAdmin || this.userIsSysAdmin)

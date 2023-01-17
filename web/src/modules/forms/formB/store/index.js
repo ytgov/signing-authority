@@ -112,10 +112,10 @@ const actions = {
       });
   },
 
-  async accountSearch(state, {term, date}) {
+  async accountSearch(state, { term, date }) {
     const auth = getInstance();
-    
-    return auth.post(`${AUTHORITY_URL}/account-search`, {term, date}).then((resp) => {
+
+    return auth.post(`${AUTHORITY_URL}/account-search`, { term, date }).then((resp) => {
       return resp.data.data;
     });
   },
@@ -165,7 +165,7 @@ const mutations = {
 export function cleanCoding(input) {
   input = input || "";
   input = input.toLowerCase().replace(/[^0-9|x]/g, "");
-  input = input.toLowerCase().replace(/x+$/, "");
+  if (input != "x") input = input.toLowerCase().replace(/x+$/, "");
   return formatCoding(input);
 }
 

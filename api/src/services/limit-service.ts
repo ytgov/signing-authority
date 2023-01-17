@@ -183,6 +183,32 @@ export class LimitService {
 
     return limitNum >= valueNum;
   }
+
+  checkValidEditsOnDM(dmForm: Position, positions: Position[]): string | undefined {
+    let response = "";
+    let count = 0;
+
+    for (let pos of positions) {
+      if (pos.status == "Archived") continue;
+      if (pos.status == "Inactive (Draft)") continue;
+      if (pos.is_deputy_minister) continue;
+
+      for (let line of pos.authority_lines || []) {
+        let limitError = this.checkFormALineLimits(dmForm, line);
+
+        if (limitError) {
+          response += `${pos.position} : Line: ${limitError} \n`;
+          count++;
+        }
+      }
+    }
+
+    if (count == 0) {
+      return "All positions valid, but not ready for this yet";
+    } else {
+      return `${count} Position(s) fail validation\n ${response.trim()}`;
+    }
+  }
 }
 
 interface GenericLine {

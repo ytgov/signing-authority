@@ -4,7 +4,9 @@
 
     <BaseCard :showHeader="true" :heading="`Delegation of Financial Signing Authority`">
       <template slot="right">
-        <v-chip color="#f2a900" v-if="formA.is_deputy_minister" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
+        <v-chip color="#f2a900" v-if="formA.is_deputy_minister || formA.is_deputy_duplicate" class="mr-4" dark
+          >Deputy Minister or Equivalent</v-chip
+        >
         <v-btn color="primary" small class="mr-5" text @click="close">Cancel</v-btn>
         <v-btn color="primary" @click="save" :disabled="!canSave">Save</v-btn>
         <div style="display:none">{{ version }}</div>
@@ -95,7 +97,7 @@ export default {
     },
 
     canAdminister() {
-      if (this.profile && this.profile.roles.length > 0) {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
 
         if (

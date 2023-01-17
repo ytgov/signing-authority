@@ -772,6 +772,16 @@ formARouter.put(
 
     if (saveAction) {
       if (saveAction == "DMLock") {
+        let deptPositions = await db.getAll({ department_code: existing?.department_code });
+
+        for (let pos of deptPositions) {
+          setPositionStatus(pos);
+        }
+
+        let limitError = limitService.checkValidEditsOnDM(req.body, deptPositions);
+
+        if (limitError) return res.status(400).send(limitError);
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -849,7 +859,7 @@ formARouter.put(
 
     let skipLimitChecks = false;
 
-    if (existing && existing.is_deputy_minister) skipLimitChecks = true;
+    if (existing && (existing.is_deputy_minister || existing.is_deputy_duplicate)) skipLimitChecks = true;
 
     let myDMForms = await db.getAll({
       department_code: req.body.department_code,
@@ -871,9 +881,10 @@ formARouter.put(
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
-      if (!codingIsValid)
-        line.contracts_for_goods_services =
-          line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
+      if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
+
+      line.contracts_for_goods_services =
+        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
       line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments;
       line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel;

@@ -7,6 +7,7 @@ export * from "./quest-service";
 export * from "./user-service";
 export * from "./department-service";
 export * from "./limit-service";
+export * from "./vroozi-service";
 
 export interface QueryStatement {
   field: string;

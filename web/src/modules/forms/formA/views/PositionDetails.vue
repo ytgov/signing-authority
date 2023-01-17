@@ -4,7 +4,7 @@
 
     <BaseCard :showHeader="true" heading="Delegation of Financial Signing Authority">
       <template slot="right">
-        <v-chip color="#f2a900" v-if="formA.is_deputy_minister" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
+        <v-chip color="#f2a900" v-if="formA.is_deputy_minister || formA.is_deputy_duplicate" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
         <form-a-status :isLocked="isLocked" :status="status"> </form-a-status>
 
         <actions-menu :showPreview="showPreview" :showDMApprove="showDMApprove"> </actions-menu>
