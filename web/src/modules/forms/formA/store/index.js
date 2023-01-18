@@ -64,7 +64,7 @@ const actions = {
   async saveFormA({ commit }, item) {
     const auth = getInstance();
     let body = _.clone(item);
-    delete body.employee;
+    if (!item.keep_employee) delete body.employee;
     delete body.department;
     delete body._id;
 

@@ -11,7 +11,7 @@
           <v-list-item-title>Edit </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="canDMLock" @click="dmLock">
+        <v-list-item v-if="canDMLock" @click="startDMLock">
           <v-list-item-title>DM - Lock for Approval</v-list-item-title>
         </v-list-item>
 
@@ -47,6 +47,7 @@ export default {
   props: {
     showPreview: { type: Function },
     showDMApprove: { type: Function },
+    showDMLock: { type: Function },
   },
   computed: {
     ...mapState("authority/formA", ["formA"]),
@@ -139,10 +140,8 @@ export default {
     preview() {
       this.showPreview();
     },
-    async dmLock() {
-      this.formA.save_action = "DMLock";
-
-      await this.saveFormA(this.formA);
+    async startDMLock() {
+      this.showDMLock();
     },
 
     startDMApprove() {

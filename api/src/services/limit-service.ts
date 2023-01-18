@@ -8,38 +8,44 @@ export class LimitService {
     let restricts = line.operational_restriction || undefined;
     let matches = new Array<PositionAuthorityLine>();
 
-    for (let dmLine of dmForm.authority_lines || []) {
-      // check for matching operational_restriction
-      let dmRestricts = dmLine.operational_restriction || undefined;
-
-      // if not special delegation, ignore the OR
-      if (dmRestricts) {
-        if (restricts != dmRestricts) continue;
+    if (coding == "x") {
+      for (let dmLine of dmForm.authority_lines || []) {
+        if (dmLine.coding == "x") matches.push(dmLine);
       }
+    } else {
+      for (let dmLine of dmForm.authority_lines || []) {
+        // check for matching operational_restriction
+        let dmRestricts = dmLine.operational_restriction || undefined;
 
-      let chars = dmLine.coding.split("");
-      let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
-
-      let hasFail = false;
-
-      for (let i = 0; i < chars.length; ++i) {
-        let dmChar = chars[i];
-        let cdChar = codCh[i];
-
-        if (dmChar == cdChar) {
-          continue;
+        // if not special delegation, ignore the OR
+        if (dmRestricts) {
+          if (restricts != dmRestricts) continue;
         }
 
-        if (dmChar == "x") {
-          continue;
+        let chars = dmLine.coding.split("");
+        let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
+
+        let hasFail = false;
+
+        for (let i = 0; i < chars.length; ++i) {
+          let dmChar = chars[i];
+          let cdChar = codCh[i];
+
+          if (dmChar == cdChar) {
+            continue;
+          }
+
+          if (dmChar == "x") {
+            continue;
+          }
+
+          hasFail = true;
+          break;
         }
 
-        hasFail = true;
-        break;
-      }
-
-      if (!hasFail) {
-        matches.push(dmLine);
+        if (!hasFail) {
+          matches.push(dmLine);
+        }
       }
     }
 
@@ -203,11 +209,9 @@ export class LimitService {
       }
     }
 
-    if (count == 0) {
-      return "All positions valid, but not ready for this yet";
-    } else {
+    if (count > 0) {
       return `${count} Position(s) fail validation\n ${response.trim()}`;
-    }
+    } else return undefined;
   }
 }
 
