@@ -198,6 +198,7 @@ export class LimitService {
       if (pos.status == "Archived") continue;
       if (pos.status == "Inactive (Draft)") continue;
       if (pos.is_deputy_minister) continue;
+      if (pos._id == dmForm._id) continue;
 
       for (let line of pos.authority_lines || []) {
         let limitError = this.checkFormALineLimits(dmForm, line);
