@@ -773,7 +773,10 @@ formARouter.put(
 
     if (saveAction) {
       if (saveAction == "DMLock") {
-        let deptPositions = await db.getAll({ department_code: existing?.department_code });
+        let deptPositions = await db.getAll({
+          department_code: existing?.department_code,
+          _id: { $ne: new ObjectId(id) },
+        });
 
         for (let pos of deptPositions) {
           setPositionStatus(pos);
@@ -795,7 +798,10 @@ formARouter.put(
 
         req.body.position_group_id = "-1";
       } else if (saveAction == "DMApprove") {
-        let deptPositions = await db.getAll({ department_code: existing?.department_code });
+        let deptPositions = await db.getAll({
+          department_code: existing?.department_code,
+          _id: { $ne: new ObjectId(id) },
+        });
 
         for (let pos of deptPositions) {
           setPositionStatus(pos);

@@ -194,7 +194,7 @@ export class LimitService {
     let response = "";
     let count = 0;
 
-    console.log("STARING DMCHECK ON ", dmForm._id, positions.length)
+    console.log("STARING DMCHECK ON ", dmForm.position, positions.length)
 
     for (let pos of positions) {
        console.log("dmvalidate", pos.position, pos._id)
@@ -203,8 +203,7 @@ export class LimitService {
       if (pos.status == "Archived") continue;
       if (pos.status == "Inactive (Draft)") continue;
       if (pos.is_deputy_minister) continue;
-      if (pos._id == dmForm._id) continue;
-
+      
       console.log("  POS NOT SKIPPED")
 
 
