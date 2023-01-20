@@ -194,16 +194,25 @@ export class LimitService {
     let response = "";
     let count = 0;
 
+    console.log("STARING DMCHECK ON ", dmForm._id, positions.length)
+
     for (let pos of positions) {
+       console.log("dmvalidate", pos.position, pos._id)
+
+
       if (pos.status == "Archived") continue;
       if (pos.status == "Inactive (Draft)") continue;
       if (pos.is_deputy_minister) continue;
       if (pos._id == dmForm._id) continue;
 
+      console.log("  POS NOT SKIPPED")
+
+
       for (let line of pos.authority_lines || []) {
         let limitError = this.checkFormALineLimits(dmForm, line);
 
         if (limitError) {
+          console.log("  -- Found problem", limitError)
           response += `${pos.position} : Line: ${limitError} \n`;
           count++;
         }
