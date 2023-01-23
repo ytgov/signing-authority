@@ -8,44 +8,40 @@ export class LimitService {
     let restricts = line.operational_restriction || undefined;
     let matches = new Array<PositionAuthorityLine>();
 
-    if (coding == "x") {
-      for (let dmLine of dmForm.authority_lines || []) {
-        if (dmLine.coding == "x") matches.push(dmLine);
+    for (let dmLine of dmForm.authority_lines || []) {
+      // check for matching operational_restriction
+      let dmRestricts = dmLine.operational_restriction || undefined;
+
+      // if not special delegation, ignore the OR
+      if (dmRestricts) {
+        if (restricts != dmRestricts) continue;
       }
-    } else {
-      for (let dmLine of dmForm.authority_lines || []) {
-        // check for matching operational_restriction
-        let dmRestricts = dmLine.operational_restriction || undefined;
 
-        // if not special delegation, ignore the OR
-        if (dmRestricts) {
-          if (restricts != dmRestricts) continue;
+      if (coding == "x" && dmLine.coding == "x") matches.push(dmLine);
+
+      let chars = dmLine.coding.split("");
+      let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
+
+      let hasFail = false;
+
+      for (let i = 0; i < chars.length; ++i) {
+        let dmChar = chars[i];
+        let cdChar = codCh[i];
+
+        if (dmChar == cdChar) {
+          continue;
         }
 
-        let chars = dmLine.coding.split("");
-        let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
-
-        let hasFail = false;
-
-        for (let i = 0; i < chars.length; ++i) {
-          let dmChar = chars[i];
-          let cdChar = codCh[i];
-
-          if (dmChar == cdChar) {
-            continue;
-          }
-
-          if (dmChar == "x") {
-            continue;
-          }
-
-          hasFail = true;
-          break;
+        if (dmChar == "x") {
+          continue;
         }
 
-        if (!hasFail) {
-          matches.push(dmLine);
-        }
+        hasFail = true;
+        break;
+      }
+
+      if (!hasFail) {
+        matches.push(dmLine);
       }
     }
 
@@ -194,24 +190,15 @@ export class LimitService {
     let response = "";
     let count = 0;
 
-    console.log("STARING DMCHECK ON ", dmForm.position, positions.length)
-
     for (let pos of positions) {
-       console.log("dmvalidate", pos.position, pos._id)
-
-
       if (pos.status == "Archived") continue;
       if (pos.status == "Inactive (Draft)") continue;
       if (pos.is_deputy_minister) continue;
-      
-      console.log("  POS NOT SKIPPED")
-
 
       for (let line of pos.authority_lines || []) {
         let limitError = this.checkFormALineLimits(dmForm, line);
 
         if (limitError) {
-          console.log("  -- Found problem", limitError)
           response += `${pos.position} : Line: ${limitError} \n`;
           count++;
         }
