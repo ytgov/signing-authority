@@ -27,7 +27,7 @@
             </template>
         </v-autocomplete>
 
-        <v-card class="default mb-4" v-if="model && model.email">
+        <v-card class="default mb-4" v-if="model && model.display_name">
             <v-card-text>
                 <v-row>
                     <v-col cols="9">
@@ -79,10 +79,10 @@ export default {
             {
                 name: "Existing employee search",
                 icon: "mdi-account-search",
-                alt: "YNET directory search",
+                alt: "Directory search",
             },
             {
-                name: "YNET directory search",
+                name: "Directory search",
                 icon: "mdi-account-search",
                 alt: "Existing employee search",
             },

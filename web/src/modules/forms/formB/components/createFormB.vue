@@ -37,7 +37,7 @@
             actionName="Select"
             label="Employee : "
             :select="pickEmployee"
-            v-if="!selectedEmployee.email"
+            v-if="!selectedEmployee.display_name"
           ></employee-lookup>
 
           <v-text-field
@@ -47,7 +47,7 @@
             outlined
             label="Employee"
             append-icon="mdi-lock"
-            v-if="selectedEmployee.email"
+            v-if="selectedEmployee.display_name"
             append-outer-icon="mdi-close-circle"
             @click:append-outer="unselectEmployee"
           ></v-text-field>
@@ -66,7 +66,7 @@
               actionName="Select"
               label="Supervisor : "
               :select="pickSupervisor"
-              v-if="!selectedSupervisor.email"
+              v-if="!selectedSupervisor.display_name"
             ></employee-lookup>
 
             <v-text-field
@@ -76,7 +76,7 @@
               outlined
               label="Supervisor"
               append-icon="mdi-lock"
-              v-if="selectedSupervisor.email"
+              v-if="selectedSupervisor.display_name"
               append-outer-icon="mdi-close-circle"
               @click:append-outer="unselectSupervisor"
             ></v-text-field>
@@ -127,10 +127,10 @@ export default {
   computed: {
     isValid() {
       if (
-        this.selectedEmployee.email &&
+        this.selectedEmployee.display_name &&
         this.formAId &&
         this.position.length > 0 &&
-        (this.isDMFormA || this.selectedSupervisor.email)
+        (this.isDMFormA || this.selectedSupervisor.display_name)
       )
         return true;
 
