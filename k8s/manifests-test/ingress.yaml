@@ -11,16 +11,16 @@ spec:
   routes:
     - kind: Rule
       #match requests to this domain
-      match: Host(`signing-authorization-test.ynet.gov.yk.ca`)
+      match: Host(`signing-authorities-test.ynet.gov.yk.ca`)
       priority: 10
       services:
         - name: signing-authority-test
           port: 3000
   tls:
     domains:
-      - main: signing-authorization.ynet.gov.yk.ca
+      - main: signing-authorities.ynet.gov.yk.ca
         sans:
-          - signing-authorization-test.ynet.gov.yk.ca
+          - signing-authorities-test.ynet.gov.yk.ca
     secretName: signing-authority-cert
 
 ---
@@ -34,7 +34,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: Host(`signing-authorization-test.ynet.gov.yk.ca`)
+      match: Host(`signing-authorities-test.ynet.gov.yk.ca`)
       priority: 1
       middlewares:
         - name: redirect-to-https
