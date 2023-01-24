@@ -224,7 +224,7 @@
 
               <v-row>
                 <v-col>
-                  <v-btn color="primary" small class="my-0" @click="openFormA">Preview Signed Form A</v-btn>
+                  <v-btn color="primary" small class="my-0" @click="openFormA" v-if="canPreviewFormA">Preview Signed Form A</v-btn>
                 </v-col>
                 <v-spacer />
                 <v-col style="text-align: right">
@@ -753,7 +753,9 @@ export default {
     canDownload() {
       return this.isLocked || this.isCancelled;
     },
-
+    canPreviewFormA() {
+      return this.userIsDeptAdmin || this.userIsSysAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin;
+    },
     canEdit() {
       return (this.userIsDeptAdmin || this.userIsSysAdmin) && !this.isLocked && !this.isCancelled;
     },
@@ -894,12 +896,17 @@ export default {
     },
 
     openFormA() {
-      if (this.formB && this.formB.form_a && this.formB.form_a.activation)
+      if (
+        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        this.formB &&
+        this.formB.form_a &&
+        this.formB.form_a.activation
+      ) {
         this.$refs.pdfPreview.show(
           "Signed Form A",
           `${AUTHORITY_URL}/uploads/${this.formB.form_a.activation.file_id}/file`
         );
-      else console.log("No form attached");
+      } else console.log("No form attached");
     },
 
     editFormB() {
@@ -932,7 +939,10 @@ export default {
     },
 
     async downloadPDF() {
-      if (this.formB.upload_signatures) {
+      if (
+        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        this.formB.upload_signatures
+      ) {
         window.open(`${AUTHORITY_URL}/uploads/${this.formB.upload_signatures.file_id}/file`);
       } else {
         window.open(this.pdfURL);
@@ -940,7 +950,10 @@ export default {
     },
 
     showPreview() {
-      if (this.formB.upload_signatures) {
+      if (
+        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        this.formB.upload_signatures
+      ) {
         this.$refs.pdfPreview.show(
           "Signed Form B",
           `${AUTHORITY_URL}/uploads/${this.formB.upload_signatures.file_id}/file`

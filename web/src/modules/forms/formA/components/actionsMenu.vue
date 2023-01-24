@@ -91,7 +91,11 @@ export default {
       return this.userIsSysAdmin || this.userIsDeptAdmin;
     },
     canPreview() {
-      return this.formA.activation && !this.formA.is_deputy_minister;
+      return (
+        this.formA.activation &&
+        !this.formA.is_deputy_minister &&
+        (this.userIsSysAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin)
+      );
     },
     canArchive() {
       if (this.formA.is_deputy_minister) return false;
