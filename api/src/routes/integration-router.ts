@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import { isArray } from "lodash";
 import { Authority, setAuthorityStatus } from "../data/models";
 import { RequiresData } from "../middleware";
 import { GenericService, VrooziService } from "../services";
@@ -46,7 +47,18 @@ integrationRouter.get("/users", async (req: Request, res: Response) => {
 
   let userList = await serv.getUsers();
 
-  console.log("USERS", userList)
+  console.log("USERS", userList);
 
   res.json({ data: userList });
+});
+
+integrationRouter.post("/amf/delta", async (req: Request, res: Response) => {
+  let payload = req.body.data || req.body;
+
+  if (isArray(payload)) {
+    res.json({ data: `Received an array with ${payload.length} elements` });
+  } else {
+    console.log("I got ", payload);
+    res.json({ data: `Received an unexpected format - expected JSON array` });
+  }
 });
