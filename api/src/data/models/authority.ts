@@ -48,7 +48,7 @@ export interface Authority extends MongoEntity {
 
   // used in DTO only
   department?: Department;
-  form_a: Position | null;
+  form_a?: Position | null;
 
   issue_date_display?: string;
   created_by?: User;

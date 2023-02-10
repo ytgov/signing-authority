@@ -16,6 +16,7 @@ import {
   User,
   setAuthorityStatus,
   setPositionStatus,
+  ReviewResultType,
 } from "../data/models";
 import { ObjectId } from "mongodb";
 
@@ -772,6 +773,19 @@ formARouter.put(
 
     if (saveAction) {
       if (saveAction == "DMLock") {
+        let deptPositions = await db.getAll({
+          department_code: existing?.department_code,
+          _id: { $ne: new ObjectId(id) },
+        });
+
+        for (let pos of deptPositions) {
+          setPositionStatus(pos);
+        }
+
+        let limitError = limitService.checkValidEditsOnDM(req.body, deptPositions);
+
+        if (limitError) return res.status(400).send(limitError);
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -784,6 +798,81 @@ formARouter.put(
 
         req.body.position_group_id = "-1";
       } else if (saveAction == "DMApprove") {
+        let deptPositions = await db.getAll({
+          department_code: existing?.department_code,
+          _id: { $ne: new ObjectId(id) },
+        });
+
+        for (let pos of deptPositions) {
+          setPositionStatus(pos);
+        }
+
+        let limitError = limitService.checkValidEditsOnDM(req.body, deptPositions);
+
+        if (limitError) return res.status(400).send(limitError);
+
+        let authorityDb = req.store.Authorities as GenericService<Authority>;
+
+        let newFormB: Authority = {
+          department_code: req.body.department_code,
+          department_descr: req.body.department_descr,
+          authority_type: "substantive",
+          employee: req.body.employee,
+          supervisor: { title: "", name: "", email: "", ynet_id: "", upn: "" },
+          program_branch: "ALL",
+          form_a_id: new ObjectId(id),
+          authority_lines: req.body.authority_lines,
+          create_date: new Date(),
+          created_by_id: req.user._id,
+          created_by_name: "",
+          audit_lines: [],
+        };
+        (newFormB as any).created_by = `${req.user.first_name} ${req.user.last_name}`;
+
+        newFormB.audit_lines?.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Form B auto-created",
+          previous_value: {},
+        });
+
+        newFormB.department_reviews = [
+          {
+            user_id: req.user._id,
+            name: `${req.user.first_name} ${req.user.last_name}`,
+            date: new Date(),
+            note: "",
+            result: ReviewResultType.Approved,
+          },
+        ];
+
+        newFormB.audit_lines?.push({
+          action: "Locked for Signatures",
+          date: new Date(),
+          previous_value: {},
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+        });
+
+        let createdFormB = await authorityDb.create(newFormB);
+        //let newFormB2 = await loadSingleAuthority(req, createdFormB.insertedId.toString());
+
+        let deptFBAdmins = await userDb.getAll({
+          roles: "Form B Administrator",
+          department_admin_for: req.body.department_code,
+        });
+
+        if (deptFBAdmins) {
+          let newFormBObj = await authorityDb.getById(createdFormB.insertedId.toString());
+          if (newFormBObj)
+            await emailService.sendFormBUpload(
+              newFormBObj,
+              deptFBAdmins,
+              "Upload Signatures",
+              `${req.user.first_name} ${req.user.last_name}`,
+              "Updated Deputy Minister or Equivant - High Priority"
+            );
+        }
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -801,6 +890,31 @@ formARouter.put(
           let creator = await userDb.getAll({ email: req.body.updated_by });
           await emailService.sendDMApproved(existing, creator[0]);
         }
+
+        let oldDMList = await db.getAll({ department_code: req.body.department_code, is_deputy_minister: true });
+
+        for (let oldDM of oldDMList) {
+          oldDM.is_deputy_minister = false;
+
+          if (!oldDM.deactivation) {
+            oldDM.deactivation = {
+              reason: "DM Authority Update",
+              date: new Date(),
+              by: `${req.user.first_name} ${req.user.last_name}`,
+              sub: req.user.sub,
+            };
+          }
+
+          await db.update((oldDM._id || "").toString(), oldDM);
+        }
+
+        req.body.is_deputy_minister = true;
+        req.body.is_deputy_duplicate = false;
+
+        await db.update(id, req.body);
+
+        let item = await loadSinglePosition(req, id);
+        return res.json({ data: item });
       } else if (saveAction == "DMReject") {
         req.body.audit_lines.push({
           date: new Date(),
@@ -849,7 +963,7 @@ formARouter.put(
 
     let skipLimitChecks = false;
 
-    if (existing && existing.is_deputy_minister) skipLimitChecks = true;
+    if (existing && (existing.is_deputy_minister || existing.is_deputy_duplicate)) skipLimitChecks = true;
 
     let myDMForms = await db.getAll({
       department_code: req.body.department_code,
@@ -871,9 +985,10 @@ formARouter.put(
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
-      if (!codingIsValid)
-        line.contracts_for_goods_services =
-          line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
+      if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
+
+      line.contracts_for_goods_services =
+        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
       line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
       line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments;
       line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel;

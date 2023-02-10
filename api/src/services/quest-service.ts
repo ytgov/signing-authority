@@ -27,6 +27,9 @@ export class QuestService {
     input = input.replace(/x/g, "_") + "_";
     input = input.replace(/-/g, "");
 
+    // this is just validating a single "x", which is strange, but OK
+    if (input == "__") return true;
+
     if (this.cache.has(input)) {
       return this.cache.get(input);
     }

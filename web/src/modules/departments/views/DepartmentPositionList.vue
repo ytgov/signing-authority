@@ -302,8 +302,9 @@ export default {
         list = list.filter((i) => i.activity == this.activityFilter);
       }
 
-      if (excludeArchived) {
+      if (excludeArchived == true) {
         list = list.filter((i) => i.status != "Archived");
+        list = list.filter((i) => !i.is_deputy_duplicate);
       }
 
       this.matchingItems = list;

@@ -4,10 +4,12 @@
 
     <BaseCard :showHeader="true" heading="Delegation of Financial Signing Authority">
       <template slot="right">
-        <v-chip color="#f2a900" v-if="formA.is_deputy_minister" class="mr-4" dark>Deputy Minister or Equivalent</v-chip>
+        <v-chip color="#f2a900" v-if="formA.is_deputy_minister || formA.is_deputy_duplicate" class="mr-4" dark
+          >Deputy Minister or Equivalent</v-chip
+        >
         <form-a-status :isLocked="isLocked" :status="status"> </form-a-status>
 
-        <actions-menu :showPreview="showPreview" :showDMApprove="showDMApprove"> </actions-menu>
+        <actions-menu :showPreview="showPreview" :showDMApprove="showDMApprove" :showDMLock="showDMLock"></actions-menu>
       </template>
       <v-overlay :value="is_loading"> <v-progress-circular indeterminate size="64"></v-progress-circular></v-overlay>
 
@@ -57,6 +59,42 @@
       </v-row>
     </BaseCard>
 
+    <v-dialog v-model="showDMLockDialog" persistent width="600">
+      <v-app-bar dark color="#0097A9">
+        <v-toolbar-title>Deputy Minister or Equivalent Lock</v-toolbar-title>
+        <v-spacer />
+        <v-icon title="Close" @click="showDMLockDialog = false">mdi-close</v-icon>
+      </v-app-bar>
+      <v-card tile>
+        <v-card-text class="pt-3">
+          <p>When this position is approved, a Form B is automatically generated. Please select the person to assign to this position.</p>
+          <employee-lookup
+            actionName="Select"
+            label="Deputy Minister or Equivalent for new Form B: "
+            :select="pickEmployee"
+            v-if="!activateEmployee.email"
+          ></employee-lookup>
+
+          <v-text-field
+            v-model="activateEmployee.display_name"
+            readonly
+            dense
+            outlined
+            label="Deputy Minister or Equivalent for new Form B"
+            append-icon="mdi-lock"
+            v-if="activateEmployee.email"
+            append-outer-icon="mdi-close-circle"
+            @click:append-outer="unselectEmployee"
+          ></v-text-field>
+          <p>Department of Finance Administrators will receive an email notification when you complete this step.</p>
+
+          <v-btn @click="dmLockClick" :disabled="!activateEmployee.display_name" color="primary" class="mb-0 mr-5"
+            >Lock</v-btn
+          >
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="showDMApproveDialog" persistent width="600">
       <v-app-bar dark color="#0097A9">
         <v-toolbar-title>Deputy Minister or Equivalent Approval</v-toolbar-title>
@@ -97,6 +135,7 @@ import formATable from "../components/formATable.vue";
 import ActionsMenu from "../components/actionsMenu.vue";
 import FormAStatus from "../components/formAStatus/formAStatus.vue";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
+import EmployeeLookup from "@/modules/employee/components/employeeLookup.vue";
 
 export default {
   name: "AuthorityDetails",
@@ -105,6 +144,7 @@ export default {
     ActionsMenu,
     FormAStatus,
     PdfPreviewDialog,
+    EmployeeLookup,
   },
   data: () => ({
     page: {
@@ -135,7 +175,9 @@ export default {
     authority: {},
     showUpload: false,
     showDMApproveDialog: false,
+    showDMLockDialog: false,
     reviewComments: "",
+    activateEmployee: {},
   }),
   computed: {
     ...mapState("department", ["departments"]),
@@ -172,6 +214,23 @@ export default {
       this.$refs.pdfPreview.show("Signed Form A", `${AUTHORITY_URL}/uploads/${this.formA.activation.file_id}/file`);
     },
 
+    showDMLock() {
+      this.showDMLockDialog = true;
+    },
+    async dmLockClick() {
+      this.formA.save_action = "DMLock";
+      this.formA.keep_employee = true;
+      this.formA.employee = {
+        name: this.activateEmployee.display_name,
+        title: this.formA.position,
+        upn: this.activateEmployee.userPrincipalName,
+        email: this.activateEmployee.email,
+        ynet_id: this.activateEmployee.ynet_id,
+      };
+
+      await this.saveFormA(this.formA);
+      this.showDMLockDialog = false;
+    },
     showDMApprove() {
       this.showDMApproveDialog = true;
     },
@@ -189,6 +248,12 @@ export default {
 
       await this.saveFormA(this.formA);
       this.showDMApproveDialog = false;
+    },
+    unselectEmployee() {
+      this.activateEmployee = {};
+    },
+    pickEmployee(item) {
+      this.activateEmployee = item;
     },
   },
 };

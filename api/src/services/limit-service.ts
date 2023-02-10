@@ -17,6 +17,8 @@ export class LimitService {
         if (restricts != dmRestricts) continue;
       }
 
+      if (coding == "x" && dmLine.coding == "x") matches.push(dmLine);
+
       let chars = dmLine.coding.split("");
       let codCh = (coding + "xxxxxxxxxxxxxxxxxxxxxx").split("");
 
@@ -182,6 +184,30 @@ export class LimitService {
     let valueNum = parseInt(value);
 
     return limitNum >= valueNum;
+  }
+
+  checkValidEditsOnDM(dmForm: Position, positions: Position[]): string | undefined {
+    let response = "";
+    let count = 0;
+
+    for (let pos of positions) {
+      if (pos.status == "Archived") continue;
+      if (pos.status == "Inactive (Draft)") continue;
+      if (pos.is_deputy_minister) continue;
+
+      for (let line of pos.authority_lines || []) {
+        let limitError = this.checkFormALineLimits(dmForm, line);
+
+        if (limitError) {
+          response += `${pos.position} : Line: ${limitError} \n`;
+          count++;
+        }
+      }
+    }
+
+    if (count > 0) {
+      return `${count} Position(s) fail validation\n ${response.trim()}`;
+    } else return undefined;
   }
 }
 

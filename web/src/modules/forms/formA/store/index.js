@@ -64,7 +64,7 @@ const actions = {
   async saveFormA({ commit }, item) {
     const auth = getInstance();
     let body = _.clone(item);
-    delete body.employee;
+    if (!item.keep_employee) delete body.employee;
     delete body.department;
     delete body._id;
 
@@ -93,6 +93,7 @@ const actions = {
     dupe.authority_lines = state.formA.authority_lines;
     dupe.parentFormA = state.formA._id; //TODO: decide how to audit a clone
     dupe.is_deputy_minister = false;
+    dupe.is_deputy_duplicate = state.formA.is_deputy_minister;
 
     const auth = getInstance();
     return await auth
@@ -200,7 +201,8 @@ const mutations = {
 function cleanCoding(input) {
   input = input || "";
   input = input.toLowerCase().replace(/[^0-9|x]/g, "");
-  input = input.toLowerCase().replace(/x+$/, "");
+
+  if (input != "x") input = input.toLowerCase().replace(/x+$/, "");
 
   return formatCoding(input);
 }

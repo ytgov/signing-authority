@@ -11,7 +11,7 @@
           <v-list-item-title>Edit </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="canDMLock" @click="dmLock">
+        <v-list-item v-if="canDMLock" @click="startDMLock">
           <v-list-item-title>DM - Lock for Approval</v-list-item-title>
         </v-list-item>
 
@@ -47,6 +47,7 @@ export default {
   props: {
     showPreview: { type: Function },
     showDMApprove: { type: Function },
+    showDMLock: { type: Function },
   },
   computed: {
     ...mapState("authority/formA", ["formA"]),
@@ -90,7 +91,11 @@ export default {
       return this.userIsSysAdmin || this.userIsDeptAdmin;
     },
     canPreview() {
-      return this.formA.activation && !this.formA.is_deputy_minister;
+      return (
+        this.formA.activation &&
+        !this.formA.is_deputy_minister &&
+        (this.userIsSysAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin)
+      );
     },
     canArchive() {
       if (this.formA.is_deputy_minister) return false;
@@ -105,11 +110,15 @@ export default {
     },
 
     canDMLock() {
-      return this.formA.is_deputy_minister && !this.isLocked && (this.userIsDeptAdmin || this.userIsSysAdmin);
+      return (
+        (this.formA.is_deputy_minister || this.formA.is_deputy_duplicate) &&
+        !this.isLocked &&
+        (this.userIsDeptAdmin || this.userIsSysAdmin)
+      );
     },
     canDMApprove() {
       return (
-        this.formA.is_deputy_minister &&
+        (this.formA.is_deputy_minister || this.formA.is_deputy_duplicate) &&
         this.isLocked &&
         !this.isActive &&
         (this.userIsFinanceAdmin || this.userIsSysAdmin)
@@ -135,10 +144,8 @@ export default {
     preview() {
       this.showPreview();
     },
-    async dmLock() {
-      this.formA.save_action = "DMLock";
-
-      await this.saveFormA(this.formA);
+    async startDMLock() {
+      this.showDMLock();
     },
 
     startDMApprove() {
