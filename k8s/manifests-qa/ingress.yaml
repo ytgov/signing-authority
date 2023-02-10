@@ -1,0 +1,54 @@
+#The commented out sections below are for when the application is set up for SSL
+#They should be uncommented out when application is SSL enabled
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: signing-authority-qa-ingressroute
+  namespace: signing-authority-qa
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      #match reqaests to this domain
+      match: Host(`signing-authorities-qa.ynet.gov.yk.ca`)
+      priority: 10
+      services:
+        - name: signing-authority-qa
+          port: 3000
+  tls:
+    domains:
+      - main: signing-authorities.ynet.gov.yk.ca
+        sans:
+          - signing-authorities-qa.ynet.gov.yk.ca
+    secretName: signing-authority-cert
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: http-to-https-redirect
+  namespace: signing-authority-qa
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`signing-authorities-qa.ynet.gov.yk.ca`)
+      priority: 1
+      middlewares:
+        - name: redirect-to-https
+      services:
+        - name: signing-authority-qa
+          port: 3000
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-https
+  namespace: signing-authority-qa
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+
