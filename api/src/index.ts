@@ -28,7 +28,7 @@ app.use(fileUpload());
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      "default-src": ["'self'", "https://dev-0tc6bn14.eu.auth0.com"],
+      "default-src": ["'self'", "https://dev-0tc6bn14.eu.auth0.com", "https://sign-in.service.yukon.ca"],
       "base-uri": ["'self'"],
       "block-all-mixed-content": [],
       "font-src": ["'self'", "https:", "data:"],
