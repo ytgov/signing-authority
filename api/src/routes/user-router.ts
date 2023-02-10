@@ -92,7 +92,7 @@ userRouter.get("/make-admin/:email/:key", async (req: Request, res: Response) =>
 
   if (user) {
     console.log(`KEY MATCHES, making ${email} an admin`);
-    user.roles = ["Admin"];
+    user.roles = ["System Admin"];
     //await db.update(email, user);
   }
 
