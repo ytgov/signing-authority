@@ -7,7 +7,14 @@ import { ExpressHandlebars } from "express-handlebars";
 import { uploadsRouter } from "./uploads";
 import { ReturnValidationErrors } from "../middleware";
 import { CodeSearchService, EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
-import { Authority, Position, ReviewResultType, setAuthorityStatus, StoredFile } from "../data/models";
+import {
+  Authority,
+  FormBAuthorityLine,
+  Position,
+  ReviewResultType,
+  setAuthorityStatus,
+  StoredFile,
+} from "../data/models";
 import { FileStore } from "../utils/file-store";
 import { generatePDF } from "../utils/pdf-generator";
 import { CleanFilename, FormatCoding } from "../utils/formatters";
@@ -444,6 +451,18 @@ authoritiesRouter.put(
           return res.status(500).send("Cannot find FormA for this FormB");
         }
 
+        // check for duplicate coding/OR
+        let dupCheckLine = req.body.authority_lines.map(
+          (l: FormBAuthorityLine) => `${l.coding}#${l.operational_restriction || ""}`
+        );
+
+        let dupCheckCount = dupCheckLine.length;
+        let unqCheckCount = _.uniq(dupCheckLine).length;
+
+        if (dupCheckCount != unqCheckCount) {
+          return res.status(400).send(`Coding and Operational Restriction combinations cannot be duplicated`);
+        }
+
         for (let line of req.body.authority_lines) {
           let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
@@ -466,6 +485,10 @@ authoritiesRouter.put(
           line.trust_limit = line.trust_limit === "0" ? "" : line.trust_limit;
           line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
           line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+
+          //check for lines with all empty values
+          let allEmpty = limitService.checkAllEmptyFormBValues(line);
+          if (allEmpty) return res.status(400).send(`Line ${line.coding} has no value in any field`);
 
           if (myFormA) {
             let limitError = limitService.checkFormBLineLimits(myFormA, line);

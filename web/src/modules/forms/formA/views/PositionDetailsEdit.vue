@@ -84,7 +84,7 @@ export default {
     ...mapState("home", ["profile"]),
 
     canSave() {
-      if (this.formA && this.formA.authority_lines) {
+      if (this.formA && this.formA.authority_lines && this.formA.authority_lines.length > 0) {
         for (let line of this.formA.authority_lines) {
           if (line.coding_invalid || line.is_working) {
             return false;

@@ -425,7 +425,7 @@ export default {
     ...mapGetters("department", ["departments"]),
 
     canSave() {
-      if (this.formB && this.formB.authority_lines) {
+      if (this.formB && this.formB.authority_lines && this.formB.authority_lines.length > 0) {
         for (let line of this.formB.authority_lines) {
           if (line.coding_invalid || line.is_working) return false;
         }

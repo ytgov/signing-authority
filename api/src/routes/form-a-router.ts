@@ -17,6 +17,7 @@ import {
   setAuthorityStatus,
   setPositionStatus,
   ReviewResultType,
+  PositionAuthorityLine,
 } from "../data/models";
 import { ObjectId } from "mongodb";
 
@@ -982,6 +983,19 @@ formARouter.put(
     //RA: this should be the ID of the person creating the FormA I think
     if (req.body.employee_id) req.body.employee_id = new ObjectId(req.body.employee_id);
     // console.log(req.body.authority_lines[0])
+
+    // check for duplicate coding/OR
+    let dupCheckLine = req.body.authority_lines.map(
+      (l: PositionAuthorityLine) => `${l.coding}#${l.operational_restriction || ""}`
+    );
+
+    let dupCheckCount = dupCheckLine.length;
+    let unqCheckCount = _.uniq(dupCheckLine).length;
+
+    if (dupCheckCount != unqCheckCount) {
+      return res.status(400).send(`Coding and Operational Restriction combinations cannot be duplicated`);
+    }
+
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
@@ -997,7 +1011,9 @@ formARouter.put(
       line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
       line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
 
-      // do check for limits here
+      //check for lines with all empty values
+      let allEmpty = limitService.checkAllEmptyFormAValues(line);
+      if (allEmpty) return res.status(400).send(`Line ${line.coding} has no value in any field`);
 
       if (!skipLimitChecks) {
         let limitError = limitService.checkFormALineLimits(myDMForm, line);
