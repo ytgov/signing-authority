@@ -192,7 +192,6 @@ export class LimitService {
 
     for (let pos of positions) {
       if (pos.status == "Archived") continue;
-      if (pos.status == "Inactive (Draft)") continue;
       if (pos.is_deputy_minister) continue;
 
       for (let line of pos.authority_lines || []) {
@@ -230,6 +229,7 @@ export class LimitService {
 
     return false;
   }
+
   checkAllEmptyFormAValues(line: any): Boolean {
     if (
       line.contracts_for_goods_services.length == 0 &&
