@@ -13,7 +13,7 @@
         <v-select
           label="Status"
           v-model="statusFilter"
-          :items="['Any', 'Active', 'Approved', 'Pending', 'Scheduled', 'Inactive', 'Archived']"
+          :items="['Any', 'Active', 'Approved', 'Pending', 'Scheduled', 'Inactive', 'Archived', 'Cancelled']"
           @change="filterList"
           single-line
           hide-details

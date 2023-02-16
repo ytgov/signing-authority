@@ -12,9 +12,9 @@
     }"
     :items-per-page="50"
   >
-  <template v-slot:item.authority_type="{ item }">
-    {{convertType(item.authority_type)}}
-  </template>
+    <template v-slot:item.authority_type="{ item }">
+      {{ convertType(item.authority_type) }}
+    </template>
   </v-data-table>
 </template>
 <script>
@@ -79,13 +79,15 @@ export default {
     filterList() {
       let list = _.clone(this.allItems);
 
-      let pendingStates = ["Locked for Signatures", "Upload Signatures"];
+      let pendingStates = ["Inactive (Locked for Signatures)", "Inactive (Upload Signatures)"];
 
       if (this.status && this.status != "Any") {
         list = list.filter((i) => {
           if (i.status == this.status) return true;
           else if (this.status == "Inactive" && i.status.indexOf("Inactive") >= 0) return true;
+          else if (this.status == "Scheduled" && i.status.indexOf("Scheduled") >= 0) return true;
           else if (this.status == "Pending" && pendingStates.indexOf(i.status) >= 0) return true;
+          else if (this.status == "Approved" && i.status.indexOf("Approved") >= 0) return true;
 
           return false;
         });
@@ -97,7 +99,7 @@ export default {
       if (input == "temporary") return "Temporary";
       if (input == "acting") return "Acting";
       return "Substantive";
-    }
+    },
   },
 };
 </script>
