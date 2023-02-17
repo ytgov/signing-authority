@@ -514,11 +514,11 @@ formARouter.put(
         item.upload_signatures = undefined;
         item.finance_approval_complete = undefined;
         item.finance_approval_reject = undefined;
-        //item.finance_review_complete = undefined;
-        //item.finance_review_reject = undefined;
+        item.finance_review_complete = undefined;
+        item.finance_review_reject = undefined;
         item.status = "Locked for Signatures";
 
-        groupDb.update(id, item);
+        await groupDb.update(id, item);
       } else {
         item.status = status;
 
