@@ -162,6 +162,13 @@ const actions = {
       return resp.data.data;
     });
   },
+
+  async dmValidate({ state }) {
+    const auth = getInstance();
+    return await auth.post(`${FORMA_URL}/${state.formA._id}/dm-validate`, {}).then((resp) => {
+      return resp.data.data;
+    });
+  },
 };
 
 const mutations = {

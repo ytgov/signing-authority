@@ -748,6 +748,37 @@ formARouter.delete(
   }
 );
 
+
+formARouter.post(
+  "/:id/dm-validate",
+  checkJwt,
+  loadUser,
+  isFormAAdmin,
+  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let db = req.store.FormA as GenericService<Position>;
+
+    let existing = await db.getById(id);
+
+    let deptPositions = await db.getAll({
+      department_code: existing?.department_code,
+      _id: { $ne: new ObjectId(id) },
+    });
+
+    for (let pos of deptPositions) {
+      setPositionStatus(pos);
+    }
+
+    let limitError = limitService.checkValidEditsOnDM(req.body, deptPositions);
+
+    if (limitError) return res.status(400).send(limitError);
+
+    res.json({data: "Successfully validated " + existing?.position});
+
+  })
+
 formARouter.put(
   "/:id",
   checkJwt,
@@ -895,6 +926,8 @@ formARouter.put(
         let oldDMList = await db.getAll({ department_code: req.body.department_code, is_deputy_minister: true });
 
         for (let oldDM of oldDMList) {
+          if (oldDM._id?.toString() == id) continue;
+
           oldDM.is_deputy_minister = false;
 
           if (!oldDM.deactivation) {

@@ -11,6 +11,10 @@
           <v-list-item-title>Edit </v-list-item-title>
         </v-list-item>
 
+        <v-list-item v-if="canDMValidate" @click="startDMValidate">
+          <v-list-item-title>DM - Validate Positions</v-list-item-title>
+        </v-list-item>
+
         <v-list-item v-if="canDMLock" @click="startDMLock">
           <v-list-item-title>DM - Lock for Approval</v-list-item-title>
         </v-list-item>
@@ -124,9 +128,12 @@ export default {
         (this.userIsFinanceAdmin || this.userIsSysAdmin)
       );
     },
+    canDMValidate() {
+      return this.canDMLock || this.canDMApprove;
+    },
   },
   methods: {
-    ...mapActions("authority/formA", ["duplicateFormA", "deleteFormA", "saveFormA"]),
+    ...mapActions("authority/formA", ["duplicateFormA", "deleteFormA", "saveFormA", "dmValidate"]),
     editClick() {
       this.$router.push(`/departments/${this.formA.department_code}/positions/${this.formA._id}/edit`);
     },
@@ -150,6 +157,11 @@ export default {
 
     startDMApprove() {
       this.showDMApprove();
+    },
+    async startDMValidate() {
+      let t = await this.dmValidate();
+
+      if (t) window.alert(t);
     },
   },
 };
