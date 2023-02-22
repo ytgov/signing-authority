@@ -514,9 +514,9 @@ formARouter.put(
         item.upload_signatures = undefined;
         item.finance_approval_complete = undefined;
         item.finance_approval_reject = undefined;
-        item.finance_review_complete = undefined;
-        item.finance_review_reject = undefined;
-        item.status = "Locked for Signatures";
+        //item.finance_review_complete = undefined;
+        //item.finance_review_reject = undefined;
+        item.status = "Upload Signatures";
 
         await groupDb.update(id, item);
       } else {
@@ -748,7 +748,6 @@ formARouter.delete(
   }
 );
 
-
 formARouter.post(
   "/:id/dm-validate",
   checkJwt,
@@ -775,9 +774,9 @@ formARouter.post(
 
     if (limitError) return res.status(400).send(limitError);
 
-    res.json({data: "Successfully validated " + existing?.position});
-
-  })
+    res.json({ data: "Successfully validated " + existing?.position });
+  }
+);
 
 formARouter.put(
   "/:id",
@@ -1026,7 +1025,7 @@ formARouter.put(
     let unqCheckCount = _.uniq(dupCheckLine).length;
 
     if (dupCheckCount != unqCheckCount) {
-      return res.status(400).send(`Coding and Operational Restriction combinations cannot be duplicated`);
+      return res.status(400).send(`More then one identical authority line detected`);
     }
 
     for (let line of req.body.authority_lines) {
@@ -1035,14 +1034,15 @@ formARouter.put(
       if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
 
       line.contracts_for_goods_services =
-        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
-      line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
-      line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments;
-      line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel;
-      line.request_for_goods_services = line.request_for_goods_services === "0" ? "" : line.request_for_goods_services;
-      line.assignment_authority = line.assignment_authority === "0" ? "" : line.assignment_authority;
-      line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
-      line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services || "";
+      line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees || "";
+      line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments || "";
+      line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel || "";
+      line.request_for_goods_services =
+        line.request_for_goods_services === "0" ? "" : line.request_for_goods_services || "";
+      line.assignment_authority = line.assignment_authority === "0" ? "" : line.assignment_authority || "";
+      line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit || "";
+      line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit || "";
 
       //check for lines with all empty values
       let allEmpty = limitService.checkAllEmptyFormAValues(line);

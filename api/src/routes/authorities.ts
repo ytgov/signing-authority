@@ -460,7 +460,7 @@ authoritiesRouter.put(
         let unqCheckCount = _.uniq(dupCheckLine).length;
 
         if (dupCheckCount != unqCheckCount) {
-          return res.status(400).send(`Coding and Operational Restriction combinations cannot be duplicated`);
+          return res.status(400).send(`More then one identical authority line detected`);
         }
 
         for (let line of req.body.authority_lines) {
@@ -468,23 +468,23 @@ authoritiesRouter.put(
 
           if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
 
-          line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit;
+          line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit || "";
           line.s24_procure_services_limit =
-            line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit;
-          line.s24_procure_request_limit = line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit;
+            line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit || "";
+          line.s24_procure_request_limit =
+            line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit || "";
           line.s24_procure_assignment_limit =
-            line.s24_procure_assignment_limit === "0" ? "" : line.s24_procure_assignment_limit;
-          line.s23_procure_goods_limit = line.s23_procure_goods_limit === "0" ? "" : line.s23_procure_goods_limit;
+            line.s24_procure_assignment_limit === "0" ? "" : line.s24_procure_assignment_limit || "";
+          line.s23_procure_goods_limit = line.s23_procure_goods_limit === "0" ? "" : line.s23_procure_goods_limit || "";
           line.s23_procure_services_limit =
-            line.s23_procure_services_limit === "0" ? "" : line.s23_procure_services_limit;
-          line.s24_transfer_limit = line.s24_transfer_limit === "0" ? "" : line.s24_transfer_limit;
-          line.s23_transfer_limit = line.s23_transfer_limit === "0" ? "" : line.s23_transfer_limit;
-          line.s24_travel_limit = line.s24_travel_limit === "0" ? "" : line.s24_travel_limit;
-          line.other_limit = line.other_limit === "0" ? "" : line.other_limit;
-          line.loans_limit = line.loans_limit === "0" ? "" : line.loans_limit;
-          line.trust_limit = line.trust_limit === "0" ? "" : line.trust_limit;
-          line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
-          line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+            line.s23_procure_services_limit === "0" ? "" : line.s23_procure_services_limit || "";
+          line.s24_transfer_limit = line.s24_transfer_limit === "0" ? "" : line.s24_transfer_limit || "";
+          line.s23_transfer_limit = line.s23_transfer_limit === "0" ? "" : line.s23_transfer_limit || "";
+          line.s24_travel_limit = line.s24_travel_limit === "0" ? "" : line.s24_travel_limit || "";
+          line.other_limit = line.other_limit === "0" ? "" : line.other_limit || "";
+          line.loans_limit = line.loans_limit === "0" ? "" : line.loans_limit || "";
+          line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit || "";
+          line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit || "";
 
           //check for lines with all empty values
           let allEmpty = limitService.checkAllEmptyFormBValues(line);

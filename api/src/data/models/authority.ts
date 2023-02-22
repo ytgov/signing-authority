@@ -112,7 +112,6 @@ export interface FormBAuthorityLine {
   s24_travel_limit: number;
   other_limit: number;
   loans_limit: number;
-  trust_limit: number;
   s29_performance_limit: number;
   s30_payment_limit: number;
 }
