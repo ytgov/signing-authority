@@ -352,12 +352,12 @@ formARouter.put(
             });
 
             let posId = (position._id || "").toString();
-            delete position._id;
             await db.update(posId, position);
           }
         }
 
         item.activated_positions = positions.map((p) => {
+          console.log("ATPOSITIONS", p);
           return {
             _id: p._id,
             position: p.position,
@@ -520,9 +520,35 @@ formARouter.put(
 
         await groupDb.update(id, item);
       } else {
-        item.status = status;
+        if (status == "Archived") {
+          console.log("ASKING FOR ARCHIVE");
 
-        await groupDb.update(id, item);
+          if (item.activated_positions) {
+            for (let position of item.activated_positions) {
+              console.log("HER2", position);
+              let pos = await db.getById(position._id);
+
+              if (pos) {
+                console.log("HER3");
+                setPositionStatus(pos);
+
+                console.log("CHECKING Posotion", pos.position, pos.status);
+                if (pos.status == "Active") {
+                  console.log("HER4");
+                  return res.status(400).send(`You cannot archive a Form A with Active positions.`);
+                }
+              }
+            }
+          }
+
+          //item.status = status;
+
+          //await groupDb.update(id, item);
+        } else {
+          item.status = status;
+
+          await groupDb.update(id, item);
+        }
       }
     }
 

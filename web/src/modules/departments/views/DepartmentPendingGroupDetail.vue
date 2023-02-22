@@ -554,9 +554,13 @@ export default {
     },
     async archiveGrouping() {
       this.item.status = "Archived";
-      this.savePendingGroup(this.item).then(() => {
-        this.$router.push(`/departments/${this.departmentId}/form-a`);
-      });
+      this.savePendingGroup(this.item)
+        .then((resp) => {
+          if (resp) this.$router.push(`/departments/${this.departmentId}/form-a`);
+        })
+        .catch((e) => {
+          console.log("ERROR IN ARCHVE", e);
+        });
     },
     async deleteGrouping() {
       this.deletePendingGroup(this.item).then(() => {

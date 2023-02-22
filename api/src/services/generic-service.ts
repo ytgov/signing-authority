@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { Collection, ObjectId, Filter, InsertOneResult, DeleteResult, Document } from "mongodb";
 import { MongoEntity } from "../data/models";
 
@@ -14,7 +15,10 @@ export class GenericService<T extends MongoEntity> {
     }
 
     async update(id: string, item: T): Promise<T | undefined> {
-        return this.db.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: item })
+        let clone = cloneDeep(item);
+        delete clone._id;
+        
+        return this.db.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: clone })
             .then(result => {
                 if (result.ok == 1)
                     return result.value as T;
