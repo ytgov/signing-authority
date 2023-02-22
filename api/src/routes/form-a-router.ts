@@ -199,7 +199,7 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
     created_by_id: req.user._id,
     department_code,
     department_descr,
-    status: "Locked for Signatures",
+    status: "Finance Review",
     program: program || "",
     activity: activity || "",
   };
