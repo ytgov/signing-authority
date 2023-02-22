@@ -521,20 +521,14 @@ formARouter.put(
         await groupDb.update(id, item);
       } else {
         if (status == "Archived") {
-          console.log("ASKING FOR ARCHIVE");
-
           if (item.activated_positions) {
             for (let position of item.activated_positions) {
-              console.log("HER2", position);
               let pos = await db.getById(position._id);
 
               if (pos) {
-                console.log("HER3");
                 setPositionStatus(pos);
 
-                console.log("CHECKING Posotion", pos.position, pos.status);
                 if (pos.status == "Active") {
-                  console.log("HER4");
                   return res.status(400).send(`You cannot archive a Form A with Active positions.`);
                 }
               }
@@ -787,20 +781,24 @@ formARouter.post(
 
     let existing = await db.getById(id);
 
-    let deptPositions = await db.getAll({
-      department_code: existing?.department_code,
-      _id: { $ne: new ObjectId(id) },
-    });
+    if (existing) {
+      let deptPositions = await db.getAll({
+        department_code: existing?.department_code,
+        _id: { $ne: new ObjectId(id) },
+      });
 
-    for (let pos of deptPositions) {
-      setPositionStatus(pos);
+      for (let pos of deptPositions) {
+        setPositionStatus(pos);
+      }
+
+      let limitError = limitService.checkValidEditsOnDM(existing, deptPositions);
+
+      if (limitError) return res.status(400).send(limitError);
+
+      return res.json({ data: "Successfully validated " + existing?.position });
     }
 
-    let limitError = limitService.checkValidEditsOnDM(req.body, deptPositions);
-
-    if (limitError) return res.status(400).send(limitError);
-
-    res.json({ data: "Successfully validated " + existing?.position });
+    res.status(404).send();
   }
 );
 

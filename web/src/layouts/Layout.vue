@@ -67,6 +67,14 @@
               </v-list-item-icon>
               <v-list-item-title>Administration</v-list-item-title>
             </v-list-item>
+
+            
+            <v-list-item href="https://yukonnect.gov.yk.ca" target="_blank">
+              <v-list-item-icon>
+                <v-icon>mdi-help-circle-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Documentation</v-list-item-title>
+            </v-list-item>
             <v-divider />
             <v-list-item @click="$auth.logout({ returnTo })">
               <v-list-item-icon>

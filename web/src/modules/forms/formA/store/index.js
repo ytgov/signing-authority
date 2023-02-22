@@ -165,9 +165,15 @@ const actions = {
 
   async dmValidate({ state }) {
     const auth = getInstance();
-    return await auth.post(`${FORMA_URL}/${state.formA._id}/dm-validate`, {}).then((resp) => {
-      return resp.data.data;
-    });
+    return await auth
+      .post(`${FORMA_URL}/${state.formA._id}/dm-validate`, {})
+      .then((resp) => {
+        return resp.data.data;
+      })
+      .catch((e) => {
+        console.log("ERROR", e.response.data);
+        return e.response.data
+      });
   },
 };
 

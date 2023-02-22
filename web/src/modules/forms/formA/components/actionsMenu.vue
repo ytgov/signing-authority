@@ -160,7 +160,6 @@ export default {
     },
     async startDMValidate() {
       let t = await this.dmValidate();
-
       if (t) window.alert(t);
     },
   },
