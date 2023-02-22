@@ -69,7 +69,7 @@
             </v-list-item>
 
             
-            <v-list-item href="https://yukonnect.gov.yk.ca" target="_blank">
+            <v-list-item href="https://yukongovernment.sharepoint.com/teams/SignatureAuthorityAppResourceCentre-FIN/" target="_blank">
               <v-list-item-icon>
                 <v-icon>mdi-help-circle-outline</v-icon>
               </v-list-item-icon>
