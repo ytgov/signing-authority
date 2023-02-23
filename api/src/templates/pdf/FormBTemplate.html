@@ -136,7 +136,16 @@
         <td style="width: 160px; font-size: 1.3rem; vertical-align: bottom; padding-bottom: 10px">
           Specimen Signature Card
         </td>
-        <td style="vertical-align: bottom; text-align: left">
+        <td style="vertical-align: bottom; text-align: left; padding-bottom: 12px; padding-left: 40px">
+          <div style="width: 420px">
+            {{#if (eq authority_type 'SUBSTANTIVE') }} This form is effective upon approval and until cancelation.
+            Activation information is retained and available in the Signing Authorities App{{/if}} {{#if (eq
+            authority_type 'TEMPORARY') }} This form is effective upon approval and as prescribed by the nature of the
+            appointment. Activation information is retained and available in the Signing Authorities App{{/if}} {{#if
+            (eq authority_type 'ACTING') }} This form is effective upon approval of an acting appointment. Activation
+            information is retained and available in the Signing Authorities App {{/if}}
+          </div>
+
           <!-- <span style="font-size: .95rem; font-weight: 700">{{authority_type}}</span> -->
         </td>
         <td style="vertical-align: bottom; text-align: right; width: 160px; font-weight: 700">
@@ -167,7 +176,7 @@
             Department:<br />
             <strong style="margin-top: 5px">{{ department_descr }}</strong>
             <br /><br />
-            Program:<br />
+            Program (Division):<br />
             <strong>{{ program_branch }}</strong>
             <br /><br />
             Position title:<br />
@@ -218,7 +227,7 @@
             <div>S.24 Travel <br />authorization</div>
           </th>
           <th rowspan="3" class="rotate">
-            <div>Other contracts & <br />Expenditures</div>
+            <div>Other contracts & <br />Expenditures **</div>
           </th>
           <th rowspan="3" class="rotate">
             <div>Loans & <br />Guarantees</div>
@@ -241,9 +250,11 @@
             <div class="mb-2">Services</div>
           </th>
         </tr>
-        <tr style="height: 30px">
-          <th style="height: 30px">Area of Authority</th>
-          <th style="height: 30px">Operational Restrictions</th>
+        <tr style="height: 30px; text-align: left">
+          <th style="height: 30px; text-align: left; padding: 0 2px; min-width: 140px">
+            Area of Authority<br /><span style="font-weight: 400; font-size: 10px">General Ledger Coding</span>
+          </th>
+          <th style="height: 30px; text-align: left; padding: 0 2px">Operational Restriction</th>
           <th style="height: 30px">Notes</th>
         </tr>
       </thead>
@@ -274,13 +285,17 @@
 
     <table style="margin-top: 5px; width: 100%" border="0" cellspacing="0" cellpadding="0">
       <tr style="height: 62px">
-        <td style="width: 11%; vertical-align: top; font-size: 11px"><p>NL = No limit</p></td>
-        <td style="width: 22%; vertical-align: top; font-size: 11px"></td>
+        <td style="width: 33%; vertical-align: top; font-size: 11px">
+          <p>
+            NL = No limit <br /><br />
+            ** "Other Contracts & Expenditures" includes: reimbursements and other obligations.
+          </p>
+        </td>
         <td rowspan="2" style="width: 66%; vertical-align: top">
           <div style="border: 2px black solid; height: 100%">
             <div style="text-align: center; height: 50px; margin: 5px 0 10px 0">
-              This is to certify that I am aware of and accept the responsibilities related to these delegated
-              authorities.
+              With this signature I certify that I am aware of and accept the responsibilities related to these
+              delegated authorities
             </div>
             <table style="width: 100%; margin: 0 0 0 5px" border="0" cellspacing="0" cellpadding="0">
               <tr>
@@ -308,7 +323,8 @@
             <div style="border-top: 1px black solid; width: 80%">Supervisor's Name</div>
           </td>
           <td colspan="2" style="text-align: center">
-            This is to certify that the delegate's signature is that of the person appointed to the above position.
+            With this signature I certify that the delegate's signature is that of the person appointed to the above
+            position and they have been delegated the listed authorities
           </td>
         </tr>
         <tr style="height: 45px">
@@ -324,6 +340,17 @@
           </td>
         </tr>
       </table>
+    </div>
+
+    <div style="padding-top: 5px; font-size: 11px;">
+      <i>
+        Your personal information is being collected under the Financial Administration Act and S. 15(a) of the ATIPP
+        Act for the purpose of verifying your authority to allocate government funds. For further information, contact
+        Financial Accounting at 667-5850
+      </i>
+      <br /><br />
+      Work Flow: upon signature original document is retained within the Department as per finance branch instructions.
+      Scanned copy is uploaded into the Signing Authorities App
     </div>
 
     <!--     <div style="text-align: center; font-size: 11px;">

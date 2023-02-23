@@ -76,8 +76,15 @@ authoritiesRouter.get(
       else item.authority_type = "SUBSTANTIVE";
 
       let t = new ExpressHandlebars();
+
       const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
-      let data = template(item);
+      let data = template(item, {
+        helpers: {
+          eq: function (a1: string, a2: string) {
+            return a1 == a2;
+          },
+        },
+      });
 
       let name = CleanFilename(`${item.department_code}`);
       if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
