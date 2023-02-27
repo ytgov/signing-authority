@@ -173,7 +173,7 @@ export function setAuthorityStatus(item: Authority) {
     if (item.status == "") {
       item.status = "Inactive (Draft)";
       if (item.finance_reviews) item.status = "Inactive (Approved)";
-      else if (item.upload_signatures) item.status = "Inactive (Upload Signatures)";
+      else if (item.upload_signatures) item.status = "Inactive (Finance Approve)";
       else if (item.department_reviews) item.status = "Inactive (Locked for Signatures)";
     }
   }

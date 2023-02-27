@@ -79,7 +79,7 @@ export default {
     filterList() {
       let list = _.clone(this.allItems);
 
-      let pendingStates = ["Inactive (Locked for Signatures)", "Inactive (Upload Signatures)"];
+      let pendingStates = ["Inactive (Locked for Signatures)", "Inactive (Finance Approve)"];
 
       if (this.status && this.status != "Any") {
         list = list.filter((i) => {

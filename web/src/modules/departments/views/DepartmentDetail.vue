@@ -79,7 +79,7 @@ export default {
     ...mapState("department", ["departments"]),
 
     pendingFormB() {
-      let pendingStates = ["Inactive (Locked for Signatures)", "Inactive (Upload Signatures)"];
+      let pendingStates = ["Inactive (Locked for Signatures)", "Inactive (Finance Approve)"];
       return this.formBList.filter((f) => pendingStates.indexOf(f.status) >= 0).length;
     },
     activeFormB() {
