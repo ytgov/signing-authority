@@ -209,7 +209,7 @@ export default {
         .filter((i) => i.status == "Active")
         .map((i) => {
           return Object.assign(i, {
-            display_name: `${i.program_branch} / ${i.position}`,
+            display_name: `${i.program_branch ? i.program_branch + " / " : ""} ${i.position}`,
           });
         });
     },

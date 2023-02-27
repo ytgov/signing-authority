@@ -17,6 +17,7 @@ import {
   setAuthorityStatus,
   setPositionStatus,
   ReviewResultType,
+  PositionAuthorityLine,
 } from "../data/models";
 import { ObjectId } from "mongodb";
 
@@ -198,7 +199,7 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
     created_by_id: req.user._id,
     department_code,
     department_descr,
-    status: "Locked for Signatures",
+    status: "Finance Review",
     program: program || "",
     activity: activity || "",
   };
@@ -351,12 +352,12 @@ formARouter.put(
             });
 
             let posId = (position._id || "").toString();
-            delete position._id;
             await db.update(posId, position);
           }
         }
 
         item.activated_positions = positions.map((p) => {
+          console.log("ATPOSITIONS", p);
           return {
             _id: p._id,
             position: p.position,
@@ -515,13 +516,33 @@ formARouter.put(
         item.finance_approval_reject = undefined;
         //item.finance_review_complete = undefined;
         //item.finance_review_reject = undefined;
-        item.status = "Locked for Signatures";
-
-        groupDb.update(id, item);
-      } else {
-        item.status = status;
+        item.status = "Upload Signatures";
 
         await groupDb.update(id, item);
+      } else {
+        if (status == "Archived") {
+          if (item.activated_positions) {
+            for (let position of item.activated_positions) {
+              let pos = await db.getById(position._id);
+
+              if (pos) {
+                setPositionStatus(pos);
+
+                if (pos.status == "Active") {
+                  return res.status(400).send(`You cannot archive a Form A with Active positions.`);
+                }
+              }
+            }
+          }
+
+          //item.status = status;
+
+          //await groupDb.update(id, item);
+        } else {
+          item.status = status;
+
+          await groupDb.update(id, item);
+        }
       }
     }
 
@@ -747,6 +768,40 @@ formARouter.delete(
   }
 );
 
+formARouter.post(
+  "/:id/dm-validate",
+  checkJwt,
+  loadUser,
+  isFormAAdmin,
+  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let db = req.store.FormA as GenericService<Position>;
+
+    let existing = await db.getById(id);
+
+    if (existing) {
+      let deptPositions = await db.getAll({
+        department_code: existing?.department_code,
+        _id: { $ne: new ObjectId(id) },
+      });
+
+      for (let pos of deptPositions) {
+        setPositionStatus(pos);
+      }
+
+      let limitError = limitService.checkValidEditsOnDM(existing, deptPositions);
+
+      if (limitError) return res.status(400).send(limitError);
+
+      return res.json({ data: "Successfully validated " + existing?.position });
+    }
+
+    res.status(404).send();
+  }
+);
+
 formARouter.put(
   "/:id",
   checkJwt,
@@ -894,6 +949,8 @@ formARouter.put(
         let oldDMList = await db.getAll({ department_code: req.body.department_code, is_deputy_minister: true });
 
         for (let oldDM of oldDMList) {
+          if (oldDM._id?.toString() == id) continue;
+
           oldDM.is_deputy_minister = false;
 
           if (!oldDM.deactivation) {
@@ -982,22 +1039,38 @@ formARouter.put(
     //RA: this should be the ID of the person creating the FormA I think
     if (req.body.employee_id) req.body.employee_id = new ObjectId(req.body.employee_id);
     // console.log(req.body.authority_lines[0])
+
+    // check for duplicate coding/OR
+    let dupCheckLine = req.body.authority_lines.map(
+      (l: PositionAuthorityLine) => `${l.coding}#${l.operational_restriction || ""}`
+    );
+
+    let dupCheckCount = dupCheckLine.length;
+    let unqCheckCount = _.uniq(dupCheckLine).length;
+
+    if (dupCheckCount != unqCheckCount) {
+      return res.status(400).send(`More then one identical authority line detected`);
+    }
+
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
       if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
 
       line.contracts_for_goods_services =
-        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services;
-      line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees;
-      line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments;
-      line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel;
-      line.request_for_goods_services = line.request_for_goods_services === "0" ? "" : line.request_for_goods_services;
-      line.assignment_authority = line.assignment_authority === "0" ? "" : line.assignment_authority;
-      line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
-      line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+        line.contracts_for_goods_services === "0" ? "" : line.contracts_for_goods_services || "";
+      line.loans_and_guarantees = line.loans_and_guarantees === "0" ? "" : line.loans_and_guarantees || "";
+      line.transfer_payments = line.transfer_payments === "0" ? "" : line.transfer_payments || "";
+      line.authorization_for_travel = line.authorization_for_travel === "0" ? "" : line.authorization_for_travel || "";
+      line.request_for_goods_services =
+        line.request_for_goods_services === "0" ? "" : line.request_for_goods_services || "";
+      line.assignment_authority = line.assignment_authority === "0" ? "" : line.assignment_authority || "";
+      line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit || "";
+      line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit || "";
 
-      // do check for limits here
+      //check for lines with all empty values
+      let allEmpty = limitService.checkAllEmptyFormAValues(line);
+      if (allEmpty) return res.status(400).send(`Line ${line.coding} has no value in any field`);
 
       if (!skipLimitChecks) {
         let limitError = limitService.checkFormALineLimits(myDMForm, line);

@@ -13,7 +13,7 @@
         <v-select
           label="Status"
           v-model="statusFilter"
-          :items="['Any', 'Active', 'Approved', 'Pending', 'Scheduled', 'Inactive', 'Archived']"
+          :items="['Any', 'Active', 'Approved', 'Pending', 'Scheduled', 'Inactive', 'Cancelled']"
           @change="filterList"
           single-line
           hide-details
@@ -79,9 +79,8 @@ export default {
 
     let status = this.$route.query.status || "";
 
-    if (status) {
-      this.statusFilter = status;
-    }
+    if (status) this.statusFilter = status;
+    else this.statusFilter = "Any";
   },
   computed: {
     ...mapState("home", ["profile"]),

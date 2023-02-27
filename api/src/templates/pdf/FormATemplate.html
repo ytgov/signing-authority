@@ -133,11 +133,14 @@
         <td style="width: 180px">
           <img src="http://localhost:{{API_PORT}}/yukon-logo.png" style="height: 80px; width: 160px" />
         </td>
-        <td style="width: 360px; font-size: 1.3rem; vertical-align: middle">
+        <td style="width: 260px; font-size: 1.3rem; vertical-align: middle">
           Delegation of Financial<br />Signing Authority Chart
         </td>
-        <td style="vertical-align: bottom; text-align: right; padding-bottom: 20px; font-weight: bold">
-          <div style="font-size: 14px; margin-right: 160px"></div>
+        <td style="vertical-align: bottom; padding-bottom: 20px">
+          <div style="font-size: 12px; margin-right: 140px">
+            This form is effective upon approval and until cancelation. Activation information is retained and available
+            in the Signing Authorities App
+          </div>
           <div style="width: 150px; float: right"></div>
         </td>
         <td style="text-align: right; vertical-align: top; width: 120px; padding-top: 25px">
@@ -161,23 +164,20 @@
             Department:<br />
             <strong style="margin-top: 5px">{{department_descr}}</strong>
             <br /><br />
-            Program:<br />
-            (Division)<strong> {{ program }}</strong> <br /><br />
-            Activity:<br />
-            (Branch)<strong> {{ activity }}</strong>
+            Program (Division):<br /><strong> {{ program }}</strong> <br /><br />
+            Activity (Branch):<br /><strong> {{ activity }}</strong>
           </td>
-          <th colspan="7">SPENDING AUTHORITY</th>
+          <th colspan="7" style="border-bottom: 0px; padding: 2px 0px; text-align: center">SPENDING AUTHORITY</th>
           <th rowspan="4" class="rotate" style="height: 140px">
-            <div>PAYMENT AUTHORITY<br />S.30</div>
+            <div>PAYMENT AUTHORITY (SECTION <br />30) <span style="font-size: 9px">REQUISITION FOR PAYMENT</span></div>
           </th>
         </tr>
         <tr>
-          <th colspan="6">SECTION 23 AND SECTION 24 ($000)</th>
+          <th colspan="6" style="border-top: 0px black solid; padding: 2px 0px">SECTION 23 &/OR SECTION 24 ($000)</th>
           <th class="rotate" rowspan="3">
             <div>
               (SECTION 29)<br />
-              CERTIFICATE OF<br />
-              PERFORMANCE
+              <span style="font-size: 9px">CERTIFICATE OF PERFORMANCE</span>
             </div>
           </th>
         </tr>
@@ -261,6 +261,18 @@
               </tr>
             </table>
           </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding-top: 25px">
+          <i>
+            Your personal information is being collected under the Financial Administration Act and S. 15(a) of the
+            ATIPP Act for the purpose of verifying your authority to allocate government funds. For further information,
+            contact Financial Accounting at 667-5850
+          </i>
+          <br /><br />
+          Work Flow: upon signature original document is retained within the Department as per finance branch
+          instructions. Scanned copy is uploaded into the Signing Authorities App
         </td>
       </tr>
     </table>

@@ -150,9 +150,9 @@ export class LimitService {
     if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_services_limit))
       return `${line.coding} - S23 Goods limit invalid`;
     if (!this.compareLimit(limit.request_for_goods_services, line.s24_procure_request_limit))
-      return `${line.coding} - S24 Procure limit invalid`;
+      return `${line.coding} - S24 Procure request limit invalid`;
     if (!this.compareLimit(limit.assignment_authority, line.s24_procure_assignment_limit))
-      return `${line.coding} - S24 Procure limit invalid`;
+      return `${line.coding} - S24 Procure assignmenty limit invalid`;
     if (!this.compareLimit(limit.contracts_for_goods_services, line.s23_procure_services_limit))
       return `${line.coding} - S23 Services limit invalid`;
     if (!this.compareLimit(limit.transfer_payments, line.s24_transfer_limit))
@@ -192,7 +192,6 @@ export class LimitService {
 
     for (let pos of positions) {
       if (pos.status == "Archived") continue;
-      if (pos.status == "Inactive (Draft)") continue;
       if (pos.is_deputy_minister) continue;
 
       for (let line of pos.authority_lines || []) {
@@ -208,6 +207,43 @@ export class LimitService {
     if (count > 0) {
       return `${count} Position(s) fail validation\n ${response.trim()}`;
     } else return undefined;
+  }
+
+  checkAllEmptyFormBValues(line: any): Boolean {
+    if (
+      line.s24_procure_goods_limit.length == 0 &&
+      line.s24_procure_services_limit.length == 0 &&
+      line.s24_procure_request_limit.length == 0 &&
+      line.s24_procure_assignment_limit.length == 0 &&
+      line.s23_procure_goods_limit.length == 0 &&
+      line.s23_procure_services_limit.length == 0 &&
+      line.s24_transfer_limit.length == 0 &&
+      line.s23_transfer_limit.length == 0 &&
+      line.s24_travel_limit.length == 0 &&
+      line.other_limit.length == 0 &&
+      line.loans_limit.length == 0 &&
+      line.s29_performance_limit.length == 0 &&
+      line.s30_payment_limit.length == 0
+    )
+      return true;
+
+    return false;
+  }
+
+  checkAllEmptyFormAValues(line: any): Boolean {
+    if (
+      line.contracts_for_goods_services.length == 0 &&
+      line.loans_and_guarantees.length == 0 &&
+      line.transfer_payments.length == 0 &&
+      line.authorization_for_travel.length == 0 &&
+      line.request_for_goods_services.length == 0 &&
+      line.assignment_authority.length == 0 &&
+      line.s29_performance_limit.length == 0 &&
+      line.s30_payment_limit.length == 0
+    )
+      return true;
+
+    return false;
   }
 }
 

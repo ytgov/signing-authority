@@ -63,7 +63,6 @@ export default {
       { text: "Program", value: "program" },
       { text: "Activity", value: "activity" },
       { text: "Status", value: "status" },
-      { text: "Positions", value: "positions.length" },
     ],
     page: {
       title: "Form As",

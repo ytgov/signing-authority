@@ -7,7 +7,14 @@ import { ExpressHandlebars } from "express-handlebars";
 import { uploadsRouter } from "./uploads";
 import { ReturnValidationErrors } from "../middleware";
 import { CodeSearchService, EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
-import { Authority, Position, ReviewResultType, setAuthorityStatus, StoredFile } from "../data/models";
+import {
+  Authority,
+  FormBAuthorityLine,
+  Position,
+  ReviewResultType,
+  setAuthorityStatus,
+  StoredFile,
+} from "../data/models";
 import { FileStore } from "../utils/file-store";
 import { generatePDF } from "../utils/pdf-generator";
 import { CleanFilename, FormatCoding } from "../utils/formatters";
@@ -69,8 +76,15 @@ authoritiesRouter.get(
       else item.authority_type = "SUBSTANTIVE";
 
       let t = new ExpressHandlebars();
+
       const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
-      let data = template(item);
+      let data = template(item, {
+        helpers: {
+          eq: function (a1: string, a2: string) {
+            return a1 == a2;
+          },
+        },
+      });
 
       let name = CleanFilename(`${item.department_code}`);
       if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
@@ -444,28 +458,44 @@ authoritiesRouter.put(
           return res.status(500).send("Cannot find FormA for this FormB");
         }
 
+        // check for duplicate coding/OR
+        let dupCheckLine = req.body.authority_lines.map(
+          (l: FormBAuthorityLine) => `${l.coding}#${l.operational_restriction || ""}`
+        );
+
+        let dupCheckCount = dupCheckLine.length;
+        let unqCheckCount = _.uniq(dupCheckLine).length;
+
+        if (dupCheckCount != unqCheckCount) {
+          return res.status(400).send(`More then one identical authority line detected`);
+        }
+
         for (let line of req.body.authority_lines) {
           let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
           if (!codingIsValid) return res.status(400).send(`Invalid account code '${line.coding}'`);
 
-          line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit;
+          line.s24_procure_goods_limit = line.s24_procure_goods_limit === "0" ? "" : line.s24_procure_goods_limit || "";
           line.s24_procure_services_limit =
-            line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit;
-          line.s24_procure_request_limit = line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit;
+            line.s24_procure_services_limit === "0" ? "" : line.s24_procure_services_limit || "";
+          line.s24_procure_request_limit =
+            line.s24_procure_request_limit === "0" ? "" : line.s24_procure_request_limit || "";
           line.s24_procure_assignment_limit =
-            line.s24_procure_assignment_limit === "0" ? "" : line.s24_procure_assignment_limit;
-          line.s23_procure_goods_limit = line.s23_procure_goods_limit === "0" ? "" : line.s23_procure_goods_limit;
+            line.s24_procure_assignment_limit === "0" ? "" : line.s24_procure_assignment_limit || "";
+          line.s23_procure_goods_limit = line.s23_procure_goods_limit === "0" ? "" : line.s23_procure_goods_limit || "";
           line.s23_procure_services_limit =
-            line.s23_procure_services_limit === "0" ? "" : line.s23_procure_services_limit;
-          line.s24_transfer_limit = line.s24_transfer_limit === "0" ? "" : line.s24_transfer_limit;
-          line.s23_transfer_limit = line.s23_transfer_limit === "0" ? "" : line.s23_transfer_limit;
-          line.s24_travel_limit = line.s24_travel_limit === "0" ? "" : line.s24_travel_limit;
-          line.other_limit = line.other_limit === "0" ? "" : line.other_limit;
-          line.loans_limit = line.loans_limit === "0" ? "" : line.loans_limit;
-          line.trust_limit = line.trust_limit === "0" ? "" : line.trust_limit;
-          line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit;
-          line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit;
+            line.s23_procure_services_limit === "0" ? "" : line.s23_procure_services_limit || "";
+          line.s24_transfer_limit = line.s24_transfer_limit === "0" ? "" : line.s24_transfer_limit || "";
+          line.s23_transfer_limit = line.s23_transfer_limit === "0" ? "" : line.s23_transfer_limit || "";
+          line.s24_travel_limit = line.s24_travel_limit === "0" ? "" : line.s24_travel_limit || "";
+          line.other_limit = line.other_limit === "0" ? "" : line.other_limit || "";
+          line.loans_limit = line.loans_limit === "0" ? "" : line.loans_limit || "";
+          line.s29_performance_limit = line.s29_performance_limit === "0" ? "" : line.s29_performance_limit || "";
+          line.s30_payment_limit = line.s30_payment_limit === "0" ? "" : line.s30_payment_limit || "";
+
+          //check for lines with all empty values
+          let allEmpty = limitService.checkAllEmptyFormBValues(line);
+          if (allEmpty) return res.status(400).send(`Line ${line.coding} has no value in any field`);
 
           if (myFormA) {
             let limitError = limitService.checkFormBLineLimits(myFormA, line);

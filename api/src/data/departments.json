@@ -72,15 +72,15 @@
     "descr": "HIGHWAYS & PUBLIC WORKS"
   },
   {
-    "dept": "93",
-    "descr": "LOTTERIES CORPORATION"
-  },
-  {
-    "dept": "96",
+    "dept": "69",
     "descr": "YUKON HOUSING CORPORATION"
   },
   {
-    "dept": "97",
+    "dept": "79",
     "descr": "YUKON LIQUOR CORPORATION"
+  },
+  {
+    "dept": "93",
+    "descr": "LOTTERIES CORPORATION"
   }
 ]

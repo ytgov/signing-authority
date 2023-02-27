@@ -93,7 +93,6 @@ export async function Seed(storage: Storage) {
         s24_travel_limit: 123,
         other_limit: 123,
         loans_limit: 123,
-        trust_limit: 123,
         s29_performance_limit: 123,
         s30_payment_limit: 123
     });
@@ -112,7 +111,6 @@ export async function Seed(storage: Storage) {
         s24_travel_limit: 222,
         other_limit: 222,
         loans_limit: 222,
-        trust_limit: 222,
         s29_performance_limit: 222,
         s30_payment_limit: 222
     });
@@ -130,7 +128,6 @@ export async function Seed(storage: Storage) {
         s24_travel_limit: 222,
         other_limit: 222,
         loans_limit: 222,
-        trust_limit: 222,
         s29_performance_limit: 222,
         s30_payment_limit: 222
     });

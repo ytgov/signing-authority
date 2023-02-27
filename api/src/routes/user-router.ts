@@ -90,10 +90,10 @@ userRouter.get("/make-admin/:email/:key", async (req: Request, res: Response) =>
     return res.status(403).send("Your key is invalid");
   }
 
-  if (user) {
+  if (user && user._id) {
     console.log(`KEY MATCHES, making ${email} an admin`);
     user.roles = ["System Admin"];
-    //await db.update(email, user);
+    await db.update(user._id, user);
   }
 
   res.send("Done");

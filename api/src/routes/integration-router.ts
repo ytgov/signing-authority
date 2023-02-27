@@ -56,9 +56,10 @@ integrationRouter.post("/amf/delta", async (req: Request, res: Response) => {
   let payload = req.body.data || req.body;
 
   if (isArray(payload)) {
+    console.log("INTEGRATION ACCEPT ARRAY ", payload);
     res.json({ data: `Received an array with ${payload.length} elements` });
   } else {
-    console.log("I got ", payload);
+    console.log("INTEGRATION FAIL NON-ARRAY", payload);
     res.json({ data: `Received an unexpected format - expected JSON array` });
   }
 });

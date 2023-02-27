@@ -224,7 +224,9 @@
 
               <v-row>
                 <v-col>
-                  <v-btn color="primary" small class="my-0" @click="openFormA" v-if="canPreviewFormA">Preview Signed Form A</v-btn>
+                  <v-btn color="primary" small class="my-0" @click="openFormA" v-if="canPreviewFormA"
+                    >Preview Signed Form A</v-btn
+                  >
                 </v-col>
                 <v-spacer />
                 <v-col style="text-align: right">
@@ -329,7 +331,11 @@
           <v-row>
             <v-col cols="12">
               <div v-if="formB.authority_type == 'substantive'">
-                <p>
+                <p v-if="formB.status.indexOf('Suspended') >= 0">
+                  A suspended Form B can be re-activated by setting an effective date. To activate this Form B
+                  immediately, set the Effective date as today.
+                </p>
+                <p v-else>
                   A Substantive Form B is active until cancelled which is done by viewing the activation history and
                   clicking the 'Edit' button.
                 </p>

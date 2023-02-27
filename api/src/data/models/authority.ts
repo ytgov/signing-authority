@@ -112,7 +112,6 @@ export interface FormBAuthorityLine {
   s24_travel_limit: number;
   other_limit: number;
   loans_limit: number;
-  trust_limit: number;
   s29_performance_limit: number;
   s30_payment_limit: number;
 }
@@ -157,7 +156,6 @@ export function setAuthorityStatus(item: Authority) {
         a.current_status = "Rejected";
       } else if (start > now) {
         a.current_status = "Scheduled";
-        if (!item.status) item.status = "Scheduled";
       } else if (start <= now && (a.expire_date == undefined || expire >= now)) {
         a.current_status = "Active";
         item.status = "Active";
@@ -166,11 +164,18 @@ export function setAuthorityStatus(item: Authority) {
   }
 
   if (item.status == "") {
-    item.status = "Inactive (Draft)";
+    if (item.activation) {
+      let sus = item.activation.map((a) => a.current_status);
+      if (sus.includes("Suspended")) item.status = "Inactive (Suspended)";
+      if (sus.includes("Scheduled")) item.status = "Inactive (Scheduled)";
+    }
 
-    if (item.finance_reviews) item.status = "Approved";
-    else if (item.upload_signatures) item.status = "Upload Signatures";
-    else if (item.department_reviews) item.status = "Locked for Signatures";
+    if (item.status == "") {
+      item.status = "Inactive (Draft)";
+      if (item.finance_reviews) item.status = "Inactive (Approved)";
+      else if (item.upload_signatures) item.status = "Inactive (Finance Approve)";
+      else if (item.department_reviews) item.status = "Inactive (Locked for Signatures)";
+    }
   }
 }
 

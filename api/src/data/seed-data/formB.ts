@@ -43,7 +43,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "dept": "02",
@@ -69,7 +68,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "operational_restriction": "None",
@@ -95,7 +93,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         }
   
       ]
@@ -134,7 +131,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "dept": "55",
@@ -159,7 +155,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "dept": "55",
@@ -184,7 +179,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         }
   
       ]
@@ -222,7 +216,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "operational_restriction": "None",
@@ -248,7 +241,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "operational_restriction": "None",
@@ -274,7 +266,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         }
   
       ]
@@ -312,7 +303,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "operational_restriction": "Journal only",
@@ -338,7 +328,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "operational_restriction": "None",
@@ -364,7 +353,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         }
   
       ]
@@ -406,7 +394,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "operational_restriction": "",
@@ -432,7 +419,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         }
       ]
     },
@@ -470,7 +456,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         },
         {
           "operational_restriction": "",
@@ -496,7 +481,6 @@ export const formBSeedData: Authority[] = [
           s23_transfer_limit: 0,
           s24_travel_limit: 10,
           s29_performance_limit: 12,
-          trust_limit: 0,
         }
       ]
     }, */

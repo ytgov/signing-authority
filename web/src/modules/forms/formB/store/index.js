@@ -147,7 +147,6 @@ const mutations = {
         line.s24_travel_limit = cleanZeros(line.s24_travel_limit);
         line.s29_performance_limit = cleanZeros(line.s29_performance_limit);
         line.s30_payment_limit = cleanZeros(line.s30_payment_limit);
-        line.trust_limit = cleanZeros(line.trust_limit);
         line.is_working = false;
       }
 

@@ -93,7 +93,6 @@ export enum OperationalRestrictions {
   "Purchase Contracts S23 only" = "Purchase Contracts S23 only",
   "Travel Warrant S23 only" = "Travel Warrant S23 only",
   "Print Contracts S23 only" = "Print Contracts S23 only",
-  "GL Revision only" = "GL Revision only",
   "Q journals only" = "Q journals only",
   "V journals only" = "V journals only",
   "CDPITNEYWORK only" = "CDPITNEYWORK only",
