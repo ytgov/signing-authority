@@ -379,7 +379,7 @@ export class EmailService {
       html: baseContent,
     };
 
-    if (toEmail.length == 0) {
+    if (!toEmail || toEmail.length == 0) {
       console.log("Not sending email to " + toName + " without an email address");
       return null;
     }
