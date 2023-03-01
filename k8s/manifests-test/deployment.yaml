@@ -15,7 +15,7 @@ spec:
         app: signing-authority-test
     spec:
       containers:
-        - image: harbor.ynet.gov.yk.ca/yg-github/ytgov/signing-authority:v1.0.6
+        - image: harbor.ynet.gov.yk.ca/yg-github/ytgov/signing-authority:v1.0.10
           name: signing-authority-test
           ports:
             - containerPort: 3000
@@ -27,7 +27,7 @@ spec:
             - mountPath: "/home/node/web/.env.production"
               subPath: .env
               name: env-configmap-volume
-          
+
       volumes:
         - name: env-configmap-volume
           configMap:
