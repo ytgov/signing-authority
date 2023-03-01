@@ -876,13 +876,33 @@ formARouter.put(
           supervisor: { title: "", name: "", email: "", ynet_id: "", upn: "" },
           program_branch: "ALL",
           form_a_id: new ObjectId(id),
-          authority_lines: req.body.authority_lines,
+          authority_lines: [],
           create_date: new Date(),
           created_by_id: req.user._id,
           created_by_name: "",
           audit_lines: [],
         };
         (newFormB as any).created_by = `${req.user.first_name} ${req.user.last_name}`;
+
+        for (let line of req.body.authority_lines) {
+          newFormB.authority_lines.push({
+            coding: line.coding,
+            operational_restriction: line.operational_restriction,
+            s24_procure_goods_limit: line.contracts_for_goods_services,
+            s24_procure_services_limit: line.contracts_for_goods_services,
+            s24_procure_request_limit: line.request_for_goods_services,
+            s24_procure_assignment_limit: line.assignment_authority,
+            s23_procure_goods_limit: line.contracts_for_goods_services,
+            s23_procure_services_limit: line.contracts_for_goods_services,
+            s24_transfer_limit: line.transfer_payments,
+            s23_transfer_limit: line.transfer_payments,
+            s24_travel_limit: line.authorization_for_travel,
+            other_limit: line.contracts_for_goods_services,
+            loans_limit: line.loans_and_guarantees,
+            s29_performance_limit: line.s29_performance_limit,
+            s30_payment_limit: line.s30_payment_limit,
+          });
+        }
 
         newFormB.audit_lines?.push({
           date: new Date(),
