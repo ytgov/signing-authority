@@ -26,6 +26,7 @@
           :programList="programList"
           :activityList="activityList"
           :listLength="allItems.length"
+          :activeDMExists="activeDMExists"
         ></create-form-a-button>
       </template>
 
@@ -226,6 +227,11 @@ export default {
       }
 
       return false;
+    },
+
+    activeDMExists() {
+      let activeDm = this.allItems.filter((a) => a.is_deputy_minister && a.status == "Active");
+      return activeDm.length > 0;
     },
 
     programListAny() {
