@@ -63,7 +63,7 @@
             </th>
             <th rowspan="3" class="rotate">
                 <div>
-                    Requesition<br />
+                    Requisition<br />
                     for payment
                 </div>
             </th>
