@@ -112,7 +112,7 @@
                       <div>Certificate of <br />performance</div>
                     </th>
                     <th rowspan="4" class="rotate">
-                      <div>Requesition<br />for payment</div>
+                      <div>Requisition<br />for payment</div>
                     </th>
                   </tr>
                   <tr>
