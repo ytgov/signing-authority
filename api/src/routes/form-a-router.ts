@@ -928,9 +928,9 @@ formARouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
-        let createdFormB = await authorityDb.create(newFormB);
-        //let newFormB2 = await loadSingleAuthority(req, createdFormB.insertedId.toString());
+        await authorityDb.create(newFormB);
 
+        /* removed per JS
         let deptFBAdmins = await userDb.getAll({
           roles: "Form B Administrator",
           department_admin_for: req.body.department_code,
@@ -947,6 +947,7 @@ formARouter.put(
               "Updated Deputy Minister or Equivant - High Priority"
             );
         }
+        */
 
         req.body.audit_lines.push({
           date: new Date(),
