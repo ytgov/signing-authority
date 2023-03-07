@@ -21,7 +21,7 @@ let obj = process.env;
 let pattern = "VUE_APP_";
 
 export const VUE_APP: any = Object.keys(obj)
-  .filter(k => k.includes(pattern))
+  .filter((k) => k.includes(pattern))
   .reduce((cur, key) => {
     return Object.assign(cur, { [key]: obj[key] });
   }, {});
@@ -63,15 +63,17 @@ export const MAIL_CONFIG_DEV = {
   secure: false, // true for 465, false for other ports
   auth: {
     user: MAIL_USER,
-    pass: MAIL_PASS
-  }
+    pass: MAIL_PASS,
+  },
 };
 
 export const MAIL_CONFIG = {
   host: MAIL_HOST,
   port: MAIL_PORT,
-  secure: false // true for 465, false for other ports
+  secure: false, // true for 465, false for other ports
 };
+
+export const SUSPEND_EMAIL = process.env.SUSPEND_EMAIL ? true : false;
 
 export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || "";
 export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || "";

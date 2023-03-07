@@ -3,7 +3,7 @@ import cors from "cors";
 import path from "path";
 import helmet from "helmet";
 import fileUpload from "express-fileupload";
-import { API_PORT, FRONTEND_URL, APPLICATION_NAME } from "./config";
+import { API_PORT, FRONTEND_URL, APPLICATION_NAME, SUSPEND_EMAIL } from "./config";
 import { doHealthCheck } from "./utils/healthCheck";
 import {
   userRouter,
@@ -50,6 +50,8 @@ app.use(
     credentials: true,
   })
 );
+
+if (SUSPEND_EMAIL) console.log("** Sending of emails is currently suspended");
 
 app.get("/seed", RequiresData, async (req: Request, res: Response) => {
   await Seed(req.store);
