@@ -885,14 +885,16 @@ formARouter.put(
         (newFormB as any).created_by = `${req.user.first_name} ${req.user.last_name}`;
 
         for (let line of req.body.authority_lines) {
-          newFormB.authority_lines.push({
+          let useOne = line.contracts_for_goods_services != "" ?"1" : "";
+
+          (newFormB.authority_lines as any[]).push({
             coding: line.coding,
             operational_restriction: line.operational_restriction,
-            s24_procure_goods_limit: line.contracts_for_goods_services,
+            s24_procure_goods_limit: useOne,
             s24_procure_services_limit: line.contracts_for_goods_services,
             s24_procure_request_limit: line.request_for_goods_services,
             s24_procure_assignment_limit: line.assignment_authority,
-            s23_procure_goods_limit: line.contracts_for_goods_services,
+            s23_procure_goods_limit: useOne,
             s23_procure_services_limit: line.contracts_for_goods_services,
             s24_transfer_limit: line.transfer_payments,
             s23_transfer_limit: line.transfer_payments,
