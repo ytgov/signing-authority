@@ -1,11 +1,18 @@
 import nodemailer, { Transporter, TransportOptions } from "nodemailer";
 import { MailOptions } from "nodemailer/lib/json-transport";
-import { MAIL_CONFIG, MAIL_FROM, NODE_ENV, FRONTEND_URL, APPLICATION_NAME, MAIL_CONFIG_DEV } from "../config";
+import {
+  MAIL_CONFIG,
+  MAIL_FROM,
+  NODE_ENV,
+  FRONTEND_URL,
+  APPLICATION_NAME,
+  MAIL_CONFIG_DEV,
+  SUSPEND_EMAIL,
+} from "../config";
 import { Authority, Position, PositionGroup, User } from "../data/models";
 import fs from "fs";
 import path from "path";
 
-const FROM_ADDRESS = "";
 const BASE_TEMPLATE = "../templates/email/base.html";
 
 const FORMA_FINREVIEW_TEMPLATE = "../templates/email/form_a_finance_review.html";
@@ -363,6 +370,8 @@ export class EmailService {
   }
 
   async sendEmail(toName: string, toEmail: string, subject: string, customContent: string): Promise<any> {
+    if (SUSPEND_EMAIL) return false;
+
     let basePath = path.join(__dirname, BASE_TEMPLATE);
     let baseContent = fs.readFileSync(basePath).toString();
 
