@@ -84,6 +84,7 @@ export enum OperationalRestrictions {
   "" = "",
   "Journal only" = "Journal only",
   "Acquisition cards" = "Acquisition cards",
+  "Refund as per FAM 7.6" = "Refund as per FAM 7.6",
   "Personnel pay action" = "Personnel pay action",
   "Travel advance" = "Travel advance",
   "Special delegation" = "Special delegation",
