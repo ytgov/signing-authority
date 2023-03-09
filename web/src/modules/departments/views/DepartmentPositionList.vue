@@ -311,6 +311,7 @@ export default {
       if (excludeArchived == true) {
         list = list.filter((i) => i.status != "Archived");
         list = list.filter((i) => !i.is_deputy_duplicate);
+        list = list.filter((i) => !i.is_deputy_minister);
       }
 
       this.matchingItems = list;
