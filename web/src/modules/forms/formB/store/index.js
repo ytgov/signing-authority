@@ -171,9 +171,31 @@ export function cleanCoding(input) {
 function cleanZeros(input) {
   input = input || "";
   input = `${input}`.trim().toUpperCase();
-  if (input == "0" || input == "00" || input == "000" || input == "0000") return "";
+  input = input.replace(/^0+/, "");
+
   if (input == "NL") return "NL";
-  input = input.replace(/[^0-9]/g, "");
+
+  input = input.replace(/[^0-9|.]/g, "");
+
+  if (input.indexOf(".") >= 0) {
+    let chars = input.split("");
+    let b = "";
+
+    let dotCount = 0;
+    let afterDotCount = 0;
+    for (let char of chars) {
+      if (char == ".") dotCount++;
+
+      if (dotCount > 1) break;
+
+      if (dotCount == 1) afterDotCount++;
+
+      if (afterDotCount > 4) break;
+      b += char;
+    }
+
+    return b.startsWith(".") ? `0${b}` : b;
+  }
 
   return input;
 }
