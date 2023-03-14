@@ -180,8 +180,8 @@ export class LimitService {
     if (limit == "NL") return true;
     if (value == "NL") return false;
 
-    let limitNum = parseInt(limit);
-    let valueNum = parseInt(value);
+    let limitNum = parseFloat(limit);
+    let valueNum = parseFloat(value);
 
     return limitNum >= valueNum;
   }
