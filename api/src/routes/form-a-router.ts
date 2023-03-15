@@ -885,7 +885,7 @@ formARouter.put(
         (newFormB as any).created_by = `${req.user.first_name} ${req.user.last_name}`;
 
         for (let line of req.body.authority_lines) {
-          let useOne = line.contracts_for_goods_services != "" ?"1" : "";
+          let useOne = line.contracts_for_goods_services != "" ? "1" : "";
 
           (newFormB.authority_lines as any[]).push({
             coding: line.coding,
@@ -983,6 +983,15 @@ formARouter.put(
               by: `${req.user.first_name} ${req.user.last_name}`,
               sub: req.user.sub,
             };
+          }
+
+          if (oldDM.audit_lines) {
+            oldDM.audit_lines.push({
+              date: new Date(),
+              user_name: `${req.user.first_name} ${req.user.last_name}`,
+              action: "Archived",
+              previous_value: {},
+            });
           }
 
           await db.update((oldDM._id || "").toString(), oldDM);
