@@ -57,22 +57,6 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
     if (p) positions.push(p);
   }
 
-  positions.sort((a, b) => {
-    if (a.program_branch == b.program_branch) {
-      if (a.activity == b.activity) {
-        return (a.position || "") > (b.position || "") ? -1 : (a.position || "") < (b.position || "") ? 1 : 0;
-      } else {
-        return (a.activity || "") > (b.activity || "") ? -1 : (a.activity || "") < (b.activity || "") ? 1 : 0;
-      }
-    }
-
-    return (a.program_branch || "") > (b.program_branch || "")
-      ? -1
-      : (a.program_branch || "") < (b.program_branch || "")
-      ? 1
-      : 0;
-  });
-
   let item = {
     department_code,
     department_descr,
@@ -211,11 +195,13 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
     let emailUsers = await userDb.getAll({ roles: "Department of Finance" });
     await emailService.sendFormAFinReview(group, emailUsers, "Form A Finance Review", group.created_by);
 
+    let order = 1;
     for (let item of items) {
       let position = await db.getById(item);
 
       if (position) {
         position.position_group_id = result.insertedId;
+        position.position_group_order = order;
 
         if (position.status != "Active") {
           position.audit_lines?.push({
@@ -226,6 +212,7 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
           });
         }
 
+        order++;
         await db.update(item, position);
       }
     }
@@ -260,6 +247,8 @@ formARouter.get("/department/:department_code/pending-groups", async (req: Reque
 
     if (item.activated_positions) item.positions = item.activated_positions;
     else item.positions = await db.getAll({ position_group_id: item._id });
+
+    item.positions.sort((a, b) => (a.position_group_order || 1000) - (b.position_group_order || 1000));
 
     for (let position of item.positions) {
       setPositionStatus(position);
@@ -357,7 +346,6 @@ formARouter.put(
         }
 
         item.activated_positions = positions.map((p) => {
-          console.log("ATPOSITIONS", p);
           return {
             _id: p._id,
             position: p.position,
@@ -367,6 +355,7 @@ formARouter.put(
             deactivation: p.deactivation,
             activation: p.activation,
             position_group_id: p.position_group_id,
+            position_group_order: p.position_group_order,
           };
         });
 
@@ -688,21 +677,7 @@ formARouter.get(
 
     if (item) {
       item.positions = await db.getAll({ position_group_id: item._id });
-      item.positions.sort((a, b) => {
-        if (a.program_branch == b.program_branch) {
-          if (a.activity == b.activity) {
-            return (a.position || "") > (b.position || "") ? -1 : (a.position || "") < (b.position || "") ? 1 : 0;
-          } else {
-            return (a.activity || "") > (b.activity || "") ? -1 : (a.activity || "") < (b.activity || "") ? 1 : 0;
-          }
-        }
-
-        return (a.program_branch || "") > (b.program_branch || "")
-          ? -1
-          : (a.program_branch || "") < (b.program_branch || "")
-          ? 1
-          : 0;
-      });
+      item.positions.sort((a, b) => (a.position_group_order || 1000) - (b.position_group_order || 1000));
 
       let lines = new Array();
 
@@ -983,15 +958,15 @@ formARouter.put(
               by: `${req.user.first_name} ${req.user.last_name}`,
               sub: req.user.sub,
             };
-          }
 
-          if (oldDM.audit_lines) {
-            oldDM.audit_lines.push({
-              date: new Date(),
-              user_name: `${req.user.first_name} ${req.user.last_name}`,
-              action: "Archived",
-              previous_value: {},
-            });
+            if (oldDM.audit_lines) {
+              oldDM.audit_lines.push({
+                date: new Date(),
+                user_name: `${req.user.first_name} ${req.user.last_name}`,
+                action: "Archived",
+                previous_value: {},
+              });
+            }
           }
 
           await db.update((oldDM._id || "").toString(), oldDM);

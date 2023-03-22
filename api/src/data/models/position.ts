@@ -16,6 +16,7 @@ export interface Position extends MongoEntity {
   audit_lines?: PositionAuditLine[];
 
   position_group_id?: ObjectId;
+  position_group_order?: number;
 
   department_reviews?: ReviewResults[];
   finance_reviews?: ReviewResults[];

@@ -94,7 +94,7 @@
       <v-app-bar dark color="#0097A9">
         <v-toolbar-title>Generate Form A</v-toolbar-title>
         <v-spacer />
-        <v-icon title="Close" @click="showGenerateDialog = false">mdi-close</v-icon>
+        <v-icon title="Close" @click="closeGenerateDialog">mdi-close</v-icon>
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
@@ -111,18 +111,46 @@
             This will generate a new Form A that includes all
             <strong>'Non Archived'</strong> position records within the <strong>'{{ programFilter }}'</strong> Program.
           </p> -->
-          <p>The following {{ matchingItems.length }} position(s) will be included:</p>
-          <ul class="mb-3">
-            <li v-for="(item, idx) of matchingItems" :key="idx">
-              {{ item.position }}
-            </li>
-          </ul>
+          <p class="mb-1">The following {{ generateFormAList.length }} position(s) will be included:</p>
+          <p style="color: #323232cc !important">
+            Drag the <v-icon small>mdi-arrow-expand-vertical</v-icon> icon to reorder positions and click the
+            <v-icon small color="warning">mdi-close</v-icon> to remove positions.
+          </p>
+
+          <v-list dense>
+            <draggable v-model="generateFormAList" handle=".handle">
+              <div v-for="(item, idx) of generateFormAList" :key="idx">
+                <v-divider></v-divider>
+                <v-list-item>
+                  <v-list-item-action style="cursor:pointer" title="Drag to reorder" class="handle">
+                    <v-icon>mdi-arrow-expand-vertical</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    {{ item.position }}
+                  </v-list-item-content>
+                  <v-list-item-icon>
+                    <v-btn color="warning" class="my-0" small icon @click="removeMatchingItem(idx)"
+                      ><v-icon>mdi-close</v-icon></v-btn
+                    >
+                  </v-list-item-icon>
+                </v-list-item>
+              </div>
+            </draggable>
+          </v-list>
 
           <p>By clicking 'Proceed' below, these positions will be locked from further edits.</p>
           <p>A notification will be sent to the Department of Finance to review the form.</p>
 
-          <v-btn color="primary" class="mb-0" @click="doGenerateFormA">Proceed</v-btn>
-          <v-btn color="secondary" class="mb-0 ml-5" @click="doGeneratePreview">Form A Preview</v-btn>
+          <v-btn color="primary" class="mb-0" @click="doGenerateFormA" :disabled="generateFormAList.length == 0"
+            >Proceed</v-btn
+          >
+          <v-btn
+            color="secondary"
+            class="mb-0 ml-5"
+            @click="doGeneratePreview"
+            :disabled="generateFormAList.length == 0"
+            >Form A Preview</v-btn
+          >
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -134,14 +162,16 @@
 <script>
 /*------ TODO ------*/
 // tidy up HTML code and break into multiple components
-import _ from "lodash";
+import { cloneDeep, clone, uniq } from "lodash";
 import { mapActions, mapGetters, mapState } from "vuex";
 import createFormAButton from "../../forms/formA/components/createFormAButton.vue";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
 import { FORMA_URL } from "@/urls";
 
+import draggable from "vuedraggable";
+
 export default {
-  components: { createFormAButton, PdfPreviewDialog },
+  components: { createFormAButton, PdfPreviewDialog, draggable },
   name: "DepartmentDetail",
   componenets: {
     createFormAButton,
@@ -189,6 +219,7 @@ export default {
     matchingItems: [],
 
     showGenerateDialog: false,
+    generateFormAList: [],
   }),
   mounted: async function() {
     this.loading = true;
@@ -235,7 +266,7 @@ export default {
     },
 
     programListAny() {
-      let list = _.clone(this.programList);
+      let list = clone(this.programList);
       list.unshift("All");
       return list;
     },
@@ -246,7 +277,7 @@ export default {
         if (item.activity) list.push(item.activity);
       }
 
-      list = _.uniq(list);
+      list = uniq(list);
 
       list.unshift("All");
       return list;
@@ -287,7 +318,7 @@ export default {
       this.filterList();
     },
     filterList(excludeArchived = false) {
-      let list = _.clone(this.allItems);
+      let list = clone(this.allItems);
 
       if (this.statusFilter != "Any") {
         list = list.filter((i) => {
@@ -336,12 +367,15 @@ export default {
       this.$router.push(`/departments/${this.departmentId}/positions/${item._id}`);
     },
     generateFormAClick() {
-      this.statusFilter = "Any";
-      this.filterList(true);
+      this.generateFormAList = cloneDeep(this.matchingItems);
+      this.generateFormAList = this.generateFormAList.filter((i) => i.status != "Archived");
+      this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_duplicate);
+      this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_minister);
+
       this.showGenerateDialog = true;
     },
     async doGenerateFormA() {
-      let items = this.matchingItems.map((i) => i._id);
+      let items = this.generateFormAList.map((i) => i._id);
 
       let answer = await this.generateFormA({
         id: this.departmentId,
@@ -355,9 +389,18 @@ export default {
     },
 
     async doGeneratePreview() {
-      let ids = this.matchingItems.map((i) => i._id).join(",");
+      let ids = this.generateFormAList.map((i) => i._id).join(",");
       let previewUrl = `${FORMA_URL}/temp-pdf-preview?ids=${ids}&department_code=${this.departmentId}&department_descr=${this.item.descr}&program=${this.programFilter}&activity=${this.activityFilter}`;
       this.$refs.pdfPreview.show("Form A Preview", previewUrl);
+    },
+
+    removeMatchingItem(index) {
+      this.generateFormAList.splice(index, 1);
+    },
+
+    closeGenerateDialog() {
+      this.showGenerateDialog = false;
+      this.filterList();
     },
   },
 };
