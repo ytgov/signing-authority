@@ -372,7 +372,7 @@ export default {
       this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_duplicate);
       this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_minister);
 
-      this.generateFormAList = orderBy(this.generateFormAList, ["program_branch", "activity", "position"]);
+      this.generateFormAList = orderBy(this.generateFormAList, ["program_branch", "activity", "position", "created_on"]);
       this.showGenerateDialog = true;
     },
     async doGenerateFormA() {
