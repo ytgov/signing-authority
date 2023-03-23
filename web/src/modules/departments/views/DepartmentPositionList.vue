@@ -126,7 +126,7 @@
                     <v-icon>mdi-arrow-expand-vertical</v-icon>
                   </v-list-item-action>
                   <v-list-item-content>
-                    {{ item.position }}
+                    {{ makeFullName(item) }}
                   </v-list-item-content>
                   <v-list-item-icon>
                     <v-btn color="warning" class="my-0" small icon @click="removeMatchingItem(idx)"
@@ -162,7 +162,7 @@
 <script>
 /*------ TODO ------*/
 // tidy up HTML code and break into multiple components
-import { cloneDeep, clone, uniq } from "lodash";
+import { cloneDeep, clone, uniq, orderBy } from "lodash";
 import { mapActions, mapGetters, mapState } from "vuex";
 import createFormAButton from "../../forms/formA/components/createFormAButton.vue";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
@@ -372,6 +372,7 @@ export default {
       this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_duplicate);
       this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_minister);
 
+      this.generateFormAList = orderBy(this.generateFormAList, ["program_branch", "activity", "position"]);
       this.showGenerateDialog = true;
     },
     async doGenerateFormA() {
@@ -401,6 +402,15 @@ export default {
     closeGenerateDialog() {
       this.showGenerateDialog = false;
       this.filterList();
+    },
+    makeFullName(item) {
+      if (item.program_branch && item.activity) {
+        return `${item.program_branch} : ${item.activity} - ${item.position}`;
+      }
+      if (item.program_branch) return `${item.program_branch} - ${item.position}`;
+      if (item.activity) return `${item.activity} - ${item.position}`;
+
+      return item.position;
     },
   },
 };

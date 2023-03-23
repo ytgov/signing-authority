@@ -133,18 +133,28 @@ export class LimitService {
 
     if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_goods_limit))
       return `${line.coding} - S24 Goods limit invalid`;
+
     if (!this.compareLimit(limit.contracts_for_goods_services, line.s23_procure_goods_limit))
       return `${line.coding} - S23 Goods limit invalid`;
 
+    let exceptionRestrictions = [
+      "Special delegation",
+      "Aircraft Charters S23 only",
+      "Purchase Contracts S23 only",
+      "Print Contracts S23 only",
+      "Travel Warrant S23 only",
+    ];
+
     if (
       line.s24_procure_goods_limit &&
-      parseInt(line.s24_procure_goods_limit + "") > 1 &&
+      parseFloat(line.s24_procure_goods_limit + "") > 1 &&
       line.operational_restriction != "Special delegation"
     ) {
       return `${line.coding} - S24 Goods limit over $1000 w/o Special delegation`;
     }
-    if (line.s23_procure_goods_limit > 1 && line.operational_restriction != "Special delegation") {
-      return `${line.coding} - S23 Goods limit over $1000 w/o Special delegation`;
+
+    if (line.s23_procure_goods_limit > 1 && exceptionRestrictions.indexOf(line.operational_restriction || "") < 0) {
+      return `${line.coding} - S23 Goods limit over $1000 w/o appropriate operational restriction`;
     }
 
     if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_services_limit))
