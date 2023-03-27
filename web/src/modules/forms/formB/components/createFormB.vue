@@ -207,9 +207,17 @@ export default {
 
       this.formAItems = formAItems
         .filter((i) => i.status == "Active")
-        .map((i) => {
-          return Object.assign(i, {
-            display_name: `${i.program_branch ? i.program_branch + " / " : ""} ${i.position}`,
+        .map((item) => {
+          let display_name = "";
+
+          if (item.program_branch && item.activity) {
+            display_name = `${item.program_branch} : ${item.activity} - ${item.position}`;
+          } else if (item.program_branch) display_name = `${item.program_branch} - ${item.position}`;
+          else if (item.activity) display_name = `${item.activity} - ${item.position}`;
+          else display_name = item.position;
+
+          return Object.assign(item, {
+            display_name,
           });
         });
     },
