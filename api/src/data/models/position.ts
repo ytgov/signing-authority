@@ -89,6 +89,12 @@ export enum OperationalRestrictions {
   "Personnel pay action" = "Personnel pay action",
   "Travel advance" = "Travel advance",
   "Special delegation" = "Special delegation",
+
+  "Special delegation S23" = "Special delegation S23",
+  "Special delegation S23 and S24" = "Special delegation S23 and S24",
+  "Special delegation construction contract change orders only" = "Special delegation construction contract change orders only",
+  "Special delegation acquisition card purchases only" = "Special delegation acquisition card purchases only",
+
   "Bank deposit" = "Bank deposit",
   "Period 14 only" = "Period 14 only",
   "Aircraft Charters S23 only" = "Aircraft Charters S23 only",
