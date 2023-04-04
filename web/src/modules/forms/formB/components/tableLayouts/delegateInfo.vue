@@ -13,6 +13,9 @@
     Program:<br />
     <strong>{{ formB.program_branch }}</strong>
     <br /><br />
+    Activity:<br />
+    <strong>{{ formB.activity || formB.form_a.activity }}</strong>
+    <br /><br />
     Position title:<br />
     <strong>{{ formB.employee.title }}</strong>
   </th>

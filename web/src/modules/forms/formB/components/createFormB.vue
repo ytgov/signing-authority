@@ -268,6 +268,7 @@ export default {
           ynet_id: this.selectedSupervisor.ynet_id,
         },
         program_branch: this.formAId.program_branch,
+        activity: this.formAId.activity,
         form_a_id: this.formAId._id,
         authority_lines: lines,
       });
