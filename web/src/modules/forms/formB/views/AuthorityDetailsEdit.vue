@@ -46,7 +46,19 @@
                         append-icon="mdi-lock"
                       ></v-text-field>
 
-                      <v-text-field v-model="formB.program_branch" label="Program" @change="itemChanged"></v-text-field>
+                      <v-text-field
+                        v-model="formB.program_branch"
+                        label="Program"
+                        readonly
+                        append-icon="mdi-lock"
+                      ></v-text-field>
+                      
+                      <v-text-field
+                        :value="formB.activity || formB.form_a.activity"
+                        label="Actviity"
+                        readonly
+                        append-icon="mdi-lock"
+                      ></v-text-field>
 
                       <v-text-field
                         v-model="formB.employee.title"
