@@ -15,7 +15,7 @@ spec:
         app: signing-authority-qa
     spec:
       containers:
-        - image: harbor.ynet.gov.yk.ca/yg-github/ytgov/signing-authority:v1.0.10
+        - image: harbor.ynet.gov.yk.ca/yg-github/ytgov/signing-authority:v1.0.20
           name: signing-authority-qa
           ports:
             - containerPort: 3000
