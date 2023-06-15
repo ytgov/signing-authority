@@ -104,6 +104,9 @@ export enum OperationalRestrictions {
   "Q journals only" = "Q journals only",
   "V journals only" = "V journals only",
   "CDPITNEYWORK only" = "CDPITNEYWORK only",
+
+  "Except 121-03xx Prior Year Accounting" = "Except 121-03xx Prior Year Accounting",
+  "Payment cancellations and reissues" = "Payment cancellations and reissues",
 }
 
 export function setPositionStatus(item: Position) {
