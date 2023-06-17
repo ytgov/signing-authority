@@ -179,8 +179,7 @@
             <br /><br />
             Program (Division):<br />
             <strong>{{ program_branch }}</strong> <br /><br />
-            Activity (Branch):<br /><strong> {{ activity }}</strong>
-            <br /><br />
+            Activity (Branch):<br /><strong> {{ activity }}</strong> <br /><br />
             Position title:<br />
             <strong>{{ employee.title }}</strong>
           </td>
@@ -285,39 +284,41 @@
       </tbody>
     </table>
 
-    <table style="margin-top: 5px; width: 100%" border="0" cellspacing="0" cellpadding="0">
-      <tr style="height: 62px">
-        <td style="width: 33%; vertical-align: top; font-size: 11px">
-          <p>
-            NL = No limit <br /><br />
-            ** "Other Contracts & Expenditures" includes: reimbursements and other obligations.
-          </p>
-        </td>
-        <td rowspan="2" style="width: 66%; vertical-align: top">
-          <div style="border: 2px black solid; height: 100%">
-            <div style="text-align: center; height: 50px; margin: 5px 0 10px 0">
-              With this signature I certify that I am aware of and accept the responsibilities related to these
-              delegated authorities
+    <div style="width: 100%; break-inside: avoid; min-height: 100px">
+      <table style="margin-top: 5px; width: 100%" border="0" cellspacing="0" cellpadding="0">
+        <tr style="height: 62px">
+          <td style="width: 33%; vertical-align: top; font-size: 11px">
+            <p>
+              NL = No limit <br /><br />
+              ** "Other Contracts & Expenditures" includes: reimbursements and other obligations.
+            </p>
+          </td>
+          <td rowspan="2" style="width: 66%; vertical-align: top">
+            <div style="border: 2px black solid; height: 100%">
+              <div style="text-align: center; height: 50px; margin: 5px 0 10px 0">
+                With this signature I certify that I am aware of and accept the responsibilities related to these
+                delegated authorities
+              </div>
+              <table style="width: 100%; margin: 0 0 0 5px" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px">
+                    <div style="border-top: 1px black solid; width: 80%">Date</div>
+                  </td>
+                  <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px">
+                    <div style="border-top: 1px black solid; width: 80%">Delegate's Signature</div>
+                  </td>
+                </tr>
+              </table>
             </div>
-            <table style="width: 100%; margin: 0 0 0 5px" border="0" cellspacing="0" cellpadding="0">
-              <tr>
-                <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px">
-                  <div style="border-top: 1px black solid; width: 80%">Date</div>
-                </td>
-                <td style="width: 33%; vertical-align: bottom; padding-bottom: 3px">
-                  <div style="border-top: 1px black solid; width: 80%">Delegate's Signature</div>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2" style="font-size: 11px"></td>
-      </tr>
-    </table>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="font-size: 11px"></td>
+        </tr>
+      </table>
+    </div>
 
-    <div style="margin: 10px 0px 5px 0px; border: 2px black solid">
+    <div style="margin: 10px 0px 5px 0px; border: 2px black solid; break-inside: avoid">
       <table style="width: 100%; margin: 0 0 0 5px" border="0" cellspacing="0" cellpadding="0">
         <tr style="height: 45px">
           <td style="vertical-align: bottom; padding-bottom: 3px">
