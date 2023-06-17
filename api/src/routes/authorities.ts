@@ -261,6 +261,10 @@ authoritiesRouter.put(
         });
 
         let creator = await userDb.getAll({ _id: existing.created_by_id });
+        console.log(
+          "CREATOR",
+          creator.map((c) => c.email)
+        );
 
         await emailService.sendFormBUpload(
           existing,
@@ -350,6 +354,10 @@ authoritiesRouter.put(
         });
 
         let creator = await userDb.getAll({ _id: existing.created_by_id });
+        console.log(
+          "CREATOR",
+          creator.map((c) => c.email)
+        );
 
         await emailService.sendFormBApprove(
           existing,
@@ -387,6 +395,10 @@ authoritiesRouter.put(
         });
 
         let creator = await userDb.getAll({ _id: existing.created_by_id });
+        console.log(
+          "CREATOR",
+          creator.map((c) => c.email)
+        );
 
         await emailService.sendFormBReject(
           existing,
