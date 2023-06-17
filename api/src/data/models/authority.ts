@@ -156,6 +156,11 @@ export function setAuthorityStatus(item: Authority) {
         a.current_status = "Rejected";
       } else if (start > now) {
         a.current_status = "Scheduled";
+      } else if (item.authority_type == "acting") {
+        if (a.approve_user_date && start <= now && (a.expire_date == undefined || expire >= now)) {
+          a.current_status = "Active";
+          item.status = "Active";
+        }
       } else if (start <= now && (a.expire_date == undefined || expire >= now)) {
         a.current_status = "Active";
         item.status = "Active";
