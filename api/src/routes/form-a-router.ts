@@ -323,7 +323,8 @@ formARouter.put(
 
         if (item.upload_signatures) {
           for (let position of positions) {
-            position.position_group_id = undefined;
+            //position.position_group_id = undefined; removed becuase this caused too much auto-archive
+            
 
             position.activation = {
               activate_user_id: req.user._id,
