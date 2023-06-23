@@ -483,9 +483,12 @@
       <v-card tile>
         <v-card-text class="pt-3">
           <div v-if="editActivation.current_status == 'Scheduled'">
-            <p>
-              Since this activation is currently 'Scheduled' for the future, you can change the dates or remove it
-              entirely.
+            <p v-if="editActivation.approve_user_date">
+              Since this activation is currently 'Scheduled' for the future and has been Approved, you can only change the dates within the
+              original range or remove it entirely. If you would like to extend the dates, you must create a new Acting Appointment.
+            </p>
+            <p v-else>
+              Since this activation is currently 'Scheduled' for the future, you can change the dates or remove it entirely.
             </p>
 
             <v-row>
@@ -517,7 +520,8 @@
                     v-model="editActivation.date"
                     @input="startDateMenu1 = false"
                     @change="startDate1Changed"
-                    :min="today"
+                    :min="originalActStartDate"
+                    :max="originalActExpireDate"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -549,7 +553,8 @@
                   <v-date-picker
                     v-model="editActivation.expire_date"
                     @input="endDateMenu2 = false"
-                    :min="activateEffective"
+                    :min="editActivation.date"
+                    :max="originalActExpireDate"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -670,6 +675,8 @@ export default {
       .format("YYYY-MM-DD"),
     editActivation: {},
     editActivationIndex: -1,
+    originalActStartDate: null,
+    originalActExpireDate: null,
 
     editActivationHasStarted: true,
   }),
@@ -1099,6 +1106,17 @@ export default {
     startEditActivation(index) {
       this.editActivationIndex = index;
       this.editActivation = this.formB.activation[this.editActivationIndex];
+
+      console.log(this.editActivation);
+
+      if (this.editActivation.approve_user_date) {
+        this.originalActStartDate = this.editActivation.date;
+        this.originalActExpireDate = this.editActivation.expire_date;
+      } else {
+        this.originalActStartDate = moment().format("YYYY-MM-DD");
+        this.originalActExpireDate = null;
+      }
+
       this.showActivationEditDialog = true;
     },
     doActivationEditSave() {
