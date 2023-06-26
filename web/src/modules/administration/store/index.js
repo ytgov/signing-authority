@@ -80,10 +80,11 @@ const actions = {
       return resp.data.data;
     });
   },
-  async setPositionStatus(state, { id, status }) {
+
+  async setPositionGroup(state, { id, position_group_id }) {
     const auth = getInstance();
 
-    return auth.put(`${FORMA_URL}/pending-groups/${id}/status`, { status }).then((resp) => {
+    return auth.put(`${FORMA_URL}/${id}/position_group_id`, { position_group_id }).then((resp) => {
       return resp.data.data;
     });
   },

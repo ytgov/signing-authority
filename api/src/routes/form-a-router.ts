@@ -24,7 +24,7 @@ import { ObjectId } from "mongodb";
 import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
 
-import { checkJwt, loadUser, isFormAAdmin } from "../middleware/authz.middleware";
+import { checkJwt, loadUser, isFormAAdmin, isSystemAdmin } from "../middleware/authz.middleware";
 import { CleanFilename, FormatCoding } from "../utils/formatters";
 import { FileStore } from "../utils/file-store";
 import { API_PORT } from "../config";
@@ -39,7 +39,7 @@ formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
 });
 
-formARouter.get("/", async (req: Request, res: Response) => {
+formARouter.get("/", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let list = await db.getAll({});
 
@@ -50,7 +50,7 @@ formARouter.get("/", async (req: Request, res: Response) => {
   res.json({ data: list });
 });
 
-formARouter.get("/pending-groups", async (req: Request, res: Response) => {
+formARouter.get("/pending-groups", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
 
@@ -72,22 +72,25 @@ formARouter.get("/pending-groups", async (req: Request, res: Response) => {
   return res.json({ data: list });
 });
 
-formARouter.put("/pending-groups/:id/status", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+formARouter.put(
+  "/pending-groups/:id/status",
+  checkJwt,
+  loadUser,
+  isSystemAdmin,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+    let existing = await groupDb.getById(id);
 
-  console.log("SETTING", id, status);
+    if (existing) {
+      existing.status = status;
+      await groupDb.update(id, existing);
+    }
 
-  let existing = await groupDb.getById(id);
-
-  if (existing) {
-    existing.status = status;
-    await groupDb.update(id, existing);
+    return res.json({ data: "success" });
   }
-
-  return res.json({ data: "success" });
-});
+);
 
 formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
   const ids = req.query.ids as string;
@@ -817,6 +820,31 @@ formARouter.post(
       return res.json({ data: "Successfully validated " + existing?.position });
     }
 
+    res.status(404).send();
+  }
+);
+
+formARouter.put(
+  "/:id/position_group_id",
+  checkJwt,
+  loadUser,
+  isSystemAdmin,
+  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { position_group_id } = req.body;
+    let db = req.store.FormA as GenericService<Position>;
+
+    let existing = await db.getById(id);
+
+    if (existing) {
+      existing.position_group_id = position_group_id;
+
+      await db.update(id, existing);
+      return res.json({ data: "success" });
+    }
+    
     res.status(404).send();
   }
 );

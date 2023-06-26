@@ -20,6 +20,14 @@ export const checkJwt = jwt({
   algorithms: ["RS256"],
 });
 
+export async function isSystemAdmin(req: Request, res: Response, next: NextFunction) {
+  const { roles } = req.user;
+
+  // these folks can do it all!
+  if (roles.includes("System Admin")) return next();
+  return res.status(403).send(`You do not permission`);
+}
+
 export async function isFormAAdmin(req: Request, res: Response, next: NextFunction) {
   const { department_code } = req.body;
   const { roles, department_admin_for } = req.user;

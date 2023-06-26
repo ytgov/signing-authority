@@ -62,33 +62,20 @@
                 v-if="!item.position_group_id && item.activation && item.activation.file_id"
                 @click.native.capture.stop
               >
-                {{ signtureForFile(item.activation.file_id) }}
+                <router-link
+                  :to="`/departments/${item.department_code}/form-a/${signatureForFile(item.activation.file_id)}`"
+                  target="_blank"
+                  @click.native.capture.stop
+                  ><v-icon color="primary">mdi-link-variant</v-icon>
+                </router-link>
+
+                <v-btn color="primary" @click="connectClick(item)"><v-icon>mdi-connection</v-icon></v-btn>
               </div>
             </template>
           </v-data-table>
         </v-card-text>
       </v-card>
     </BaseCard>
-
-    <v-dialog persistent v-model="showEdit" width="600">
-      <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Override Form A Status</v-toolbar-title>
-        <v-spacer />
-        <v-icon title="Close" @click="showEdit = false">mdi-close</v-icon>
-      </v-app-bar>
-      <v-card tile>
-        <v-card-text class="mt-5 pb-0" v-if="editItem">
-          <p>
-            This will override the status of the selected Form A, but will have no impact on any linked Position
-            records.
-          </p>
-
-          <v-select v-model="editItem.status" :items="['Pending', 'Archived', 'Active']" outlined dense></v-select>
-
-          <v-btn color="primary" @click="saveClick">Save</v-btn>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
 
     <notifications ref="notifier"></notifications>
   </v-container>
@@ -112,7 +99,6 @@ export default {
     items: [],
     formAs: [],
     editItem: null,
-    showEdit: false,
   }),
   async mounted() {
     this.loadItems();
@@ -134,7 +120,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions("administration", ["getPositionList", "setFormAStatus", "getFormAList"]),
+    ...mapActions("administration", ["getPositionList", "setPositionGroup", "getFormAList"]),
     async loadItems() {
       this.isLoading = true;
       this.items = await this.getPositionList();
@@ -143,21 +129,20 @@ export default {
     },
     rowClick(item) {
       this.editItem = clone(item);
-      this.showEdit = true;
     },
-    async saveClick() {
-      let resp = await this.setFormAStatus({ id: this.editItem._id, status: this.editItem.status });
-
-      if (resp == "success") {
-        this.items = await this.getPositionList();
-        this.showEdit = false;
-      }
-    },
-    signtureForFile(id) {
+    signatureForFile(id) {
       let sig = this.signatures.filter((s) => s.file_id == id);
 
       if (sig.length > 0) return sig[0]._id;
       return null;
+    },
+    async connectClick(item) {
+      console.log("CONNECT", item._id, this.signatureForFile(item.activation.file_id), "was", item.position_group_id);
+      let resp = await this.setPositionGroup({ id: this.editItem._id, status: this.editItem.status });
+
+      if (resp == "success") {
+        this.items = await this.getPositionList();
+      }
     },
   },
 };
