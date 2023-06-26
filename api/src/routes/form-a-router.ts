@@ -92,6 +92,28 @@ formARouter.put(
   }
 );
 
+formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<Position>;
+  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+  let allGroups = await groupDb.getAll({ status: { $ne: "Archived" } });
+
+  let archiveList = [];
+
+  for (let group of allGroups) {
+    let groupPositions = await db.getAll({ position_group_id: group._id });
+
+    if (groupPositions.length == 0) {
+      if (group._id) {
+        group.status = "Archived";
+        archiveList.push(group);
+        await groupDb.update(group._id.toString(), group);
+      }
+    }
+  }
+
+  return res.json({ data: archiveList });
+});
+
 formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
   const ids = req.query.ids as string;
   const { department_code, department_descr, program, activity } = req.query;
@@ -844,7 +866,7 @@ formARouter.put(
       await db.update(id, existing);
       return res.json({ data: "success" });
     }
-    
+
     res.status(404).send();
   }
 );

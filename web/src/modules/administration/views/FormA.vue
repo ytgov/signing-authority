@@ -20,7 +20,9 @@
           clearable
         ></v-text-field>
       </template>
-      <template v-slot:right> </template>
+      <template v-slot:right>
+        <v-btn color="primary" small @click="archiveClick"> Auto-Archive</v-btn>
+      </template>
 
       <v-card class="default">
         <v-card-text>
@@ -107,7 +109,7 @@ export default {
     this.loadItems();
   },
   methods: {
-    ...mapActions("administration", ["getFormAList", "setFormAStatus"]),
+    ...mapActions("administration", ["getFormAList", "setFormAStatus", "autoArchive"]),
     async loadItems() {
       this.isLoading = true;
       this.items = await this.getFormAList();
@@ -124,6 +126,13 @@ export default {
         this.items = await this.getFormAList();
         this.showEdit = false;
       }
+    },
+    async archiveClick() {
+      this.autoArchive().then(async (resp) => {
+        console.log("AUTO-ARCHIVED: ", resp);
+        await this.loadItems();
+        alert("Auto-archived: " + resp.length);
+      });
     },
   },
 };

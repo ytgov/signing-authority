@@ -88,6 +88,13 @@ const actions = {
       return resp.data.data;
     });
   },
+  async autoArchive() {
+    const auth = getInstance();
+
+    return auth.post(`${FORMA_URL}/auto-archive`).then((resp) => {
+      return resp.data.data;
+    });
+  },
 };
 
 const mutations = {
