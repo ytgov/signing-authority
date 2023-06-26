@@ -103,9 +103,7 @@ formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req:
     let groupPositions = await db.getAll({ position_group_id: group._id });
     let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
 
-    console.log("CHECKING GROUP", group._id, groupPositions.length, groupPositions2.length);
-
-    if (groupPositions.length == 0) {
+    if (groupPositions.length == 0 && groupPositions2.length == 0) {
       if (group._id) {
         group.status = "Archived";
         archiveList.push(group);
