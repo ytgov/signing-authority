@@ -101,8 +101,9 @@ formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req:
 
   for (let group of allGroups) {
     let groupPositions = await db.getAll({ position_group_id: group._id });
+    let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
 
-    console.log("CHECKING GROUP", group._id, groupPositions.length);
+    console.log("CHECKING GROUP", group._id, groupPositions.length, groupPositions2.length);
 
     if (groupPositions.length == 0) {
       if (group._id) {
