@@ -137,9 +137,8 @@ export default {
       return null;
     },
     async connectClick(item) {
-      console.log("CONNECT", item._id, this.signatureForFile(item.activation.file_id), "was", item.position_group_id);
       let resp = await this.setPositionGroup({
-        id: this.item._id,
+        id: item._id,
         position_group_id: this.signatureForFile(item.activation.file_id),
       });
 
