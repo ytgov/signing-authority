@@ -260,11 +260,9 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
-        let creator = await userDb.getAll({ _id: existing.created_by_id });
-        console.log(
-          "CREATOR",
-          creator.map((c) => c.email)
-        );
+        let creator = await userDb.getAll({
+          $or: [{ _id: existing.created_by_id }, { _id: existing.created_by_id.toString() }],
+        });
 
         await emailService.sendFormBUpload(
           existing,
@@ -353,11 +351,9 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
-        let creator = await userDb.getAll({ _id: existing.created_by_id });
-        console.log(
-          "CREATOR",
-          creator.map((c) => c.email)
-        );
+        let creator = await userDb.getAll({
+          $or: [{ _id: existing.created_by_id }, { _id: existing.created_by_id.toString() }],
+        });
 
         await emailService.sendFormBApprove(
           existing,
@@ -394,11 +390,9 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
-        let creator = await userDb.getAll({ _id: existing.created_by_id });
-        console.log(
-          "CREATOR",
-          creator.map((c) => c.email)
-        );
+        let creator = await userDb.getAll({
+          $or: [{ _id: existing.created_by_id }, { _id: existing.created_by_id.toString() }],
+        });
 
         await emailService.sendFormBReject(
           existing,
