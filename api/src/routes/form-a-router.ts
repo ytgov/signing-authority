@@ -431,7 +431,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -457,7 +460,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -484,7 +490,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -512,7 +521,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
