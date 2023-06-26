@@ -68,7 +68,12 @@
             records.
           </p>
 
-          <v-select v-model="editItem.status" :items="['Pending', 'Archived', 'Active']" outlined dense></v-select>
+          <v-select
+            v-model="editItem.status"
+            :items="['Finance Review', 'Upload Signatures', 'Finance Approve', 'Archived', 'Active']"
+            outlined
+            dense
+          ></v-select>
 
           <v-btn color="primary" @click="saveClick">Save</v-btn>
         </v-card-text>
