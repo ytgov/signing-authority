@@ -102,6 +102,8 @@ formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req:
   for (let group of allGroups) {
     let groupPositions = await db.getAll({ position_group_id: group._id });
 
+    console.log("CHECKING GROUP", group._id, groupPositions.length);
+
     if (groupPositions.length == 0) {
       if (group._id) {
         group.status = "Archived";
