@@ -1,4 +1,3 @@
-
 const routes = [
   {
     path: "/administration",
@@ -12,14 +11,25 @@ const routes = [
         component: () => import("../views/Home.vue"),
       },
       {
-        path: 'users',
+        path: "users",
         name: "AdminUsers",
-        component: () =>
-          import("../views/Users"),
+        component: () => import("../views/Users"),
         meta: { requiresAuth: true },
-      }
-    ]
+      },
+      {
+        path: "form-a",
+        name: "AdminFormA",
+        component: () => import("../views/FormA"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "positions",
+        name: "AdminPositions",
+        component: () => import("../views/Positions"),
+        meta: { requiresAuth: true },
+      },
+    ],
   },
-]
+];
 
 export default routes;

@@ -42,7 +42,51 @@ formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
 formARouter.get("/", async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let list = await db.getAll({});
+
+  for (let position of list) {
+    setPositionStatus(position);
+  }
+
   res.json({ data: list });
+});
+
+formARouter.get("/pending-groups", async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<Position>;
+  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+
+  let list = await groupDb.getAll({});
+
+  for (let item of list) {
+    item.create_date_display = moment(item.create_date).utc(true).format("MMMM D, YYYY @ h:mm a");
+
+    if (item.activated_positions) item.positions = item.activated_positions;
+    else item.positions = await db.getAll({ position_group_id: item._id });
+
+    item.positions.sort((a, b) => (a.position_group_order || 1000) - (b.position_group_order || 1000));
+
+    for (let position of item.positions) {
+      setPositionStatus(position);
+    }
+  }
+
+  return res.json({ data: list });
+});
+
+formARouter.put("/pending-groups/:id/status", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+
+  console.log("SETTING", id, status);
+
+  let existing = await groupDb.getById(id);
+
+  if (existing) {
+    existing.status = status;
+    await groupDb.update(id, existing);
+  }
+
+  return res.json({ data: "success" });
 });
 
 formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
@@ -324,7 +368,6 @@ formARouter.put(
         if (item.upload_signatures) {
           for (let position of positions) {
             //position.position_group_id = undefined; removed becuase this caused too much auto-archive
-            
 
             position.activation = {
               activate_user_id: req.user._id,
