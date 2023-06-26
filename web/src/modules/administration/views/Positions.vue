@@ -34,25 +34,36 @@
               { text: 'Activation', value: 'activation' },
               { text: 'Deactivation', value: 'deactivation' },
               { text: 'Form A', value: 'position_group_id' },
+              { text: 'Lookup', value: 'lookup' },
             ]"
             @click:row="rowClick"
             class="row-clickable"
             :loading="isLoading"
           >
             <template v-slot:item.activation="{ item }">
-              <v-icon v-if="item.activation">mdi-check</v-icon>
+              <v-icon v-if="item.activation" color="success">mdi-check</v-icon>
             </template>
             <template v-slot:item.deactivation="{ item }">
-              <v-icon v-if="item.deactivation">mdi-check</v-icon>
+              <v-icon v-if="item.deactivation" color="error">mdi-check</v-icon>
             </template>
 
             <template v-slot:item.position_group_id="{ item }">
-              <router-link v-if="item.position_group_id && item.position_group_id != -1"
+              <router-link
+                v-if="item.position_group_id && item.position_group_id != -1"
                 :to="`/departments/${item.department_code}/form-a/${item.position_group_id}`"
                 target="_blank"
                 @click.native.capture.stop
                 ><v-icon color="primary">mdi-link-variant</v-icon>
               </router-link>
+            </template>
+
+            <template v-slot:item.lookup="{ item }">
+              <div
+                v-if="!item.position_group_id && item.activation && item.activation.file_id"
+                @click.native.capture.stop
+              >
+                {{ signtureForFile(item.activation.file_id) }}
+              </div>
             </template>
           </v-data-table>
         </v-card-text>
@@ -99,17 +110,35 @@ export default {
     search: "",
     isLoading: false,
     items: [],
+    formAs: [],
     editItem: null,
     showEdit: false,
   }),
   async mounted() {
     this.loadItems();
   },
+  computed: {
+    signatures() {
+      if (this.formAs) {
+        let sigs = this.formAs.filter((a) => a.upload_signatures);
+        let sigList = [];
+
+        for (let sig of sigs) {
+          sigList.push({ ...sig.upload_signatures, _id: sig._id });
+        }
+
+        return sigList;
+      }
+
+      return [];
+    },
+  },
   methods: {
-    ...mapActions("administration", ["getPositionList", "setFormAStatus"]),
+    ...mapActions("administration", ["getPositionList", "setFormAStatus", "getFormAList"]),
     async loadItems() {
       this.isLoading = true;
       this.items = await this.getPositionList();
+      this.formAs = await this.getFormAList();
       this.isLoading = false;
     },
     rowClick(item) {
@@ -123,6 +152,12 @@ export default {
         this.items = await this.getPositionList();
         this.showEdit = false;
       }
+    },
+    signtureForFile(id) {
+      let sig = this.signatures.filter((s) => s.file_id == id);
+
+      if (sig.length > 0) return sig[0]._id;
+      return null;
     },
   },
 };
