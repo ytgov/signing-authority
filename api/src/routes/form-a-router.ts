@@ -95,7 +95,7 @@ formARouter.put(
 formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
-  let allGroups = await groupDb.getAll({ status: { $ne: "Archived" } });
+  let allGroups = await groupDb.getAll({ status: "Active" });
 
   let archiveList = [];
 
