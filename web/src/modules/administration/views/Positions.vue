@@ -69,7 +69,7 @@
                   ><v-icon color="primary">mdi-link-variant</v-icon>
                 </router-link>
 
-                <v-btn color="primary" @click="connectClick(item)"><v-icon>mdi-connection</v-icon></v-btn>
+                <v-icon class="ml-3" color="primary" @click="connectClick(item)">mdi-content-copy</v-icon>
               </div>
             </template>
           </v-data-table>
@@ -138,7 +138,10 @@ export default {
     },
     async connectClick(item) {
       console.log("CONNECT", item._id, this.signatureForFile(item.activation.file_id), "was", item.position_group_id);
-      let resp = await this.setPositionGroup({ id: this.editItem._id, status: this.editItem.status });
+      let resp = await this.setPositionGroup({
+        id: this.item._id,
+        position_group_id: this.signatureForFile(item.activation.file_id),
+      });
 
       if (resp == "success") {
         this.items = await this.getPositionList();
