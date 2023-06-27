@@ -292,8 +292,9 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
 
     for (let group of allGroups) {
       let groupPositions = await db.getAll({ position_group_id: group._id });
-
-      if (groupPositions.length == 0) {
+      let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
+  
+      if (groupPositions.length == 0 && groupPositions2.length == 0) {
         if (group._id) {
           group.status = "Archived";
           await groupDb.update(group._id.toString(), group);
