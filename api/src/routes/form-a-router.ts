@@ -24,7 +24,7 @@ import { ObjectId } from "mongodb";
 import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
 
-import { checkJwt, loadUser, isFormAAdmin } from "../middleware/authz.middleware";
+import { checkJwt, loadUser, isFormAAdmin, isSystemAdmin } from "../middleware/authz.middleware";
 import { CleanFilename, FormatCoding } from "../utils/formatters";
 import { FileStore } from "../utils/file-store";
 import { API_PORT } from "../config";
@@ -39,10 +39,80 @@ formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
   return res.json(OperationalRestrictions);
 });
 
-formARouter.get("/", async (req: Request, res: Response) => {
+formARouter.get("/", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {
   let db = req.store.FormA as GenericService<Position>;
   let list = await db.getAll({});
+
+  for (let position of list) {
+    setPositionStatus(position);
+  }
+
   res.json({ data: list });
+});
+
+formARouter.get("/pending-groups", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<Position>;
+  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+
+  let list = await groupDb.getAll({});
+
+  for (let item of list) {
+    item.create_date_display = moment(item.create_date).utc(true).format("MMMM D, YYYY @ h:mm a");
+
+    if (item.activated_positions) item.positions = item.activated_positions;
+    else item.positions = await db.getAll({ position_group_id: item._id });
+
+    item.positions.sort((a, b) => (a.position_group_order || 1000) - (b.position_group_order || 1000));
+
+    for (let position of item.positions) {
+      setPositionStatus(position);
+    }
+  }
+
+  return res.json({ data: list });
+});
+
+formARouter.put(
+  "/pending-groups/:id/status",
+  checkJwt,
+  loadUser,
+  isSystemAdmin,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+    let existing = await groupDb.getById(id);
+
+    if (existing) {
+      existing.status = status;
+      await groupDb.update(id, existing);
+    }
+
+    return res.json({ data: "success" });
+  }
+);
+
+formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {
+  let db = req.store.FormA as GenericService<Position>;
+  let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+  let allGroups = await groupDb.getAll({ status: "Active" });
+
+  let archiveList = [];
+
+  for (let group of allGroups) {
+    let groupPositions = await db.getAll({ position_group_id: group._id });
+    let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
+
+    if (groupPositions.length == 0 && groupPositions2.length == 0) {
+      if (group._id) {
+        group.status = "Archived";
+        archiveList.push(group);
+        await groupDb.update(group._id.toString(), group);
+      }
+    }
+  }
+
+  return res.json({ data: archiveList });
 });
 
 formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
@@ -324,7 +394,6 @@ formARouter.put(
         if (item.upload_signatures) {
           for (let position of positions) {
             //position.position_group_id = undefined; removed becuase this caused too much auto-archive
-            
 
             position.activation = {
               activate_user_id: req.user._id,
@@ -362,7 +431,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -388,7 +460,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -415,7 +490,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -443,7 +521,10 @@ formARouter.put(
 
         let creator: User[];
 
-        if (item.created_by_id) creator = await userDb.getAll({ _id: item.created_by_id });
+        if (item.created_by_id)
+          creator = await userDb.getAll({
+            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+          });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -772,6 +853,31 @@ formARouter.post(
       if (limitError) return res.status(400).send(limitError);
 
       return res.json({ data: "Successfully validated " + existing?.position });
+    }
+
+    res.status(404).send();
+  }
+);
+
+formARouter.put(
+  "/:id/position_group_id",
+  checkJwt,
+  loadUser,
+  isSystemAdmin,
+  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { position_group_id } = req.body;
+    let db = req.store.FormA as GenericService<Position>;
+
+    let existing = await db.getById(id);
+
+    if (existing) {
+      existing.position_group_id = position_group_id;
+
+      await db.update(id, existing);
+      return res.json({ data: "success" });
     }
 
     res.status(404).send();

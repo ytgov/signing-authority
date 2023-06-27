@@ -1,61 +1,100 @@
-import { HEALTHCHECK_URL, USER_URL } from "@/urls";
-import { getInstance } from "@/auth/auth0-plugin"
+import { HEALTHCHECK_URL, USER_URL, FORMA_URL } from "@/urls";
+import { getInstance } from "@/auth/auth0-plugin";
 
 const state = {
   //appHealth is an array of componentHealth
   appHealth: [],
   componentHealth: {
-    "name": "",
-    "status": false,
-    "loading": true,
-    "helpNotes": "" //what to do if something this component is broken
+    name: "",
+    status: false,
+    loading: true,
+    helpNotes: "", //what to do if something this component is broken
   },
-  users: []
+  users: [],
 };
 
 const actions = {
   async doHealthCheck({ commit }) {
-    console.log("Checking app health")
-    let response = await fetch(HEALTHCHECK_URL)
-    let data = await response.json()
-    commit("SET_APP_HEALTH", data)
+    console.log("Checking app health");
+    let response = await fetch(HEALTHCHECK_URL);
+    let data = await response.json();
+    commit("SET_APP_HEALTH", data);
   },
   async seedData() {
-    let response = await fetch("http://localhost:3000/seed")
-    let data = await response.text()
-    return data
+    let response = await fetch("http://localhost:3000/seed");
+    let data = await response.text();
+    return data;
   },
   async loadUsers({ commit }) {
     const auth = getInstance();
 
-    return auth.get(USER_URL)
-      .then(resp => {
+    return auth
+      .get(USER_URL)
+      .then((resp) => {
         let data = resp.data.data;
-        commit("SET_USERS", data)
-        console.log(`Loaded ${data.length} users`)
-        return data
+        commit("SET_USERS", data);
+        console.log(`Loaded ${data.length} users`);
+        return data;
       })
-      .catch(err => {
-        console.log("BROKEN", err)
-      })
+      .catch((err) => {
+        console.log("BROKEN", err);
+      });
   },
-  async saveUser({dispatch}, item) {
+  async saveUser({ dispatch }, item) {
     const auth = getInstance();
-    let body = { roles: item.roles, status: item.status, department_admin_for: item.department_admin_for};
+    let body = { roles: item.roles, status: item.status, department_admin_for: item.department_admin_for };
     const result = await auth.put(`${USER_URL}/${item.email}`, body);
     if (result.status === 200) {
       dispatch("loadUsers");
     }
-    return result
+    return result;
   },
-  async createUser({dispatch}, item) {
+  async createUser({ dispatch }, item) {
     const auth = getInstance();
 
     let body = item;
     let result = await auth.post(`${USER_URL}`, body);
-    dispatch("loadUsers")
+    dispatch("loadUsers");
     return result;
-  }
+  },
+
+  async getFormAList() {
+    const auth = getInstance();
+
+    return auth.get(`${FORMA_URL}/pending-groups`).then((resp) => {
+      return resp.data.data;
+    });
+  },
+  async setFormAStatus(state, { id, status }) {
+    const auth = getInstance();
+
+    return auth.put(`${FORMA_URL}/pending-groups/${id}/status`, { status }).then((resp) => {
+      return resp.data.data;
+    });
+  },
+
+  async getPositionList() {
+    const auth = getInstance();
+
+    return auth.get(`${FORMA_URL}`).then((resp) => {
+      return resp.data.data;
+    });
+  },
+
+  async setPositionGroup(state, { id, position_group_id }) {
+    const auth = getInstance();
+
+    return auth.put(`${FORMA_URL}/${id}/position_group_id`, { position_group_id }).then((resp) => {
+      return resp.data.data;
+    });
+  },
+  async autoArchive() {
+    const auth = getInstance();
+
+    return auth.post(`${FORMA_URL}/auto-archive`).then((resp) => {
+      return resp.data.data;
+    });
+  },
 };
 
 const mutations = {
@@ -64,12 +103,12 @@ const mutations = {
   },
   SET_USERS(state, value) {
     state.users = value;
-  }
+  },
 };
 
 export default {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
 };
