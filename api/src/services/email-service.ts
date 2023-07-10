@@ -30,6 +30,9 @@ const FORMB_REJECT_TEMPLATE = "../templates/email/form_b_reject.html";
 const FORMB_ACTIVATE_TEMPLATE = "../templates/email/form_b_activate.html";
 const FORMB_ACTING_TEMPLATE = "../templates/email/form_b_acting.html";
 
+const FORMB_ACTING_APPROVE_NOTIFY_TEMPLATE = "../templates/email/form_b_acting_approve_notify.html";
+const FORMB_ACTING_APPROVE_TEMPLATE = "../templates/email/form_b_acting_approve.html";
+
 const FORMA_DM_TEMPLATE = "../templates/email/form_a_dm_notification.html";
 const FORMA_DM_APPROVE = "../templates/email/form_a_dm_approve.html";
 const FORMA_DM_REJECT = "../templates/email/form_a_dm_reject.html";
@@ -367,6 +370,50 @@ export class EmailService {
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
 
     await this.sendEmail(approverEmail, approverEmail, "Form B Acting Approval", content);
+  }
+
+  async sendFormBActingApproveNotice(formB: Authority, effectiveDate: string, expireDate: string): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_ACTING_APPROVE_NOTIFY_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+    let fullName = formB.employee.name;
+
+    content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+    content = content.replace(/``EXPIRE_DATE``/, expireDate);
+    content = content.replace(/``POSITION``/, formB.employee.title);
+
+    await this.sendEmail(fullName, formB.employee.email, "Form B Acting Approval", content);
+  }
+
+  async sendFormBActingApprove(formB: Authority, approverEmail: string): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_ACTING_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(/``EMPLOYEE``/, formB.employee.name);
+    content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
+
+    await this.sendEmail(approverEmail, approverEmail, "Form B Acting Approval", content);
+  }
+
+  async sendFormBActingApproveCreatorNotice(
+    formB: Authority,
+    users: User[],
+    effectiveDate: string,
+    expireDate: string
+  ): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_ACTING_APPROVE_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+    content = content.replace(/``EXPIRE_DATE``/, expireDate);
+    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``ACTOR``/, formB.employee.name);
+
+    for (let recipient of users) {
+      let fullName = `${recipient.first_name} ${recipient.last_name}`;
+
+      console.log("-- EMAIL FORM-B-ACTING APPROVE CREATOR SENDING", recipient.email);
+      await this.sendEmail(fullName, recipient.email, "Form B Acting Approval", content);
+    }
   }
 
   async sendEmail(toName: string, toEmail: string, subject: string, customContent: string): Promise<any> {

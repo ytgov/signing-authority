@@ -484,11 +484,13 @@
         <v-card-text class="pt-3">
           <div v-if="editActivation.current_status == 'Scheduled'">
             <p v-if="editActivation.approve_user_date">
-              Since this activation is currently 'Scheduled' for the future and has been Approved, you can only change the dates within the
-              original range or remove it entirely. If you would like to extend the dates, you must create a new Acting Appointment.
+              Since this activation is currently 'Scheduled' for the future and has been Approved, you can only change
+              the dates within the original range or remove it entirely. If you would like to extend the dates, you must
+              create a new Acting Appointment.
             </p>
             <p v-else>
-              Since this activation is currently 'Scheduled' for the future, you can change the dates or remove it entirely.
+              Since this activation is currently 'Scheduled' for the future, you can change the dates or remove it
+              entirely.
             </p>
 
             <v-row>
@@ -1077,11 +1079,19 @@ export default {
           act.activate_reason == activation.activate_reason &&
           act.date == activation.date &&
           act.approve_user_email == activation.approve_user_email
-        )
+        ) {
           act.approve_user_date = new Date();
+          act.editItem = true;
+
+          if (moment(act.approve_user_date) > moment(act.date))
+            act.date = moment(act.approve_user_date).format("YYYY-MM-DD");
+        } else {
+          delete act.editItem;
+        }
       });
 
       this.formB.save_action = "SupervisorApproveActing";
+      this.formB.editActivation = this.editActivation;
 
       this.saveFormB(this.formB).then(() => {
         this.loadFormB(this.id);
@@ -1106,8 +1116,6 @@ export default {
     startEditActivation(index) {
       this.editActivationIndex = index;
       this.editActivation = this.formB.activation[this.editActivationIndex];
-
-      console.log(this.editActivation);
 
       if (this.editActivation.approve_user_date) {
         this.originalActStartDate = this.editActivation.date;

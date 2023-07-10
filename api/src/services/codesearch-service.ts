@@ -13,7 +13,7 @@ export class CodeSearchService {
     let department_code = code.substring(0, 2);
 
     let today = moment().startOf("day").format("YYYY-MM-DD");
-    let date = moment(asAtDate).toDate();
+    let date = moment(asAtDate).endOf("day").toDate();
 
     let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
     let littleList = new Array<Authority>();
