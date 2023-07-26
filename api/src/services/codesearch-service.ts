@@ -20,12 +20,11 @@ export class CodeSearchService {
     let littleList = new Array<Authority>();
 
     for (let item of bigListNoDate) {
-      console.log("TESTING", item.employee.title, item.employee.name, item.authority_lines.length);
+      console.log("TESTING", item.employee.title, item.employee.name, item.create_date > date);
 
       let foundMatch = false;
 
       for (let line of item.authority_lines) {
-        console.log("CHILD OF", code, line.coding, codeIsChildOf(code, line.coding));
         if (codeIsChildOf(code, line.coding)) {
           foundMatch = true;
           break;
