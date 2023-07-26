@@ -15,15 +15,16 @@ export class CodeSearchService {
     let today = moment().startOf("day").format("YYYY-MM-DD");
     let date = moment(asAtDate).endOf("day").toDate();
 
-    let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
+    //let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
     let bigListNoDate = await this.db.getAll({ department_code });
-    console.log("LIST", bigList.length, department_code, date);
+    //console.log("LIST", bigList.length, department_code, date);
     console.log("BIGLIST", bigListNoDate.length, department_code, date);
 
     let littleList = new Array<Authority>();
 
-    for (let item of bigList) {
-      console.log("TESTING", item.employee.title);
+    for (let item of bigListNoDate) {
+      console.log("TESTING", item.employee.title, item.create_date);
+
       let foundMatch = false;
 
       for (let line of item.authority_lines) {
