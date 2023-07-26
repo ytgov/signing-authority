@@ -416,7 +416,6 @@ authoritiesRouter.put(
         if (req.body.activation) {
           for (let act of req.body.activation) {
             if (act.editItem == true) {
-              console.log("FOUND ITEM", act);
               effectiveDate = moment(act.date).format("YYYY-MM-DD");
               expireDate = moment(act.expire_date).format("YYYY-MM-DD");
               delete act.editItem;
@@ -428,13 +427,9 @@ authoritiesRouter.put(
           $or: [{ _id: existing.created_by_id }, { _id: existing.created_by_id.toString() }],
         });
 
-        console.log("T1")
         await emailService.sendFormBActingApproveCreatorNotice(existing, creator, effectiveDate, expireDate);
-
-        console.log("T2")
         await emailService.sendFormBActingApproveNotice(existing, effectiveDate, expireDate);
 
-        console.log("T3")
         await db.update(id, req.body);
       } else if (save_action == "SupervisorRejectActing") {
         req.body.audit_lines.push({
