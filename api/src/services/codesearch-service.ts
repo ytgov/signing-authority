@@ -19,9 +19,11 @@ export class CodeSearchService {
     let littleList = new Array<Authority>();
 
     for (let item of bigList) {
+      console.log("TESTING", item.employee.title);
       let foundMatch = false;
 
       for (let line of item.authority_lines) {
+        console.log("CHILD OF", code, line.coding, codeIsChildOf(code, line.coding));
         if (codeIsChildOf(code, line.coding)) {
           foundMatch = true;
           break;
