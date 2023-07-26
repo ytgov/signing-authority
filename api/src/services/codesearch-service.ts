@@ -16,7 +16,10 @@ export class CodeSearchService {
     let date = moment(asAtDate).endOf("day").toDate();
 
     let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
-    console.log("LIST", bigList.length, department_code, date)
+    let bigListNoDate = await this.db.getAll({ department_code });
+    console.log("LIST", bigList.length, department_code, date);
+    console.log("BIGLIST", bigListNoDate.length, department_code, date);
+
     let littleList = new Array<Authority>();
 
     for (let item of bigList) {
