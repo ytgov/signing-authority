@@ -17,13 +17,10 @@ export class CodeSearchService {
 
     //let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
     let bigListNoDate = await this.db.getAll({ department_code });
-    //console.log("LIST", bigList.length, department_code, date);
-    console.log("BIGLIST", bigListNoDate.length, department_code, date);
-
     let littleList = new Array<Authority>();
 
     for (let item of bigListNoDate) {
-      console.log("TESTING", item.employee.title, item.create_date);
+      console.log("TESTING", item.employee.title, item.employee.name, item.authority_lines.length);
 
       let foundMatch = false;
 
