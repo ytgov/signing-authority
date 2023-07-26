@@ -618,9 +618,9 @@
                 v-model="editActivation.expire_date"
                 @input="endDateMenu1 = false"
                 :min="yesterday"
+                :max="originalActExpireDate"
               ></v-date-picker>
             </v-menu>
-
             <v-btn @click="doActivationEditSave" color="primary" class="mb-0 mr-5">Save</v-btn>
             <v-btn @click="showActivationEditDialog = false" color="secondary" class="mb-0">Close</v-btn>
           </div>
