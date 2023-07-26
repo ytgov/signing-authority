@@ -20,8 +20,6 @@ export class CodeSearchService {
     let littleList = new Array<Authority>();
 
     for (let item of bigListNoDate) {
-      console.log("TESTING", item.employee.title, item.employee.name, item.create_date > date);
-
       let foundMatch = false;
 
       for (let line of item.authority_lines) {
