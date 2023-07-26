@@ -26,7 +26,7 @@ export class GenericService<T extends MongoEntity> {
                 return undefined;
             })
             .catch(err => {
-                console.log("UPDATE ERROR");
+                console.log("UPDATE ERROR", err);
                 return undefined;
             });
     }
