@@ -446,8 +446,6 @@ authoritiesRouter.put(
           ],
         });
 
-        console.log("CREATOR", creator);
-
         await emailService.sendFormBActingApproveCreatorNotice(existing, creator, effectiveDate, expireDate);
         await emailService.sendFormBActingApproveNotice(existing, effectiveDate, expireDate);
 
