@@ -47,8 +47,15 @@
 
           <v-spacer />
 
-          <v-col style="min-width: 220px">
-            <v-btn small color="secondary" class="my-0 mr-5" @click.stop="showFormAPdf">Form A</v-btn>
+          <v-col style="min-width: 220px" class="text-right">
+            <v-btn
+              v-if="userIsActingAdmin || userIsDeptAdmin || userIsFinanceAdmin || userIsSysAdmin"
+              small
+              color="secondary"
+              class="my-0 mr-5"
+              @click.stop="showFormAPdf"
+              >Form A</v-btn
+            >
             <v-btn small color="secondary" class="my-0" @click.stop="showFormBPdf">Form B</v-btn></v-col
           >
         </v-row>
@@ -59,9 +66,10 @@
 </template>
 
 <script>
-import { AUTHORITY_URL } from "@/urls";
+import { AUTHORITY_URL, FORMA_URL } from "@/urls";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
 import moment from "moment";
+import { mapState } from "vuex";
 
 export default {
   components: { PdfPreviewDialog },
@@ -69,6 +77,31 @@ export default {
   props: ["authority"],
   data: () => ({}),
   computed: {
+    ...mapState("home", ["profile"]),
+
+    userIsSysAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
+    },
+    userIsDeptAdmin() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Form B Administrator") &&
+        this.profile.department_admin_for.includes(this.authority.department_code)
+      );
+    },
+    userIsFinanceAdmin() {
+      return this.profile && this.profile.roles && this.profile.roles.includes("Department of Finance");
+    },
+    userIsActingAdmin() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Acting Appointment Administrator") &&
+        this.profile.department_admin_for.includes(this.authority.department_code)
+      );
+    },
+
     isActive() {
       return this.authority.status == "Active";
     },
@@ -124,22 +157,36 @@ export default {
     },
   },
   methods: {
+    pdfURL: function() {
+      return `${AUTHORITY_URL}/${this.authority._id}/pdf`;
+    },
+    formAURL: function() {
+      return `${FORMA_URL}/${this.authority.form_a.activation.file_id}/pdf`;
+    },
+
     showFormAPdf() {
-      if (this.authority.form_a && this.authority.form_a.activation)
+      if (
+        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        this.authority.form_a &&
+        this.authority.form_a.activation
+      ) {
         this.$refs.pdfPreview.show(
           "Signed Form A",
           `${AUTHORITY_URL}/uploads/${this.authority.form_a.activation.file_id}/file`
         );
-      else console.log("No form attached");
+      }
     },
     showFormBPdf() {
-      if (this.authority.upload_signatures) {
+      if (
+        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        this.authority.upload_signatures
+      ) {
         this.$refs.pdfPreview.show(
           "Signed Form B",
           `${AUTHORITY_URL}/uploads/${this.authority.upload_signatures.file_id}/file`
         );
       } else {
-        this.$refs.pdfPreview.show("Form B Preview", `${AUTHORITY_URL}/${this.authority._id}/pdf`);
+        this.$refs.pdfPreview.show("Form B Preview", this.pdfURL());
       }
     },
     openFormB() {
