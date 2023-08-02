@@ -286,21 +286,6 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
         await db.update(item, position);
       }
     }
-
-    // find groups to archive if they are empty
-    let allGroups = await groupDb.getAll({ department_code, status: { $ne: "Archived" } });
-
-    for (let group of allGroups) {
-      let groupPositions = await db.getAll({ position_group_id: group._id });
-      let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
-
-      if (groupPositions.length == 0 && groupPositions2.length == 0) {
-        if (group._id) {
-          group.status = "Archived";
-          await groupDb.update(group._id.toString(), group);
-        }
-      }
-    }
   }
 
   return res.json({ data: result.insertedId });
@@ -451,6 +436,21 @@ formARouter.put(
           "Form A Activation",
           `${req.user.first_name} ${req.user.last_name}`
         );
+
+        // find groups to archive if they are empty
+        let allGroups = await groupDb.getAll({ department_code, status: { $ne: "Archived" } });
+
+        for (let group of allGroups) {
+          let groupPositions = await db.getAll({ position_group_id: group._id });
+          let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
+
+          if (groupPositions.length == 0 && groupPositions2.length == 0) {
+            if (group._id) {
+              group.status = "Archived";
+              await groupDb.update(group._id.toString(), group);
+            }
+          }
+        }
 
         delete item._id;
         await groupDb.update(id, item);
