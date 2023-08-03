@@ -21,6 +21,7 @@ import { CleanFilename, FormatCoding } from "../utils/formatters";
 
 import { checkJwt, loadUser, isFormBAdmin, isFormBOrActingAdmin } from "../middleware/authz.middleware";
 import { API_PORT } from "../config";
+import { ObjectId } from "mongodb";
 
 const questService = new QuestService();
 const emailService = new EmailService();
@@ -103,7 +104,6 @@ authoritiesRouter.post(
   "/account-search",
   checkJwt,
   loadUser,
-  isFormBOrActingAdmin,
   [
     body("term")
       .notEmpty()
@@ -219,7 +219,7 @@ authoritiesRouter.put(
   "/:id",
   checkJwt,
   loadUser,
-  isFormBAdmin,
+  isFormBOrActingAdmin,
   [param("id").isMongoId().notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -261,7 +261,11 @@ authoritiesRouter.put(
         });
 
         let creator = await userDb.getAll({
-          $or: [{ _id: existing.created_by_id }, { _id: existing.created_by_id.toString() }],
+          $or: [
+            { _id: existing.created_by_id },
+            { _id: existing.created_by_id.toString() },
+            { _id: new ObjectId(existing.created_by_id) },
+          ],
         });
 
         await emailService.sendFormBUpload(
@@ -352,7 +356,11 @@ authoritiesRouter.put(
         });
 
         let creator = await userDb.getAll({
-          $or: [{ _id: existing.created_by_id }, { _id: existing.created_by_id.toString() }],
+          $or: [
+            { _id: existing.created_by_id },
+            { _id: existing.created_by_id.toString() },
+            { _id: new ObjectId(existing.created_by_id) },
+          ],
         });
 
         await emailService.sendFormBApprove(
@@ -391,7 +399,11 @@ authoritiesRouter.put(
         });
 
         let creator = await userDb.getAll({
-          $or: [{ _id: existing.created_by_id }, { _id: existing.created_by_id.toString() }],
+          $or: [
+            { _id: existing.created_by_id },
+            { _id: existing.created_by_id.toString() },
+            { _id: new ObjectId(existing.created_by_id) },
+          ],
         });
 
         await emailService.sendFormBReject(
@@ -410,6 +422,32 @@ authoritiesRouter.put(
           action: "Supervisor Approved Acting Appointment",
           previous_value: existing,
         });
+
+        let effectiveDate = "";
+        let expireDate = "";
+
+        if (req.body.activation) {
+          for (let act of req.body.activation) {
+            if (act.editItem == true) {
+              effectiveDate = moment(act.date).format("YYYY-MM-DD");
+              expireDate = moment(act.expire_date).format("YYYY-MM-DD");
+              delete act.editItem;
+            }
+          }
+        }
+
+        //console.log("ACTING CREATE", existing)
+
+        let creator = await userDb.getAll({
+          $or: [
+            { _id: existing.created_by_id },
+            { _id: existing.created_by_id.toString() },
+            { _id: new ObjectId(existing.created_by_id) },
+          ],
+        });
+
+        await emailService.sendFormBActingApproveCreatorNotice(existing, creator, effectiveDate, expireDate);
+        await emailService.sendFormBActingApproveNotice(existing, effectiveDate, expireDate);
 
         await db.update(id, req.body);
       } else if (save_action == "SupervisorRejectActing") {

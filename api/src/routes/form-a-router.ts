@@ -286,21 +286,6 @@ formARouter.post("/department/:department_code", checkJwt, loadUser, async (req:
         await db.update(item, position);
       }
     }
-
-    // find groups to archive if they are empty
-    let allGroups = await groupDb.getAll({ department_code, status: { $ne: "Archived" } });
-
-    for (let group of allGroups) {
-      let groupPositions = await db.getAll({ position_group_id: group._id });
-      let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
-  
-      if (groupPositions.length == 0 && groupPositions2.length == 0) {
-        if (group._id) {
-          group.status = "Archived";
-          await groupDb.update(group._id.toString(), group);
-        }
-      }
-    }
   }
 
   return res.json({ data: result.insertedId });
@@ -434,7 +419,11 @@ formARouter.put(
 
         if (item.created_by_id)
           creator = await userDb.getAll({
-            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+            $or: [
+              { _id: item.created_by_id },
+              { _id: item.created_by_id.toString() },
+              { _id: new ObjectId(item.created_by_id) },
+            ],
           });
         else {
           let allUsers = await userDb.getAll();
@@ -447,6 +436,21 @@ formARouter.put(
           "Form A Activation",
           `${req.user.first_name} ${req.user.last_name}`
         );
+
+        // find groups to archive if they are empty
+        let allGroups = await groupDb.getAll({ department_code, status: { $ne: "Archived" } });
+
+        for (let group of allGroups) {
+          let groupPositions = await db.getAll({ position_group_id: group._id });
+          let groupPositions2 = await db.getAll({ position_group_id: group._id?.toString() });
+
+          if (groupPositions.length == 0 && groupPositions2.length == 0) {
+            if (group._id) {
+              group.status = "Archived";
+              await groupDb.update(group._id.toString(), group);
+            }
+          }
+        }
 
         delete item._id;
         await groupDb.update(id, item);
@@ -463,7 +467,11 @@ formARouter.put(
 
         if (item.created_by_id)
           creator = await userDb.getAll({
-            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+            $or: [
+              { _id: item.created_by_id },
+              { _id: item.created_by_id.toString() },
+              { _id: new ObjectId(item.created_by_id) },
+            ],
           });
         else {
           let allUsers = await userDb.getAll();
@@ -493,7 +501,11 @@ formARouter.put(
 
         if (item.created_by_id)
           creator = await userDb.getAll({
-            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+            $or: [
+              { _id: item.created_by_id },
+              { _id: item.created_by_id.toString() },
+              { _id: new ObjectId(item.created_by_id) },
+            ],
           });
         else {
           let allUsers = await userDb.getAll();
@@ -524,7 +536,11 @@ formARouter.put(
 
         if (item.created_by_id)
           creator = await userDb.getAll({
-            $or: [{ _id: item.created_by_id }, { _id: item.created_by_id.toString() }],
+            $or: [
+              { _id: item.created_by_id },
+              { _id: item.created_by_id.toString() },
+              { _id: new ObjectId(item.created_by_id) },
+            ],
           });
         else {
           let allUsers = await userDb.getAll();

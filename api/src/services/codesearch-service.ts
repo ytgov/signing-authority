@@ -13,12 +13,13 @@ export class CodeSearchService {
     let department_code = code.substring(0, 2);
 
     let today = moment().startOf("day").format("YYYY-MM-DD");
-    let date = moment(asAtDate).toDate();
+    let date = moment(asAtDate).endOf("day").toDate();
 
-    let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
+    //let bigList = await this.db.getAll({ department_code, create_date: { $lte: date } });
+    let bigListNoDate = await this.db.getAll({ department_code });
     let littleList = new Array<Authority>();
 
-    for (let item of bigList) {
+    for (let item of bigListNoDate) {
       let foundMatch = false;
 
       for (let line of item.authority_lines) {

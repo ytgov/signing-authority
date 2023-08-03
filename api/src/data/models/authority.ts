@@ -64,6 +64,7 @@ export interface ActivationRecord {
   approve_user_email: string;
   approve_user_date?: Date;
   reject_user_date?: Date;
+  editItem?: boolean;
 
   file?: StoredFile;
   memo?: StoredFile;
