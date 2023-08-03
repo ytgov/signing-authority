@@ -416,6 +416,8 @@ authoritiesRouter.put(
 
         await db.update(id, existing);
       } else if (save_action == "SupervisorApproveActing") {
+        delete existing.audit_lines;
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -436,8 +438,6 @@ authoritiesRouter.put(
           }
         }
 
-        //console.log("ACTING CREATE", existing)
-
         let creator = await userDb.getAll({
           $or: [
             { _id: existing.created_by_id },
@@ -451,6 +451,8 @@ authoritiesRouter.put(
 
         await db.update(id, req.body);
       } else if (save_action == "SupervisorRejectActing") {
+        delete existing.audit_lines;
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -460,6 +462,8 @@ authoritiesRouter.put(
 
         await db.update(id, req.body);
       } else if (save_action == "ActivationChange") {
+        delete existing.audit_lines;
+        
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -469,6 +473,8 @@ authoritiesRouter.put(
 
         await db.update(id, req.body);
       } else if (save_action == "ActivationRemove") {
+        delete existing.audit_lines;
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
