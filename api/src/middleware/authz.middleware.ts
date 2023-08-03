@@ -79,6 +79,7 @@ export async function isFormBOrActingAdmin(req: Request, res: Response, next: Ne
 
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
+  if (roles.includes("Department of Finance")) return next();
   if (roles.includes("Form B Administrator") && department_admin_for.includes(department_code)) return next();
   if (roles.includes("Acting Appointment Administrator")) {
     if (!department_code) return next();
