@@ -79,10 +79,23 @@ export async function isFormBOrActingAdmin(req: Request, res: Response, next: Ne
 
   // these folks can do it all!
   if (roles.includes("System Admin")) return next();
+  if (roles.includes("Department of Finance")) return next();
   if (roles.includes("Form B Administrator") && department_admin_for.includes(department_code)) return next();
   if (roles.includes("Acting Appointment Administrator")) {
     if (!department_code) return next();
     if (department_code && department_admin_for.includes(department_code)) return next();
+  }
+
+  if (req.body && req.body.save_action && req.body.activation && req.user.email) {
+    let action = req.body.save_action;
+    let supervisors = req.body.activation.map((s: any) => s.approve_user_email);
+
+    if (
+      (action == "SupervisorApproveActing" || action == "SupervisorRejectActing") &&
+      supervisors.includes(req.user.email)
+    ) {
+      return next();
+    }
   }
 
   return res.status(403).send(`You do not have Form B Administrator on ${department_code}`);

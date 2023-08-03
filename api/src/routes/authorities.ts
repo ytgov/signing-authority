@@ -416,6 +416,8 @@ authoritiesRouter.put(
 
         await db.update(id, existing);
       } else if (save_action == "SupervisorApproveActing") {
+        delete existing.audit_lines;
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -425,25 +427,21 @@ authoritiesRouter.put(
 
         let effectiveDate = "";
         let expireDate = "";
+        let creatorId = "";
 
         if (req.body.activation) {
           for (let act of req.body.activation) {
             if (act.editItem == true) {
               effectiveDate = moment(act.date).format("YYYY-MM-DD");
               expireDate = moment(act.expire_date).format("YYYY-MM-DD");
+              creatorId = act.activate_user_id;
               delete act.editItem;
             }
           }
         }
 
-        //console.log("ACTING CREATE", existing)
-
         let creator = await userDb.getAll({
-          $or: [
-            { _id: existing.created_by_id },
-            { _id: existing.created_by_id.toString() },
-            { _id: new ObjectId(existing.created_by_id) },
-          ],
+          $or: [{ _id: creatorId }, { _id: creatorId.toString() }, { _id: new ObjectId(creatorId) }],
         });
 
         await emailService.sendFormBActingApproveCreatorNotice(existing, creator, effectiveDate, expireDate);
@@ -451,6 +449,8 @@ authoritiesRouter.put(
 
         await db.update(id, req.body);
       } else if (save_action == "SupervisorRejectActing") {
+        delete existing.audit_lines;
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -460,6 +460,8 @@ authoritiesRouter.put(
 
         await db.update(id, req.body);
       } else if (save_action == "ActivationChange") {
+        delete existing.audit_lines;
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -469,6 +471,8 @@ authoritiesRouter.put(
 
         await db.update(id, req.body);
       } else if (save_action == "ActivationRemove") {
+        delete existing.audit_lines;
+
         req.body.audit_lines.push({
           date: new Date(),
           user_name: `${req.user.first_name} ${req.user.last_name}`,
