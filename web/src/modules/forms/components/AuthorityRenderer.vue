@@ -137,7 +137,7 @@ export default {
         }
       }
 
-      if (hasExpire) return `- Expires ${longest.from(moment().startOf("day"))}`;
+      if (hasExpire) return `- Expires ${longest.endOf("day").from(moment())}`;
       return "";
     },
     scheduledIn() {
