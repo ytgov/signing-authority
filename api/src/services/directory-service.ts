@@ -70,6 +70,7 @@ export class DirectoryService {
               // get rid of results for external people like contractors
               if (dir.userPrincipalName.toLowerCase().endsWith("xnet.gov.yk.ca")) continue;
               if (dir.userPrincipalName.toLowerCase().endsWith("yukongovernment.onmicrosoft.com")) continue;
+              if (dir.userPrincipalName.toLowerCase().endsWith("-susp@ynet.gov.yk.ca")) continue;
               if (dir.userPrincipalName.toLowerCase().startsWith("admin")) continue;
               if ((dir.jobTitle || "").toLowerCase() == "yg contractor") continue;
 
