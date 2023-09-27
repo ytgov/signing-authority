@@ -46,13 +46,11 @@ export class YesnetService {
 
       let pieces = terms.replace(".", " ").replace("&", " ").split(" ");
       let queryStmts = new Array<string>();
-      //queryStmts.push(`(not startsWith(jobTitle,'Student')`)
 
       for (let piece of pieces) {
         piece = piece.trim();
 
         if (piece == "") continue;
-
 
         queryStmts.push(
           `(startsWith(givenName,'${piece}') or startsWith(surname,'${piece}') or startsWith(userprincipalname,'${piece}') or startsWith(jobTitle, '${piece}') )`
@@ -65,7 +63,9 @@ export class YesnetService {
       //return axios.get<AzureADUserGetResponse>(`https://graph.microsoft.com/v1.0/users?$count=true&$filter=(not startsWith(jobTitle, 'Student')) AND ${queryStmts.join(" AND ")} and endsWith(mail, '@yukon.ca')${selectStmt}`,
       return axios
         .get<AzureADUserGetResponse>(
-          `https://graph.microsoft.com/v1.0/users?$count=true&$filter=(not startsWith(jobTitle, 'Student')) AND ${queryStmts.join(" AND ")} ${selectStmt}`,
+          `https://graph.microsoft.com/v1.0/users?$count=true&$filter=(not startsWith(jobTitle, 'Student')) AND ${queryStmts.join(
+            " AND "
+          )} ${selectStmt}`,
           { headers: this.authHeader }
         )
         .then((resp) => {
@@ -73,10 +73,6 @@ export class YesnetService {
             let list = new Array<any>();
 
             for (let dir of resp.data.value) {
-
-
-              console.log(dir)
-
               // get rid of results for external people like contractors
               if (dir.userPrincipalName.toLowerCase().endsWith("xnet.gov.yk.ca")) continue;
               if (dir.userPrincipalName.toLowerCase().endsWith("yukongovernment.onmicrosoft.com")) continue;

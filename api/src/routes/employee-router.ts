@@ -69,9 +69,7 @@ employeeRouter.post(
     await directoryService.connect();
     await yesnetService.connect();
     let results = await directoryService.search(terms);
-
     let yesnetResults = await yesnetService.search(terms);
-    console.log("YESNET RESULTS", yesnetResults)
 
     return res.json({ data: [...results, ...yesnetResults] });
   }
