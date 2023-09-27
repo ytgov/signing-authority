@@ -37,6 +37,8 @@ export class DirectoryService {
       if (moment().isAfter(this.validUntil)) {
         this.connected = false;
         await this.connect();
+
+        if (!this.connected) return [];
       }
 
       let pieces = terms.replace(".", " ").replace("&", " ").split(" ");
@@ -55,7 +57,6 @@ export class DirectoryService {
       const selectStmt =
         "&$select=surname,givenName,department,userPrincipalName,mail,jobTitle,officeLocation,division,manager";
 
-      //return axios.get<AzureADUserGetResponse>(`https://graph.microsoft.com/v1.0/users?$count=true&$filter=${queryStmts.join(" AND ")} and endsWith(mail, '@yukon.ca')${selectStmt}`,
       return axios
         .get<AzureADUserGetResponse>(
           `https://graph.microsoft.com/v1.0/users?$count=true&$filter=${queryStmts.join(" AND ")} ${selectStmt}`,

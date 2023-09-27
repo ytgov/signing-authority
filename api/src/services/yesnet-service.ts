@@ -5,8 +5,6 @@ import { AzureADUserGetResponse } from "./directory-service";
 
 const AD_SCOPE = "https://graph.microsoft.com/.default";
 
-console.log(YESNET_CLIENT_ID, YESNET_CLIENT_SECRET, YESNET_TENANT_ID);
-
 export class YesnetService {
   connected = false;
   token = "";
@@ -60,7 +58,6 @@ export class YesnetService {
       const selectStmt =
         "&$select=surname,givenName,department,userPrincipalName,mail,jobTitle,officeLocation,division,manager";
 
-      //return axios.get<AzureADUserGetResponse>(`https://graph.microsoft.com/v1.0/users?$count=true&$filter=(not startsWith(jobTitle, 'Student')) AND ${queryStmts.join(" AND ")} and endsWith(mail, '@yukon.ca')${selectStmt}`,
       return axios
         .get<AzureADUserGetResponse>(
           `https://graph.microsoft.com/v1.0/users?$count=true&$filter=(not startsWith(jobTitle, 'Student')) AND ${queryStmts.join(
