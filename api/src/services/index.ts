@@ -8,6 +8,7 @@ export * from "./user-service";
 export * from "./department-service";
 export * from "./limit-service";
 export * from "./vroozi-service";
+export * from "./yesnet-service";
 
 export interface QueryStatement {
   field: string;

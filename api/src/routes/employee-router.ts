@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import _, { join } from "lodash";
-import { DirectoryService, GenericService } from "../services";
+import { DirectoryService, GenericService, YesnetService } from "../services";
 import { Authority, Department, Employee, Position, setAuthorityStatus } from "../data/models";
 import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
@@ -12,6 +12,7 @@ export const employeeRouter = express.Router();
 employeeRouter.use(RequiresData, checkJwt);
 
 const directoryService = new DirectoryService();
+const yesnetService = new YesnetService();
 
 employeeRouter.get("/", async (req: Request, res: Response) => {
   //return all the authorites assigned to the account
@@ -66,9 +67,13 @@ employeeRouter.post(
     let { terms } = req.body;
 
     await directoryService.connect();
+    await yesnetService.connect();
     let results = await directoryService.search(terms);
 
-    return res.json({ data: results });
+    let yesnetResults = await yesnetService.search(terms);
+    console.log("YESNET RESULTS", yesnetResults)
+
+    return res.json({ data: [...results, ...yesnetResults] });
   }
 );
 
