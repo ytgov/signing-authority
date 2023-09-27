@@ -1,10 +1,11 @@
 import axios from "axios";
 import moment from "moment";
-import { AD_CLIENT_ID, AD_CLIENT_SECRET, AD_TENANT_ID } from "../config";
+import { YESNET_CLIENT_ID, YESNET_CLIENT_SECRET, YESNET_TENANT_ID } from "../config";
+import { AzureADUserGetResponse } from "./directory-service";
 
 const AD_SCOPE = "https://graph.microsoft.com/.default";
 
-export class DirectoryService {
+export class YesnetService {
   connected = false;
   token = "";
   authHeader = {};
@@ -15,10 +16,10 @@ export class DirectoryService {
   async connect(): Promise<any> {
     if (this.connected) return;
 
-    let body = `client_id=${AD_CLIENT_ID}&scope=${AD_SCOPE}&client_secret=${AD_CLIENT_SECRET}&grant_type=client_credentials`;
+    let body = `client_id=${YESNET_CLIENT_ID}&scope=${AD_SCOPE}&client_secret=${YESNET_CLIENT_SECRET}&grant_type=client_credentials`;
 
     return axios
-      .post(`https://login.microsoftonline.com/${AD_TENANT_ID}/oauth2/v2.0/token`, body, {
+      .post(`https://login.microsoftonline.com/${YESNET_TENANT_ID}/oauth2/v2.0/token`, body, {
         headers: { "Content-type": "application/x-www-form-urlencoded" },
       })
       .then((resp) => {
@@ -28,7 +29,7 @@ export class DirectoryService {
         this.validUntil = moment().add(resp.data.expires_in, "seconds");
       })
       .catch((error) => {
-        console.error("GRAPH ERROR: ", error);
+        console.error("GRAPH ERROR: ", error.response.data);
       });
   }
 
@@ -59,7 +60,9 @@ export class DirectoryService {
 
       return axios
         .get<AzureADUserGetResponse>(
-          `https://graph.microsoft.com/v1.0/users?$count=true&$filter=${queryStmts.join(" AND ")} ${selectStmt}`,
+          `https://graph.microsoft.com/v1.0/users?$count=true&$filter=(not startsWith(jobTitle, 'Student')) AND ${queryStmts.join(
+            " AND "
+          )} ${selectStmt}`,
           { headers: this.authHeader }
         )
         .then((resp) => {
@@ -105,37 +108,11 @@ export class DirectoryService {
           }
         })
         .catch((error) => {
-          console.log("GRAPH ERROR", error);
+          console.log("GRAPH ERROR", error.response.data);
           return [];
         });
     }
 
     return [];
   }
-}
-
-export interface AzureADGroupGetResponse {
-  value: AzureADGroup[];
-}
-
-export interface AzureADUserGetResponse {
-  value: AzureADUser[];
-}
-
-export interface AzureADGroup {
-  id: string;
-  displayName: string;
-  members: AzureADUser[];
-}
-
-export interface AzureADUser {
-  id: string;
-  givenName: string;
-  surname: string;
-  displayName: string;
-  mail: string;
-  userPrincipalName: string;
-  jobTitle: string;
-  department: string;
-  officeLocation: string;
 }

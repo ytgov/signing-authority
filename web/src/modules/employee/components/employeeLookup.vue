@@ -87,6 +87,7 @@ export default {
                 alt: "Existing employee search",
             },
         ],
+        timerId: null
     }),
     methods: {
         ...mapActions("employee", ["searchEmployees", "searchDirectory"]),
@@ -108,6 +109,21 @@ export default {
             this.model = {};
             this.search = "";
         },
+        doDirectorySearch(val) {
+            clearTimeout(this.timerId)
+
+            // delay new call 500ms
+            this.timerId = setTimeout(() => {
+                this.searchDirectory({ terms: val })
+                    .then((res) => {
+                        this.items = res;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
+                    .finally(() => (this.isLoading = false));
+            }, 500)
+        }
     },
     computed: {
         searchIcon() {
@@ -138,14 +154,7 @@ export default {
                     })
                     .finally(() => (this.isLoading = false));
             } else {
-                this.searchDirectory({ terms: val })
-                    .then((res) => {
-                        this.items = res;
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    })
-                    .finally(() => (this.isLoading = false));
+                this.doDirectorySearch(val)
             }
         },
     },
