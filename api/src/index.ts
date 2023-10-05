@@ -18,6 +18,7 @@ import {
 //import { configureLocalAuthentication } from "./routes/auth-local";
 import { RequiresData } from "./middleware";
 import { Seed } from "./data/seed";
+import { SchedulerService } from "./services";
 
 //runMigrations();
 
@@ -52,6 +53,8 @@ app.use(
 );
 
 if (SUSPEND_EMAIL) console.log("** Sending of emails is currently suspended");
+
+const scheduler = new SchedulerService();
 
 app.get("/seed", RequiresData, async (req: Request, res: Response) => {
   await Seed(req.store);

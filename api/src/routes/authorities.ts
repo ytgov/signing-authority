@@ -6,7 +6,15 @@ import { body, param } from "express-validator";
 import { ExpressHandlebars } from "express-handlebars";
 import { uploadsRouter } from "./uploads";
 import { ReturnValidationErrors } from "../middleware";
-import { CodeSearchService, EmailService, GenericService, LimitService, QuestService, UserService } from "../services";
+import {
+  CodeSearchService,
+  EmailService,
+  GenericService,
+  IntegrationService,
+  LimitService,
+  QuestService,
+  UserService,
+} from "../services";
 import {
   Authority,
   FormBAuthorityLine,
@@ -26,6 +34,7 @@ import { ObjectId } from "mongodb";
 const questService = new QuestService();
 const emailService = new EmailService();
 const limitService = new LimitService();
+const integrationService = new IntegrationService();
 
 export const authoritiesRouter = express.Router();
 
@@ -170,6 +179,7 @@ authoritiesRouter.post(
       });
 
       await db.update(id, existing);
+      await integrationService.checkAuthorityChange(existing);
     }
     let item = await loadSingleAuthority(req, id);
     return res.json({ data: item });
@@ -206,6 +216,7 @@ authoritiesRouter.put(
       existing.cancel_date = new Date();
 
       await db.update(id, existing);
+      await integrationService.checkAuthorityChange(existing);
 
       let item = await loadSingleAuthority(req, id);
       return res.json({ data: item });
@@ -383,6 +394,7 @@ authoritiesRouter.put(
 
         await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"));
 
+        await integrationService.checkAuthorityChange(existing);
         await db.update(id, existing);
       } else if (save_action == "FinanceApproveReject") {
         existing.department_reviews = undefined;
@@ -469,6 +481,7 @@ authoritiesRouter.put(
           previous_value: existing,
         });
 
+        await integrationService.checkAuthorityChange({ ...req.body, employee: existing.employee });
         await db.update(id, req.body);
       } else if (save_action == "ActivationRemove") {
         delete existing.audit_lines;
@@ -480,6 +493,7 @@ authoritiesRouter.put(
           previous_value: existing,
         });
 
+        await integrationService.checkAuthorityChange({ ...req.body, employee: existing.employee });
         await db.update(id, req.body);
       }
 

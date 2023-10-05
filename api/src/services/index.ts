@@ -3,11 +3,12 @@ export * from "./directory-service";
 export * from "./email-service";
 export * from "./file-service";
 export * from "./generic-service";
+export * from "./integration-service";
 export * from "./quest-service";
 export * from "./user-service";
 export * from "./department-service";
 export * from "./limit-service";
-export * from "./vroozi-service";
+export * from "./scheduler-service";
 export * from "./yesnet-service";
 
 export interface QueryStatement {
