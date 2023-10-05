@@ -5,7 +5,11 @@ import { setAuthorityStatus, setHistoricAuthorityStatus } from "../data/models";
 import moment from "moment";
 
 export class SchedulerService {
-  readonly cronSchedule = "*/2 * * * *";
+  // every minute - for testing purposes
+  //readonly cronSchedule = "*/1 * * * *";
+
+  // daily at 1:00am
+  readonly cronSchedule = "0 1 * * *";
 
   constructor() {
     const schedule = new RecurrenceRule();
@@ -45,6 +49,6 @@ export class SchedulerService {
     }
 
     // check for authorities that
-    console.log("#   Job Completed at", new Date(), moment(startTime).from(new Date()));
+    console.log("#   Job Completed at", new Date(), moment(new Date()).from(startTime));
   }
 }
