@@ -37,7 +37,7 @@ export class QuestService {
     return axios
       .get(`${FM_ACCOUNT_LOOKUP_URL}/account/${input}`, { headers: FM_AUTH_HEADER })
       .then(async (resp) => {
-        let count = (resp.data.count as Number) || 0;
+        let count = (resp.data.count as number) || 0;
         let val = count > 0;
 
         if (!this.cache.has(input)) this.cache.set(input, val);
