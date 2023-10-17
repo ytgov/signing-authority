@@ -3,7 +3,7 @@
  */
 
 import Vue from "vue";
-import createAuth0Client from "@auth0/auth0-spa-js";
+import { createAuth0Client } from "@auth0/auth0-spa-js";
 import { secureDelete, secureGet, securePut, securePost } from "@/store/jwt";
 import { getAuthConfig } from "./getAuthConfig";
 import { apiConfigUrl } from "@/config";
@@ -21,8 +21,7 @@ export const getInstance = () => instance;
  */
 
 export const useAuth0 = ({
-  onRedirectCallback = (appState) => {
-    console.log("APPSTTE", appState);
+  onRedirectCallback = () => {
     window.history.replaceState({}, document.title, window.location.pathname);
   },
   redirectUri = window.location.origin,
@@ -88,9 +87,15 @@ export const useAuth0 = ({
       this.options = await getAuthConfig(apiConfigUrl);
 
       this.auth0Client = await createAuth0Client({
-        ...this.options,
+        //...this.options,
+        clientId: this.options.clientId,
+        domain: this.options.domain,
+
         // ...pluginOptions,
-        redirect_uri: redirectUri,
+        authorizationParams: {
+          redirect_uri: redirectUri,
+          audience: this.options.audience,
+        },
       });
 
       try {
