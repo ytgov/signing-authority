@@ -26,10 +26,12 @@ export class IntegrationService {
   }
 
   async notifyOfAuthorityChange(email: string): Promise<any> {
-    console.log("Sending Authority Change to Integration to " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
+    console.log("Sending Authority Change to Integration at " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
 
     axios
-      .get(`${INTEGRATION_ENDPOINT_URL}/${email}`, { httpsAgent: new https.Agent({ rejectUnauthorized: false }) })
+      .get(`${INTEGRATION_ENDPOINT_URL}/authority-changed/${email}`, {
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+      })
       .then((resp) => {
         console.log("Successfully received data: ", resp.data);
         return resp.data;
