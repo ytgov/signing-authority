@@ -72,11 +72,11 @@ export const useAuth0 = ({
       get(url) {
         return secureGet(url);
       },
-      put(url, body) {
-        return securePut(url, body);
+      put(url, body, config) {
+        return securePut(url, body, config);
       },
-      post(url, body) {
-        return securePost(url, body);
+      post(url, body, config) {
+        return securePost(url, body, config);
       },
       delete(url) {
         return secureDelete(url);
