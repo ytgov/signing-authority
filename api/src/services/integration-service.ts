@@ -34,7 +34,7 @@ export class IntegrationService {
         return resp.data;
       })
       .catch((err) => {
-        console.log(err.response.status, err.response.data);
+        console.log(err.response?.status, err.response?.data);
       });
   }
 }
