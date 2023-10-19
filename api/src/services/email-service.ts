@@ -192,7 +192,7 @@ export class EmailService {
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
 
-      console.log("-- EMAIL FORM-A FINREJECT SENDING", recipient.email, action);
+      console.log("-- EMAIL FORM-A UPLOAD SENDING", recipient.email, action);
       await this.sendEmail(fullName, recipient.email, "Form A PDF Upload", content);
     }
   }

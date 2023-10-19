@@ -599,8 +599,6 @@ export default {
     async uploadSigned() {
       this.item.save_action = "UploadSignatures";
 
-      console.log("SENDING UPLOAD", this.item)
-
       this.savePendingGroupWithFile(this.item).then(() => {
         this.loadFormA();
         this.showUploadDialog = false;
