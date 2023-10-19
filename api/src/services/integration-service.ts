@@ -25,7 +25,7 @@ export class IntegrationService {
   }
 
   async notifyOfAuthorityChange(email: string): Promise<any> {
-    console.log("Sending Authority Change to Integration to " + `${INTEGRATION_ENDPOINT_URL}/${email}`)
+    console.log("Sending Authority Change to Integration to " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
 
     axios
       .get(`${INTEGRATION_ENDPOINT_URL}/${email}`)
@@ -34,7 +34,8 @@ export class IntegrationService {
         return resp.data;
       })
       .catch((err) => {
-        console.log(err.response?.status, err.response?.data);
+        console.log("ERROR: notifyOfAuthorityChange", err.response?.status, err.response?.data);
+        console.log("INTEGRATION ERROR:", err);
       });
   }
 }
