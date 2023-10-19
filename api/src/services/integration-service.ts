@@ -1,4 +1,5 @@
 import axios from "axios";
+import https from "https";
 import { INTEGRATION_ENDPOINT_URL } from "../config";
 import { Authority, setAuthorityStatus, setHistoricAuthorityStatus } from "../data/models";
 import moment from "moment";
@@ -28,7 +29,7 @@ export class IntegrationService {
     console.log("Sending Authority Change to Integration to " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
 
     axios
-      .get(`${INTEGRATION_ENDPOINT_URL}/${email}`)
+      .get(`${INTEGRATION_ENDPOINT_URL}/${email}`, { httpsAgent: new https.Agent({ rejectUnauthorized: false }) })
       .then((resp) => {
         console.log("Successfully received data: ", resp.data);
         return resp.data;
