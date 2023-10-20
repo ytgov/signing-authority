@@ -9,13 +9,14 @@ export class IntegrationService {
   async checkAuthorityChange(baseAuthority: Authority): Promise<any> {
     let authority = cloneDeep(baseAuthority);
     let yesterdayAuthority = cloneDeep(baseAuthority);
+
     setHistoricAuthorityStatus(yesterdayAuthority, moment().subtract(1, "day").toDate());
     setAuthorityStatus(authority);
 
     let email = authority.employee.email;
     let currentStatus = authority.status;
 
-    console.log("checkAuthorityChange", email, authority._id, currentStatus, yesterdayAuthority.status);
+    console.log("CheckAuthorityChange", email, currentStatus, yesterdayAuthority.status);
 
     // one must be active, but not both
     if (currentStatus == "Active" || yesterdayAuthority.status == "Active") {
@@ -26,7 +27,7 @@ export class IntegrationService {
   }
 
   async notifyOfAuthorityChange(email: string): Promise<any> {
-    console.log("Sending Authority Change to Integration at " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
+    console.log("Sending Authority Change Notification to " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
 
     axios
       .get(`${INTEGRATION_ENDPOINT_URL}/authority-changed/${email}`, {

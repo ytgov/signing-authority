@@ -43,8 +43,10 @@ export class SchedulerService {
       setAuthorityStatus(auth);
       setHistoricAuthorityStatus(yesterdayAuth, yesterday);
 
+      console.log("#  Checking", auth.employee.email, auth.employee.title, auth.status, yesterdayAuth.status)
+
       if (auth.status != yesterdayAuth.status && (auth.status == "Active" || yesterdayAuth.status == "Active")) {
-        console.log("#   Auth changed for:", auth.employee.email, auth.employee.title);
+        console.log("##  Auth changed for:", auth.employee.email, auth.employee.title);
       }
     }
 
