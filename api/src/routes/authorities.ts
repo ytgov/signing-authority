@@ -394,8 +394,8 @@ authoritiesRouter.put(
 
         await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"));
 
-        await integrationService.checkAuthorityChange(existing);
         await db.update(id, existing);
+        await integrationService.checkAuthorityChange(existing);
       } else if (save_action == "FinanceApproveReject") {
         existing.department_reviews = undefined;
         existing.upload_signatures = undefined;
@@ -481,8 +481,8 @@ authoritiesRouter.put(
           previous_value: existing,
         });
 
-        await integrationService.checkAuthorityChange({ ...req.body, employee: existing.employee });
         await db.update(id, req.body);
+        await integrationService.checkAuthorityChange({ ...req.body, employee: existing.employee });
       } else if (save_action == "ActivationRemove") {
         delete existing.audit_lines;
 
@@ -493,8 +493,8 @@ authoritiesRouter.put(
           previous_value: existing,
         });
 
-        await integrationService.checkAuthorityChange({ ...req.body, employee: existing.employee });
         await db.update(id, req.body);
+        await integrationService.checkAuthorityChange({ ...req.body, employee: existing.employee });
       }
 
       return res.send("WORKING");

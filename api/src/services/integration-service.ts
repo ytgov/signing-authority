@@ -19,14 +19,15 @@ export class IntegrationService {
     console.log("CheckAuthorityChange", email, currentStatus, yesterdayAuthority.status);
 
     // one must be active, but not both
-    if (currentStatus == "Active" || yesterdayAuthority.status == "Active") {
-      if (currentStatus != yesterdayAuthority.status) {
+    //if (currentStatus == "Active" || yesterdayAuthority.status == "Active") {
+     // if (currentStatus != yesterdayAuthority.status || currentStatus?.startsWith("Inactive")) {
         this.notifyOfAuthorityChange(email);
-      }
-    }
+     // }
+    //}
   }
 
   async notifyOfAuthorityChange(email: string): Promise<any> {
+    email = email.toLowerCase();
     console.log("Sending Authority Change Notification to " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
 
     axios
@@ -39,7 +40,6 @@ export class IntegrationService {
       })
       .catch((err) => {
         console.log("ERROR: notifyOfAuthorityChange", err.response?.status, err.response?.data);
-        console.log("INTEGRATION ERROR:", err);
       });
   }
 }
