@@ -20,26 +20,31 @@ export class IntegrationService {
 
     // one must be active, but not both
     //if (currentStatus == "Active" || yesterdayAuthority.status == "Active") {
-     // if (currentStatus != yesterdayAuthority.status || currentStatus?.startsWith("Inactive")) {
-        this.notifyOfAuthorityChange(email);
-     // }
+    // if (currentStatus != yesterdayAuthority.status || currentStatus?.startsWith("Inactive")) {
+    this.notifyOfAuthorityChange(email);
+    // }
     //}
   }
 
   async notifyOfAuthorityChange(email: string): Promise<any> {
     email = email.toLowerCase();
-    console.log("Sending Authority Change Notification to " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
 
-    axios
-      .get(`${INTEGRATION_ENDPOINT_URL}/authority-changed/${email}`, {
-        httpsAgent: new https.Agent({ rejectUnauthorized: false }),
-      })
-      .then((resp) => {
-        console.log("Successfully received data: ", resp.data);
-        return resp.data;
-      })
-      .catch((err) => {
-        console.log("ERROR: notifyOfAuthorityChange", err.response?.status, err.response?.data);
-      });
+    if (INTEGRATION_ENDPOINT_URL && INTEGRATION_ENDPOINT_URL.length > 0) {
+      console.log("Sending Authority Change Notification to " + `${INTEGRATION_ENDPOINT_URL}/${email}`);
+
+      axios
+        .get(`${INTEGRATION_ENDPOINT_URL}/authority-changed/${email}`, {
+          httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+        })
+        .then((resp) => {
+          console.log("Successfully received data: ", resp.data);
+          return resp.data;
+        })
+        .catch((err) => {
+          console.log("ERROR: notifyOfAuthorityChange", err.response?.status, err.response?.data);
+        });
+    } else {
+      console.log("Integration is not configured");
+    }
   }
 }
