@@ -49,6 +49,14 @@ const actions = {
     }
     return result;
   },
+  async unlinkUser({ dispatch }, item) {
+    const auth = getInstance();
+    const result = await auth.put(`${USER_URL}/${item.email}/unlink`, {});
+    if (result.status === 200) {
+      dispatch("loadUsers");
+    }
+    return result;
+  },
   async createUser({ dispatch }, item) {
     const auth = getInstance();
 
