@@ -2,7 +2,7 @@
   <div>
     <v-card class="mb-6" color="#fff2d5" :loading="loadingMyActions" :disabled="loadingMyActions != ''">
       <v-card-title class="d-flex">
-        Pending Actions
+        My Pending Actions
         <v-spacer></v-spacer>
         <v-btn icon color="primary" class="my-0" title="Reload" @click="loadActions">
           <v-icon>mdi-refresh</v-icon>
