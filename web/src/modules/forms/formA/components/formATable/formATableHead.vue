@@ -14,7 +14,15 @@
         ></v-text-field>
         <v-text-field label="Program" v-model="formA.program_branch" @change="itemChanged"></v-text-field>
         <v-text-field label="Activity" v-model="formA.activity" @change="itemChanged"></v-text-field>
-        <v-text-field label="Position" v-model="formA.position" hide-details @change="itemChanged"></v-text-field>
+        <v-text-field
+          label="Position"
+          v-model="formA.position"
+          :hide-details="formA.position.indexOf('Duplicate') < 0"
+          persistent-hint
+          @change="itemChanged"
+          :error="formA.position.indexOf('Duplicate') > 0"
+          hint="Position contains 'Duplicate'"
+        ></v-text-field>
       </th>
       <th colspan="7" style="height: 40px">SPENDING AUTHORITY</th>
       <th rowspan="5" class="rotate" style="height: 140px">
@@ -28,40 +36,20 @@
       <th colspan="6" style="height: 20px">
         SECTION 23 and SECTION 24 ($000)
       </th>
-      
 
-                <th
-                    :rowspan="
-                        formA.authority_lines &&
-                        formA.authority_lines.length > 0
-                            ? '2'
-                            : '3'
-                    "
-                    class="rotate"
-                    :style="
-                        formA.authority_lines &&
-                        formA.authority_lines.length > 0
-                            ? 'border-bottom: none !important;'
-                            : ''
-                    "
-                >
-                    <div
-                        class="ml-2 mr-1"
-                        :style="
-                            formA.authority_lines &&
-                            formA.authority_lines.length > 0
-                                ? 'margin-bottom: -36px !important'
-                                : ''
-                        "
-                    >
-                        (SECTION 29) <br />
-                        CERTIFICATE OF <br />PERFORMANCE
-                    </div>
-                </th>
-
-
-
-
+      <th
+        :rowspan="formA.authority_lines && formA.authority_lines.length > 0 ? '2' : '3'"
+        class="rotate"
+        :style="formA.authority_lines && formA.authority_lines.length > 0 ? 'border-bottom: none !important;' : ''"
+      >
+        <div
+          class="ml-2 mr-1"
+          :style="formA.authority_lines && formA.authority_lines.length > 0 ? 'margin-bottom: -36px !important' : ''"
+        >
+          (SECTION 29) <br />
+          CERTIFICATE OF <br />PERFORMANCE
+        </div>
+      </th>
     </tr>
     <tr>
       <th rowspan="3" class="rotate" style="">

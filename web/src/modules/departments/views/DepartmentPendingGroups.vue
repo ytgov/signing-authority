@@ -8,7 +8,14 @@
 
     <BaseCard :showHeader="true">
       <template v-slot:left>
-        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          clearable
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
 
         <v-select
           label="Status"
@@ -98,13 +105,27 @@ export default {
     await this.loadFormA();
 
     let status = this.$route.query.status || "";
+    let savedSearch = localStorage.getItem("FormA_search");
 
     if (status) {
       this.statusFilter = status;
-      this.filterList();
+      this.search = null;
+      localStorage.setItem("FormA_search", null);
+    } else {
+      let savedStatus = localStorage.getItem("FormA_statusFilter");
+      this.statusFilter = savedStatus ?? "Active";
+      if (savedSearch && savedSearch.length > 0) this.search = savedSearch;
     }
+    this.filterList();
   },
-  watch: {},
+  watch: {
+    search(newVal) {
+      localStorage.setItem("FormA_search", newVal);
+    },
+    statusFilter(newVal) {
+      localStorage.setItem("FormA_statusFilter", newVal);
+    },
+  },
   computed: {
     ...mapState("department", ["departments"]),
 
