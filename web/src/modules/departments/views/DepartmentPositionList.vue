@@ -8,7 +8,14 @@
 
     <BaseCard :showHeader="true">
       <template v-slot:left>
-        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          clearable
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
         <v-select
           class="ml-5"
           :items="statusOptions"
@@ -162,7 +169,7 @@
 <script>
 /*------ TODO ------*/
 // tidy up HTML code and break into multiple components
-import { cloneDeep, clone, uniq, orderBy } from "lodash";
+import { cloneDeep, clone, uniq, orderBy, isEmpty } from "lodash";
 import { mapActions, mapGetters, mapState } from "vuex";
 import createFormAButton from "../../forms/formA/components/createFormAButton.vue";
 import PdfPreviewDialog from "@/components/PdfPreviewDialog.vue";
@@ -232,15 +239,44 @@ export default {
     await this.loadFormA();
 
     let status = this.$route.query.status || "";
+    let savedSearch = localStorage.getItem("Position_search");
 
     if (status) {
       this.statusFilter = status;
-      this.filterList();
+      this.search = null;
+      localStorage.setItem("Position_search", null);
+    } else {
+      let savedStatus = localStorage.getItem("Position_statusFilter");
+      this.statusFilter = savedStatus ?? "Any";
+      if (savedSearch && savedSearch.length > 0) this.search = savedSearch;
     }
+
+    let programFilt = localStorage.getItem("programFilter");
+    let activityFilt = localStorage.getItem("activityFilter");
+
+    if (!isEmpty(programFilt)) {
+      this.programFilter = programFilt;
+      if (!isEmpty(activityFilt)) this.activityFilter = activityFilt;
+    }
+
+    this.filterList();
 
     this.loading = false;
   },
-  watch: {},
+  watch: {
+    search(newVal) {
+      localStorage.setItem("Position_search", newVal);
+    },
+    statusFilter(newVal) {
+      localStorage.setItem("Position_statusFilter", newVal);
+    },
+    programFilter(newVal) {
+      localStorage.setItem("programFilter", newVal);
+    },
+    activityFilter(newVal) {
+      localStorage.setItem("activityFilter", newVal);
+    },
+  },
   computed: {
     ...mapState("department", ["departments"]),
     ...mapGetters("department", ["getDepartmentDetails"]),
@@ -372,7 +408,12 @@ export default {
       this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_duplicate);
       this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_minister);
 
-      this.generateFormAList = orderBy(this.generateFormAList, ["program_branch", "activity", "position", "created_on"]);
+      this.generateFormAList = orderBy(this.generateFormAList, [
+        "program_branch",
+        "activity",
+        "position",
+        "created_on",
+      ]);
       this.showGenerateDialog = true;
     },
     async doGenerateFormA() {

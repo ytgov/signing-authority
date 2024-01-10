@@ -1,23 +1,24 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "express-jwt";
+import { GetVerificationKey, expressjwt } from "express-jwt";
 import axios from "axios";
-import jwksRsa from "jwks-rsa";
+import { expressJwtSecret } from "jwks-rsa";
 import { AUTH0_DOMAIN, AUTH0_AUDIENCE } from "../config";
 import { UserService } from "../services";
 import { ObjectId } from "mongodb";
 
-export const checkJwt = jwt({
-  secret: jwksRsa.expressJwtSecret({
+export const checkJwt = expressjwt({
+  secret: expressJwtSecret({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
     jwksUri: `${AUTH0_DOMAIN}.well-known/jwks.json`,
-  }),
-
+  }) as GetVerificationKey,
+  //secret: "secret value",
   // Validate the audience and the issuer.
   audience: AUTH0_AUDIENCE,
   issuer: [AUTH0_DOMAIN],
   algorithms: ["RS256"],
+  requestProperty: "user",
 });
 
 export async function isSystemAdmin(req: Request, res: Response, next: NextFunction) {

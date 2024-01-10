@@ -102,7 +102,8 @@ const actions = {
         return resp.data.data;
       })
       .catch((e) => {
-        window.alert(`Save failed - ${e.response.data}`);});
+        window.alert(`Save failed - ${e.response.data}`);
+      });
   },
   async deletePendingGroup(store, item) {
     const auth = getInstance();

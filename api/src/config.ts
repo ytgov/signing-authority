@@ -79,7 +79,4 @@ export const MAIL_CONFIG = {
 
 export const SUSPEND_EMAIL = process.env.SUSPEND_EMAIL ? true : false;
 
-export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || "";
-export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || "";
-export const AWS_SESSION_TOKEN = process.env.AWS_SESSION_TOKEN || "";
-export const VROOZI_ENDPOINT_URL = process.env.VROOZI_ENDPOINT_URL || "";
+export const INTEGRATION_ENDPOINT_URL = process.env.INTEGRATION_ENDPOINT_URL || "";

@@ -124,3 +124,33 @@ db['SAA-FILES.chunks'].remove({})
 db.runCommand({count: 'SAA-FILES.files'})
 db['SAA-FILES.files'].remove({})
 ```
+
+## Upgrading from MongoDB 5 to 6
+
+Upgrade MongoDB docker image from version tag `mongo:5.0.6` to `mongo:6.0`
+
+Database server should start just fine and run no problem.
+
+Exec into running MongoDB container and open mongosh to move compatibitlity version from 5 to 6
+
+```
+docker exec -it <docker_container_name> bash
+mongosh --username admin
+db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+db.adminCommand( { setFeatureCompatibilityVersion: "6.0" } )
+```
+
+## Upgrading from MongoDB 6 to 7
+
+Upgrade MongoDB docker image from version tag `mongo:6.0` to `mongo:7.0`
+
+Database server should start just fine and run no problem.
+
+Exec into running MongoDB container and open mongosh to move compatibitlity version from 6 to 7
+
+```
+docker exec -it <docker_container_name> bash
+mongosh --username admin
+db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+db.adminCommand( { setFeatureCompatibilityVersion: "7.0", confirm: true } )
+```

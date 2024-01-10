@@ -20,7 +20,7 @@ export class GenericService<T extends MongoEntity> {
         
         return this.db.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: clone })
             .then(result => {
-                if (result.ok == 1)
+                if (result?.ok == 1)
                     return result.value as T;
 
                 return undefined;

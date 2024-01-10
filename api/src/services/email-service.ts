@@ -192,7 +192,7 @@ export class EmailService {
     for (let recipient of users) {
       let fullName = `${recipient.first_name} ${recipient.last_name}`;
 
-      console.log("-- EMAIL FORM-A FINREJECT SENDING", recipient.email, action);
+      console.log("-- EMAIL FORM-A UPLOAD SENDING", recipient.email, action);
       await this.sendEmail(fullName, recipient.email, "Form A PDF Upload", content);
     }
   }
@@ -440,6 +440,8 @@ export class EmailService {
       return null;
     }
 
-    return this.TRANSPORT.sendMail(message);
+    return this.TRANSPORT.sendMail(message).catch((e) => {
+      console.log("Error Sending Email", e);
+    });
   }
 }

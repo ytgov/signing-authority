@@ -1,12 +1,12 @@
 import express, { Request, Response } from "express";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
-import _, { join } from "lodash";
-import { DirectoryService, GenericService, YesnetService } from "../services";
+import _, { join, sortBy } from "lodash";
+import { ActionService, DirectoryService, GenericService, YesnetService } from "../services";
 import { Authority, Department, Employee, Position, setAuthorityStatus } from "../data/models";
 import { body, param } from "express-validator";
 import { ObjectId } from "mongodb";
 import moment from "moment";
-import { checkJwt } from "../middleware/authz.middleware";
+import { checkJwt, loadUser } from "../middleware/authz.middleware";
 
 export const employeeRouter = express.Router();
 employeeRouter.use(RequiresData, checkJwt);
@@ -75,6 +75,13 @@ employeeRouter.post(
   }
 );
 
+employeeRouter.get("/my-actions", loadUser, async (req: Request, res: Response) => {
+  let actionService = new ActionService();
+  let actions = await actionService.getActionsForUser(req.user);
+
+  res.json({ data: actions });
+});
+
 employeeRouter.get("/:id", [param("id").notEmpty()], ReturnValidationErrors, async (req: Request, res: Response) => {
   let autDb = req.store.Authorities as GenericService<Authority>;
   let positionDb = req.store.FormA as GenericService<Position>;
@@ -93,6 +100,27 @@ employeeRouter.get("/:id", [param("id").notEmpty()], ReturnValidationErrors, asy
   }
   res.status(404).send();
 });
+
+employeeRouter.get(
+  "/email/:email",
+  [param("email").notEmpty()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    let autDb = req.store.Authorities as GenericService<Authority>;
+    let positionDb = req.store.FormA as GenericService<Position>;
+    let { email } = req.params;
+    let authorities = await autDb.getAll({ "employee.email": email });
+
+    for (let auth of authorities) {
+      auth.form_a = await positionDb.getById(auth.form_a_id.toString());
+      setAuthorityStatus(auth);
+    }
+
+    authorities = sortBy(authorities, ["status"]);
+
+    return res.json({ data: authorities });
+  }
+);
 
 employeeRouter.put("/:id", [param("id").isMongoId()], ReturnValidationErrors, async (req: Request, res: Response) => {
   let empDb = req.store.Employees as GenericService<Employee>;

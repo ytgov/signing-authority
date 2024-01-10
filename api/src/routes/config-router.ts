@@ -9,7 +9,7 @@ configRouter.post("/", async (req: Request, res: Response) => {
   //have a config service that returns the config variables
   const auth = {
     domain: VUE_APP.VUE_APP_AUTH_DOMAIN,
-    client_id: VUE_APP.VUE_APP_AUTH_CLIENTID,
+    clientId: VUE_APP.VUE_APP_AUTH_CLIENTID,
     audience: VUE_APP.VUE_APP_AUTH_AUDIENCE,
     logout_redirect: VUE_APP.VUE_APP_FRONTEND_URL,
   };

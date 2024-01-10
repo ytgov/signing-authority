@@ -38,7 +38,12 @@
           item-value="dept"
           clearable
         ></v-autocomplete>
+        <div class="d-flex">
+
         <v-btn @click="save" color="primary" class="mt-0">Save</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn v-if="item.sub" @click="unlink" color="secondary" small class="mt-0 ">Unlink Auth</v-btn>
+        </div>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -76,13 +81,18 @@ export default {
     ...mapGetters("department", ["departmentList"]),
   },
   methods: {
-    ...mapActions("administration", ["saveUser"]),
+    ...mapActions("administration", ["saveUser", "unlinkUser"]),
     show(item) {
       this.item = item;
       this.showDialog = true;
     },
     async save() {
       let resp = await this.saveUser(this.item);
+      this.onSave(resp);
+      this.showDialog = false;
+    },
+    async unlink() {
+      let resp = await this.unlinkUser(this.item);
       this.onSave(resp);
       this.showDialog = false;
     },

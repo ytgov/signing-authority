@@ -58,6 +58,26 @@ userRouter.put(
   }
 );
 
+userRouter.put(
+  "/:email/unlink",
+  [param("email").notEmpty().isString()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const db = req.store.Users as UserService;
+    let { email } = req.params;
+
+    let existing = await db.getByEmail(email);
+
+    if (existing) {
+      (existing as any).sub = undefined;
+      await db.update(existing._id || new ObjectId(), existing);
+      return res.json({ messages: [{ variant: "success", text: "User saved" }] });
+    }
+
+    res.status(404).send();
+  }
+);
+
 userRouter.post("/", async (req: Request, res: Response) => {
   const db = req.store.Users as UserService;
   let { email } = req.body;
