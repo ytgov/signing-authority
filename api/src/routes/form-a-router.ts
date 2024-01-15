@@ -10,7 +10,6 @@ import { EmailService, GenericService, LimitService, QuestService, UserService }
 import {
   Authority,
   Position,
-  OperationalRestrictions,
   PositionGroup,
   StoredFile,
   User,
@@ -18,6 +17,8 @@ import {
   setPositionStatus,
   ReviewResultType,
   PositionAuthorityLine,
+  OperationalRestriction,
+  OperationalRestrictionSeeds,
 } from "../data/models";
 import { ObjectId } from "mongodb";
 
@@ -35,8 +36,54 @@ const questService = new QuestService();
 const emailService = new EmailService();
 const limitService = new LimitService();
 
-formARouter.get("/operational-restrictions", (req: Request, res: Response) => {
-  return res.json(OperationalRestrictions);
+formARouter.get("/operational-restrictions", async (req: Request, res: Response) => {
+  let db = req.store.OperationalRestrictions as GenericService<OperationalRestriction>;
+  let { status } = req.query;
+
+  if (status && status == "active") return res.json({ data: await db.getAll({ is_active: true }, { sort: 1 }) });
+  return res.json({ data: await db.getAll({}, { sort: 1 }) });
+});
+
+formARouter.get("/operational-restrictions/seed", async (req: Request, res: Response) => {
+  let db = req.store.OperationalRestrictions as GenericService<OperationalRestriction>;
+  let list = await db.getAll({});
+  let addCount = 0;
+
+  let seeds = OperationalRestrictionSeeds;
+
+  for (let seed of seeds) {
+    let exists = list.find((i) => i.description == seed);
+    if (!exists) {
+      await db.create({ description: seed, is_active: true, sort: addCount + 1 });
+      addCount++;
+    }
+  }
+
+  console.log("SEED Operational Restrictions", addCount);
+
+  return res.json({ data: await db.getAll({}, { sort: 1 }) });
+});
+
+formARouter.post("/operational-restrictions", async (req: Request, res: Response) => {
+  let db = req.store.OperationalRestrictions as GenericService<OperationalRestriction>;
+  let { description, is_active, sort } = req.body;
+
+  await db.create({ description, is_active, sort: parseInt(`${sort}`) });
+
+  return res.json({
+    data: await db.getAll({}, { sort: 1 }),
+    messages: [{ variant: "success", text: "Added" }],
+  });
+});
+
+formARouter.put("/operational-restrictions/:id", async (req: Request, res: Response) => {
+  let db = req.store.OperationalRestrictions as GenericService<OperationalRestriction>;
+  const { id } = req.params;
+  let { description, is_active, sort } = req.body;
+
+  await db.update(id, { description, is_active, sort: parseInt(`${sort}`) });
+
+  return res.json({ data: await db.getAll({}), messages: [{ variant: "success", text: "Updated" }] });
 });
 
 formARouter.get("/", checkJwt, loadUser, isSystemAdmin, async (req: Request, res: Response) => {

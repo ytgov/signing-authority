@@ -28,6 +28,12 @@ const routes = [
         component: () => import("../views/Positions"),
         meta: { requiresAuth: true },
       },
+      {
+        path: "operational-restrictions",
+        name: "OperationalRestrictions",
+        component: () => import("../views/OperationalRestrictions"),
+        meta: { requiresAuth: true },
+      },
     ],
   },
 ];
