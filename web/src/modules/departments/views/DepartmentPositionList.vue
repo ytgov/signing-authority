@@ -405,15 +405,18 @@ export default {
     generateFormAClick() {
       this.generateFormAList = cloneDeep(this.matchingItems);
       this.generateFormAList = this.generateFormAList.filter((i) => i.status != "Archived");
-      this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_duplicate);
-      this.generateFormAList = this.generateFormAList.filter((i) => !i.is_deputy_minister);
 
-      this.generateFormAList = orderBy(this.generateFormAList, [
-        "program_branch",
-        "activity",
-        "position",
-        "created_on",
-      ]);
+      this.generateFormAList.map((i) => {
+        i.is_deputy_minister = i.is_deputy_minister ?? false;
+        i.is_deputy_duplicate = i.is_deputy_duplicate ?? false;
+      });
+
+      this.generateFormAList = orderBy(
+        this.generateFormAList,
+        ["is_deputy_minister", "is_deputy_duplicate", "program_branch", "activity", "position", "created_on"],
+        ["desc", "desc", "asc"]
+      );
+
       this.showGenerateDialog = true;
     },
     async doGenerateFormA() {
