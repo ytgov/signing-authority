@@ -58,7 +58,6 @@ const actions = {
 
 const mutations = {
   setProfile(state, value) {
-    console.log(value);
     state.profile = value;
   },
   setActions(state, value) {
