@@ -86,6 +86,13 @@
             class="mt-5 row-clickable"
             :loading="isLoading"
           ></v-data-table>
+
+          <div class="d-flex mt-2">
+            <v-spacer></v-spacer>
+            <v-btn small color="info" class="my-0" @click="copyEmails"
+              ><v-icon small class="mr-2">mdi-content-copy</v-icon> Copy emails of above users</v-btn
+            >
+          </div>
         </v-card-text>
       </v-card>
     </BaseCard>
@@ -163,6 +170,11 @@ export default {
       }
 
       this.users = list;
+    },
+    copyEmails() {
+      let emails = this.users.map((u) => u.email);
+      navigator.clipboard.writeText(emails.join("; "));
+      this.$refs.notifier.showSuccess("Email list is now in your clipboard - paste into Outlook");
     },
   },
 };
