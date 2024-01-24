@@ -39,10 +39,9 @@
           clearable
         ></v-autocomplete>
         <div class="d-flex">
-
-        <v-btn @click="save" color="primary" class="mt-0">Save</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn v-if="item.sub" @click="unlink" color="secondary" small class="mt-0 ">Unlink Auth</v-btn>
+          <v-btn @click="save" color="primary" class="mt-0">Save</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn v-if="item.sub" @click="unlink" color="secondary" small class="mt-0 ">Unlink Auth</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -65,6 +64,7 @@ export default {
       "Form A Administrator",
       "Form B Administrator",
       "Acting Appointment Administrator",
+      "Form Viewer",
     ],
   }),
   computed: {
