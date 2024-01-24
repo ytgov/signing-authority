@@ -12,6 +12,15 @@ const state = {
   },
   users: [],
   operationalRestrictions: [],
+  roleOptions: [
+    "Employee",
+    "System Admin",
+    "Department of Finance",
+    "Form A Administrator",
+    "Form B Administrator",
+    "Acting Appointment Administrator",
+    "Form Viewer",
+  ],
 };
 
 const actions = {

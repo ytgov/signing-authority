@@ -9,23 +9,69 @@
     <!-- <admin-sidebar></admin-sidebar> -->
 
     <BaseCard :show-header="true">
-      <template v-slot:left>
-        <v-text-field
-          v-model="search"
-          hide-details
-          background-color="white"
-          label="Search"
-          prepend-icon="mdi-magnify"
-          :loading="isLoading"
-          clearable
-        ></v-text-field>
-      </template>
+      <template v-slot:left>Manage Users</template>
       <template v-slot:right>
         <create-user-btn ref="create-user-btn" :onSave="saveComplete"></create-user-btn>
       </template>
 
       <v-card class="default">
         <v-card-text>
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="search"
+                prepend-inner-icon="mdi-magnify"
+                label="Search"
+                clearable
+                outlined
+                dense
+                hide-details
+                background-color="white"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Status"
+                prepend-inner-icon="mdi-clock"
+                v-model="statusFilter"
+                :items="['Any', 'Active', 'Inactive']"
+                @change="filterList"
+                outlined
+                dense
+                hide-details
+                background-color="white"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Role"
+                prepend-inner-icon="mdi-filter"
+                v-model="roleFilter"
+                :items="['Any', ...roleOptions]"
+                @change="filterList"
+                outlined
+                dense
+                hide-details
+                background-color="white"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-select
+                label="Department"
+                prepend-inner-icon="mdi-filter"
+                v-model="departmentFilter"
+                :items="['Any', ...departmentList]"
+                item-text="display_name"
+                item-value="dept"
+                @change="filterList"
+                outlined
+                dense
+                hide-details
+                background-color="white"
+              />
+            </v-col>
+          </v-row>
+
           <v-data-table
             :items="users"
             :search="search"
@@ -37,7 +83,7 @@
               { text: 'Departments', value: 'department_admin_for.length' },
             ]"
             @click:row="rowClick"
-            class="row-clickable"
+            class="mt-5 row-clickable"
             :loading="isLoading"
           ></v-data-table>
         </v-card-text>
@@ -50,8 +96,8 @@
 </template>
 
 <script>
-import _ from "lodash";
-import { mapActions } from "vuex";
+import { clone } from "lodash";
+import { mapActions, mapGetters, mapState } from "vuex";
 import userEditor from "../components/UserEditor.vue";
 import CreateUserBtn from "../components/createUserBtn.vue";
 
@@ -65,18 +111,32 @@ export default {
       { text: "Manage users", disabled: true },
     ],
     search: "",
+    statusFilter: "",
+    roleFilter: "",
+    departmentFilter: [],
+
     isLoading: false,
+    allUsers: [],
     users: [],
     editUser: null,
   }),
+  computed: {
+    ...mapState("administration", ["roleOptions"]),
+    ...mapGetters("department", ["departmentList"]),
+  },
   async mounted() {
-    this.loadUserList();
+    this.statusFilter = "Active";
+    this.roleFilter = "Any";
+    this.departmentFilter = "Any";
+
+    await this.loadUserList();
+    this.filterList();
   },
   methods: {
     ...mapActions("administration", ["loadUsers"]),
     async loadUserList() {
       this.isLoading = true;
-      this.users = await this.loadUsers();
+      this.allUsers = await this.loadUsers();
       this.isLoading = false;
     },
     saveComplete(resp) {
@@ -84,7 +144,25 @@ export default {
       this.loadUserList();
     },
     rowClick(item) {
-      this.$refs.userEditor.show(_.clone(item));
+      this.$refs.userEditor.show(clone(item));
+    },
+
+    filterList() {
+      let list = clone(this.allUsers);
+
+      if (this.statusFilter && this.statusFilter != "Any") {
+        list = list.filter((i) => i.status == this.statusFilter);
+      }
+
+      if (this.roleFilter != "Any") {
+        list = list.filter((i) => i.roles.includes(this.roleFilter));
+      }
+
+      if (this.departmentFilter != "Any") {
+        list = list.filter((i) => i.department_admin_for.includes(this.departmentFilter));
+      }
+
+      this.users = list;
     },
   },
 };
