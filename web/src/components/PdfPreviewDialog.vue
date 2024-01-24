@@ -6,6 +6,7 @@
     <v-app-bar dark color="#0097A9">
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer />
+      <!-- <v-icon title="Print" @click="download" class="mr-5">mdi-printer</v-icon> -->
       <v-icon title="Close" @click="hide">mdi-close</v-icon>
     </v-app-bar>
     <v-card tile :height="previewHeight" style="overflow: scroll">
@@ -57,6 +58,9 @@ export default {
     },
     doneLoading() {
       this.loading = false;
+    },
+    download() {
+      window.open(`${this.pdfUrl}`);
     },
   },
 };
