@@ -211,7 +211,7 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
     item.authority_lines = lines;
   }
 
-  const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormATemplate.html");
+  const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormATemplateDraft.html");
 
   (item as any).API_PORT = API_PORT;
 
@@ -224,7 +224,7 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
   if (activity) dept = `${dept}-${CleanFilename(`${activity}`)}`;
 
   let pdf = await generatePDF(data);
-  res.setHeader("Content-disposition", `attachment; filename="FormA_${dept}.pdf"`);
+  res.setHeader("Content-disposition", `filename="DRAFT-FormA_${dept}.pdf"`);
   res.setHeader("Content-type", "application/pdf");
   res.send(pdf);
 });
@@ -865,6 +865,70 @@ formARouter.get(
 
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="FormA_${dept}.pdf"`);
+      res.setHeader("Content-type", "application/pdf");
+      res.send(pdf);
+    }
+
+    res.status(404).send();
+  }
+);
+
+formARouter.get(
+  "/:id/pdf/draft",
+  [param("id").isMongoId().notEmpty()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    let db = req.store.FormA as GenericService<Position>;
+    let groupDb = req.store.PositionGroups as GenericService<PositionGroup>;
+
+    let item = await groupDb.getById(id);
+
+    if (item) {
+      item.positions = await db.getAll({ position_group_id: item._id });
+      item.positions.sort((a, b) => (a.position_group_order || 1000) - (b.position_group_order || 1000));
+
+      let lines = new Array();
+
+      for (let position of item.positions) {
+        let title = position.position;
+        let lineList = position.authority_lines || [];
+
+        for (let line of lineList) {
+          lines.push({
+            position: title,
+            coding: line.coding,
+            coding_display: FormatCoding(line.coding),
+            operational_restriction: line.operational_restriction,
+            contracts_for_goods_services: line.contracts_for_goods_services,
+            loans_and_guarantees: line.loans_and_guarantees,
+            transfer_payments: line.transfer_payments,
+            authorization_for_travel: line.authorization_for_travel,
+            request_for_goods_services: line.request_for_goods_services,
+            assignment_authority: line.assignment_authority,
+            s29_performance_limit: line.s29_performance_limit,
+            s30_payment_limit: line.s30_payment_limit,
+          });
+        }
+      }
+
+      item.authority_lines = lines;
+
+      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormATemplateDraft.html");
+
+      (item as any).API_PORT = API_PORT;
+
+      let t = new ExpressHandlebars();
+      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
+      let data = template(item);
+
+      let dept = CleanFilename(`${item.department_code}`);
+      if (item.program) dept = `${dept}-${CleanFilename(`${item.program}`)}`;
+      if (item.activity) dept = `${dept}-${CleanFilename(`${item.activity}`)}`;
+
+      let pdf = await generatePDF(data);
+      res.setHeader("Content-disposition", `attachment; filename="DRAFT-FormA_${dept}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
       res.send(pdf);
     }
