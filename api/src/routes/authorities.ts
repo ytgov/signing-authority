@@ -109,6 +109,49 @@ authoritiesRouter.get(
   }
 );
 
+authoritiesRouter.get(
+  "/:id/pdf/draft",
+  [param("id").isMongoId().notEmpty()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    let item = await loadSingleAuthority(req, id);
+
+    if (item) {
+      const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormBTemplateDraft.html");
+
+      (item as any).API_PORT = API_PORT;
+
+      if (item.authority_type == "temporary") item.authority_type = "TEMPORARY";
+      else if (item.authority_type == "acting") item.authority_type = "ACTING";
+      else item.authority_type = "SUBSTANTIVE";
+
+      let t = new ExpressHandlebars();
+
+      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
+      let data = template(item, {
+        helpers: {
+          eq: function (a1: string, a2: string) {
+            return a1 == a2;
+          },
+        },
+      });
+
+      console.log(data);
+
+      let name = CleanFilename(`${item.department_code}`);
+      if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
+
+      let pdf = await generatePDF(data);
+      res.setHeader("Content-disposition", `attachment; filename="DRAFT-FormB_${name}.pdf"`);
+      res.setHeader("Content-type", "application/pdf");
+      res.send(pdf);
+    }
+
+    res.status(404).send();
+  }
+);
+
 authoritiesRouter.post(
   "/account-search",
   checkJwt,
