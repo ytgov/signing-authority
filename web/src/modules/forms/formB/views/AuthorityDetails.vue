@@ -690,6 +690,22 @@ export default {
     userIsFormEmployee() {
       return this.formB && this.formB.employee && this.profile && this.profile.email == this.formB.employee.email;
     },
+    userIsFormViewer() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Form Viewer") &&
+        this.profile.department_admin_for.includes(this.formB.department_code)
+      );
+    },
+    userIsFormUploader() {
+      return (
+        this.formB &&
+        this.formB.upload_signatures &&
+        this.profile &&
+        this.formB.upload_signatures.id == this.profile._id
+      );
+    },
     userIsSysAdmin() {
       return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
     },
@@ -962,7 +978,9 @@ export default {
           this.userIsDeptAdmin ||
           this.userIsFinanceAdmin ||
           this.userIsSysAdmin ||
-          this.userIsFormEmployee) &&
+          this.userIsFormEmployee ||
+          this.userIsFormViewer ||
+          this.userIsFormUploader) &&
         this.formB.upload_signatures
       ) {
         window.open(`${AUTHORITY_URL}/uploads/${this.formB.upload_signatures.file_id}/file`);
@@ -977,7 +995,9 @@ export default {
           this.userIsDeptAdmin ||
           this.userIsFinanceAdmin ||
           this.userIsSysAdmin ||
-          this.userIsFormEmployee) &&
+          this.userIsFormEmployee ||
+          this.userIsFormViewer ||
+          this.userIsFormUploader) &&
         this.formB.upload_signatures
       ) {
         this.$refs.pdfPreview.show(
