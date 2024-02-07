@@ -834,6 +834,9 @@ export default {
       if (this.isApproved && this.formB.authority_type == "acting") {
         if (this.userIsSysAdmin || this.userIsActingAdmin) return true;
         return false;
+      } else if (this.isApproved && this.formB.authority_type == "temporary") {
+        if (this.userIsSysAdmin || this.userIsDeptAdmin) return true;
+        return false;
       } else if (this.isApproved && this.formB.authority_type != "substantive") return true;
       return false;
     },
