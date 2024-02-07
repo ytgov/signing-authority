@@ -687,6 +687,9 @@ export default {
     ...mapState("authority/formB", ["is_loading"]),
     ...mapState("home", ["profile"]),
 
+    userIsFormEmployee() {
+      return this.formB && this.formB.employee && this.profile && this.profile.email == this.formB.employee.email;
+    },
     userIsSysAdmin() {
       return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
     },
@@ -955,7 +958,11 @@ export default {
 
     async downloadPDF() {
       if (
-        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        (this.userIsActingAdmin ||
+          this.userIsDeptAdmin ||
+          this.userIsFinanceAdmin ||
+          this.userIsSysAdmin ||
+          this.userIsFormEmployee) &&
         this.formB.upload_signatures
       ) {
         window.open(`${AUTHORITY_URL}/uploads/${this.formB.upload_signatures.file_id}/file`);
@@ -966,7 +973,11 @@ export default {
 
     showPreview() {
       if (
-        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        (this.userIsActingAdmin ||
+          this.userIsDeptAdmin ||
+          this.userIsFinanceAdmin ||
+          this.userIsSysAdmin ||
+          this.userIsFormEmployee) &&
         this.formB.upload_signatures
       ) {
         this.$refs.pdfPreview.show(
