@@ -135,15 +135,14 @@ export default {
     this.statusFilter = "Active";
     this.roleFilter = "Any";
     this.departmentFilter = "Any";
-
     await this.loadUserList();
-    this.filterList();
   },
   methods: {
     ...mapActions("administration", ["loadUsers"]),
     async loadUserList() {
       this.isLoading = true;
       this.allUsers = await this.loadUsers();
+      this.filterList();
       this.isLoading = false;
     },
     saveComplete(resp) {
