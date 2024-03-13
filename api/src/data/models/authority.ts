@@ -1,6 +1,7 @@
 import moment from "moment";
 import { ObjectId } from "mongodb";
 import { Position, MongoEntity, User, Department, Employee, StoredFile } from ".";
+import { max } from "lodash";
 
 export interface Authority extends MongoEntity {
   created_by_id: ObjectId;
@@ -212,6 +213,11 @@ export function setHistoricAuthorityStatus(item: Authority, asAtDate: Date) {
 
       let start = moment(a.approve_user_date).format("YYYYMMDD");
       let expire = moment(a.expire_date || `2999-12-31`).format("YYYYMMDD");
+      let activate = moment(a.date).format("YYYYMMDD");
+
+      if (item.authority_type != "substantive") {
+        start = max([start, activate]) || start;
+      }
 
       if (start <= now) {
         if (a.expire_date == undefined || expire >= now) {
