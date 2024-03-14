@@ -47,7 +47,8 @@ const actions = {
         return resp.data.data;
       })
       .catch((e) => {
-        window.alert(`Save failed - ${e.response.data}`);
+        //window.alert(`Save failed - ${e.response.data}`);
+        return e.response
       });
   },
   async saveFormBWithFile(store, item) {

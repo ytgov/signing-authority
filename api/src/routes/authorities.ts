@@ -421,7 +421,8 @@ authoritiesRouter.put(
           existing,
           creator,
           `Approved Form B for ${existing.employee.name}`,
-          `${req.user.first_name} ${req.user.last_name}`
+          `${req.user.first_name} ${req.user.last_name}`,
+          existing.authority_type == "temporary" ? `You may now schedule this authority for activation.` : ""
         );
 
         if (existing.authority_type == "substantive") {
@@ -575,6 +576,7 @@ authoritiesRouter.put(
           return res.status(400).send(`More then one identical authority line detected`);
         }
 
+        let i = 0;
         for (let line of req.body.authority_lines) {
           let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
@@ -600,13 +602,16 @@ authoritiesRouter.put(
 
           //check for lines with all empty values
           let allEmpty = limitService.checkAllEmptyFormBValues(line);
-          if (allEmpty) return res.status(400).send(`Line ${line.coding} has no value in any field`);
+          if (allEmpty)
+            return res.status(400).send({ error: `Line ${line.coding} has no value in any field`, line: i });
 
           if (myFormA) {
             let limitError = limitService.checkFormBLineLimits(myFormA, line);
 
-            if (limitError) return res.status(400).send(limitError);
+            if (limitError) return res.status(400).send({ error: limitError, line: i });
           }
+
+          i++;
         }
 
         await db.update(id, req.body);

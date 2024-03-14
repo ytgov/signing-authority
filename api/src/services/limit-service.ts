@@ -162,11 +162,11 @@ export class LimitService {
     }
 
     if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_services_limit))
-      return `${line.coding} - S23 Goods limit invalid`;
+      return `${line.coding} - S24 Services limit invalid`;
     if (!this.compareLimit(limit.request_for_goods_services, line.s24_procure_request_limit))
       return `${line.coding} - S24 Procure request limit invalid`;
     if (!this.compareLimit(limit.assignment_authority, line.s24_procure_assignment_limit))
-      return `${line.coding} - S24 Procure assignmenty limit invalid`;
+      return `${line.coding} - S24 Procure assignment limit invalid`;
     if (!this.compareLimit(limit.contracts_for_goods_services, line.s23_procure_services_limit))
       return `${line.coding} - S23 Services limit invalid`;
     if (!this.compareLimit(limit.transfer_payments, line.s24_transfer_limit))

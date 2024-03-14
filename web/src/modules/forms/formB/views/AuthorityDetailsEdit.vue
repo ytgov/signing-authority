@@ -148,7 +148,7 @@
 
                 <tbody>
                   <tr v-for="(line, idx) of formB.authority_lines" :key="idx">
-                    <td class="">
+                    <td class="" v-bind:class="checkProblem(idx, ['has no value', 'No parent rows'])">
                       <v-text-field
                         v-model="line.coding"
                         dense
@@ -217,7 +217,7 @@
                     <td>
                       <v-text-field v-model="line.notes" dense filled hide-details @change="itemChanged"></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S24 Goods')">
                       <v-text-field
                         v-model="line.s24_procure_goods_limit"
                         dense
@@ -226,7 +226,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S24 Services limit invalid')">
                       <v-text-field
                         v-model="line.s24_procure_services_limit"
                         dense
@@ -235,7 +235,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S24 Procure request limit invalid')">
                       <v-text-field
                         v-model="line.s24_procure_request_limit"
                         dense
@@ -244,7 +244,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S24 Procure assignment limit invalid')">
                       <v-text-field
                         v-model="line.s24_procure_assignment_limit"
                         dense
@@ -253,7 +253,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S23 Goods')">
                       <v-text-field
                         v-model="line.s23_procure_goods_limit"
                         dense
@@ -262,7 +262,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S23 Services limit invalid')">
                       <v-text-field
                         v-model="line.s23_procure_services_limit"
                         dense
@@ -271,7 +271,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S24 Transfer limit invalid')">
                       <v-text-field
                         v-model="line.s24_transfer_limit"
                         dense
@@ -280,7 +280,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S23 Transfer limit invalid')">
                       <v-text-field
                         v-model="line.s23_transfer_limit"
                         dense
@@ -289,7 +289,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S24 Travel limit invalid')">
                       <v-text-field
                         v-model="line.s24_travel_limit"
                         dense
@@ -298,7 +298,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'Other limit invalid')">
                       <v-text-field
                         v-model="line.other_limit"
                         dense
@@ -307,7 +307,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'Loans limit invalid')">
                       <v-text-field
                         v-model="line.loans_limit"
                         dense
@@ -316,7 +316,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S29 Performance limit invalid')">
                       <v-text-field
                         v-model="line.s29_performance_limit"
                         dense
@@ -325,7 +325,7 @@
                         @change="itemChanged"
                       ></v-text-field>
                     </td>
-                    <td class="fb-value">
+                    <td class="fb-value" v-bind:class="checkProblem(idx, 'S30 Payment limit invalid')">
                       <v-text-field
                         v-model="line.s30_payment_limit"
                         dense
@@ -344,7 +344,12 @@
             :items="formB.authority_lines"></v-data-table>
 
 -->
-              <v-btn color="primary" @click="addLine">Add line</v-btn>
+
+              <div class="d-flex">
+                <v-btn color="secondary" small class="mb-0" @click="addLine">Add line</v-btn>
+                <v-spacer />
+                <span class="text-error pt-5" v-if="saveError">Error Saving Position: {{ saveError.error }}</span>
+              </div>
             </v-card-text>
           </v-card>
         </v-col>
@@ -385,6 +390,9 @@
   width: 60px;
   text-align: center;
 }
+td.problem {
+  background-color: #ff000055 !important;
+}
 </style>
 
 <script>
@@ -422,6 +430,7 @@ export default {
         text: "Edit",
       },
     ],
+    saveError: null,
 
     id: "",
     departmentId: "",
@@ -510,12 +519,25 @@ export default {
       this.itemChanged();
     },
     async saveClick() {
+      this.saveError = null;
       let resp = await this.saveFormB(this.formB);
 
-      if (resp) this.closeClick();
+      if (resp) {
+        if (resp.status && resp.status != 200) {
+          this.saveError = resp.data;
+        } else this.closeClick();
+      }
     },
     closeClick() {
       this.$router.push(`/form-b/${this.id}`);
+    },
+    checkProblem(idx, fields) {
+      if (this.saveError && this.saveError.error) {
+        if (!_.isArray(fields)) fields = [fields];
+        for (let field of fields)
+          if (this.saveError.line == idx && this.saveError.error.indexOf(field) >= 0) return "problem";
+      }
+      return "";
     },
   },
 };
