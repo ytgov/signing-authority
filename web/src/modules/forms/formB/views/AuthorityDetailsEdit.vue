@@ -52,7 +52,7 @@
                         readonly
                         append-icon="mdi-lock"
                       ></v-text-field>
-                      
+
                       <v-text-field
                         :value="formB.activity || formB.form_a.activity"
                         label="Actviity"
@@ -473,7 +473,7 @@ export default {
       this.department = await this.getDepartment({ id: this.departmentId });
 
       this.page.title = `Form B Details - Edit`;
-      this.items = Object.keys(await this.getOperationalRestictions());
+      this.items = await this.getOperationalRestictions();
 
       this.breadcrumbs[1].text = this.department.descr;
       this.breadcrumbs[1].to = `/departments/${this.departmentId}`;

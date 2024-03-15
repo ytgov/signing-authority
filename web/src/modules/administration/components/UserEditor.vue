@@ -39,10 +39,9 @@
           clearable
         ></v-autocomplete>
         <div class="d-flex">
-
-        <v-btn @click="save" color="primary" class="mt-0">Save</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn v-if="item.sub" @click="unlink" color="secondary" small class="mt-0 ">Unlink Auth</v-btn>
+          <v-btn @click="save" color="primary" class="mt-0">Save</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn v-if="item.sub" @click="unlink" color="secondary" small class="mt-0 ">Unlink Auth</v-btn>
         </div>
       </v-card-text>
     </v-card>
@@ -50,7 +49,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 
 export default {
   name: "UserEdtior",
@@ -58,22 +57,16 @@ export default {
   data: () => ({
     showDialog: false,
     item: {},
-    roleOptions: [
-      "Employee",
-      "System Admin",
-      "Department of Finance",
-      "Form A Administrator",
-      "Form B Administrator",
-      "Acting Appointment Administrator",
-    ],
   }),
   computed: {
+    ...mapState("administration", ["roleOptions"]),
     isDepartmentAdmin: function() {
       if (this.item.roles) {
         return (
           this.item.roles.includes("Form A Administrator") ||
           this.item.roles.includes("Form B Administrator") ||
-          this.item.roles.includes("Acting Appointment Administrator")
+          this.item.roles.includes("Acting Appointment Administrator") ||
+          this.item.roles.includes("Form Viewer")
         );
       }
       return false;

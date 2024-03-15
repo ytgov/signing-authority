@@ -180,13 +180,12 @@ export default {
       this.formA.authority_lines.splice(idx + 1, 0, item);
     },
     duplicateLine(idx) {
-      console.log("DUP", idx);
       let item = _.clone(this.formA.authority_lines[idx]);
       this.formA.authority_lines.splice(idx + 1, 0, item);
     },
   },
   async mounted() {
-    this.items = Object.keys(await this.getOperationalRestictions());
+    this.items = await this.getOperationalRestictions();
   },
 };
 </script>

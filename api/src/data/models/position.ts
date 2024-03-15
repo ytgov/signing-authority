@@ -81,34 +81,6 @@ export interface PositionAuditLine {
   date_display?: string;
 }
 
-export enum OperationalRestrictions {
-  "" = "",
-  "Journal only" = "Journal only",
-  "Acquisition cards" = "Acquisition cards",
-  "Refund as per FAM 7.6" = "Refund as per FAM 7.6",
-  "Personnel pay action" = "Personnel pay action",
-  "Travel advance" = "Travel advance",
-  "Special delegation" = "Special delegation",
-
-  "Special delegation S23" = "Special delegation S23",
-  "Special delegation S23 and S24" = "Special delegation S23 and S24",
-  "Special delegation construction contract change orders only" = "Special delegation construction contract change orders only",
-  "Special delegation acquisition card purchases only" = "Special delegation acquisition card purchases only",
-
-  "Bank deposit" = "Bank deposit",
-  "Period 14 only" = "Period 14 only",
-  "Aircraft Charters S23 only" = "Aircraft Charters S23 only",
-  "Purchase Contracts S23 only" = "Purchase Contracts S23 only",
-  "Travel Warrant S23 only" = "Travel Warrant S23 only",
-  "Print Contracts S23 only" = "Print Contracts S23 only",
-  "Q journals only" = "Q journals only",
-  "V journals only" = "V journals only",
-  "CDPITNEYWORK only" = "CDPITNEYWORK only",
-
-  "Except 121-03xx Prior Year Accounting" = "Except 121-03xx Prior Year Accounting",
-  "Payment cancellations and reissues" = "Payment cancellations and reissues",
-}
-
 export function setPositionStatus(item: Position) {
   if (item.deactivation) item.status = "Archived";
   else if (item.activation) {

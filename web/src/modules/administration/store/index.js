@@ -11,6 +11,16 @@ const state = {
     helpNotes: "", //what to do if something this component is broken
   },
   users: [],
+  operationalRestrictions: [],
+  roleOptions: [
+    "Employee",
+    "System Admin",
+    "Department of Finance",
+    "Form A Administrator",
+    "Form B Administrator",
+    "Acting Appointment Administrator",
+    "Form Viewer",
+  ],
 };
 
 const actions = {
@@ -103,6 +113,31 @@ const actions = {
       return resp.data.data;
     });
   },
+
+  async getOperationalRestrictions({ commit }) {
+    const auth = getInstance();
+
+    return auth.get(`${FORMA_URL}/operational-restrictions`).then((resp) => {
+      commit("SET_OPERATIONAL_RESTRICTIONS", resp.data.data);
+      return resp.data.data;
+    });
+  },
+  async createOperationalRestriction({ commit }, value) {
+    const auth = getInstance();
+
+    return auth.post(`${FORMA_URL}/operational-restrictions`, value).then((resp) => {
+      commit("SET_OPERATIONAL_RESTRICTIONS", resp.data.data);
+      return resp.data;
+    });
+  },
+  async updateOperationalRestriction({ commit }, value) {
+    const auth = getInstance();
+
+    return auth.put(`${FORMA_URL}/operational-restrictions/${value._id}`, value).then((resp) => {
+      commit("SET_OPERATIONAL_RESTRICTIONS", resp.data.data);
+      return resp.data;
+    });
+  },
 };
 
 const mutations = {
@@ -111,6 +146,9 @@ const mutations = {
   },
   SET_USERS(state, value) {
     state.users = value;
+  },
+  SET_OPERATIONAL_RESTRICTIONS(state, value) {
+    state.operationalRestrictions = value;
   },
 };
 

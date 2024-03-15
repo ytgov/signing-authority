@@ -2,7 +2,7 @@
   <div>
     <v-dialog v-model="show" persistent width="800">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="primary" small v-bind="attrs" v-on="on" @click="doShow">Add</v-btn>
+        <v-btn color="primary" small v-bind="attrs" v-on="on" @click="doShow">Add User</v-btn>
       </template>
 
       <v-app-bar dark color="#0097A9">
@@ -26,14 +26,13 @@
             readonly
             dense
             outlined
-            label="Employee"
+            label="Name"
             append-icon="mdi-lock"
             v-if="selectedEmployee.email"
             append-outer-icon="mdi-close-circle"
             @click:append-outer="unselectEmployee"
           ></v-text-field>
           <div v-if="selectedEmployee.email">
-            <v-text-field label="Employee title" dense outlined v-model="selectedEmployee.title"></v-text-field>
             <v-text-field
               v-model="selectedEmployee.email"
               label="Email"
@@ -42,7 +41,6 @@
               readonly
               append-icon="mdi-lock"
             ></v-text-field>
-
             <v-select
               label="Status"
               v-model="selectedEmployee.status"
@@ -53,15 +51,16 @@
             <v-select
               label="Role"
               multiple
+              clearable
               dense
               outlined
-              v-model="selectedEmployee.roles"
+              v-model="roles"
               required
               :items="roleOptions"
             ></v-select>
-            <v-select
+
+            <v-autocomplete
               v-if="isDepartmentAdmin"
-              class="pl-2"
               label="Department"
               dense
               outlined
@@ -71,7 +70,7 @@
               item-text="display_name"
               item-value="dept"
               clearable
-            ></v-select>
+            ></v-autocomplete>
           </div>
 
           <div>
@@ -110,14 +109,15 @@ export default {
     employeeSearch: "",
     employeeId: "",
     selectedEmployee: {},
+    roles: [],
   }),
   computed: {
     isDepartmentAdmin: function() {
-      if (this.selectedEmployee.roles) {
+      if (this.roles) {
         return (
-          this.selectedEmployee.roles.includes("Form A Administrator") ||
-          this.selectedEmployee.roles.includes("Form B Administrator") ||
-          this.selectedEmployee.roles.includes("Acting Appointment Administrator")
+          this.roles.includes("Form A Administrator") ||
+          this.roles.includes("Form B Administrator") ||
+          this.roles.includes("Acting Appointment Administrator")
         );
       }
       return false;
@@ -150,6 +150,9 @@ export default {
         })
         .finally(() => (this.isEmployeeLoading = false));
     },
+    roles: function() {
+      this.selectedEmployee.roles = this.roles;
+    },
   },
 
   mounted: async function() {},
@@ -171,7 +174,7 @@ export default {
     },
     pickEmployee(item) {
       this.selectedEmployee = item;
-      this.selectedEmployee.roles = ["Employee"];
+      this.roles = ["Employee"];
       this.selectedEmployee.status = "Active";
     },
     unselectEmployee() {

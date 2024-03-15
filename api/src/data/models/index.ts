@@ -7,6 +7,7 @@ export class MongoEntity {
 export * from "./authority";
 export * from "./file";
 export * from "./user";
+export * from "./operational-restriction";
 export * from "./position";
 export * from "./position-group";
 export * from "./department";

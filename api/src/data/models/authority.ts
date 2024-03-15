@@ -192,7 +192,6 @@ export function setHistoricAuthorityStatus(item: Authority, asAtDate: Date) {
   if (!item.authority_type) item.authority_type = "substantive";
 
   let now = moment(asAtDate).format("YYYYMMDD");
-
   item.status = "Inactive";
 
   if (item.cancel_date && moment(item.cancel_date).format("YYYYMMDD") < now) {
@@ -203,6 +202,11 @@ export function setHistoricAuthorityStatus(item: Authority, asAtDate: Date) {
   if (item.activation && item.activation.length > 0) {
     for (let a of item.activation) {
       if (a.reject_user_date) {
+        continue;
+      }
+
+      if (!a.approve_user_date) {
+        // acting not approved yet
         continue;
       }
 

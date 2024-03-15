@@ -15,7 +15,7 @@
         <v-text-field label="Program" v-model="formA.program_branch" @change="itemChanged"></v-text-field>
         <v-text-field label="Activity" v-model="formA.activity" @change="itemChanged"></v-text-field>
         <v-text-field
-          label="Position"
+          label="Position" v-if="formA.position"
           v-model="formA.position"
           :hide-details="formA.position.indexOf('Duplicate') < 0"
           persistent-hint

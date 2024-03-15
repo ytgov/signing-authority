@@ -184,8 +184,6 @@ export default {
       id: this.departmentId,
     });
 
-    console.log(this.programList);
-
     this.activityList = await this.getActivityList({
       id: this.departmentId,
     });

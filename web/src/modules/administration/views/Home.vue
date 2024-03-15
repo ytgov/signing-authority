@@ -20,6 +20,11 @@
               <router-link to="/administration/positions">All Positions</router-link>
             </v-card-text>
           </v-card>
+          <v-card class="default mb-5">
+            <v-card-text>
+              <router-link to="/administration/operational-restrictions">Operational Restrictions</router-link>
+            </v-card-text>
+          </v-card>
         </v-col>
         <v-col>
           <v-card class="my-0 default">

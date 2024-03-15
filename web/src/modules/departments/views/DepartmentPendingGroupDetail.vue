@@ -99,6 +99,10 @@
                     <v-list-item-title>Show Preview</v-list-item-title>
                   </v-list-item>
 
+                  <v-list-item @click="downloadPreview">
+                    <v-list-item-title>Download Preview</v-list-item-title>
+                  </v-list-item>
+
                   <v-list-item @click="startUnlock" v-if="canUnlock">
                     <v-list-item-title>Unlock and Rewind</v-list-item-title>
                   </v-list-item>
@@ -551,6 +555,9 @@ export default {
       } else {
         this.$refs.pdfPreview.show("Form A Preview", this.pdfURL);
       }
+    },
+    downloadPreview() {
+      window.open(`${this.pdfURL}/draft`);
     },
     async archiveGrouping() {
       this.item.status = "Archived";

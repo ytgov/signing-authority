@@ -687,6 +687,25 @@ export default {
     ...mapState("authority/formB", ["is_loading"]),
     ...mapState("home", ["profile"]),
 
+    userIsFormEmployee() {
+      return this.formB && this.formB.employee && this.profile && this.profile.email == this.formB.employee.email;
+    },
+    userIsFormViewer() {
+      return (
+        this.profile &&
+        this.profile.roles &&
+        this.profile.roles.includes("Form Viewer") &&
+        this.profile.department_admin_for.includes(this.formB.department_code)
+      );
+    },
+    userIsFormUploader() {
+      return (
+        this.formB &&
+        this.formB.upload_signatures &&
+        this.profile &&
+        this.formB.upload_signatures.id == this.profile._id
+      );
+    },
     userIsSysAdmin() {
       return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
     },
@@ -814,6 +833,9 @@ export default {
 
       if (this.isApproved && this.formB.authority_type == "acting") {
         if (this.userIsSysAdmin || this.userIsActingAdmin) return true;
+        return false;
+      } else if (this.isApproved && this.formB.authority_type == "temporary") {
+        if (this.userIsSysAdmin || this.userIsDeptAdmin) return true;
         return false;
       } else if (this.isApproved && this.formB.authority_type != "substantive") return true;
       return false;
@@ -955,7 +977,13 @@ export default {
 
     async downloadPDF() {
       if (
-        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        (this.userIsActingAdmin ||
+          this.userIsDeptAdmin ||
+          this.userIsFinanceAdmin ||
+          this.userIsSysAdmin ||
+          this.userIsFormEmployee ||
+          this.userIsFormViewer ||
+          this.userIsFormUploader) &&
         this.formB.upload_signatures
       ) {
         window.open(`${AUTHORITY_URL}/uploads/${this.formB.upload_signatures.file_id}/file`);
@@ -966,7 +994,13 @@ export default {
 
     showPreview() {
       if (
-        (this.userIsActingAdmin || this.userIsDeptAdmin || this.userIsFinanceAdmin || this.userIsSysAdmin) &&
+        (this.userIsActingAdmin ||
+          this.userIsDeptAdmin ||
+          this.userIsFinanceAdmin ||
+          this.userIsSysAdmin ||
+          this.userIsFormEmployee ||
+          this.userIsFormViewer ||
+          this.userIsFormUploader) &&
         this.formB.upload_signatures
       ) {
         this.$refs.pdfPreview.show(
