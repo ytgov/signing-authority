@@ -7,6 +7,7 @@ import authenticationRoutes from "@/modules/authentication/router";
 import departmentRoutes from "@/modules/departments/router";
 import employeeRoutes from "@/modules/employee/router";
 import administrationRoutes from "@/modules/administration/router";
+import reportsRoutes from "@/modules/reports/router";
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,7 @@ const routes = [
   ...departmentRoutes,
   ...employeeRoutes,
   ...administrationRoutes,
+  ...reportsRoutes,
 
   {
     path: "*",
