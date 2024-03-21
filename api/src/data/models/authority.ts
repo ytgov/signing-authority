@@ -219,9 +219,10 @@ export function setHistoricAuthorityStatus(item: Authority, asAtDate: Date) {
         start = max([start, activate]) || start;
       }
 
-      if (start <= now) {
+      if (start <= now && expire >= start) {
         if (a.expire_date == undefined || expire >= now) {
           item.status = "Active";
+          a.current_status = "Active";
         }
       }
     }
