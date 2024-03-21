@@ -1,7 +1,7 @@
 <template>
   <tbody>
     <tr v-for="(line, idx) of formA.authority_lines" :key="idx">
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, ['has no value', 'No parent rows'])">
         <v-text-field
           v-model="line.coding"
           dense
@@ -65,7 +65,7 @@
           v-model="line.operational_restriction"
         ></v-select>
       </td>
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Contracts limit invalid')">
         <!-- Contracts for Goods or Services -->
         <v-text-field
           v-model="line.contracts_for_goods_services"
@@ -75,7 +75,7 @@
           @change="itemChanged"
         ></v-text-field>
       </td>
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Loans limit invalid')">
         <!-- Loans and Guarantees -->
         <v-text-field
           v-model="line.loans_and_guarantees"
@@ -86,11 +86,11 @@
         ></v-text-field>
       </td>
 
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Transfer limit invalid')">
         <!-- Transfer Payments-->
         <v-text-field v-model="line.transfer_payments" dense filled hide-details @change="itemChanged"></v-text-field>
       </td>
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Travel limit invalid')">
         <!--Authorization for Travel-->
         <v-text-field
           v-model="line.authorization_for_travel"
@@ -101,7 +101,7 @@
         ></v-text-field>
       </td>
 
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Request limit invalid')">
         <!-- Request for Goods or Services -->
         <v-text-field
           v-model="line.request_for_goods_services"
@@ -114,7 +114,7 @@
         {{ line.s23_procure_goods_limit }}
       </td>
 
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Assignment limit invalid')">
         <!-- Assignment Authority -->
         <v-text-field
           v-model="line.assignment_authority"
@@ -124,7 +124,7 @@
           @change="itemChanged"
         ></v-text-field>
       </td>
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Performance limit invalid')">
         <!-- Section 29 Certificate of Performance -->
         <v-text-field
           v-model="line.s29_performance_limit"
@@ -134,7 +134,7 @@
           @change="itemChanged"
         ></v-text-field>
       </td>
-      <td class="fb-value">
+      <td class="fb-value" v-bind:class="checkProblem(idx, 'Payment limit invalid')">
         <!-- Section 30 Payment Authority -->
         <v-text-field v-model="line.s30_payment_limit" dense filled hide-details @change="itemChanged"></v-text-field>
       </td>
@@ -147,9 +147,9 @@ import _ from "lodash";
 
 export default {
   name: "formATable",
-  // props: {
-  //   formA: Object
-  // },
+  props: {
+    saveError: Object,
+  },
   data: () => ({
     items: [],
   }),
@@ -183,6 +183,14 @@ export default {
       let item = _.clone(this.formA.authority_lines[idx]);
       this.formA.authority_lines.splice(idx + 1, 0, item);
     },
+    checkProblem(idx, fields) {
+      if (this.saveError && this.saveError.error) {
+        if (!_.isArray(fields)) fields = [fields];
+        for (let field of fields)
+          if (this.saveError.line == idx && this.saveError.error.indexOf(field) >= 0) return "problem";
+      }
+      return "";
+    },
   },
   async mounted() {
     this.items = await this.getOperationalRestictions();
@@ -211,7 +219,7 @@ export default {
   padding-bottom: 20px;
   max-width: 80px;
 }
-table th.bottom {
+.table th.bottom {
   white-space: nowrap;
   vertical-align: bottom;
   width: 175px;
@@ -227,5 +235,7 @@ table th.bottom {
   width: 60px;
   text-align: center;
 }
+td.problem {
+  background-color: #ff000055 !important;
+}
 </style>
-``

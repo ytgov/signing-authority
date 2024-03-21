@@ -23,9 +23,13 @@
                 style="background-color: white;width: 100%;text-align: left;"
               >
                 <form-a-table-head> </form-a-table-head>
-                <form-a-table-body-edit></form-a-table-body-edit>
+                <form-a-table-body-edit :saveError="saveError"></form-a-table-body-edit>
               </table>
-              <v-btn color="secondary" small class="mb-0" @click="addLine">Add line</v-btn>
+              <div class="d-flex">
+                <v-btn color="secondary" small class="mb-0" @click="addLine">Add line</v-btn>
+                <v-spacer />
+                <span class="text-error pt-5" v-if="saveError">Error Saving Position: {{ saveError.error }}</span>
+              </div>
             </v-card-text>
           </v-card>
         </v-col>
@@ -77,6 +81,7 @@ export default {
     department: {},
     //authority: {},
     showUpload: false,
+    saveError: null,
   }),
   computed: {
     ...mapState("department", ["departments"]),
@@ -154,8 +159,14 @@ export default {
     },
 
     async save() {
+      this.saveError = null;
       let resp = await this.saveFormA(this.formA);
-      if (resp) this.close();
+
+      if (resp) {
+        if (resp.status && resp.status != 200) {
+          this.saveError = resp.data;
+        } else this.close();
+      }
     },
   },
 };

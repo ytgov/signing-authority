@@ -60,6 +60,7 @@ export class ActionService {
 
       if ((item.status || "").indexOf("Draft") >= 0) continue; // these are waiting on Dept Finance
       if ((item.status || "").indexOf("Locked for Signatures") >= 0) continue; // these are not locked yet
+      if ((item.status || "").indexOf("Approved") >= 0) continue; // these are not locked yet
 
       items.push({
         title: `Form B: ${item.status}`,

@@ -1294,6 +1294,7 @@ formARouter.put(
       return res.status(400).send(`More then one identical authority line detected`);
     }
 
+    let i = 0;
     for (let line of req.body.authority_lines) {
       let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
@@ -1312,13 +1313,14 @@ formARouter.put(
 
       //check for lines with all empty values
       let allEmpty = limitService.checkAllEmptyFormAValues(line);
-      if (allEmpty) return res.status(400).send(`Line ${line.coding} has no value in any field`);
+      if (allEmpty) return res.status(400).send({ error: `Line ${line.coding} has no value in any field`, line: i });
 
       if (!skipLimitChecks) {
         let limitError = limitService.checkFormALineLimits(myDMForm, line);
 
-        if (limitError) return res.status(400).send(limitError);
+        if (limitError) return res.status(400).send({ error: limitError, line: i });
       }
+      i++;
     }
 
     await db.update(id, req.body);

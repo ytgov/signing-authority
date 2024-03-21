@@ -211,7 +211,12 @@ authoritiesRouter.post(
       else if (activate_reason == "acting") activationType = "Acting appointment";
 
       if (activate_reason == "acting") {
-        await emailService.sendFormBActingNotice(existing, approve_user_email);
+        await emailService.sendFormBActingNotice(
+          existing,
+          approve_user_email,
+          moment(date).format("MMMM D, YYYY"),
+          moment(expire_date).format("MMMM D, YYYY")
+        );
       }
 
       existing.audit_lines.push({
@@ -421,7 +426,8 @@ authoritiesRouter.put(
           existing,
           creator,
           `Approved Form B for ${existing.employee.name}`,
-          `${req.user.first_name} ${req.user.last_name}`
+          `${req.user.first_name} ${req.user.last_name}`,
+          existing.authority_type == "temporary" ? `<br/>You may now schedule this authority for activation.` : ""
         );
 
         if (existing.authority_type == "substantive") {
@@ -433,9 +439,11 @@ authoritiesRouter.put(
             activate_user_id: req.user._id,
             approve_user_date: new Date(),
           });
+
+          await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"), "until cancelled");
         }
 
-        await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"));
+        //await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"), moment().format("MMMM D, YYYY"));
 
         await db.update(id, existing);
         await integrationService.checkAuthorityChange(existing);
@@ -575,6 +583,7 @@ authoritiesRouter.put(
           return res.status(400).send(`More then one identical authority line detected`);
         }
 
+        let i = 0;
         for (let line of req.body.authority_lines) {
           let codingIsValid = await questService.accountPatternIsValid(line.coding);
 
@@ -600,13 +609,16 @@ authoritiesRouter.put(
 
           //check for lines with all empty values
           let allEmpty = limitService.checkAllEmptyFormBValues(line);
-          if (allEmpty) return res.status(400).send(`Line ${line.coding} has no value in any field`);
+          if (allEmpty)
+            return res.status(400).send({ error: `Line ${line.coding} has no value in any field`, line: i });
 
           if (myFormA) {
             let limitError = limitService.checkFormBLineLimits(myFormA, line);
 
-            if (limitError) return res.status(400).send(limitError);
+            if (limitError) return res.status(400).send({ error: limitError, line: i });
           }
+
+          i++;
         }
 
         await db.update(id, req.body);
