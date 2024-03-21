@@ -265,7 +265,7 @@ export class EmailService {
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
     content = content.replace(/``ACTOR_NAME``/, actor);
     content = content.replace(/``DEPARTMENT``/, formB.department_descr);
-    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``POSITION``/, `${formB.employee.title} (${formB.authority_type})`);
     content = content.replace(/``EMPLOYEE``/, formB.employee.name);
     content = content.replace(/``NEXT_ACTION``/, action);
     content = content.replace(/``EXTRA_HTML``/, extraHtml);
@@ -291,7 +291,7 @@ export class EmailService {
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
     content = content.replace(/``ACTOR_NAME``/, actor);
     content = content.replace(/``DEPARTMENT``/, formB.department_descr);
-    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``POSITION``/, `${formB.employee.title} (${formB.authority_type})`);
     content = content.replace(/``EMPLOYEE``/, formB.employee.name);
     content = content.replace(/``NEXT_ACTION``/, action);
     content = content.replace(/``EXTRA_HTML``/, extraHtml);
@@ -317,7 +317,7 @@ export class EmailService {
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
     content = content.replace(/``ACTOR_NAME``/, actor);
     content = content.replace(/``DEPARTMENT``/, formB.department_descr);
-    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``POSITION``/, `${formB.employee.title} (${formB.authority_type})`);
     content = content.replace(/``EMPLOYEE``/, formB.employee.name);
     content = content.replace(/``NEXT_ACTION``/, action);
     content = content.replace(/``EXTRA_HTML``/, extraHtml);
@@ -343,7 +343,7 @@ export class EmailService {
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
     content = content.replace(/``ACTOR_NAME``/, actor);
     content = content.replace(/``DEPARTMENT``/, formB.department_descr);
-    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``POSITION``/, `${formB.employee.title} (${formB.authority_type})`);
     content = content.replace(/``EMPLOYEE``/, formB.employee.name);
     content = content.replace(/``NEXT_ACTION``/, action);
     content = content.replace(/``EXTRA_HTML``/, extraHtml);
@@ -356,24 +356,26 @@ export class EmailService {
     }
   }
 
-  async sendFormBActiveNotice(formB: Authority, effectiveDate: string): Promise<any> {
+  async sendFormBActiveNotice(formB: Authority, effectiveDate: string, expireDate: string): Promise<any> {
     let templatePath = path.join(__dirname, FORMB_ACTIVATE_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
     let fullName = formB.employee.name;
 
-    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``POSITION``/, `${formB.employee.title} (${formB.authority_type})`);
     content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+    content = content.replace(/``EXPIRE_DATE``/, expireDate);
 
     await this.sendEmail(fullName, formB.employee.email, "Form B Active Notice", content);
   }
 
-  async sendFormBScheduleActive(formB: Authority, effectiveDate: string): Promise<any> {
+  async sendFormBScheduleActive(formB: Authority, effectiveDate: string, expireDate: string): Promise<any> {
     let templatePath = path.join(__dirname, FORMB_SCHEDULE_ACTIVE_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
     let fullName = formB.employee.name;
 
-    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``POSITION``/, `${formB.employee.title} (${formB.authority_type})`);
     content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+    content = content.replace(/``EXPIRE_DATE``/, expireDate);
     content = content.replace(/``FORMB_LINK``/, `${FRONTEND_URL}/form-b/${formB._id}`);
 
     await this.sendEmail(fullName, formB.employee.email, "Form B Schedule Active", content);
@@ -384,19 +386,26 @@ export class EmailService {
     let content = fs.readFileSync(templatePath).toString();
     let fullName = formB.employee.name;
 
-    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``POSITION``/, `${formB.employee.title} (${formB.authority_type})`);
     content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
     content = content.replace(/``FORMB_LINK``/, `${FRONTEND_URL}/form-b/${formB._id}`);
 
     await this.sendEmail(fullName, formB.employee.email, "Form B Schedule Inactive", content);
   }
 
-  async sendFormBActingNotice(formB: Authority, approverEmail: string): Promise<any> {
+  async sendFormBActingNotice(
+    formB: Authority,
+    approverEmail: string,
+    effectiveDate: string,
+    expireDate: string
+  ): Promise<any> {
     let templatePath = path.join(__dirname, FORMB_ACTING_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
     content = content.replace(/``EMPLOYEE``/, formB.employee.name);
     content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+    content = content.replace(/``EXPIRE_DATE``/, expireDate);
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
 
     await this.sendEmail(approverEmail, approverEmail, "Form B Acting Approval", content);
@@ -432,12 +441,19 @@ export class EmailService {
     await this.sendEmail(fullName, formB.employee.email, "Form B Acting Approval Notice", content);
   }
 
-  async sendFormBActingApprove(formB: Authority, approverEmail: string): Promise<any> {
+  async sendFormBActingApprove(
+    formB: Authority,
+    approverEmail: string,
+    effectiveDate: string,
+    expireDate: string
+  ): Promise<any> {
     let templatePath = path.join(__dirname, FORMB_ACTING_TEMPLATE);
     let content = fs.readFileSync(templatePath).toString();
 
     content = content.replace(/``EMPLOYEE``/, formB.employee.name);
     content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+    content = content.replace(/``EXPIRE_DATE``/, expireDate);
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
 
     await this.sendEmail(approverEmail, approverEmail, "Form B Acting Approval", content);

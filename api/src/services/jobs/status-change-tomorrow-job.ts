@@ -1,11 +1,12 @@
-import { clone } from "lodash";
+import { clone, reverse, sortBy } from "lodash";
 import moment from "moment";
 import { EmailService } from "../email-service";
 import { setHistoricAuthorityStatus } from "../../data/models";
 import { Storage } from "../../data";
 
 export class StatusChangeTomorrowJob {
-  readonly cronSchedule = "15 6 * * *";
+  //readonly cronSchedule = "15 6 * * *";
+  readonly cronSchedule = "*/1 * * * *";
 
   async runJob() {
     let startTime = new Date();
@@ -38,14 +39,6 @@ export class StatusChangeTomorrowJob {
       // run at 6:00 and look for currently inactive/active that are inactive/active in 24 hours and
 
       if (todayAuth.status != tomorrowAuth.status) {
-        console.log(
-          "#  Change Detected",
-          auth.employee.email,
-          auth.employee.title,
-          todayAuth.status,
-          tomorrowAuth.status
-        );
-
         if (todayAuth.status == "Active") {
           console.log("#  -- Cancelled tomorrow");
           await emailService.sendFormBScheduleInactive(
@@ -54,7 +47,20 @@ export class StatusChangeTomorrowJob {
           );
         } else {
           console.log("#  -- Activated tomorrow");
-          await emailService.sendFormBScheduleActive(auth, moment(new Date()).add(24, "hours").format("MMMM D, yyyy"));
+
+          let expireDate = "until cancelled";
+          let activeActivation = auth.activation?.filter((a) => a.current_status == "Active");
+          let expires = reverse(sortBy(activeActivation?.map((a) => a.expire_date)));
+
+          if (expires.length > 0 && expires[0]) {
+            expireDate = `to ${moment(expires[0]).format("MMMM D, yyyy")}`;
+          }
+
+          await emailService.sendFormBScheduleActive(
+            auth,
+            moment(new Date()).add(24, "hours").format("MMMM D, yyyy"),
+            expireDate
+          );
         }
       }
     }
