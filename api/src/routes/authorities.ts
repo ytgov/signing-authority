@@ -211,7 +211,12 @@ authoritiesRouter.post(
       else if (activate_reason == "acting") activationType = "Acting appointment";
 
       if (activate_reason == "acting") {
-        await emailService.sendFormBActingNotice(existing, approve_user_email);
+        await emailService.sendFormBActingNotice(
+          existing,
+          approve_user_email,
+          moment(date).format("MMMM D, YYYY"),
+          moment(expire_date).format("MMMM D, YYYY")
+        );
       }
 
       existing.audit_lines.push({
@@ -434,9 +439,11 @@ authoritiesRouter.put(
             activate_user_id: req.user._id,
             approve_user_date: new Date(),
           });
+
+          await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"), "until cancelled");
         }
 
-        await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"));
+        //await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"), moment().format("MMMM D, YYYY"));
 
         await db.update(id, existing);
         await integrationService.checkAuthorityChange(existing);

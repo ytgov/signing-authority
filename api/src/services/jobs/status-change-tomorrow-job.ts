@@ -5,8 +5,7 @@ import { setHistoricAuthorityStatus } from "../../data/models";
 import { Storage } from "../../data";
 
 export class StatusChangeTomorrowJob {
-  //readonly cronSchedule = "15 6 * * *";
-  readonly cronSchedule = "*/1 * * * *";
+  readonly cronSchedule = "15 6 * * *";
 
   async runJob() {
     let startTime = new Date();

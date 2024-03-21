@@ -67,6 +67,12 @@
               </v-list-item-icon>
               <v-list-item-title>Administration</v-list-item-title>
             </v-list-item>
+            <v-list-item to="/reports" v-if="canReport">
+              <v-list-item-icon>
+                <v-icon>mdi-chart-bar</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Reports</v-list-item-title>
+            </v-list-item>
 
             <v-list-item
               href="https://yukongovernment.sharepoint.com/teams/SigningAuthorityAppResourceCentre-FIN"
@@ -148,6 +154,12 @@ export default {
       if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
       }
+      return false;
+    },
+    canReport() {
+      /* if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
+        if (this.profile.roles.includes("System Admin")) return true;
+      } */
       return false;
     },
   },
