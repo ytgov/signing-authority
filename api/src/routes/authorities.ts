@@ -422,7 +422,7 @@ authoritiesRouter.put(
           creator,
           `Approved Form B for ${existing.employee.name}`,
           `${req.user.first_name} ${req.user.last_name}`,
-          existing.authority_type == "temporary" ? `You may now schedule this authority for activation.` : ""
+          existing.authority_type == "temporary" ? `<br/>You may now schedule this authority for activation.` : ""
         );
 
         if (existing.authority_type == "substantive") {
