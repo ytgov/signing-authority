@@ -7,6 +7,8 @@ import employee from "@/modules/employee/store";
 import authority from "@/modules/forms/store";
 import department from "@/modules/departments/store";
 import administration from "@/modules/administration/store";
+import vrooziReports from "@/modules/reports/store/vroozi-store";
+import reports from "@/modules/reports/store/reports-store";
 import { secureGet } from "./jwt";
 import { USER_URL } from "@/urls";
 import forms from "@/modules/forms/store";
@@ -25,12 +27,12 @@ export default new Vuex.Store({
     },
     SET_COMPLETE(state, value) {
       state.initializationComplete = value;
-    }
+    },
   },
   actions: {
     async initialize(state) {
       console.log("Initializing Store");
-      
+
       await this.dispatch("department/initialize");
       await this.dispatch("home/initialize");
 
@@ -53,5 +55,7 @@ export default new Vuex.Store({
     department,
     administration,
     forms,
+    vrooziReports,
+    reports,
   },
 });
