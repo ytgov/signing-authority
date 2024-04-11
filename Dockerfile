@@ -1,7 +1,7 @@
-FROM node:16-alpine3.15
+FROM node:18.17.0-alpine3.17
 
 RUN apk add --no-cache \
-      chromium \
+      chromium=112.0.5615.165-r0 \
       nss \
       freetype \
       harfbuzz \
@@ -36,6 +36,8 @@ RUN npm run build
 
 WORKDIR /home/node/web
 ENV NODE_ENV=production
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+ENV NODE_OPTIONS=--openssl-legacy-provider
 
 RUN npm run build:docker
 
