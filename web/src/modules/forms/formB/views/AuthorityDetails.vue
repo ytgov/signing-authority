@@ -445,6 +445,8 @@
             </v-col>
           </v-row>
 
+          <v-alert v-if="activateError" type="error">{{ activateError }}</v-alert>
+
           <v-btn @click="doScheduleActivate" color="primary" class="mb-0 mr-5" :disabled="!activateValid"
             >Schedule</v-btn
           >
@@ -681,6 +683,8 @@ export default {
     originalActExpireDate: null,
 
     editActivationHasStarted: true,
+
+    activateError: null,
   }),
   computed: {
     ...mapGetters("authority/formB", ["formB"]),
@@ -1050,6 +1054,7 @@ export default {
       this.activateEffective = null;
       this.activateExpiry = null;
       this.activateEmployee = {};
+      this.activateError = null;
       this.showActivateDialog = true;
     },
     startCancel() {
@@ -1070,9 +1075,13 @@ export default {
         approve_user_date: this.formB.authority_type == "acting" ? null : new Date(),
       };
 
-      this.scheduleActivation({ id: this.formB._id, body }).then(() => {
-        this.loadFormB(this.id);
-        this.showActivateDialog = false;
+      this.scheduleActivation({ id: this.formB._id, body }).then((resp) => {
+        if (resp && resp.errors && resp.errors.length > 0) {
+          this.activateError = resp.errors[0];
+        } else {
+          this.loadFormB(this.id);
+          this.showActivateDialog = false;
+        }
       });
     },
     unselectEmployee() {

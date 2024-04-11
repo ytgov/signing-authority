@@ -48,7 +48,7 @@ const actions = {
       })
       .catch((e) => {
         //window.alert(`Save failed - ${e.response.data}`);
-        return e.response
+        return e.response;
       });
   },
   async saveFormBWithFile(store, item) {
@@ -88,14 +88,14 @@ const actions = {
       return resp;
     });
   },
-  async scheduleActivation({ commit }, { id, body }) {
+  async scheduleActivation(store, { id, body }) {
     const auth = getInstance();
 
     return auth
       .post(`${AUTHORITY_URL}/${id}/activate`, body)
       .then((resp) => {
-        commit("setFormB", resp.data.data);
-        return resp.data.data;
+        //commit("setFormB", resp.data.data);
+        return resp.data;
       })
       .catch(() => {});
   },
