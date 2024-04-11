@@ -16,7 +16,7 @@ reportsRouter.get("/vroozi/audit", async (req: Request, res: Response) => {
       res.json({ data: resp.data.data });
     })
     .catch((err) => {
-      console.log("ERROR Connecting to Integration");
+      console.log("ERROR Connecting to Integration", err);
       res.json({ data: null });
     });
 });
@@ -28,7 +28,7 @@ reportsRouter.get("/vroozi/logs", async (req: Request, res: Response) => {
       res.json({ data: resp.data.data });
     })
     .catch((err) => {
-      console.log("ERROR Connecting to Integration");
+      console.log("ERROR Connecting to Integration", err);
       res.json({ data: null });
     });
 });
@@ -42,7 +42,7 @@ reportsRouter.get("/vroozi/audit/:email", async (req: Request, res: Response) =>
       res.json({ data: resp.data.data });
     })
     .catch((err) => {
-      console.log("ERROR Connecting to Integration");
+      console.log("ERROR Connecting to Integration", err);
       res.json({ data: null });
     });
 });
