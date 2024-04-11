@@ -2,8 +2,8 @@ import express, { Request, Response } from "express";
 import axios from "axios";
 import { RequiresData } from "../middleware";
 import { INTEGRATION_ENDPOINT_URL } from "../config";
-import { GenericService } from "src/services";
-import { Authority, Position, setAuthorityStatus, setPositionStatus } from "src/data/models";
+import { GenericService } from "../services";
+import { Authority, Position, setAuthorityStatus, setPositionStatus } from "../data/models";
 import { pick, startCase } from "lodash";
 
 export const reportsRouter = express.Router();
