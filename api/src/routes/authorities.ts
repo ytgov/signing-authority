@@ -335,7 +335,10 @@ authoritiesRouter.put(
     if (!existing.authority_type) existing.authority_type = "substantive"; // polyfill for late model change
 
     //this is workflow stuff
+
     if (save_action) {
+      existing.reject_comments = "";
+
       if (save_action == "Lock") {
         existing.department_reviews = [
           {
@@ -492,7 +495,7 @@ authoritiesRouter.put(
         existing.audit_lines = existing.audit_lines || [];
 
         existing.audit_lines.push({
-          action: "Finance Rejected",
+          action: "Finance Rejected: " + comments,
           date: new Date(),
           previous_value: {},
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -505,6 +508,8 @@ authoritiesRouter.put(
             { _id: new ObjectId(existing.created_by_id) },
           ],
         });
+
+        existing.reject_comments = comments;
 
         await emailService.sendFormBReject(
           existing,
