@@ -40,6 +40,7 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import _ from "lodash";
 import formATableBodyEdit from "../components/formATable/formATableBodyEdit.vue";
 import formATableHead from "../components/formATable/formATableHead.vue";
 
@@ -163,7 +164,7 @@ export default {
       let resp = await this.saveFormA(this.formA);
 
       if (resp) {
-        if (resp.status && resp.status != 200) {
+        if (resp.status && _.isNumber(resp.status) && resp.status != 200) {
           this.saveError = resp.data;
         } else this.close();
       }
