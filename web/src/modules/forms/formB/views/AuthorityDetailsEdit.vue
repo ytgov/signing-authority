@@ -523,7 +523,7 @@ export default {
       let resp = await this.saveFormB(this.formB);
 
       if (resp) {
-        if (resp.status && resp.status != 200) {
+        if (resp.status && _.isNumber(resp.status) && resp.status != 200) {
           this.saveError = resp.data;
         } else this.closeClick();
       }
