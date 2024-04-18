@@ -14,6 +14,8 @@
 
       <v-row>
         <v-col>
+          <v-alert type="warning" v-if="formB.reject_comments">Rejection Comment: {{ formB.reject_comments }}</v-alert>
+
           <v-card class="default">
             <v-card-text>
               <table

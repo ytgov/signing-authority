@@ -50,6 +50,8 @@
         </v-stepper-header>
       </v-stepper>
 
+      <v-alert type="warning" v-if="formB.reject_comments">Rejection Comment:  {{ formB.reject_comments }}</v-alert>
+
       <v-card class="default">
         <div style="float: right; margin-right: 15px; margin-top: 15px">
           <form-b-status
