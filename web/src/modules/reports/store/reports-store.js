@@ -4,6 +4,7 @@ import { getInstance } from "@/auth/auth0-plugin";
 const state = {
   formBList: [],
   positionList: [],
+  auditList: [],
   isLoading: false,
 };
 
@@ -28,6 +29,19 @@ const actions = {
       commit("setLoading", false);
     });
   },
+  async loadAuditList({ commit }, { email, date, department }) {
+    commit("setLoading", true);
+    const auth = getInstance();
+
+    return auth.post(`${REPORTS_URL}/audit`, { email, date, department }).then(async (resp) => {
+      let data = resp.data;
+      commit("setAuditList", data.data);
+      commit("setLoading", false);
+    });
+  },
+  auditDownloadUrl(store, { email, date, department }) {
+    return `${REPORTS_URL}/audit/pdf?department=${department}&email=${email}&date=${date}`;
+  },
 };
 
 const mutations = {
@@ -36,6 +50,9 @@ const mutations = {
   },
   setPositionList(state, value) {
     state.positionList = value;
+  },
+  setAuditList(state, value) {
+    state.auditList = value;
   },
   setLoading(state, value) {
     state.isLoading = value;

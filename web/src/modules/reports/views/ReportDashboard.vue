@@ -17,6 +17,12 @@
           <v-card-title class="pt-2">Position Reporting</v-card-title>
           <v-card-text> View Position records from across the government filtered by type, status and department.</v-card-text>
         </v-card>
+      </v-col> 
+      <v-col cols="12" md="6">
+        <v-card color="#fff2d5" class="mb-2" style="height: 130px" to="/reports/audit">
+          <v-card-title class="pt-2">Audit Reporting</v-card-title>
+          <v-card-text>View and download authorities for a person or department on a given date.</v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>

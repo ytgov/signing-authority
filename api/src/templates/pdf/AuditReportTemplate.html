@@ -1,0 +1,268 @@
+<html>
+  <head>
+    <style>
+      html,
+      body,
+      div,
+      span,
+      object,
+      iframe,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      blockquote,
+      pre,
+      abbr,
+      address,
+      cite,
+      code,
+      del,
+      dfn,
+      em,
+      img,
+      ins,
+      kbd,
+      q,
+      samp,
+      small,
+      strong,
+      sub,
+      sup,
+      var,
+      b,
+      i,
+      dl,
+      dt,
+      dd,
+      ol,
+      ul,
+      li,
+      fieldset,
+      form,
+      label,
+      legend,
+      table,
+      caption,
+      tbody,
+      tfoot,
+      thead,
+      tr,
+      th,
+      td,
+      article,
+      aside,
+      canvas,
+      details,
+      figcaption,
+      figure,
+      footer,
+      header,
+      hgroup,
+      menu,
+      nav,
+      section,
+      summary,
+      time,
+      mark,
+      audio,
+      video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        background: transparent;
+      }
+
+      @page {
+        size: letter landscape;
+        margin: 30px 0;
+      }
+
+      body {
+        padding: 0 30px;
+        line-height: 1;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
+      }
+
+      .table {
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: center;
+      }
+
+      .table thead {
+        text-transform: uppercase;
+      }
+
+      .table th,
+      .table td {
+        border: 1px black solid;
+        font-size: 12px;
+      }
+
+      .table th.rotate {
+        height: 110px;
+        white-space: nowrap;
+        vertical-align: bottom;
+        padding-bottom: 20px;
+      }
+
+      .table th.rotate > div {
+        transform: rotate(270deg);
+        width: 48px;
+      }
+
+      .table .fb-value {
+        width: 50px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .table tbody td {
+        padding: 0px 2px
+      }
+    </style>
+  </head>
+
+  <body>
+    <table style="width: 100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td style="width: 180px; padding-bottom: 10px">
+          <img src="http://localhost:{{API_PORT}}/yukon-logo.png" style="height: 80px; width: 160px" />
+        </td>
+        <td style="text-align: left; font-size: 1.3rem; vertical-align: bottom; padding-bottom: 10px">
+          Signing Authorities : Authority Audit Report
+        </td>
+      </tr>
+    </table>
+
+    <table
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+      class="table"
+      style="background-color: white; width: 100%; text-align: left">
+      <thead>
+        <tr>
+          <td
+            rowspan="5"
+            colspan="2"
+            style="text-align: left; padding: 10px; vertical-align: top; width: 400px; height: 190px; font-size: 14px">
+            Department:<br />
+            <strong style="margin-top: 5px">{{ department_descr }}</strong>
+
+            <br /><br />
+            As at: <br />
+            <strong style="margin-top: 5px">{{ date }}</strong>
+          </td>
+          <th colspan="12">SPENDING AUTHORITY</th>
+          <th rowspan="3" class="rotate" style="height: 100px">
+            <div>
+              PAYMENT<br />
+              AUTHORITY s.30
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <th colspan="6">PROCUREMENT</th>
+          <th rowspan="2" colspan="2" style="max-width: 80px">TRANSFER PAYMENTS</th>
+          <th colspan="3" rowspan="2">OTHER:<br />S.24 COMMITMENT & <br />S.23 SIGNING CONTRACT</th>
+          <th rowspan="2">S.29</th>
+        </tr>
+        <tr>
+          <th colspan="4">S.24 Commitment</th>
+          <th colspan="2" style="max-width: 80px">S.23 Signing Contract</th>
+        </tr>
+        <tr>
+          <th colspan="2" style="max-width: 80px">OWN PROCUREMENT</th>
+          <th rowspan="3" class="rotate">
+            <div>
+              Request for goods<br />
+              or services
+            </div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div>Assignment <br />Authority</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div class="mb-2">Goods</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div class="mb-2">Services</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div class="mb-2">S.24 Commitment</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div>S.23 Signing<br />contract</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div>S.24 Travel <br />authorization</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div>Other contracts & <br />Expenditures **</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div>Loans & <br />Guarantees</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div>Certificate of <br />performance</div>
+          </th>
+          <th rowspan="3" class="rotate">
+            <div>
+              Requisition<br />
+              for payment
+            </div>
+          </th>
+        </tr>
+        <tr>
+          <th class="rotate" rowspan="2">
+            <div class="mb-2">Goods</div>
+          </th>
+          <th class="rotate" rowspan="2">
+            <div class="mb-2">Services</div>
+          </th>
+        </tr>
+        <tr style="height: 30px; text-align: left">
+          <th style="height: 30px; text-align: left; padding: 0 2px; min-width: 140px">
+            Employee
+            <br /><span style="font-weight: 400; font-size: 10px">Position</span>
+          </th>
+          <th style="height: 30px; text-align: left; padding: 0 2px; min-width: 140px">
+            Area of Authority<br /><span style="font-weight: 400; font-size: 10px">Operational Restriction</span>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {{#each data}}
+        <tr>
+          <td style="min-width: 200px;"><strong>{{employee.name}}</strong><br />{{employee.title}}</td>
+          <td style="min-width: 145px;" class="pl-3"><strong>{{ coding }}</strong><br />{{ operational_restriction }}</td>
+          <td class="fb-value">{{ s24_procure_goods_limit }}</td>
+          <td class="fb-value">{{ s24_procure_services_limit }}</td>
+          <td class="fb-value">{{ s24_procure_request_limit }}</td>
+          <td class="fb-value">{{ s24_procure_assignment_limit }}</td>
+          <td class="fb-value">{{ s23_procure_goods_limit }}</td>
+          <td class="fb-value">{{ s23_procure_services_limit }}</td>
+          <td class="fb-value">{{ s24_transfer_limit }}</td>
+          <td class="fb-value">{{ s23_transfer_limit }}</td>
+          <td class="fb-value">{{ s24_travel_limit }}</td>
+          <td class="fb-value">{{ other_limit }}</td>
+          <td class="fb-value">{{ loans_limit }}</td>
+          <td class="fb-value">{{ s29_performance_limit }}</td>
+          <td class="fb-value">{{ s30_payment_limit }}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </body>
+</html>

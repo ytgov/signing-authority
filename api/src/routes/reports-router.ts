@@ -1,10 +1,16 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
+import fs from "fs";
 import { RequiresData } from "../middleware";
-import { INTEGRATION_ENDPOINT_URL } from "../config";
+import { API_PORT, INTEGRATION_ENDPOINT_URL } from "../config";
 import { GenericService } from "../services";
-import { Authority, Position, setAuthorityStatus, setPositionStatus } from "../data/models";
-import { pick, startCase } from "lodash";
+import { Authority, Position, setAuthorityStatus, setHistoricAuthorityStatus, setPositionStatus } from "../data/models";
+import { isArray, pick, startCase } from "lodash";
+import { ExpressHandlebars } from "express-handlebars";
+import { generatePDF } from "../utils/pdf-generator";
+import moment from "moment";
+
+const departList = require("../data/departments.json");
 
 export const reportsRouter = express.Router();
 reportsRouter.use(RequiresData);
@@ -115,4 +121,83 @@ reportsRouter.get("/position", async (req: Request, res: Response) => {
   }
 
   res.json({ data: results });
+});
+
+reportsRouter.post("/audit", async (req: Request, res: Response) => {
+  const { email, department, date } = req.body;
+  let db = req.store.Authorities as GenericService<Authority>;
+  let list = await db.getAll({ department_code: department, "employee.name": { $regex: email, $options: "i" } });
+
+  let results = [];
+
+  for (let item of list) {
+    item.status = item.status ?? "Unknown";
+
+    setHistoricAuthorityStatus(item, date);
+
+    if (item.status == "Active") {
+      for (const line of item.authority_lines) {
+        results.push({
+          ...pick(item, ["_id", "employee.name", "employee.title"]),
+          ...line,
+        });
+      }
+    }
+  }
+
+  res.json({ data: results });
+});
+
+reportsRouter.get("/audit/pdf", async (req: Request, res: Response) => {
+  const { email, department, date } = req.query;
+
+  let employeeFilter = (isArray(email) ? email[0] : email)?.toString() ?? "";
+  let department_code = (isArray(department) ? department[0] : department)?.toString() ?? "";
+  let statusDate = (isArray(date) ? date[0] : date)?.toString() ?? "";
+
+  let db = req.store.Authorities as GenericService<Authority>;
+  let list = await db.getAll({ department_code, "employee.name": { $regex: employeeFilter, $options: "i" } });
+
+  let results = [];
+
+  for (let item of list) {
+    item.status = item.status ?? "Unknown";
+
+    setHistoricAuthorityStatus(item, moment(statusDate).toDate());
+
+    if (item.status == "Active") {
+      for (const line of item.authority_lines) {
+        results.push({
+          ...pick(item, ["_id", "employee.name", "employee.title"]),
+          ...line,
+        });
+      }
+    }
+  }
+
+  const d = departList.find((d: any) => d.dept == department_code);
+
+  const pdfData = { API_PORT: API_PORT, data: results, department_descr: `(${d.dept}) ${d.descr}`, date };
+
+  const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/AuditReportTemplate.html");
+
+  let t = new ExpressHandlebars();
+
+  const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
+  let data = template(pdfData, {
+    helpers: {
+      eq: function (a1: string, a2: string) {
+        return a1 == a2;
+      },
+    },
+  });
+
+  //res.send(data);
+
+  let name = `${department}-${date}`;
+
+  let pdf = await generatePDF(data);
+  res.setHeader("Content-disposition", `attachment; filename="Authority_AUDIT_${name}.pdf"`);
+  res.setHeader("Content-type", "application/pdf");
+  res.send(pdf);
 });
