@@ -29,6 +29,7 @@ const FORMB_REJECT_TEMPLATE = "../templates/email/form_b_reject.html";
 
 const FORMB_ACTIVATE_TEMPLATE = "../templates/email/form_b_activate.html";
 const FORMB_ACTING_TEMPLATE = "../templates/email/form_b_acting.html";
+const FORMB_TEMPORARY_TEMPLATE = "../templates/email/form_b_temporary.html";
 const FORMB_ACTING_REMINDER_TEMPLATE = "../templates/email/form_b_acting_reminder.html";
 
 const FORMB_SCHEDULE_ACTIVE_TEMPLATE = "../templates/email/form_b_schedule_active.html";
@@ -409,6 +410,18 @@ export class EmailService {
     content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
 
     await this.sendEmail(approverEmail, approverEmail, "Form B Acting Approval", content);
+  }
+
+  async sendFormBTemporaryNotice(formB: Authority, effectiveDate: string, expireDate: string): Promise<any> {
+    let templatePath = path.join(__dirname, FORMB_TEMPORARY_TEMPLATE);
+    let content = fs.readFileSync(templatePath).toString();
+
+    content = content.replace(/``POSITION``/, formB.employee.title);
+    content = content.replace(/``EFFECTIVE_DATE``/, effectiveDate);
+    content = content.replace(/``EXPIRE_DATE``/, expireDate);
+    content = content.replace(/``DESTINATION_URL``/, `${FRONTEND_URL}/form-b/${formB._id}`);
+
+    await this.sendEmail(formB.employee.name, formB.employee.email, "Form B Temporary Assignment", content);
   }
 
   async sendFormBActingReminderNotice(

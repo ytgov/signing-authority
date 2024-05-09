@@ -198,36 +198,25 @@ authoritiesRouter.post(
 
       const newStartDate = moment(date);
       const newEndDate = moment(expire_date);
-
-      console.log("NEWITEM", newStartDate, newEndDate);
-
       let errorMessage = null;
 
       for (const existingActivation of existing.activation) {
         const existingStart = moment(existingActivation.date);
         const existingEnd = moment(existingActivation.expire_date ?? new Date("2100-12-31"));
 
-        console.log("TESTING: ", existingActivation);
-
         //check if start is between existing
         if (newStartDate.isBetween(existingStart, existingEnd, "day", "[]")) {
-          console.log("Effective Date overlap");
           errorMessage = "Effective date overlaps existing activation";
         } else if (newEndDate.isBetween(existingStart, existingEnd, "day", "[]")) {
-          console.log("Expiration Date overlap");
           errorMessage = "Expiration date overlaps existing activation";
         } else if (newEndDate.isBetween(existingStart, existingEnd, "day", "[]")) {
-          console.log("Expiration Date overlap");
           errorMessage = "Expiration date overlaps existing activation";
         } else if (existingStart.isBetween(newStartDate, newEndDate, "day", "[]")) {
-          console.log("Overlap");
           errorMessage = "Overlaps existing activation";
         }
       }
 
       if (errorMessage) {
-        console.log("ERROR IS:", errorMessage);
-
         let item = await loadSingleAuthority(req, id);
         return res.json({ data: item, errors: [errorMessage] });
       }
@@ -251,6 +240,13 @@ authoritiesRouter.post(
         await emailService.sendFormBActingNotice(
           existing,
           approve_user_email,
+          moment(date).format("MMMM D, YYYY"),
+          moment(expire_date).format("MMMM D, YYYY")
+        );
+      } else if (activate_reason == "temporary") {
+        console.log("SENDING TERMPOROARY");
+        await emailService.sendFormBTemporaryNotice(
+          existing,
           moment(date).format("MMMM D, YYYY"),
           moment(expire_date).format("MMMM D, YYYY")
         );
