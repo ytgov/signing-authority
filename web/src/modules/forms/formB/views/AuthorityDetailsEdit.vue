@@ -14,6 +14,8 @@
 
       <v-row>
         <v-col>
+          <v-alert type="warning" v-if="formB.reject_comments">Rejection Comment: {{ formB.reject_comments }}</v-alert>
+
           <v-card class="default">
             <v-card-text>
               <table
@@ -523,7 +525,7 @@ export default {
       let resp = await this.saveFormB(this.formB);
 
       if (resp) {
-        if (resp.status && resp.status != 200) {
+        if (resp.status && _.isNumber(resp.status) && resp.status != 200) {
           this.saveError = resp.data;
         } else this.closeClick();
       }

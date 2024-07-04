@@ -136,7 +136,7 @@ export class ActionService {
       $and: [
         { authority_type: "acting" },
         { cancel_date: { $exists: false } },
-        { activation: { $elemMatch: { approve_user_date: null, approve_user_email: "michael@icefoganalytics.com" } } },
+        { activation: { $elemMatch: { approve_user_date: null, reject_user_date: null, approve_user_email: email } } },
       ],
     });
 

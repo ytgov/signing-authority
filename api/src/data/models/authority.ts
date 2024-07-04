@@ -47,6 +47,8 @@ export interface Authority extends MongoEntity {
 
   activation?: ActivationRecord[];
 
+  reject_comments?: string;
+
   // used in DTO only
   department?: Department;
   form_a?: Position | null;

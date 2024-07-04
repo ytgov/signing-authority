@@ -194,7 +194,33 @@ authoritiesRouter.post(
     let existing = await db.getById(id);
 
     if (existing) {
-      existing.activation = existing.activation || [];
+      existing.activation = existing.activation || new Array<any>();
+
+      const newStartDate = moment(date);
+      const newEndDate = moment(expire_date);
+      let errorMessage = null;
+
+      for (const existingActivation of existing.activation) {
+        const existingStart = moment(existingActivation.date);
+        const existingEnd = moment(existingActivation.expire_date ?? new Date("2100-12-31"));
+
+        //check if start is between existing
+        if (newStartDate.isBetween(existingStart, existingEnd, "day", "[]")) {
+          errorMessage = "Effective date overlaps existing activation";
+        } else if (newEndDate.isBetween(existingStart, existingEnd, "day", "[]")) {
+          errorMessage = "Expiration date overlaps existing activation";
+        } else if (newEndDate.isBetween(existingStart, existingEnd, "day", "[]")) {
+          errorMessage = "Expiration date overlaps existing activation";
+        } else if (existingStart.isBetween(newStartDate, newEndDate, "day", "[]")) {
+          errorMessage = "Overlaps existing activation";
+        }
+      }
+
+      if (errorMessage) {
+        let item = await loadSingleAuthority(req, id);
+        return res.json({ data: item, errors: [errorMessage] });
+      }
+
       existing.activation.push({
         date,
         expire_date,
@@ -214,6 +240,13 @@ authoritiesRouter.post(
         await emailService.sendFormBActingNotice(
           existing,
           approve_user_email,
+          moment(date).format("MMMM D, YYYY"),
+          moment(expire_date).format("MMMM D, YYYY")
+        );
+      } else if (activate_reason == "temporary") {
+        console.log("SENDING TERMPOROARY");
+        await emailService.sendFormBTemporaryNotice(
+          existing,
           moment(date).format("MMMM D, YYYY"),
           moment(expire_date).format("MMMM D, YYYY")
         );
@@ -298,7 +331,10 @@ authoritiesRouter.put(
     if (!existing.authority_type) existing.authority_type = "substantive"; // polyfill for late model change
 
     //this is workflow stuff
+
     if (save_action) {
+      existing.reject_comments = "";
+
       if (save_action == "Lock") {
         existing.department_reviews = [
           {
@@ -455,7 +491,7 @@ authoritiesRouter.put(
         existing.audit_lines = existing.audit_lines || [];
 
         existing.audit_lines.push({
-          action: "Finance Rejected",
+          action: "Finance Rejected: " + comments,
           date: new Date(),
           previous_value: {},
           user_name: `${req.user.first_name} ${req.user.last_name}`,
@@ -468,6 +504,8 @@ authoritiesRouter.put(
             { _id: new ObjectId(existing.created_by_id) },
           ],
         });
+
+        existing.reject_comments = comments;
 
         await emailService.sendFormBReject(
           existing,

@@ -1,4 +1,3 @@
-
 import * as config from "./config";
 
 export const LOGIN_URL = `${config.apiBaseUrl}/api/auth/login`;
@@ -15,3 +14,4 @@ export const FORMB_UPLOAD_URL = `${config.apiBaseUrl}/api/authorities/uploads`;
 export const FORMA_URL = `${config.apiBaseUrl}/api/form-a`;
 
 export const HEALTHCHECK_URL = `${config.apiBaseUrl}/api/healthcheck`;
+export const REPORTS_URL = `${config.apiBaseUrl}/reports`;
