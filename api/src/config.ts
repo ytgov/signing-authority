@@ -41,9 +41,6 @@ export const MONGO_DB = process.env.MONGO_DB || "";
 export const MONGO_HOST = process.env.MONGO_HOST || "";
 export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}`;
 
-export const API_GATEWAY_KEY = process.env.API_GATEWAY_KEY || "";
-export const DEPARTMENT_API_URL = "https://api.gov.yk.ca/finance/api/v2/accounts/departments";
-
 export const AD_CLIENT_ID = process.env.AD_CLIENT_ID || "";
 export const AD_CLIENT_SECRET = process.env.AD_CLIENT_SECRET || "";
 export const AD_TENANT_ID = process.env.AD_TENANT_ID || "";
