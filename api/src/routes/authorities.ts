@@ -201,6 +201,8 @@ authoritiesRouter.post(
       let errorMessage = null;
 
       for (const existingActivation of existing.activation) {
+        if (existingActivation.reject_user_date) continue;
+
         const existingStart = moment(existingActivation.date);
         const existingEnd = moment(existingActivation.expire_date ?? new Date("2100-12-31"));
 
@@ -244,7 +246,6 @@ authoritiesRouter.post(
           moment(expire_date).format("MMMM D, YYYY")
         );
       } else if (activate_reason == "temporary") {
-        console.log("SENDING TERMPOROARY");
         await emailService.sendFormBTemporaryNotice(
           existing,
           moment(date).format("MMMM D, YYYY"),
