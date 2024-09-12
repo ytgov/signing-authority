@@ -20,8 +20,6 @@ export class QuestService {
       return this.cache.get(input);
     }
 
-    console.log("I LOOK UP FROM ", FM_ACCOUNT_LOOKUP_URL);
-
     return axios
       .get(`${FM_ACCOUNT_LOOKUP_URL}/account/${input}`, { headers: FM_AUTH_HEADER })
       .then(async (resp) => {
