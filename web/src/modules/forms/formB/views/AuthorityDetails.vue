@@ -164,7 +164,7 @@
                       </span>
                       <span v-else-if="act.reject_user_date">
                         <strong>Rejected by: </strong>{{ act.approve_user_email }} <br />
-                        <strong>Rejected on: </strong>{{ act.reject_user_date }} <br />
+                        <strong>Rejected on: </strong>{{ formatDate(act.reject_user_date) }} <br />
                       </span>
                       <span v-else-if="act.approve_user_date">
                         <strong>Approved by:</strong> {{ act.approve_user_email }} <br />

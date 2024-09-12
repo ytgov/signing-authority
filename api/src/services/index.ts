@@ -7,7 +7,6 @@ export * from "./generic-service";
 export * from "./integration-service";
 export * from "./quest-service";
 export * from "./user-service";
-export * from "./department-service";
 export * from "./limit-service";
 export * from "./scheduler-service";
 export * from "./yesnet-service";
