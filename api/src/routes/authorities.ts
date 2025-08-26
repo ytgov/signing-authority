@@ -704,30 +704,6 @@ authoritiesRouter.post("/", checkJwt, loadUser, isFormBAdmin, async (req: Reques
   res.json({ data: item });
 });
 
-/* authoritiesRouter.post('/', async (req: Request, res: Response) => {
-  //post object {user: "YNETUsername", account: "full-accuont-code"}
-  //returns true and the value and type of approval
-  return res.json({"TESTING": "crap"});
-}); */
-
-/* authoritiesRouter.get("/account/:account", async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  return res.json({ params: req.params });
-});
-authoritiesRouter.post("/account/:account", async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  // -----------
-  let a: any = req.store as Storage;
-  // await a.Authorities.create({"thing":"the other thing"})
-  // -----------
-  return res.json({});
-}); */
-
-/* authoritiesRouter.get("/:myAuthorities", async (req: Request, res: Response) => {
-  //return a list of all the authorites assigned to my (YNET username)
-  return res.json({ params: req.params });
-}); */
-
 async function loadSingleAuthority(req: Request, id: string): Promise<Authority | undefined> {
   let db = req.store.Authorities as GenericService<Authority>;
   let formADb = req.store.FormA as GenericService<Position>;
