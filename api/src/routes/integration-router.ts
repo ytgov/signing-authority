@@ -9,7 +9,7 @@ integrationRouter.use(RequiresData);
 
 integrationRouter.get("/authorities-for-user/:email", async (req: Request, res: Response) => {
   const { email } = req.params;
-  console.log("Authorities requested for", email)
+  console.log("Authorities requested for", email);
 
   let db = req.store.Authorities as GenericService<Authority>;
   let regex = RegExp(email, "i");
@@ -37,7 +37,7 @@ integrationRouter.get("/authorities-for-user/:email", async (req: Request, res: 
     results.push({ email: auth.employee.email, authority_lines, modified_date });
   }
 
-  console.log("** Sending", results.length)
+  console.log("** Sending", results.length);
 
   res.json({ data: results });
 });
