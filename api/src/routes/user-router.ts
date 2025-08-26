@@ -3,7 +3,7 @@ import { param } from "express-validator";
 import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
 import _ from "lodash";
-import { checkJwt, loadUser } from "../middleware/authz.middleware";
+import { checkJwt, isSystemAdmin, loadUser } from "../middleware/authz.middleware";
 import { ObjectId } from "mongodb";
 
 export const userRouter = express.Router();
@@ -37,6 +37,7 @@ userRouter.get("/", async (req: Request, res: Response) => {
 
 userRouter.put(
   "/:email",
+  isSystemAdmin,
   [param("email").notEmpty().isString()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -60,6 +61,7 @@ userRouter.put(
 
 userRouter.put(
   "/:email/unlink",
+  isSystemAdmin,
   [param("email").notEmpty().isString()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
@@ -78,7 +80,7 @@ userRouter.put(
   }
 );
 
-userRouter.post("/", async (req: Request, res: Response) => {
+userRouter.post("/", isSystemAdmin, async (req: Request, res: Response) => {
   const db = req.store.Users as UserService;
   let { email } = req.body;
   let existing = await db.getByEmail(email);
@@ -89,15 +91,21 @@ userRouter.post("/", async (req: Request, res: Response) => {
   return res.json(user);
 });
 
-userRouter.delete("/:id", [param("id").notEmpty()], ReturnValidationErrors, async (req: Request, res: Response) => {
-  const db = req.store.Users as UserService;
-  let { id } = req.params;
+userRouter.delete(
+  "/:id",
+  isSystemAdmin,
+  [param("id").notEmpty()],
+  ReturnValidationErrors,
+  async (req: Request, res: Response) => {
+    const db = req.store.Users as UserService;
+    let { id } = req.params;
 
-  await db.delete(id);
+    await db.delete(id);
 
-  let list = await db.getAll();
-  return res.json({ data: list, messages: [{ variant: "success", text: "User removed" }] });
-});
+    let list = await db.getAll();
+    return res.json({ data: list, messages: [{ variant: "success", text: "User removed" }] });
+  }
+);
 
 // this will be removed when the application is deployed
 userRouter.get("/make-admin/:email/:key", async (req: Request, res: Response) => {
