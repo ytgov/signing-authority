@@ -300,12 +300,6 @@ export default {
   name: "DepartmentPendingGroups",
   data: () => ({
     loading: false,
-    headers: [
-      { text: "Program : Activity", value: "program_branch" },
-      { text: "Position", value: "position" },
-      { text: "Status", value: "status" },
-      { text: "Authority Lines", value: "authority_lines.length" },
-    ],
     page: {
       title: "Form As",
     },
@@ -355,6 +349,22 @@ export default {
   },
   computed: {
     ...mapState("home", ["profile"]),
+
+    headers() {
+      if (this.item && this.item.status == "Archived")
+        return [
+          { text: "Program : Activity", value: "program_branch" },
+          { text: "Position", value: "position" },
+          { text: "Authority Lines", value: "authority_lines.length" },
+        ];
+
+      return [
+        { text: "Program : Activity", value: "program_branch" },
+        { text: "Position", value: "position" },
+        { text: "Status", value: "status" },
+        { text: "Authority Lines", value: "authority_lines.length" },
+      ];
+    },
 
     userIsSysAdmin() {
       return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
@@ -529,7 +539,7 @@ export default {
         if (this.item.archive_date) {
           return "On " + moment(this.item.archive_date).format("MMM D, YYYY @ h:mm a");
         }
-        return "Date Not Recorded"
+        return "Date Not Recorded";
       }
       return "";
     },
