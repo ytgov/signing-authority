@@ -153,6 +153,7 @@ formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req:
     if (groupPositions.length == 0 && groupPositions2.length == 0) {
       if (group._id) {
         group.status = "Archived";
+        group.archive_date = new Date();
         archiveList.push(group);
         await groupDb.update(group._id.toString(), group);
       }
@@ -494,6 +495,7 @@ formARouter.put(
           if (groupPositions.length == 0 && groupPositions2.length == 0) {
             if (group._id) {
               group.status = "Archived";
+              group.archive_date = new Date();
               await groupDb.update(group._id.toString(), group);
             }
           }

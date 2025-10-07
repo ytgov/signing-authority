@@ -49,7 +49,8 @@
           <v-divider></v-divider>
 
           <v-stepper-step step="5" :complete="stepperValue > 5">
-            Active
+            {{ item.status == "Archived" ? "Archived" : "Active" }}
+            <small>{{ archiveDate }}</small>
           </v-stepper-step>
         </v-stepper-header>
       </v-stepper>
@@ -164,7 +165,7 @@
                 :headers="headers"
                 :items="item.positions"
                 @click:row="openFormA"
-                class="row-clickable"
+                :class="{ 'row-clickable': item.status != 'Archived' }"
                 :footer-props="{
                   'items-per-page-options': [25, 50, 75, -1],
                 }"
@@ -523,6 +524,15 @@ export default {
       }
       return "";
     },
+    archiveDate() {
+      if (this.item.status == "Archived") {
+        if (this.item.archive_date) {
+          return "On " + moment(this.item.archive_date).format("MMM D, YYYY @ h:mm a");
+        }
+        return "Date Not Recorded"
+      }
+      return "";
+    },
   },
   methods: {
     ...mapActions("department", [
@@ -544,6 +554,7 @@ export default {
       this.loading = false;
     },
     openFormA(item) {
+      if (this.item.status == "Archived") return;
       this.$router.push(`/departments/${this.departmentId}/positions/${item._id}`);
     },
     showPreview() {
