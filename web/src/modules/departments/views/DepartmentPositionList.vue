@@ -74,15 +74,6 @@
                     v-if="canAdminister"
                     >Generate Form A</v-btn
                   >
-                  <v-btn
-                    :disabled="!canGenerate"
-                    color="secondary"
-                    class="my-0 ml-5"
-                    style="height: 40px"
-                    @click="bulkUpdateClick"
-                    v-if="canAdminister"
-                    >Bulk Update</v-btn
-                  >
                 </v-col>
               </v-row>
 
@@ -170,54 +161,6 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="showUpdateDialog" persistent width="600">
-      <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Bulk Update</v-toolbar-title>
-        <v-spacer />
-        <v-icon title="Close" @click="closeUpdateDialog">mdi-close</v-icon>
-      </v-app-bar>
-      <v-card tile>
-        <v-card-text class="pt-3">
-          <p class="mb-1">The following {{ bulkUpdateList.length }} position(s) will be updated:</p>
-          <p style="color: #323232cc !important">
-            Remove any positions you do not want to update by clicking the
-            <v-icon small color="warning">mdi-close</v-icon> icon.
-          </p>
-
-          <v-list dense>
-            <div v-for="(item, idx) of bulkUpdateList" :key="idx">
-              <v-divider></v-divider>
-              <v-list-item>
-                <v-list-item-content>
-                  {{ makeFullName(item) }}
-                </v-list-item-content>
-                <v-list-item-icon>
-                  <v-btn color="warning" class="my-0" small icon @click="removeMatchingUpdateItem(idx)"
-                    ><v-icon>mdi-close</v-icon></v-btn
-                  >
-                </v-list-item-icon>
-              </v-list-item>
-            </div>
-          </v-list>
-
-          <p>
-            <strong>IMPORTANT:</strong>
-            This function will update the Program and Activity fields on multiple Positions, but cannot change authority
-            lines, authority values or Position names. Any Related Form B's will have their Program and Activity fields
-            updated accordingly and are not required to be re-signed. If one of them impacted Form B's is re-printed, it
-            will show the updated Program and Activity but preexisting uploads will remain unchanged.
-          </p>
-
-          <v-text-field v-model="bulkUpdateProgram" label="New Program" outlined dense />
-          <v-text-field v-model="bulkUpdateActivity" label="New Activity" outlined dense />
-
-          <v-btn color="primary" class="my-0" @click="doBulkUpdate" :disabled="bulkUpdateList.length == 0"
-            >Update {{ bulkUpdateList.length }} Positions And Related Form B's</v-btn
-          >
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <pdf-preview-dialog ref="pdfPreview"></pdf-preview-dialog>
   </v-container>
 </template>
@@ -283,11 +226,6 @@ export default {
 
     showGenerateDialog: false,
     generateFormAList: [],
-
-    showUpdateDialog: false,
-    bulkUpdateList: [],
-    bulkUpdateProgram: "",
-    bulkUpdateActivity: "",
   }),
   mounted: async function() {
     this.loading = true;
@@ -518,27 +456,6 @@ export default {
       return item.position;
     },
 
-    bulkUpdateClick() {
-      this.bulkUpdateProgram = "";
-      this.bulkUpdateActivity = "";
-
-      this.bulkUpdateList = cloneDeep(this.matchingItems);
-      this.bulkUpdateList = this.bulkUpdateList.filter(
-        (i) => i.status != "Archived" && !i.is_deputy_minister && !i.is_deputy_duplicate
-      );
-
-      this.bulkUpdateList = orderBy(
-        this.bulkUpdateList,
-        ["is_deputy_minister", "is_deputy_duplicate", "program_branch", "activity", "position", "created_on"],
-        ["desc", "desc", "asc"]
-      );
-
-      this.showUpdateDialog = true;
-    },
-    doBulkUpdate() {},
-    removeMatchingUpdateItem(index) {
-      this.bulkUpdateList.splice(index, 1);
-    },
     closeUpdateDialog() {
       this.showUpdateDialog = false;
     },
