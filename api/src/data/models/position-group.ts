@@ -25,6 +25,8 @@ export interface PositionGroup extends MongoEntity {
   create_date_display?: string;
   positions?: Array<Position>;
   authority_lines?: Array<any>;
+
+  archive_date?: Date;
 }
 
 export interface ElectronicApproval {

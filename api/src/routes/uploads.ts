@@ -3,33 +3,32 @@ import { FileStore } from "src/utils/file-store";
 import { StoredFile } from "../data/models";
 
 export const uploadsRouter = express.Router();
-uploadsRouter.get('/', async (req: Request, res: Response) => {
+uploadsRouter.get("/", async (req: Request, res: Response) => {
   let fileStore = req.store.Files as FileStore;
   let files = await fileStore.getFiles({});
-  return res.json({ data: files })
-
+  return res.json({ data: files });
 });
 
-uploadsRouter.get('/poster/:user', async (req: Request, res: Response) => {
+uploadsRouter.get("/poster/:user", async (req: Request, res: Response) => {
   //return all files uploaded by a given User
   // RA: This should probably go to a "reporting" api endpoint
   let { user } = req.params;
   let fileStore = req.store.Files as FileStore;
-  let files = await fileStore.getFiles({"metadata.uploadedBy": user});
-  return res.json({ data: files })
+  let files = await fileStore.getFiles({ "metadata.uploadedBy": user });
+  return res.json({ data: files });
 });
 
-uploadsRouter.get('/:id', async (req: Request, res: Response) => {
+uploadsRouter.get("/:id", async (req: Request, res: Response) => {
   let { id } = req.params;
 
   let fileStore = req.store.Files as FileStore;
   let file = await fileStore.getFile(id);
   file.content = Buffer.from([]);
 
-  return res.json({ data: file })
+  return res.json({ data: file });
 });
 
-uploadsRouter.get('/:id/file', async (req: Request, res: Response) => {
+uploadsRouter.get("/:id/file", async (req: Request, res: Response) => {
   let { id } = req.params;
   let fileStore = req.store.Files as FileStore;
   let file = await fileStore.getFile(id);
@@ -38,7 +37,7 @@ uploadsRouter.get('/:id/file', async (req: Request, res: Response) => {
   return res.contentType(file.mime_type).send(file.content);
 });
 
-uploadsRouter.post('/', async (req: Request, res: Response) => {
+uploadsRouter.post("/", async (req: Request, res: Response) => {
   //let a:any = req.store as Storage
   ///console.log (a.mongoConnection.s.url)
   let fileStore = req.store.Files as FileStore;
@@ -46,8 +45,7 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
   if (req.files) {
     let file = req.files["file"];
 
-    if (Array.isArray(file))
-      file = file[0];
+    if (Array.isArray(file)) file = file[0];
 
     if (file) {
       let storedFile: StoredFile = {
@@ -55,19 +53,19 @@ uploadsRouter.post('/', async (req: Request, res: Response) => {
         file_size: file.size,
         filename: file.name,
         mime_type: file.mimetype,
-        uploaded_by: req.body.user
-      }
+        uploaded_by: req.body.user,
+      };
 
       let f = await fileStore.putFile(storedFile);
 
-      return res.json({ data: f._id })
+      return res.json({ data: f._id });
     }
   }
 
   res.status(500).send();
 });
 
-uploadsRouter.get('/myCard', async (req: Request, res: Response) => {
+uploadsRouter.get("/myCard", async (req: Request, res: Response) => {
   //return a list of all the authorites assigned to my (YNET username)
-  return res.json({ "params": req.params });
+  return res.json({ params: req.params });
 });
