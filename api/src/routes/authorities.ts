@@ -109,6 +109,44 @@ authoritiesRouter.get(
   }
 );
 
+authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request, res: Response) => {
+  const { ids } = req.body;
+  const idList = eval(ids);
+
+  const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormBTemplate.html");
+
+  let allItemData = "";
+
+  for (let id of idList) {
+    let item = await loadSingleAuthority(req, id);
+
+    if (item) {
+      (item as any).API_PORT = API_PORT;
+
+      if (item.authority_type == "temporary") item.authority_type = "TEMPORARY";
+      else if (item.authority_type == "acting") item.authority_type = "ACTING";
+      else item.authority_type = "SUBSTANTIVE";
+
+      let t = new ExpressHandlebars();
+
+      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
+      let data = template(item, {
+        helpers: {
+          eq: function (a1: string, a2: string) {
+            return a1 == a2;
+          },
+        },
+      });
+
+      allItemData += data + '<div style="page-break-after: always;"></div>';
+    }
+  }
+  let pdf = await generatePDF(allItemData);
+  res.setHeader("Content-disposition", `attachment; filename="FormB_BULKPRINT.pdf"`);
+  res.setHeader("Content-type", "application/pdf");
+  res.send(pdf);
+});
+
 authoritiesRouter.get(
   "/:id/pdf/draft",
   [param("id").isMongoId().notEmpty()],
