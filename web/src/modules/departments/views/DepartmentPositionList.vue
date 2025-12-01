@@ -43,7 +43,7 @@
             <v-card-title>Delegations by Position</v-card-title>
             <v-card-text>
               <v-row>
-                <v-col>
+                <v-col cols="4">
                   <v-select
                     label="Filter Program"
                     v-model="programFilter"
@@ -54,7 +54,7 @@
                     background-color="white"
                   />
                 </v-col>
-                <v-col>
+                <v-col class="d-flex">
                   <v-select
                     label="Filter Activity"
                     v-model="activityFilter"
@@ -65,17 +65,16 @@
                     outlined
                     background-color="white"
                   />
-                </v-col>
-                <v-col>
                   <v-btn
                     :disabled="!canGenerate"
                     color="secondary"
-                    class="my-0"
+                    class="my-0 ml-5"
+                    style="height: 40px"
                     @click="generateFormAClick"
                     v-if="canAdminister"
                     >Generate Form A</v-btn
-                  ></v-col
-                >
+                  >
+                </v-col>
               </v-row>
 
               <v-data-table
@@ -455,6 +454,10 @@ export default {
       if (item.activity) return `${item.activity} - ${item.position}`;
 
       return item.position;
+    },
+
+    closeUpdateDialog() {
+      this.showUpdateDialog = false;
     },
   },
 };
