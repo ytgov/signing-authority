@@ -99,11 +99,7 @@ authoritiesRouter.get(
       let name = CleanFilename(`${item.department_code}`);
       if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
 
-      console.log("Generating PDF for Authority ID:", id);
-
       let pdf = await generatePDF(data);
-
-      console.log("Generated PDF for Authority ID:", pdf);
       res.setHeader("Content-disposition", `attachment; filename="FormB_${name}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
       res.send(Buffer.from(pdf));
@@ -123,8 +119,6 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
 
   for (let id of idList) {
     let item = await loadSingleAuthority(req, id);
-
-    console.log("Processing ID:", id, "Found item:", !!item);
 
     if (item) {
       (item as any).API_PORT = API_PORT;
@@ -147,8 +141,6 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
       allItemData += data + '<div style="page-break-after: always;"></div>';
     }
   }
-
-  console.log("Generating final PDF document");
 
   let pdf = await generatePDF(allItemData);
 
@@ -194,7 +186,7 @@ authoritiesRouter.get(
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="DRAFT-FormB_${name}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();

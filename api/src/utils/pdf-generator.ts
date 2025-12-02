@@ -11,6 +11,7 @@ export async function generatePDF(content: string, format: PaperFormat = "letter
     format,
     landscape,
     preferCSSPageSize: true,
+    
   });
   await browser.close();
   return Promise.resolve(pdf);

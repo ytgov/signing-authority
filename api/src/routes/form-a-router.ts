@@ -227,7 +227,7 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
   let pdf = await generatePDF(data);
   res.setHeader("Content-disposition", `filename="DRAFT-FormA_${dept}.pdf"`);
   res.setHeader("Content-type", "application/pdf");
-  res.send(pdf);
+  res.send(Buffer.from(pdf));
 });
 
 formARouter.get(
@@ -868,7 +868,7 @@ formARouter.get(
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="FormA_${dept}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();
@@ -932,7 +932,7 @@ formARouter.get(
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="DRAFT-FormA_${dept}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();
