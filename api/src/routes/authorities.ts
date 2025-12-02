@@ -117,8 +117,12 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
 
   let allItemData = "";
 
+  console.log("Generating bulk PDF for IDs:", idList);
+
   for (let id of idList) {
     let item = await loadSingleAuthority(req, id);
+
+    console.log("Processing ID:", id, "Found item:", !!item);
 
     if (item) {
       (item as any).API_PORT = API_PORT;
@@ -141,6 +145,9 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
       allItemData += data + '<div style="page-break-after: always;"></div>';
     }
   }
+
+  console.log("Generating final PDF document", allItemData);
+
   let pdf = await generatePDF(allItemData);
   res.setHeader("Content-disposition", `attachment; filename="FormB_BULKPRINT.pdf"`);
   res.setHeader("Content-type", "application/pdf");
