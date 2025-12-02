@@ -99,10 +99,14 @@ authoritiesRouter.get(
       let name = CleanFilename(`${item.department_code}`);
       if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
 
+      console.log("Generating PDF for Authority ID:", id);
+
       let pdf = await generatePDF(data);
+
+      console.log("Generated PDF for Authority ID:", pdf);
       res.setHeader("Content-disposition", `attachment; filename="FormB_${name}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();
@@ -116,8 +120,6 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
   const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormBTemplate.html");
 
   let allItemData = "";
-
-  console.log("Generating bulk PDF for IDs:", idList);
 
   for (let id of idList) {
     let item = await loadSingleAuthority(req, id);
@@ -146,12 +148,14 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
     }
   }
 
-  console.log("Generating final PDF document", allItemData);
+  console.log("Generating final PDF document");
 
   let pdf = await generatePDF(allItemData);
+
   res.setHeader("Content-disposition", `attachment; filename="FormB_BULKPRINT.pdf"`);
   res.setHeader("Content-type", "application/pdf");
-  res.send(pdf);
+  console.log("Sending PDF response");
+  res.send(Buffer.from(pdf));
 });
 
 authoritiesRouter.get(
