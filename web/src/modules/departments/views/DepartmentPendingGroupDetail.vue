@@ -161,7 +161,7 @@
               <strong>{{ item.activity }}</strong>
             </v-card-subtitle>
             <v-card-text>
-              <v-alert v-if="item.status == 'Archived'" color="warning" outlined>This Form A is 'Archived' and is no longer valid.</v-alert>
+              <v-alert v-if="item.status == 'Archived'" color="error" outlined>This Form A is 'Archived' and is no longer valid.</v-alert>
 
               <v-data-table
                 :headers="headers"

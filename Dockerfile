@@ -1,16 +1,18 @@
-FROM node:18.17.0-alpine3.17
+FROM node:20.10.0-alpine3.19
 
+# Supports Puppeteer
 RUN apk add --no-cache \
-      chromium=112.0.5615.165-r0 \
+      chromium \
       nss \
       freetype \
       harfbuzz \
       ca-certificates \
       ttf-freefont \
+      udev \
       tzdata
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 RUN cp /usr/share/zoneinfo/America/Whitehorse /etc/localtime
 RUN echo "America/Whitehorse" > /etc/timezone
