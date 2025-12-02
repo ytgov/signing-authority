@@ -93,7 +93,7 @@
 
     <v-dialog v-model="showPrintDialog" persistent width="600">
       <v-app-bar dark color="#0097A9">
-        <v-toolbar-title>Generate Form A</v-toolbar-title>
+        <v-toolbar-title>Bulk Print</v-toolbar-title>
         <v-spacer />
         <v-icon title="Close" @click="closePrintDialog">mdi-close</v-icon>
       </v-app-bar>
