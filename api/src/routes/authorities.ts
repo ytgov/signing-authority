@@ -146,7 +146,6 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
 
   res.setHeader("Content-disposition", `attachment; filename="FormB_BULKPRINT.pdf"`);
   res.setHeader("Content-type", "application/pdf");
-  console.log("Sending PDF response");
   res.send(Buffer.from(pdf));
 });
 
@@ -177,8 +176,6 @@ authoritiesRouter.get(
           },
         },
       });
-
-      console.log(data);
 
       let name = CleanFilename(`${item.department_code}`);
       if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
