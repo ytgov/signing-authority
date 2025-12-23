@@ -3,6 +3,7 @@ name: Build and Push
 on:
   push:
     branches: [main, test, uat]
+  workflow_dispatch:  # Allows manual triggering
 
 env:
   REGISTRY: ghcr.io
