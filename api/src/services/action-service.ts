@@ -4,9 +4,13 @@ import { Storage } from "../data";
 export class ActionService {
   constructor() {}
 
-  async getActionsForUser(user: { email: string; roles: string[]; department_admin_for: string[] }) {
-    let roles = user.roles;
-    let depts = user.department_admin_for;
+  async getActionsForUser(user: {
+    email: string;
+    roles: string[];
+    department_admin_for: string[];
+  }) {
+    let roles = user.roles ?? [];
+    let depts = user.department_admin_for ?? [];
 
     let allActions = await this.getActionsSupervisor(user.email);
 
@@ -34,7 +38,13 @@ export class ActionService {
     const formAService = storage.PositionGroups;
 
     let awaitingA = await formAService.getAll({
-      $and: [{ status: { $nin: ["Archived", "Active", "Finance Review", "Upload Signatures"] } }],
+      $and: [
+        {
+          status: {
+            $nin: ["Archived", "Active", "Finance Review", "Upload Signatures"],
+          },
+        },
+      ],
     });
 
     let items = new Array<any>();
@@ -136,7 +146,15 @@ export class ActionService {
       $and: [
         { authority_type: "acting" },
         { cancel_date: { $exists: false } },
-        { activation: { $elemMatch: { approve_user_date: null, reject_user_date: null, approve_user_email: email } } },
+        {
+          activation: {
+            $elemMatch: {
+              approve_user_date: null,
+              reject_user_date: null,
+              approve_user_email: email,
+            },
+          },
+        },
       ],
     });
 
