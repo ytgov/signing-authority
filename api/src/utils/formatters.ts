@@ -42,6 +42,6 @@ export function FormatCoding(input: string = ""): string {
 
 export function CleanFilename(input: string): string {
   let filename = input.replace(/\s/g, ""); // replace whitespace
-  filename = filename.replace(/[!%&'()*+./;<=>?\\,/:#@\t\r\n"\[\]_\u007B-\u00BF-]/g, ""); // replace special characters
+  filename = filename.replace(/[!%&'()*+./;<=>?\\,/:#@\t\r\n"\[\]_\u007B-\u00BF\u2013\u2014\u2018\u2019\u201C\u201D-]/g, ""); // replace special characters
   return filename;
 }
