@@ -1,9 +1,16 @@
-import { FormBAuthorityLine, Position, PositionAuthorityLine } from "../data/models";
+import {
+  FormBAuthorityLine,
+  Position,
+  PositionAuthorityLine,
+} from "../data/models";
 
 export class LimitService {
   constructor() {}
 
-  findRelevantFormALimits(dmForm: Position, line: GenericLine): PositionAuthorityLine[] {
+  findRelevantFormALimits(
+    dmForm: Position,
+    line: GenericLine
+  ): PositionAuthorityLine[] {
     let coding = line.coding;
     let restricts = line.operational_restriction || undefined;
     let matches = new Array<PositionAuthorityLine>();
@@ -48,30 +55,87 @@ export class LimitService {
     return matches;
   }
 
-  checkFormALineLimits(dmForm: Position, line: PositionAuthorityLine): string | undefined {
+  checkFormALineLimits(
+    dmForm: Position,
+    line: PositionAuthorityLine
+  ): string | undefined {
     let limits = this.findRelevantFormALimits(dmForm, line);
 
     if (limits.length == 0) return `No parent rows match ${line.coding}`;
 
+    let foundGood = false;
+    let message = undefined;
+
     for (let limit of limits) {
-      if (!this.compareLimit(limit.contracts_for_goods_services, line.contracts_for_goods_services))
-        return `${line.coding} - Contracts limit invalid`;
-      if (!this.compareLimit(limit.loans_and_guarantees, line.loans_and_guarantees))
-        return `${line.coding} - Loans limit invalid`;
-      if (!this.compareLimit(limit.transfer_payments, line.transfer_payments))
-        return `${line.coding} - Transfer limit invalid`;
-      if (!this.compareLimit(limit.authorization_for_travel, line.authorization_for_travel))
-        return `${line.coding} - Travel limit invalid`;
-      if (!this.compareLimit(limit.request_for_goods_services, line.request_for_goods_services))
-        return `${line.coding} - Request limit invalid`;
-      if (!this.compareLimit(limit.assignment_authority, line.assignment_authority))
-        return `${line.coding} - Assignment limit invalid`;
-      if (!this.compareLimit(limit.s29_performance_limit, line.s29_performance_limit))
-        return `${line.coding} - S29 Performance limit invalid`;
-      if (!this.compareLimit(limit.s30_payment_limit, line.s30_payment_limit))
-        return `${line.coding} - S30 Payment limit invalid`;
+      if (
+        !this.compareLimit(
+          limit.contracts_for_goods_services,
+          line.contracts_for_goods_services
+        )
+      ) {
+        message = `${line.coding} - Contracts limit invalid`;
+        continue;
+      }
+      if (
+        !this.compareLimit(
+          limit.loans_and_guarantees,
+          line.loans_and_guarantees
+        )
+      ) {
+        message = `${line.coding} - Loans limit invalid`;
+        continue;
+      }
+      if (!this.compareLimit(limit.transfer_payments, line.transfer_payments)) {
+        message = `${line.coding} - Transfer limit invalid`;
+        continue;
+      }
+      if (
+        !this.compareLimit(
+          limit.authorization_for_travel,
+          line.authorization_for_travel
+        )
+      ) {
+        message = `${line.coding} - Travel limit invalid`;
+        continue;
+      }
+      if (
+        !this.compareLimit(
+          limit.request_for_goods_services,
+          line.request_for_goods_services
+        )
+      ) {
+        message = `${line.coding} - Request limit invalid`;
+        continue;
+      }
+      if (
+        !this.compareLimit(
+          limit.assignment_authority,
+          line.assignment_authority
+        )
+      ) {
+        message = `${line.coding} - Assignment limit invalid`;
+        continue;
+      }
+      if (
+        !this.compareLimit(
+          limit.s29_performance_limit,
+          line.s29_performance_limit
+        )
+      ) {
+        message = `${line.coding} - S29 Performance limit invalid`;
+        continue;
+      }
+      if (!this.compareLimit(limit.s30_payment_limit, line.s30_payment_limit)) {
+        message = `${line.coding} - S30 Payment limit invalid`;
+        continue;
+      }
+
+      foundGood = true;
     }
-    return undefined;
+
+    if (foundGood) return undefined;
+
+    return message;
   }
 
   combineFormALimits(limits: PositionAuthorityLine[]): any {
@@ -96,45 +160,85 @@ export class LimitService {
     };
 
     for (let lim of limits) {
-      if (limit.contracts_for_goods_services == "" && lim.contracts_for_goods_services.toString() != "")
-        limit.contracts_for_goods_services = lim.contracts_for_goods_services.toString();
+      if (
+        limit.contracts_for_goods_services == "" &&
+        lim.contracts_for_goods_services.toString() != ""
+      )
+        limit.contracts_for_goods_services =
+          lim.contracts_for_goods_services.toString();
 
-      if (limit.loans_and_guarantees == "" && lim.loans_and_guarantees.toString() != "")
+      if (
+        limit.loans_and_guarantees == "" &&
+        lim.loans_and_guarantees.toString() != ""
+      )
         limit.loans_and_guarantees = lim.loans_and_guarantees.toString();
 
-      if (limit.transfer_payments == "" && lim.transfer_payments.toString() != "")
+      if (
+        limit.transfer_payments == "" &&
+        lim.transfer_payments.toString() != ""
+      )
         limit.transfer_payments = lim.transfer_payments.toString();
 
-      if (limit.authorization_for_travel == "" && lim.authorization_for_travel.toString() != "")
-        limit.authorization_for_travel = lim.authorization_for_travel.toString();
+      if (
+        limit.authorization_for_travel == "" &&
+        lim.authorization_for_travel.toString() != ""
+      )
+        limit.authorization_for_travel =
+          lim.authorization_for_travel.toString();
 
-      if (limit.request_for_goods_services == "" && lim.request_for_goods_services.toString() != "")
-        limit.request_for_goods_services = lim.request_for_goods_services.toString();
+      if (
+        limit.request_for_goods_services == "" &&
+        lim.request_for_goods_services.toString() != ""
+      )
+        limit.request_for_goods_services =
+          lim.request_for_goods_services.toString();
 
-      if (limit.assignment_authority == "" && lim.assignment_authority.toString() != "")
+      if (
+        limit.assignment_authority == "" &&
+        lim.assignment_authority.toString() != ""
+      )
         limit.assignment_authority = lim.assignment_authority.toString();
 
-      if (limit.s29_performance_limit == "" && lim.s29_performance_limit.toString() != "")
+      if (
+        limit.s29_performance_limit == "" &&
+        lim.s29_performance_limit.toString() != ""
+      )
         limit.s29_performance_limit = lim.s29_performance_limit.toString();
 
-      if (limit.s30_payment_limit == "" && lim.s30_payment_limit.toString() != "")
+      if (
+        limit.s30_payment_limit == "" &&
+        lim.s30_payment_limit.toString() != ""
+      )
         limit.s30_payment_limit = lim.s30_payment_limit.toString();
     }
 
     return limit;
   }
 
-  checkFormBLineLimits(formA: Position, line: FormBAuthorityLine): string | undefined {
+  checkFormBLineLimits(
+    formA: Position,
+    line: FormBAuthorityLine
+  ): string | undefined {
     let limits = this.findRelevantFormALimits(formA, line);
 
     if (limits.length == 0) return `No parent rows match ${line.coding}`;
 
     let limit = this.combineFormALimits(limits);
 
-    if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_goods_limit))
+    if (
+      !this.compareLimit(
+        limit.contracts_for_goods_services,
+        line.s24_procure_goods_limit
+      )
+    )
       return `${line.coding} - S24 Goods limit invalid`;
 
-    if (!this.compareLimit(limit.contracts_for_goods_services, line.s23_procure_goods_limit))
+    if (
+      !this.compareLimit(
+        limit.contracts_for_goods_services,
+        line.s23_procure_goods_limit
+      )
+    )
       return `${line.coding} - S23 Goods limit invalid`;
 
     let s24ExceptionRestrictions = [
@@ -157,28 +261,61 @@ export class LimitService {
       return `${line.coding} - S24 Goods limit over $1000 w/o appropriate operational restriction`;
     }
 
-    if (line.s23_procure_goods_limit > 1 && s23ExceptionRestrictions.indexOf(line.operational_restriction || "") < 0) {
+    if (
+      line.s23_procure_goods_limit > 1 &&
+      s23ExceptionRestrictions.indexOf(line.operational_restriction || "") < 0
+    ) {
       return `${line.coding} - S23 Goods limit over $1000 w/o appropriate operational restriction`;
     }
 
-    if (!this.compareLimit(limit.contracts_for_goods_services, line.s24_procure_services_limit))
+    if (
+      !this.compareLimit(
+        limit.contracts_for_goods_services,
+        line.s24_procure_services_limit
+      )
+    )
       return `${line.coding} - S24 Services limit invalid`;
-    if (!this.compareLimit(limit.request_for_goods_services, line.s24_procure_request_limit))
+    if (
+      !this.compareLimit(
+        limit.request_for_goods_services,
+        line.s24_procure_request_limit
+      )
+    )
       return `${line.coding} - S24 Procure request limit invalid`;
-    if (!this.compareLimit(limit.assignment_authority, line.s24_procure_assignment_limit))
+    if (
+      !this.compareLimit(
+        limit.assignment_authority,
+        line.s24_procure_assignment_limit
+      )
+    )
       return `${line.coding} - S24 Procure assignment limit invalid`;
-    if (!this.compareLimit(limit.contracts_for_goods_services, line.s23_procure_services_limit))
+    if (
+      !this.compareLimit(
+        limit.contracts_for_goods_services,
+        line.s23_procure_services_limit
+      )
+    )
       return `${line.coding} - S23 Services limit invalid`;
     if (!this.compareLimit(limit.transfer_payments, line.s24_transfer_limit))
       return `${line.coding} - S24 Transfer limit invalid`;
     if (!this.compareLimit(limit.transfer_payments, line.s23_transfer_limit))
       return `${line.coding} - S23 Transfer limit invalid`;
-    if (!this.compareLimit(limit.authorization_for_travel, line.s24_travel_limit))
+    if (
+      !this.compareLimit(limit.authorization_for_travel, line.s24_travel_limit)
+    )
       return `${line.coding} - S24 Travel limit invalid`;
-    if (!this.compareLimit(limit.contracts_for_goods_services, line.other_limit))
+    if (
+      !this.compareLimit(limit.contracts_for_goods_services, line.other_limit)
+    )
       return `${line.coding} - Other limit invalid`;
-    if (!this.compareLimit(limit.loans_and_guarantees, line.loans_limit)) return `${line.coding} - Loans limit invalid`;
-    if (!this.compareLimit(limit.s29_performance_limit, line.s29_performance_limit))
+    if (!this.compareLimit(limit.loans_and_guarantees, line.loans_limit))
+      return `${line.coding} - Loans limit invalid`;
+    if (
+      !this.compareLimit(
+        limit.s29_performance_limit,
+        line.s29_performance_limit
+      )
+    )
       return `${line.coding} - S29 Performance limit invalid`;
     if (!this.compareLimit(limit.s30_payment_limit, line.s30_payment_limit))
       return `${line.coding} - S30 Payment limit invalid`;
@@ -200,7 +337,10 @@ export class LimitService {
     return limitNum >= valueNum;
   }
 
-  checkValidEditsOnDM(dmForm: Position, positions: Position[]): string | undefined {
+  checkValidEditsOnDM(
+    dmForm: Position,
+    positions: Position[]
+  ): string | undefined {
     let response = "";
     let count = 0;
 
