@@ -9,7 +9,7 @@
       </v-card-text>
     </v-card>
 
-    <v-navigation-drawer v-model="drawer" absolute right temporary width="600" loading>
+    <v-navigation-drawer v-model="drawer" absolute right temporary width="620" loading>
       <v-list-item loading>
         <v-list-item-content>
           <v-list-item-title>
@@ -24,8 +24,8 @@
         <v-data-table hide-default-footer :headers="[
           { text: 'Name', value: 'display_name' },
           { text: 'YNET Id', value: 'ynet_id' },
-          { text: 'Authorities', value: 'authority_count' },
-          { text: 'Active', value: 'preview' },
+          { text: 'Authorities', value: 'authority_count', width: '140px' },
+          { text: 'Active', value: 'preview', width: '135px' },
         ]" :items="searchResults" :items-per-page="-1" :loading="loading" @click:row="selectEmployee"
           class="clickable-row">
           <template v-slot:item.preview="{ item }">
