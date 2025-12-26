@@ -32,8 +32,7 @@
           <v-stepper-step step="3" :complete="stepperValue > 3">
             Upload Signatures
             <small class="mt-1">{{ uploadDate }}</small>
-            <small>{{ uploadName }}</small></v-stepper-step
-          >
+            <small>{{ uploadName }}</small></v-stepper-step>
           <v-divider></v-divider>
 
           <v-stepper-step step="4" :complete="stepperValue > 4">
@@ -50,16 +49,12 @@
         </v-stepper-header>
       </v-stepper>
 
-      <v-alert type="warning" v-if="formB.reject_comments">Rejection Comment:  {{ formB.reject_comments }}</v-alert>
+      <v-alert type="warning" v-if="formB.reject_comments">Rejection Comment: {{ formB.reject_comments }}</v-alert>
 
       <v-card class="default">
         <div style="float: right; margin-right: 15px; margin-top: 15px">
-          <form-b-status
-            :isLocked="isLocked"
-            :isActive="isActive"
-            :isCancelled="formB.cancel_date ? true : false"
-            :authorityType="formB.authority_type"
-          >
+          <form-b-status :isLocked="isLocked" :isActive="isActive" :isCancelled="formB.cancel_date ? true : false"
+            :authorityType="formB.authority_type">
           </form-b-status>
 
           <v-menu offset-y left>
@@ -122,12 +117,10 @@
           </v-menu>
         </div>
 
-        <v-card-title
-          >Form B for
+        <v-card-title>Form B for
           <router-link :to="`/employee/${formB.employee.ynet_id}`" class="ml-1">{{
             formB.employee.name
-          }}</router-link></v-card-title
-        >
+          }}</router-link></v-card-title>
 
         <v-card-subtitle>
           Department: <strong>{{ formB.department_descr }}</strong>
@@ -147,14 +140,8 @@
             <v-card-title>History</v-card-title>
             <v-card-text class="pb-0">
               <div v-if="formB.activation && formB.activation.length > 0">
-                <v-alert
-                  v-for="(act, idx) of formB.activation"
-                  :key="idx"
-                  text
-                  dense
-                  outlined
-                  style="border-color: #9e9e9e !important"
-                >
+                <v-alert v-for="(act, idx) of formB.activation" :key="idx" text dense outlined
+                  style="border-color: #9e9e9e !important">
                   <v-row>
                     <v-col cols="10" :class="act.current_status == 'Active' ? 'green--text' : 'warning--text'">
                       <strong>Current status:</strong> {{ act.current_status }}<br />
@@ -177,16 +164,9 @@
                       <span v-else> until cancelled</span>
                     </v-col>
                     <v-col>
-                      <v-btn
-                        v-if="
-                          canEditActivations && (act.current_status == 'Active' || act.current_status == 'Scheduled')
-                        "
-                        small
-                        class="my-0 float-right"
-                        color="secondary"
-                        @click="startEditActivation(idx)"
-                        >Edit</v-btn
-                      >
+                      <v-btn v-if="
+                        canEditActivations && (act.current_status == 'Active' || act.current_status == 'Scheduled')
+                      " small class="my-0 float-right" color="secondary" @click="startEditActivation(idx)">Edit</v-btn>
                     </v-col>
                   </v-row>
 
@@ -205,36 +185,21 @@
           <v-card class="default">
             <v-card-title>Related Position</v-card-title>
             <v-card-text>
-              <v-text-field
-                v-model="formAProgram"
-                label="Program"
-                dense
-                outlined
-                background-color="white"
-                readonly
-                append-icon="mdi-lock"
-              ></v-text-field>
-              <v-text-field
-                v-model="formB.form_a.position"
-                label="Position"
-                dense
-                outlined
-                readonly
-                background-color="white"
-                append-icon="mdi-lock"
-              ></v-text-field>
+              <v-text-field v-model="formAProgram" label="Program" dense outlined background-color="white" readonly
+                append-icon="mdi-lock"></v-text-field>
+              <v-text-field v-model="formB.form_a.position" label="Position" dense outlined readonly
+                background-color="white" append-icon="mdi-lock"></v-text-field>
 
               <v-row>
                 <v-col>
-                  <v-btn color="primary" small class="my-0" @click="openFormA" v-if="canPreviewFormA"
-                    >Preview Signed Form A</v-btn
-                  >
+                  <v-btn color="primary" small class="my-0" @click="openFormA" v-if="canPreviewFormA">Preview Signed
+                    Form
+                    A</v-btn>
                 </v-col>
                 <v-spacer />
                 <v-col style="text-align: right">
-                  <router-link :to="`/departments/${formB.department_code}/positions/${formB.form_a_id}`"
-                    >Show Position</router-link
-                  >
+                  <router-link :to="`/departments/${formB.department_code}/positions/${formB.form_a_id}`">Show
+                    Position</router-link>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -245,17 +210,11 @@
           <v-card class="default">
             <v-card-title>Audit History</v-card-title>
             <v-card-text>
-              <v-data-table
-                dense
-                :headers="[
-                  { text: 'Date', value: 'date_display' },
-                  { text: 'User', value: 'user_name' },
-                  { text: 'Action', value: 'action' },
-                ]"
-                :items="formB.audit_lines"
-                :sort-by="['date']"
-                :sort-desc="[true]"
-              />
+              <v-data-table dense :headers="[
+                { text: 'Date', value: 'date_display' },
+                { text: 'User', value: 'user_name' },
+                { text: 'Action', value: 'action' },
+              ]" :items="formB.audit_lines" :sort-by="['date']" :sort-desc="[true]" />
             </v-card-text>
           </v-card>
         </v-col>
@@ -271,22 +230,12 @@
       <v-card tile>
         <v-card-text class="pt-3">
           <p>Please ensure both the Supervisor and Employee have signed the form.</p>
-          <v-checkbox
-            label="Supervisor signed"
-            dense
-            outlined
-            hide-details
-            v-model="formB.supervisor_signed"
-          ></v-checkbox>
+          <v-checkbox label="Supervisor signed" dense outlined hide-details
+            v-model="formB.supervisor_signed"></v-checkbox>
 
           <v-checkbox label="Employee signed" dense outlined v-model="formB.employee_signed"></v-checkbox>
-          <v-file-input
-            dense
-            outlined
-            accept="application/pdf"
-            label="Signed Form B"
-            v-model="formB.file"
-          ></v-file-input>
+          <v-file-input dense outlined accept="application/pdf" label="Signed Form B"
+            v-model="formB.file"></v-file-input>
 
           <p>Department of Finance Admins will receive an email notification that this Form B is ready for review.</p>
           <v-btn @click="uploadSigned" color="primary" class="mb-0" :disabled="!uploadIsValid">Upload</v-btn>
@@ -361,97 +310,44 @@
               </div>
             </v-col>
             <v-col cols="6">
-              <v-menu
-                v-model="startDateMenu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                left
-                nudge-top="26"
-                offset-y
-                min-width="auto"
-              >
+              <v-menu v-model="startDateMenu" :close-on-content-click="false" transition="scale-transition" left
+                nudge-top="26" offset-y min-width="auto">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="activateEffective"
-                    label="Effective date"
-                    append-icon="mdi-calendar"
-                    readonly
-                    outlined
-                    hide-details
-                    dense
-                    background-color="white"
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
+                  <v-text-field v-model="activateEffective" label="Effective date" append-icon="mdi-calendar" readonly
+                    outlined hide-details dense background-color="white" v-bind="attrs" v-on="on"></v-text-field>
                 </template>
-                <v-date-picker
-                  v-model="activateEffective"
-                  @input="startDateMenu = false"
-                  @change="startDateChanged"
-                  :min="today"
-                ></v-date-picker>
+                <v-date-picker v-model="activateEffective" @input="startDateMenu = false" @change="startDateChanged"
+                  :min="today"></v-date-picker>
               </v-menu>
             </v-col>
             <v-col cols="6">
-              <v-menu
-                v-model="endDateMenu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                left
-                nudge-top="26"
-                offset-y
-                min-width="auto"
-                v-if="formB.authority_type != 'substantive'"
-              >
+              <v-menu v-model="endDateMenu" :close-on-content-click="false" transition="scale-transition" left
+                nudge-top="26" offset-y min-width="auto" v-if="formB.authority_type != 'substantive'">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-model="activateExpiry"
-                    label="Expiration date"
-                    append-icon="mdi-calendar"
-                    readonly
-                    outlined
-                    hide-details
-                    dense
-                    background-color="white"
-                    v-bind="attrs"
-                    v-on="on"
-                  ></v-text-field>
+                  <v-text-field v-model="activateExpiry" label="Expiration date" append-icon="mdi-calendar" readonly
+                    outlined hide-details dense background-color="white" v-bind="attrs" v-on="on"></v-text-field>
                 </template>
-                <v-date-picker
-                  v-model="activateExpiry"
-                  @input="endDateMenu = false"
-                  :min="activateEffective"
-                ></v-date-picker>
+                <v-date-picker v-model="activateExpiry" @input="endDateMenu = false"
+                  :min="activateEffective"></v-date-picker>
               </v-menu>
             </v-col>
 
             <v-col cols="12">
-              <employee-lookup
-                actionName="Select"
-                label="Supervisor to approve Acting Appointment : "
+              <employee-lookup actionName="Select" label="Supervisor to approve Acting Appointment : "
                 :select="pickEmployee"
-                v-if="!activateEmployee.email && formB.authority_type == 'acting'"
-              ></employee-lookup>
+                v-if="!activateEmployee.email && formB.authority_type == 'acting'"></employee-lookup>
 
-              <v-text-field
-                v-model="activateEmployee.display_name"
-                readonly
-                dense
-                outlined
-                label="Supervisor to approve Acting Appointment"
-                append-icon="mdi-lock"
-                v-if="activateEmployee.email && formB.authority_type == 'acting'"
-                append-outer-icon="mdi-close-circle"
-                @click:append-outer="unselectEmployee"
-              ></v-text-field>
+              <v-text-field v-model="activateEmployee.display_name" readonly dense outlined
+                label="Supervisor to approve Acting Appointment" append-icon="mdi-lock"
+                v-if="activateEmployee.email && formB.authority_type == 'acting'" append-outer-icon="mdi-close-circle"
+                @click:append-outer="unselectEmployee"></v-text-field>
             </v-col>
           </v-row>
 
           <v-alert v-if="activateError" type="error">{{ activateError }}</v-alert>
 
-          <v-btn @click="doScheduleActivate" color="primary" class="mb-0 mr-5" :disabled="!activateValid"
-            >Schedule</v-btn
-          >
+          <v-btn @click="doScheduleActivate" color="primary" class="mb-0 mr-5"
+            :disabled="!activateValid">Schedule</v-btn>
 
           <v-btn @click="showActivateDialog = false" color="secondary" class="mb-0">Cancel</v-btn>
         </v-card-text>
@@ -499,80 +395,34 @@
 
             <v-row>
               <v-col cols="6">
-                <v-menu
-                  v-model="startDateMenu1"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  left
-                  nudge-top="26"
-                  offset-y
-                  min-width="auto"
-                >
+                <v-menu v-model="startDateMenu1" :close-on-content-click="false" transition="scale-transition" left
+                  nudge-top="26" offset-y min-width="auto">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="editActivation.date"
-                      label="Effective date"
-                      append-icon="mdi-calendar"
-                      readonly
-                      outlined
-                      hide-details
-                      dense
-                      background-color="white"
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="editActivation.date" label="Effective date" append-icon="mdi-calendar"
+                      readonly outlined hide-details dense background-color="white" v-bind="attrs"
+                      v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="editActivation.date"
-                    @input="startDateMenu1 = false"
-                    @change="startDate1Changed"
-                    :min="originalActStartDate"
-                    :max="originalActExpireDate"
-                  ></v-date-picker>
+                  <v-date-picker v-model="editActivation.date" @input="startDateMenu1 = false"
+                    @change="startDate1Changed" :min="originalActStartDate"
+                    :max="originalActExpireDate"></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col cols="6">
-                <v-menu
-                  v-model="endDateMenu2"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  left
-                  nudge-top="26"
-                  offset-y
-                  min-width="auto"
-                  v-if="formB.authority_type != 'substantive'"
-                >
+                <v-menu v-model="endDateMenu2" :close-on-content-click="false" transition="scale-transition" left
+                  nudge-top="26" offset-y min-width="auto" v-if="formB.authority_type != 'substantive'">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-model="editActivation.expire_date"
-                      label="Expiration date"
-                      append-icon="mdi-calendar"
-                      readonly
-                      outlined
-                      hide-details
-                      dense
-                      background-color="white"
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
+                    <v-text-field v-model="editActivation.expire_date" label="Expiration date"
+                      append-icon="mdi-calendar" readonly outlined hide-details dense background-color="white"
+                      v-bind="attrs" v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="editActivation.expire_date"
-                    @input="endDateMenu2 = false"
-                    :min="editActivation.date"
-                    :max="originalActExpireDate"
-                  ></v-date-picker>
+                  <v-date-picker v-model="editActivation.expire_date" @input="endDateMenu2 = false"
+                    :min="editActivation.date" :max="originalActExpireDate"></v-date-picker>
                 </v-menu>
               </v-col>
             </v-row>
 
-            <v-btn
-              @click="doActivationEditSave"
-              color="primary"
-              class="mb-0 mr-5"
-              :disabled="!(editActivation.date && editActivation.expire_date)"
-              >Save</v-btn
-            >
+            <v-btn @click="doActivationEditSave" color="primary" class="mb-0 mr-5"
+              :disabled="!(editActivation.date && editActivation.expire_date)">Save</v-btn>
             <v-btn @click="doActivationEditRemove" color="warning" class="mb-0 mr-5">Remove</v-btn>
             <v-btn @click="showActivationEditDialog = false" color="secondary" class="mb-0">Close</v-btn>
           </div>
@@ -581,49 +431,20 @@
             <p>
               Since this activation is currently 'Active', you can only change the Expiration date. To expire this
               activation immediately, set the Expiration date to yesterday's date (<a
-                @click="editActivation.expire_date = yesterday"
-                >{{ yesterday }}</a
-              >).
+                @click="editActivation.expire_date = yesterday">{{ yesterday }}</a>).
             </p>
 
-            <v-text-field
-              dense
-              outlined
-              v-model="editActivation.date"
-              label="Effective date"
-              readonly
-              append-icon="mdi-lock"
-            ></v-text-field>
+            <v-text-field dense outlined v-model="editActivation.date" label="Effective date" readonly
+              append-icon="mdi-lock"></v-text-field>
 
-            <v-menu
-              v-model="endDateMenu1"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              left
-              nudge-top="26"
-              offset-y
-              min-width="auto"
-            >
+            <v-menu v-model="endDateMenu1" :close-on-content-click="false" transition="scale-transition" left
+              nudge-top="26" offset-y min-width="auto">
               <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="editActivation.expire_date"
-                  label="Expiration date"
-                  append-icon="mdi-calendar"
-                  readonly
-                  outlined
-                  hide-details
-                  dense
-                  background-color="white"
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
+                <v-text-field v-model="editActivation.expire_date" label="Expiration date" append-icon="mdi-calendar"
+                  readonly outlined hide-details dense background-color="white" v-bind="attrs" v-on="on"></v-text-field>
               </template>
-              <v-date-picker
-                v-model="editActivation.expire_date"
-                @input="endDateMenu1 = false"
-                :min="yesterday"
-                :max="originalActExpireDate"
-              ></v-date-picker>
+              <v-date-picker v-model="editActivation.expire_date" @input="endDateMenu1 = false" :min="yesterday"
+                :max="originalActExpireDate"></v-date-picker>
             </v-menu>
             <v-btn @click="doActivationEditSave" color="primary" class="mb-0 mr-5">Save</v-btn>
             <v-btn @click="showActivationEditDialog = false" color="secondary" class="mb-0">Close</v-btn>
@@ -761,7 +582,7 @@ export default {
       return result;
     },
 
-    breadcrumbs: function() {
+    breadcrumbs: function () {
       if (this.formB) {
         let b = [{ text: "Signing Authorities Home", to: "/dashboard" }];
 
@@ -903,7 +724,7 @@ export default {
       }
       return "";
     },
-    pdfURL: function() {
+    pdfURL: function () {
       return `${AUTHORITY_URL}/${this.formB._id}/pdf`;
     },
 
@@ -971,7 +792,7 @@ export default {
         this.loadFormB(this.id);
       });
     },
-    uploadClick() {},
+    uploadClick() { },
 
     unlockClick() {
       this.formB.save_action = "Reset";
@@ -1198,12 +1019,15 @@ export default {
 .table {
   border-collapse: collapse;
 }
+
 .table th {
   text-align: center;
 }
+
 .table thead {
   text-transform: uppercase;
 }
+
 .table th,
 .table td {
   border: 1px black solid;
@@ -1216,10 +1040,11 @@ export default {
   padding-bottom: 20px;
 }
 
-.table th.rotate > div {
+.table th.rotate>div {
   transform: rotate(270deg);
   width: 58px;
 }
+
 .table .fb-value {
   width: 60px;
   text-align: center;
