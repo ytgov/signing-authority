@@ -4,8 +4,9 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular></v-overlay>
     <v-app-bar dark color="#0097A9">
       <v-toolbar-title>
-        <v-btn icon @click="showPrev"><v-icon>mdi-chevron-left</v-icon></v-btn>
-        <v-btn icon class="mr-4" @click="showNext"><v-icon>mdi-chevron-right</v-icon></v-btn>
+        <v-btn v-if="activeIds.length > 0" icon @click="showPrev"><v-icon>mdi-chevron-left</v-icon></v-btn>
+        <v-btn v-if="activeIds.length > 0" icon class="mr-4"
+          @click="showNext"><v-icon>mdi-chevron-right</v-icon></v-btn>
         <strong>{{ index + 1 }} of {{ activeIds.length }}</strong> - {{ title }}
       </v-toolbar-title>
       <v-spacer />
