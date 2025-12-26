@@ -35,7 +35,7 @@
               {{ item.active_ids.length }}
             </v-chip>
             <div v-else>
-              - None Active -
+              - None -
             </div>
           </template>
         </v-data-table>
