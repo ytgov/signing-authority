@@ -53,8 +53,8 @@ export default {
       this.activeIds = previewIds;
       if (previewIds.length == 0) return
 
-      if (previewIds.length > 0)
-        this.showItem(0);
+      this.index = 0;
+      this.showItem(0);
 
       this.title = title;
       this.dialog = true;
