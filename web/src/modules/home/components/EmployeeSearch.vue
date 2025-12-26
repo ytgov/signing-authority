@@ -25,11 +25,11 @@
           { text: 'Name', value: 'display_name' },
           { text: 'YNET Id', value: 'ynet_id' },
           { text: 'Authorities', value: 'authority_count', width: '140px' },
-          { text: 'Active', value: 'preview', width: '135px' },
+          { text: 'Active', value: 'preview', width: '120px' },
         ]" :items="searchResults" :items-per-page="-1" :loading="loading" @click:row="selectEmployee"
           class="clickable-row">
           <template v-slot:item.preview="{ item }">
-            <v-chip v-if="item.active_ids.length > 0" color="#0097a944"
+            <v-chip v-if="item.active_ids.length > 0" small color="#0097a944"
               style="border: 1px #0097a9 solid; color: #0097a9" @click.stop="previewEmployee(item)">
               Preview :
               {{ item.active_ids.length }}
