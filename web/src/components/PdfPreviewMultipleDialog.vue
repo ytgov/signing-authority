@@ -67,6 +67,7 @@ export default {
     hide() {
       this.title = "";
       this.pdfUrl = "";
+      this.loadingTask = undefined;
       this.dialog = false;
       this.loading = false;
     },
