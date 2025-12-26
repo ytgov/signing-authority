@@ -1,22 +1,10 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-bind:app="hasSidebar"
-      permanent
-      :expand-on-hover="hasSidebarClosable"
-      clipped
-      color="#f1f1f1"
-      v-bind:class="{ 'd-none': !hasSidebar }"
-    >
+    <v-navigation-drawer v-bind:app="hasSidebar" permanent :expand-on-hover="hasSidebarClosable" clipped color="#f1f1f1"
+      v-bind:class="{ 'd-none': !hasSidebar }">
       <v-list dense nav style="" class="mt-4">
-        <v-list-item
-          link
-          nav
-          v-bind:title="section.name"
-          v-bind:to="section.url"
-          v-for="section in sections"
-          v-bind:key="section.name"
-        >
+        <v-list-item link nav v-bind:title="section.name" v-bind:to="section.url" v-for="section in sections"
+          v-bind:key="section.name">
           <v-list-item-icon>
             <v-icon>{{ section.icon }}</v-icon>
           </v-list-item-icon>
@@ -28,18 +16,18 @@
     </v-navigation-drawer>
 
     <v-app-bar app color="#fff" flat height="70" style="left: 0; border-bottom: 3px #f3b228 solid">
-      <img src="/yukon.svg" style="margin: -8px 85px 0 0" height="44" />
-      <v-toolbar-title>
-        <span style="font-weight: 700">{{ applicationName }}</span>
 
-        <v-progress-circular
-          :class="loadingClass"
-          indeterminate
-          color="#f3b228"
-          size="20"
-          width="2"
-          class="ml-4"
-        ></v-progress-circular>
+
+      <router-link to="/dashboard">
+        <img src="/yukon.svg" style="margin: -8px 85px 0 0" height="44" />
+      </router-link>
+      <v-toolbar-title>
+        <router-link to="/dashboard" style="color: #323232">
+          <span style="font-weight: 700">{{ applicationName }}</span>
+        </router-link>
+
+        <v-progress-circular :class="loadingClass" indeterminate color="#f3b228" size="20" width="2"
+          class="ml-4"></v-progress-circular>
       </v-toolbar-title>
       <v-spacer></v-spacer>
 
@@ -74,10 +62,8 @@
               <v-list-item-title>Reports</v-list-item-title>
             </v-list-item>
 
-            <v-list-item
-              href="https://yukongovernment.sharepoint.com/teams/SigningAuthorityAppResourceCentre-FIN"
-              target="_blank"
-            >
+            <v-list-item href="https://yukongovernment.sharepoint.com/teams/SigningAuthorityAppResourceCentre-FIN"
+              target="_blank">
               <v-list-item-icon>
                 <v-icon>mdi-help-circle-outline</v-icon>
               </v-list-item-icon>
@@ -146,7 +132,7 @@ export default {
       return this.$auth.user.name;
     },
 
-    returnTo: function() {
+    returnTo: function () {
       return auth.options.logout_redirect;
     },
 
@@ -157,9 +143,9 @@ export default {
       return false;
     },
     canReport() {
-       if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
+      if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
         if (this.profile.roles.includes("System Admin")) return true;
-      } 
+      }
       return false;
     },
   },
@@ -178,17 +164,17 @@ export default {
   },
   methods: {
     ...mapActions(["initialize"]),
-    nav: function(location) {
+    nav: function (location) {
       router.push(location);
       console.log(location);
     },
-    toggleHeader: function() {
+    toggleHeader: function () {
       this.headerShow = !this.headerShow;
     },
-    toggleMenu: function() {
+    toggleMenu: function () {
       this.menuShow = !this.menuShow;
     },
-    signOut: function() {
+    signOut: function () {
       window.location = LOGOUT_URL;
     },
     async doInitialize() {
