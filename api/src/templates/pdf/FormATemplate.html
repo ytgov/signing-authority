@@ -1,44 +1,82 @@
 <html>
   <head>
     <style>
-      /* Comprehensive CSS Reset for PDF rendering */
-      * {
-        margin: 0;
-        padding: 0;
-        border: 0;
-        box-sizing: border-box;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        outline: 0;
-        font-size: 100%;
-        vertical-align: baseline;
-        background: transparent;
-      }
-
-      /* Critical table resets */
-      table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        width: auto;
-        table-layout: fixed;
-      }
-
+      html,
+      body,
+      div,
+      span,
+      object,
+      iframe,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      blockquote,
+      pre,
+      abbr,
+      address,
+      cite,
+      code,
+      del,
+      dfn,
+      em,
+      img,
+      ins,
+      kbd,
+      q,
+      samp,
+      small,
+      strong,
+      sub,
+      sup,
+      var,
+      b,
+      i,
+      dl,
+      dt,
+      dd,
+      ol,
+      ul,
+      li,
+      fieldset,
+      form,
+      label,
+      legend,
+      table,
       caption,
       tbody,
       tfoot,
       thead,
       tr,
       th,
-      td {
-        font-weight: normal;
-        text-align: left;
-      }
-
-      /* Remove default table attributes */
-      table[border],
-      table[cellspacing],
-      table[cellpadding] {
-        border: 0 !important;
+      td,
+      article,
+      aside,
+      canvas,
+      details,
+      figcaption,
+      figure,
+      footer,
+      header,
+      hgroup,
+      menu,
+      nav,
+      section,
+      summary,
+      time,
+      mark,
+      audio,
+      video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        background: transparent;
       }
 
       @page {
@@ -53,16 +91,12 @@
         font-size: 12px;
       }
 
-      /* Data table styles */
       .table {
         border-collapse: collapse;
-        border-spacing: 0;
-        table-layout: fixed;
       }
 
       .table th {
         text-align: center;
-        font-weight: bold;
       }
 
       .table thead {
@@ -71,228 +105,274 @@
 
       .table th,
       .table td {
-        border: 1px solid black;
+        border: 1px black solid;
         font-size: 12px;
-        padding: 0;
-        margin: 0;
-        box-sizing: border-box;
       }
 
       .table th.rotate {
+        height: 140px;
         white-space: nowrap;
-        vertical-align: middle;
-        padding: 2px 0 5px 0;
-        writing-mode: sideways-lr;
-        text-align: left;
-        height: auto;
+        vertical-align: bottom;
+        padding-bottom: 20px;
+      }
+
+      .table th.rotate > div {
+        transform: rotate(270deg);
         width: 48px;
       }
 
       .table .fb-value {
-        width: 48px;
+        width: 50px;
         text-align: center;
-        padding: 2px;
-      }
-
-      /* Header table - no borders */
-      .header-table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        table-layout: fixed;
-        width: 100%;
-      }
-
-      .header-table td {
-        border: none;
-        padding: 0;
-        margin: 0;
-        vertical-align: top;
-      }
-
-      /* Footer table - no borders */
-      .footer-table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        table-layout: auto;
-        width: 100%;
-      }
-
-      .footer-table td {
-        border: none;
-        padding: 0;
-        margin: 0;
-        vertical-align: top;
       }
     </style>
   </head>
 
   <body>
-    <table class="header-table">
-      <tr style="height: 90px; line-height: 1.2">
-        <td style="width: 180px; vertical-align: top">
-          <img src="http://localhost:{{API_PORT}}/yukon-logo.png" style="height: 80px; width: 160px; display: block" />
+    <table style="width: 100%" border="0" cellspacing="0" cellpadding="0">
+      <tr style="height: 90px">
+        <td style="width: 180px">
+          <img
+            src="http://localhost:{{API_PORT}}/yukon-logo.png"
+            style="height: 80px; width: 160px"
+          />
         </td>
-        <td style="width: 260px; font-size: 1.3rem; vertical-align: middle; font-weight: bold">
+        <td style="width: 260px; font-size: 1.3rem; vertical-align: middle">
           Delegation of Financial<br />Signing Authority Chart
         </td>
-        <td style="vertical-align: bottom; padding-bottom: 20px; padding-right: 10px">
-          <div style="font-size: 12px; line-height: 1.3; margin-right: 140px">
-            This form is effective upon approval and until cancelation. Activation information is retained and available
-            in the Signing Authorities App
+        <td style="vertical-align: bottom; padding-bottom: 20px">
+          <div style="font-size: 12px; margin-right: 140px">
+            This form is effective upon approval and until cancelation.
+            Activation information is retained and available in the Signing
+            Authorities App
           </div>
+          <div style="width: 150px; float: right"></div>
         </td>
-        <td style="text-align: right; vertical-align: top; width: 120px; padding-top: 25px">
-          <h4 style="font-size: 1.1rem; font-weight: bold; margin: 0">FORM A</h4>
+        <td
+          style="
+            text-align: right;
+            vertical-align: top;
+            width: 120px;
+            padding-top: 25px;
+          "
+        >
+          <h4 style="font-size: 1.1rem">FORM A</h4>
         </td>
       </tr>
     </table>
 
-    <table class="table" style="background-color: white; width: 100%; margin-top: 2px">
-      <colgroup>
-        <col style="width: 90%" />
-        <col style="width: 135px" />
-        <col style="width: 180px" />
-        <col style="width: 48px" />
-        <col style="width: 48px" />
-        <col style="width: 48px" />
-        <col style="width: 48px" />
-        <col style="width: 48px" />
-        <col style="width: 48px" />
-        <col style="width: 48px" />
-        <col style="width: 48px" />
-      </colgroup>
+    <table
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+      class="table"
+      style="background-color: white; width: 100%; text-align: left"
+    >
       <thead>
-        <tr style="height: 14px">
+        <tr>
           <td
             rowspan="3"
             colspan="3"
-            style="text-align: left; padding: 10px; vertical-align: top; width: 60%; line-height: 1.4; font-size: 12px">
+            style="
+              text-align: left;
+              padding: 10px;
+              vertical-align: top;
+              width: 400px;
+              height: 190px;
+            "
+          >
             Department:<br />
-            <strong style="display: inline-block; margin-top: 3px; font-weight: bold">{{department_descr}}</strong>
+            <strong style="margin-top: 5px">{{department_descr}}</strong>
             <br /><br />
-            Program (Division):<br /><strong style="font-weight: bold"> {{ program }}</strong> <br /><br />
-            Activity (Branch):<br /><strong style="font-weight: bold"> {{ activity }}</strong>
+            Program (Division):<br /><strong> {{ program }}</strong>
+            <br /><br />
+            Activity (Branch):<br /><strong> {{ activity }}</strong>
           </td>
-          <th colspan="7" style="border-bottom: 0; padding: 4px 0; text-align: center; height: 10px; font-size: 12px">
+          <th
+            colspan="7"
+            style="border-bottom: 0px; padding: 2px 0px; text-align: center"
+          >
             SPENDING AUTHORITY
           </th>
-          <th rowspan="4" class="rotate" style="min-height: 140px; height: 140px">
-            <div style="line-height: 1.2">
-              PAYMENT AUTHORITY (SECTION 30)<br /><span style="font-size: 9px">REQUISITION FOR PAYMENT</span>
+          <th rowspan="4" class="rotate" style="height: 140px">
+            <div>
+              PAYMENT AUTHORITY (SECTION <br />30)
+              <span style="font-size: 9px">REQUISITION FOR PAYMENT</span>
             </div>
           </th>
         </tr>
-        <tr style="height: 10px">
-          <th colspan="6" style="border-top: 0; padding: 4px 0; text-align: center; font-size: 12px">
+        <tr>
+          <th colspan="6" style="border-top: 0px black solid; padding: 2px 0px">
             SECTION 23 &/OR SECTION 24 ($000)
           </th>
-          <th class="rotate" rowspan="3" style="min-height: 120px; height: 120px">
-            <div style="line-height: 1.2">
-              (SECTION 29)<br /><span style="font-size: 9px">CERTIFICATE OF PERFORMANCE</span>
+          <th class="rotate" rowspan="3">
+            <div>
+              (SECTION 29)<br />
+              <span style="font-size: 9px">CERTIFICATE OF PERFORMANCE</span>
             </div>
           </th>
         </tr>
 
-        <tr style="height: 160px">
-          <th rowspan="2" class="rotate" style="min-height: 90px; height: 90px">
-            Contracts for<br />
-            Goods or Services
+        <tr>
+          <th rowspan="2" class="rotate">
+            <div>Contracts for<br />Goods or Services</div>
           </th>
-          <th rowspan="2" class="rotate" style="min-height: 90px; height: 90px">Loans & Guarantees</th>
-          <th rowspan="2" class="rotate" style="min-height: 90px; height: 90px">Transfer Payments</th>
-          <th rowspan="2" class="rotate" style="min-height: 90px; height: 90px">Authorization for Travel</th>
-          <th rowspan="2" class="rotate" style="min-height: 90px; height: 90px">
-            Request for Goods<br />
-            or Services
+          <th rowspan="2" class="rotate">
+            <div>Loans & Guarantees</div>
           </th>
-          <th rowspan="2" class="rotate" style="min-height: 90px; height: 90px">Assignment Authority</th>
+          <th rowspan="2" class="rotate">
+            <div>Transfer Payments</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Authorization for Travel</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Request for Goods<br />or Services</div>
+          </th>
+          <th rowspan="2" class="rotate">
+            <div>Assignment<br />Authority</div>
+          </th>
         </tr>
-        <tr style="height: 30px; min-height: 30px">
-          <th style="padding: 4px; font-size: 12px; vertical-align: middle">Position Title</th>
-          <th style="padding: 4px; font-size: 12px; vertical-align: middle; white-space: nowrap">Area of Authority</th>
-          <th style="padding: 4px; font-size: 12px; vertical-align: middle">Operational Restriction</th>
+        <tr style="height: 30px">
+          <th>Position Title</th>
+          <th style="height: 30px">Area of Authority</th>
+          <th style="height: 30px">Operational Restriction</th>
         </tr>
       </thead>
 
       <tbody>
         {{#each authority_lines}}
-        <tr style="height: 24px; min-height: 24px">
-          <td style="padding: 4px; font-size: 12px; line-height: 1.2; vertical-align: middle">{{ position }}</td>
-          <td style="padding: 4px; font-size: 12px; line-height: 1.2; vertical-align: middle">{{ coding_display }}</td>
-          <td style="padding: 4px; font-size: 12px; line-height: 1.2; vertical-align: middle">
-            {{ operational_restriction }}
-          </td>
-          <td class="fb-value" style="vertical-align: middle">{{ contracts_for_goods_services }}</td>
-          <td class="fb-value" style="vertical-align: middle">{{ loans_and_guarantees }}</td>
-          <td class="fb-value" style="vertical-align: middle">{{ transfer_payments }}</td>
-          <td class="fb-value" style="vertical-align: middle">{{ authorization_for_travel }}</td>
-          <td class="fb-value" style="vertical-align: middle">{{ request_for_goods_services }}</td>
-          <td class="fb-value" style="vertical-align: middle">{{ assignment_authority }}</td>
-          <td class="fb-value" style="vertical-align: middle">{{ s29_performance_limit }}</td>
-          <td class="fb-value" style="vertical-align: middle">{{ s30_payment_limit }}</td>
+        <tr>
+          <td style="padding: 2px">{{ position }}</td>
+          <td style="padding: 2px">{{ coding_display }}</td>
+          <td style="padding: 2px">{{ operational_restriction }}</td>
+          <td class="fb-value">{{ contracts_for_goods_services }}</td>
+          <td class="fb-value">{{ loans_and_guarantees }}</td>
+          <td class="fb-value">{{ transfer_payments }}</td>
+          <td class="fb-value">{{ authorization_for_travel }}</td>
+          <td class="fb-value">{{ request_for_goods_services }}</td>
+          <td class="fb-value">{{ assignment_authority }}</td>
+          <td class="fb-value">{{ s29_performance_limit }}</td>
+          <td class="fb-value">{{ s30_payment_limit }}</td>
         </tr>
         {{/each}}
       </tbody>
     </table>
 
-    <table class="footer-table" style="margin-top: 8px; width: 100%; font-size: 11px">
+    <table
+      style="margin-top: 5px; width: 100%; font-size: 11px"
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+    >
       <tr>
-        <td colspan="2" style="padding-bottom: 10px; line-height: 1.3">
-          Every officer of the Department appointed to a position listed above, including any officer appointed
-          officially on an acting basis, and upon completion of the Specimen Signature Card for this position, is hereby
-          granted financial signing authority in respect to the area of the Department for the functions as indicated.
+        <td colspan="2" style="padding-bottom: 10px">
+          Every officer of the Department appointed to a position listed above,
+          including any officer appointed officially on an acting basis, and
+          upon completion of the Specimen Signature Card for this position, is
+          hereby granted financial signing authority in respect to the area of
+          the Department for the functions as indicated.
         </td>
       </tr>
-      <tr style="height: 120px; min-height: 120px">
-        <td style="width: 40%; vertical-align: top; font-size: 11px; padding-top: 40px">NL = No limit</td>
+      <tr style="min-height: 120px; break-inside: avoid">
+        <td style="width: 40%; vertical-align: top; font-size: 11px">
+          <br /><br /><br />NL = No limit
+        </td>
         <td style="width: 60%; vertical-align: top; font-size: 11px">
-          <table class="footer-table" style="width: 100%; margin-left: 5px">
-            <tr style="height: 50px">
-              <td
-                style="
-                  width: 150px;
-                  text-align: right;
-                  padding-right: 7px;
-                  vertical-align: bottom;
-                  padding-bottom: 25px;
-                ">
-                Recommended:
-              </td>
-              <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px">
-                <div style="border-top: 1px solid black; width: 80%; padding-top: 2px; font-size: 10px">Date</div>
-              </td>
-              <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px">
-                <div style="border-top: 1px solid black; width: 80%; padding-top: 2px; font-size: 10px">
-                  Departmental Administrator
-                </div>
-              </td>
-            </tr>
-            <tr style="height: 60px">
-              <td style="text-align: right; padding-right: 7px; vertical-align: bottom; padding-bottom: 10px">
-                Approved:
-              </td>
-              <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px">
-                <div style="border-top: 1px solid black; width: 80%; padding-top: 2px; font-size: 10px">Date</div>
-              </td>
-              <td style="width: 50%; vertical-align: bottom; padding-bottom: 3px">
-                <div style="border-top: 1px solid black; width: 80%; padding-top: 2px; font-size: 10px">
-                  Deputy Minister
-                </div>
-              </td>
-            </tr>
-          </table>
+          <div style="height: 100%">
+            <table
+              style="width: 100%; margin: 0 0 0 5px"
+              border="0"
+              cellspacing="0"
+              cellpadding="0"
+            >
+              <tr>
+                <td
+                  style="
+                    width: 150px;
+                    padding-top: 10px;
+                    text-align: right;
+                    padding-right: 7px;
+                  "
+                >
+                  Recommended:
+                </td>
+                <td
+                  style="
+                    width: 50%;
+                    vertical-align: bottom;
+                    padding-bottom: 3px;
+                    padding-top: 25px;
+                  "
+                >
+                  <div style="border-top: 1px black solid; width: 80%">
+                    Date
+                  </div>
+                </td>
+                <td
+                  style="
+                    width: 50%;
+                    vertical-align: bottom;
+                    padding-bottom: 3px;
+                    padding-top: 25px;
+                  "
+                >
+                  <div style="border-top: 1px black solid; width: 80%">
+                    Departmental Administrator
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td
+                  style="
+                    padding-top: 35px;
+                    text-align: right;
+                    padding-right: 7px;
+                  "
+                >
+                  Approved:
+                </td>
+                <td
+                  style="
+                    width: 50%;
+                    vertical-align: bottom;
+                    padding-bottom: 3px;
+                    padding-top: 50px;
+                  "
+                >
+                  <div style="border-top: 1px black solid; width: 80%">
+                    Date
+                  </div>
+                </td>
+                <td
+                  style="
+                    width: 50%;
+                    vertical-align: bottom;
+                    padding-bottom: 3px;
+                    padding-top: 50px;
+                  "
+                >
+                  <div style="border-top: 1px black solid; width: 80%">
+                    Deputy Minister
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
         </td>
       </tr>
       <tr>
-        <td colspan="2" style="padding-top: 15px; line-height: 1.3">
-          <i style="font-style: italic">
-            Your personal information is being collected under the Financial Administration Act and S. 15(a) of the
-            ATIPP Act for the purpose of verifying your authority to allocate government funds. For further information,
-            contact Financial Accounting at 667-5850
+        <td colspan="2" style="padding-top: 25px">
+          <i>
+            Your personal information is being collected under the Financial
+            Administration Act and S. 15(a) of the ATIPP Act for the purpose of
+            verifying your authority to allocate government funds. For further
+            information, contact Financial Accounting at 667-5850
           </i>
           <br /><br />
-          Work Flow: upon signature original document is retained within the Department as per finance branch
-          instructions. Scanned copy is uploaded into the Signing Authorities App
+          Work Flow: upon signature original document is retained within the
+          Department as per finance branch instructions. Scanned copy is
+          uploaded into the Signing Authorities App
         </td>
       </tr>
     </table>

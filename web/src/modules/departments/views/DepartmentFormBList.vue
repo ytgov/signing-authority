@@ -16,73 +16,31 @@
         <v-card-text>
           <v-row>
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="search"
-                prepend-inner-icon="mdi-magnify"
-                label="Search"
-                clearable
-                outlined
-                dense
-                hide-details
-                background-color="white"
-              ></v-text-field>
+              <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search" clearable outlined dense
+                hide-details background-color="white"></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
-              <v-select
-                label="Status"
-                prepend-inner-icon="mdi-clock"
-                v-model="statusFilter"
+              <v-select label="Status" prepend-inner-icon="mdi-clock" v-model="statusFilter"
                 :items="['Any', 'Active', 'Approved', 'Pending', 'Scheduled', 'Inactive', 'Cancelled']"
-                @change="filterList"
-                outlined
-                dense
-                hide-details
-                background-color="white"
-              />
+                @change="filterList" outlined dense hide-details background-color="white" />
             </v-col>
             <v-col cols="12" md="6">
-              <v-select
-                label="Program"
-                prepend-inner-icon="mdi-filter"
-                v-model="programFilter"
-                :items="programListAny"
-                @change="programChanged"
-                dense
-                outlined
-                hide-details
-                background-color="white"
-              />
+              <v-select label="Program" prepend-inner-icon="mdi-filter" v-model="programFilter" :items="programListAny"
+                @change="programChanged" dense outlined hide-details background-color="white" />
             </v-col>
             <v-col cols="12" md="6" class="d-flex">
-              <v-select
-                label="Activity"
-                prepend-inner-icon="mdi-filter"
-                v-model="activityFilter"
-                :items="activityListAny"
-                @change="filterList"
-                :disabled="programFilter == 'All'"
-                dense
-                outlined
-                hide-details
-                background-color="white"
-              />
-              <v-btn class="my-0 ml-5" style="height: 40px" color="secondary" @click="printClick"> Bulk Print</v-btn>
+              <v-select label="Activity" prepend-inner-icon="mdi-filter" v-model="activityFilter"
+                :items="activityListAny" @change="filterList" :disabled="programFilter == 'All'" dense outlined
+                hide-details background-color="white" />
+              <v-btn class="d-none my-0 ml-5" style="height: 40px" color="secondary" @click="printClick"> Bulk
+                Print</v-btn>
             </v-col>
           </v-row>
 
-          <v-data-table
-            class="mt-5 row-clickable"
-            :headers="headers"
-            :search="search"
-            :items="formBItems"
-            :loading="loadingFormB"
-            @click:row="openFormB"
-            dense
-            :footer-props="{
+          <v-data-table class="mt-5 row-clickable" :headers="headers" :search="search" :items="formBItems"
+            :loading="loadingFormB" @click:row="openFormB" dense :footer-props="{
               'items-per-page-options': [25, 50, 75, -1],
-            }"
-            :items-per-page="50"
-          >
+            }" :items-per-page="50">
             <template v-slot:item.authority_type="{ item }">
               {{ convertType(item.authority_type) }}
             </template>
@@ -112,9 +70,8 @@
                   {{ item.employee.title }} - {{ item.employee.name }} ({{ convertType(item.authority_type) }})
                 </v-list-item-content>
                 <v-list-item-icon>
-                  <v-btn color="warning" class="my-0" small icon @click="removeMatchingItem(idx)"
-                    ><v-icon>mdi-close</v-icon></v-btn
-                  >
+                  <v-btn color="warning" class="my-0" small icon
+                    @click="removeMatchingItem(idx)"><v-icon>mdi-close</v-icon></v-btn>
                 </v-list-item-icon>
               </v-list-item>
             </div>
@@ -184,7 +141,7 @@ export default {
     showPrintDialog: false,
     printList: [],
   }),
-  mounted: async function() {
+  mounted: async function () {
     this.departmentId = this.$route.params.departmentId;
     this.item = await this.getDepartment({ id: this.departmentId });
     this.loadingFormB = true;
@@ -337,12 +294,12 @@ export default {
       form.method = 'POST';
       form.action = `${AUTHORITY_URL}/bulk-pdf`;
       form.target = '_blank';
-      
+
       const input = document.createElement('input');
       input.type = 'hidden';
       input.name = 'ids';
       input.value = JSON.stringify(idList);
-      
+
       form.appendChild(input);
       document.body.appendChild(form);
       form.submit();
