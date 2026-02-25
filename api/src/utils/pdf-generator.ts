@@ -4,18 +4,14 @@ export async function generatePDF(
   content: string,
   format: PaperFormat = "letter",
   landscape: boolean = true,
-) {
+): Promise<Buffer> {
   const browser = await puppeteer.launch({
-    headless: "shell",
-    args: ["--enable-gpu", "--no-sandbox", "--disable-setuid-sandbox"],
+    args: ["--no-sandbox", "--headless", "--disable-gpu"],
   });
   const page = await browser.newPage();
+  //await page.setViewport({ width: 1366, height: 768});
   await page.setContent(content);
-  const pdf = await page.pdf({
-    format,
-    landscape,
-    preferCSSPageSize: true,
-  });
+  const pdf = await page.pdf({ format, landscape });
   await browser.close();
   return Promise.resolve(pdf);
 }
