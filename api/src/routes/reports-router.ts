@@ -199,5 +199,5 @@ reportsRouter.get("/audit/pdf", async (req: Request, res: Response) => {
   let pdf = await generatePDF(data);
   res.setHeader("Content-disposition", `attachment; filename="Authority_AUDIT_${name}.pdf"`);
   res.setHeader("Content-type", "application/pdf");
-  res.send(pdf);
+  res.send(Buffer.from(pdf));
 });

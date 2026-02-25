@@ -153,6 +153,7 @@ formARouter.post("/auto-archive", checkJwt, loadUser, isSystemAdmin, async (req:
     if (groupPositions.length == 0 && groupPositions2.length == 0) {
       if (group._id) {
         group.status = "Archived";
+        group.archive_date = new Date();
         archiveList.push(group);
         await groupDb.update(group._id.toString(), group);
       }
@@ -226,7 +227,7 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
   let pdf = await generatePDF(data);
   res.setHeader("Content-disposition", `filename="DRAFT-FormA_${dept}.pdf"`);
   res.setHeader("Content-type", "application/pdf");
-  res.send(pdf);
+  res.send(Buffer.from(pdf));
 });
 
 formARouter.get(
@@ -494,6 +495,7 @@ formARouter.put(
           if (groupPositions.length == 0 && groupPositions2.length == 0) {
             if (group._id) {
               group.status = "Archived";
+              group.archive_date = new Date();
               await groupDb.update(group._id.toString(), group);
             }
           }
@@ -866,7 +868,7 @@ formARouter.get(
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="FormA_${dept}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();
@@ -930,7 +932,7 @@ formARouter.get(
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="DRAFT-FormA_${dept}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();

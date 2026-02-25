@@ -49,7 +49,8 @@
           <v-divider></v-divider>
 
           <v-stepper-step step="5" :complete="stepperValue > 5">
-            Active
+            {{ item.status == "Archived" ? "Archived" : "Active" }}
+            <small>{{ archiveDate }}</small>
           </v-stepper-step>
         </v-stepper-header>
       </v-stepper>
@@ -160,11 +161,13 @@
               <strong>{{ item.activity }}</strong>
             </v-card-subtitle>
             <v-card-text>
+              <v-alert v-if="item.status == 'Archived'" color="error" outlined>This Form A is 'Archived' and is no longer valid.</v-alert>
+
               <v-data-table
                 :headers="headers"
                 :items="item.positions"
                 @click:row="openFormA"
-                class="row-clickable"
+                :class="{ 'row-clickable': item.status != 'Archived' }"
                 :footer-props="{
                   'items-per-page-options': [25, 50, 75, -1],
                 }"
@@ -299,12 +302,6 @@ export default {
   name: "DepartmentPendingGroups",
   data: () => ({
     loading: false,
-    headers: [
-      { text: "Program : Activity", value: "program_branch" },
-      { text: "Position", value: "position" },
-      { text: "Status", value: "status" },
-      { text: "Authority Lines", value: "authority_lines.length" },
-    ],
     page: {
       title: "Form As",
     },
@@ -354,6 +351,22 @@ export default {
   },
   computed: {
     ...mapState("home", ["profile"]),
+
+    headers() {
+      if (this.item && this.item.status == "Archived")
+        return [
+          { text: "Program : Activity", value: "program_branch" },
+          { text: "Position", value: "position" },
+          { text: "Authority Lines", value: "authority_lines.length" },
+        ];
+
+      return [
+        { text: "Program : Activity", value: "program_branch" },
+        { text: "Position", value: "position" },
+        { text: "Status", value: "status" },
+        { text: "Authority Lines", value: "authority_lines.length" },
+      ];
+    },
 
     userIsSysAdmin() {
       return this.profile && this.profile.roles && this.profile.roles.includes("System Admin");
@@ -523,6 +536,15 @@ export default {
       }
       return "";
     },
+    archiveDate() {
+      if (this.item.status == "Archived") {
+        if (this.item.archive_date) {
+          return "On " + moment(this.item.archive_date).format("MMM D, YYYY @ h:mm a");
+        }
+        return "Date Not Recorded";
+      }
+      return "";
+    },
   },
   methods: {
     ...mapActions("department", [
@@ -544,6 +566,7 @@ export default {
       this.loading = false;
     },
     openFormA(item) {
+      if (this.item.status == "Archived") return;
       this.$router.push(`/departments/${this.departmentId}/positions/${item._id}`);
     },
     showPreview() {

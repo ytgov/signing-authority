@@ -53,7 +53,7 @@
                 background-color="white"
               />
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="6" class="d-flex">
               <v-select
                 label="Activity"
                 prepend-inner-icon="mdi-filter"
@@ -66,6 +66,7 @@
                 hide-details
                 background-color="white"
               />
+              <v-btn class="my-0 ml-5" style="height: 40px" color="secondary" @click="printClick"> Bulk Print</v-btn>
             </v-col>
           </v-row>
 
@@ -89,12 +90,47 @@
         </v-card-text>
       </v-card>
     </BaseCard>
+
+    <v-dialog v-model="showPrintDialog" persistent width="600">
+      <v-app-bar dark color="#0097A9">
+        <v-toolbar-title>Bulk Print</v-toolbar-title>
+        <v-spacer />
+        <v-icon title="Close" @click="closePrintDialog">mdi-close</v-icon>
+      </v-app-bar>
+      <v-card tile>
+        <v-card-text class="pt-3">
+          <p>
+            This procedure bulk prints all of the Form B authorizations listed below. You can remove items from the list
+            by clicking the "X" on the right side.
+          </p>
+
+          <v-list dense>
+            <div v-for="(item, idx) of printList" :key="idx">
+              <v-divider></v-divider>
+              <v-list-item>
+                <v-list-item-content>
+                  {{ item.employee.title }} - {{ item.employee.name }} ({{ convertType(item.authority_type) }})
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-btn color="warning" class="my-0" small icon @click="removeMatchingItem(idx)"
+                    ><v-icon>mdi-close</v-icon></v-btn
+                  >
+                </v-list-item-icon>
+              </v-list-item>
+            </div>
+          </v-list>
+
+          <v-btn color="primary" class="mb-0" @click="doPrint" :disabled="printList.length == 0">Print All</v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
 import { clone, uniq, isEmpty } from "lodash";
+import { AUTHORITY_URL } from "@/urls";
 import createFormB from "@/modules/forms/formB/components/createFormB.vue";
 
 export default {
@@ -144,6 +180,9 @@ export default {
     formBItems: [],
     loadingFormB: false,
     formBLink: "",
+
+    showPrintDialog: false,
+    printList: [],
   }),
   mounted: async function() {
     this.departmentId = this.$route.params.departmentId;
@@ -269,7 +308,6 @@ export default {
       }
 
       if (this.programFilter != "All") {
-        console.log("FILTER ON ", this.programFilter);
         list = list.filter((i) => i.program_branch == this.programFilter);
       }
 
@@ -283,6 +321,42 @@ export default {
       if (input == "temporary") return "Temporary";
       if (input == "acting") return "Acting";
       return "Substantive";
+    },
+
+    printClick() {
+      this.printList = clone(this.allItems);
+
+      this.showPrintDialog = true;
+    },
+
+    doPrint() {
+      const idList = this.printList.map((item) => item._id);
+
+      // do a post to a _blank window with the ids in the body
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `${AUTHORITY_URL}/bulk-pdf`;
+      form.target = '_blank';
+      
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'ids';
+      input.value = JSON.stringify(idList);
+      
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+
+      // return `${AUTHORITY_URL}/${this.formB._id}/pdf`;
+    },
+
+    removeMatchingItem(idx) {
+      this.printList.splice(idx, 1);
+    },
+
+    closePrintDialog() {
+      this.showPrintDialog = false;
     },
   },
 };

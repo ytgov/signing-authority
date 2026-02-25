@@ -25,7 +25,7 @@
     "mongodb": "^6.1.0",
     "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.6",
-    "puppeteer": "^21.3.8"
+    "puppeteer": "^24.3.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.14",

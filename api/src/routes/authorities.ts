@@ -102,12 +102,52 @@ authoritiesRouter.get(
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="FormB_${name}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();
   }
 );
+
+authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request, res: Response) => {
+  const { ids } = req.body;
+  const idList = eval(ids);
+
+  const PDF_TEMPLATE = fs.readFileSync(__dirname + "/../templates/pdf/FormBTemplate.html");
+
+  let allItemData = "";
+
+  for (let id of idList) {
+    let item = await loadSingleAuthority(req, id);
+
+    if (item) {
+      (item as any).API_PORT = API_PORT;
+
+      if (item.authority_type == "temporary") item.authority_type = "TEMPORARY";
+      else if (item.authority_type == "acting") item.authority_type = "ACTING";
+      else item.authority_type = "SUBSTANTIVE";
+
+      let t = new ExpressHandlebars();
+
+      const template = t.handlebars.compile(PDF_TEMPLATE.toString(), {});
+      let data = template(item, {
+        helpers: {
+          eq: function (a1: string, a2: string) {
+            return a1 == a2;
+          },
+        },
+      });
+
+      allItemData += data + '<div style="page-break-after: always;"></div>';
+    }
+  }
+
+  let pdf = await generatePDF(allItemData);
+
+  res.setHeader("Content-disposition", `attachment; filename="FormB_BULKPRINT.pdf"`);
+  res.setHeader("Content-type", "application/pdf");
+  res.send(Buffer.from(pdf));
+});
 
 authoritiesRouter.get(
   "/:id/pdf/draft",
@@ -137,15 +177,13 @@ authoritiesRouter.get(
         },
       });
 
-      console.log(data);
-
       let name = CleanFilename(`${item.department_code}`);
       if (item.employee.name) name = `${name}-${CleanFilename(`${item.employee.name}`)}`;
 
       let pdf = await generatePDF(data);
       res.setHeader("Content-disposition", `attachment; filename="DRAFT-FormB_${name}.pdf"`);
       res.setHeader("Content-type", "application/pdf");
-      res.send(pdf);
+      res.send(Buffer.from(pdf));
     }
 
     res.status(404).send();
@@ -703,30 +741,6 @@ authoritiesRouter.post("/", checkJwt, loadUser, isFormBAdmin, async (req: Reques
   let item = await loadSingleAuthority(req, created.insertedId.toString());
   res.json({ data: item });
 });
-
-/* authoritiesRouter.post('/', async (req: Request, res: Response) => {
-  //post object {user: "YNETUsername", account: "full-accuont-code"}
-  //returns true and the value and type of approval
-  return res.json({"TESTING": "crap"});
-}); */
-
-/* authoritiesRouter.get("/account/:account", async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  return res.json({ params: req.params });
-});
-authoritiesRouter.post("/account/:account", async (req: Request, res: Response) => {
-  //return all the authorites assigned to the account
-  // -----------
-  let a: any = req.store as Storage;
-  // await a.Authorities.create({"thing":"the other thing"})
-  // -----------
-  return res.json({});
-}); */
-
-/* authoritiesRouter.get("/:myAuthorities", async (req: Request, res: Response) => {
-  //return a list of all the authorites assigned to my (YNET username)
-  return res.json({ params: req.params });
-}); */
 
 async function loadSingleAuthority(req: Request, id: string): Promise<Authority | undefined> {
   let db = req.store.Authorities as GenericService<Authority>;

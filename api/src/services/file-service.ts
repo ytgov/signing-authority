@@ -2,7 +2,6 @@ import { StoredFile } from "../data/models";
 import { FileStore } from "../utils/file-store";
 
 export class FileService {
-
   readonly fileStore: FileStore;
 
   constructor(fileStore: FileStore) {
@@ -10,11 +9,11 @@ export class FileService {
   }
 
   storeFile(file: StoredFile): Promise<StoredFile> {
-    return this.fileStore.putFile(file)
+    return this.fileStore.putFile(file);
   }
 
   retrieveFile(key: string): Promise<StoredFile> {
-    return this.fileStore.getFile(key)
+    return this.fileStore.getFile(key);
   }
 
   removeFile(key: string): Promise<any> {
