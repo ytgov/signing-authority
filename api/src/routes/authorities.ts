@@ -117,6 +117,8 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
 
   let allItemData = "";
 
+  console.log("BULK GATHER: " + ids.length, new Date());
+
   for (let id of idList) {
     let item = await loadSingleAuthority(req, id);
 
@@ -142,7 +144,11 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
     }
   }
 
+  console.log("BULK PREPARE: " + allItemData.length, new Date());
+
   let pdf = await generatePDF(allItemData);
+
+  console.log("BULK GENERATED: " + pdf.length, new Date());
 
   res.setHeader("Content-disposition", `attachment; filename="FormB_BULKPRINT.pdf"`);
   res.setHeader("Content-type", "application/pdf");
