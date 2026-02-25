@@ -24,8 +24,7 @@
         <v-data-table hide-default-footer :headers="[
           { text: 'Name', value: 'display_name' },
           { text: 'YNET Id', value: 'ynet_id' },
-          { text: 'Authorities', value: 'authority_count', width: '140px' },
-          { text: 'Active', value: 'preview', width: '120px' },
+          { text: 'Active Authorities', value: 'preview' },
         ]" :items="searchResults" :items-per-page="-1" :loading="loading" @click:row="selectEmployee"
           class="clickable-row">
           <template v-slot:item.preview="{ item }">
