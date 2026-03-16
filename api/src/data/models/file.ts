@@ -1,7 +1,7 @@
-import { MongoEntity } from ".";
+import { BaseEntity } from ".";
 
 
-export interface StoredFile extends MongoEntity {
+export interface StoredFile extends BaseEntity {
     filename: string;
     file_size: number;
     mime_type: string;

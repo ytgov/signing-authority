@@ -1,66 +1,129 @@
-import { cloneDeep } from "lodash";
-import { Collection, ObjectId, Filter, InsertOneResult, DeleteResult, Document } from "mongodb";
-import { MongoEntity } from "../data/models";
+import { Knex } from "knex";
+import { BaseEntity } from "../data/models";
 
-export class GenericService<T extends MongoEntity> {
-  private db: Collection;
+export class GenericService<T extends BaseEntity> {
+  protected db: Knex;
+  protected tableName: string;
 
-  constructor(db: Collection) {
+  constructor(db: Knex, tableName: string) {
     this.db = db;
+    this.tableName = tableName;
   }
 
-  async create(item: T): Promise<InsertOneResult<T>> {
-    return this.db.insertOne(item);
+  async create(item: any): Promise<any> {
+    // Remove _id/id if present (auto-generated)
+    const toInsert = { ...item };
+    delete toInsert._id;
+    delete toInsert.id;
+
+    const [inserted] = await this.db(this.tableName).insert(toInsert).returning("id");
+    const newId = typeof inserted === "object" ? inserted.id : inserted;
+
+    return { insertedId: newId };
   }
 
-  async update(id: string, item: T): Promise<T | undefined> {
-    let clone = cloneDeep(item);
-    delete clone._id;
+  async update(id: string | number, item: any): Promise<T | undefined> {
+    const numId = typeof id === "string" ? parseInt(id, 10) : id;
+    const toUpdate = { ...item };
+    delete toUpdate._id;
+    delete toUpdate.id;
 
-    return this.db
-      .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: clone })
-      .then((result) => {
-        if (result?.ok == 1) return result.value as T;
-
-        return undefined;
-      })
-      .catch((err) => {
-        console.log("UPDATE ERROR", err);
-        return undefined;
-      });
-  }
-
-  async delete(id: string): Promise<DeleteResult> {
-    return this.db.deleteOne({ _id: new ObjectId(id) });
-  }
-
-  async getAll(query: Filter<any>, sort?: any): Promise<T[]> {
-    return (await this.db.find(query).sort(sort).toArray()) as T[];
-  }
-
-  async getOne(query: Filter<any>): Promise<T | undefined> {
-    return (await this.db.findOne(query)) as T;
-  }
-
-  async deleteWhere(query: Filter<any>): Promise<DeleteResult> {
-    return this.db.deleteMany(query);
-  }
-
-  async count(query: Filter<any>): Promise<Number> {
-    return this.db.countDocuments(query);
-  }
-
-  async aggregate(pipeline?: Document[]): Promise<Document[]> {
-    let aggCursor = await this.db.aggregate(pipeline);
-
-    return aggCursor.toArray();
-  }
-
-  async getById(id: string): Promise<T | null> {
     try {
-      return this.db.findOne<T>({ _id: new ObjectId(id) });
-    } catch (e) {}
+      await this.db(this.tableName).where({ id: numId }).update(toUpdate);
+      return item as T;
+    } catch (err) {
+      console.log("UPDATE ERROR", err);
+      return undefined;
+    }
+  }
 
-    return null;
+  async delete(id: string | number): Promise<any> {
+    const numId = typeof id === "string" ? parseInt(id, 10) : id;
+    return this.db(this.tableName).where({ id: numId }).del();
+  }
+
+  async getAll(query: any = {}, sort?: any): Promise<T[]> {
+    let q = this.db(this.tableName).select("*");
+
+    // Apply simple where conditions (plain object keys)
+    for (const [key, value] of Object.entries(query)) {
+      if (value === true || value === false) {
+        q = q.where(key, value ? 1 : 0);
+      } else {
+        q = q.where(key, value as any);
+      }
+    }
+
+    // Apply sorting
+    if (sort && typeof sort === "object") {
+      for (const [col, dir] of Object.entries(sort)) {
+        q = q.orderBy(col, (dir as number) === 1 ? "asc" : "desc");
+      }
+    }
+
+    const rows = await q;
+
+    // Add _id alias for backward compat
+    for (const row of rows) {
+      if (row.id !== undefined) row._id = row.id;
+    }
+
+    return rows as T[];
+  }
+
+  async getOne(query: any = {}): Promise<T | undefined> {
+    let q = this.db(this.tableName).select("*");
+
+    for (const [key, value] of Object.entries(query)) {
+      q = q.where(key, value as any);
+    }
+
+    const row = await q.first();
+    if (row && row.id !== undefined) row._id = row.id;
+
+    return row as T | undefined;
+  }
+
+  async deleteWhere(query: any = {}): Promise<any> {
+    let q = this.db(this.tableName);
+
+    for (const [key, value] of Object.entries(query)) {
+      q = q.where(key, value as any);
+    }
+
+    return q.del();
+  }
+
+  async count(query: any = {}): Promise<Number> {
+    let q = this.db(this.tableName);
+
+    for (const [key, value] of Object.entries(query)) {
+      q = q.where(key, value as any);
+    }
+
+    const [result] = await q.count("* as count");
+    return result.count as number;
+  }
+
+  async aggregate(pipeline?: any[]): Promise<any[]> {
+    // Aggregation pipelines don't directly translate to SQL.
+    // For the one usage (department count with $unwind on authority_lines),
+    // we handle it specifically in the route.
+    console.warn("aggregate() called on GenericService - not supported in MSSQL mode");
+    return [];
+  }
+
+  async getById(id: string | number): Promise<T | null> {
+    try {
+      const numId = typeof id === "string" ? parseInt(id, 10) : id;
+      if (isNaN(numId)) return null;
+
+      const row = await this.db(this.tableName).where({ id: numId }).first();
+      if (row && row.id !== undefined) row._id = row.id;
+
+      return (row as T) || null;
+    } catch (e) {
+      return null;
+    }
   }
 }

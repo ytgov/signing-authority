@@ -1,6 +1,7 @@
-export interface Department
-{
-  dept: String,
-  descr: String,
-  display_name: String
+export interface Department {
+  dept: string;
+  code?: string;
+  descr: string;
+  display_name: string;
+  description?: string;
 }

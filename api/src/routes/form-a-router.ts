@@ -20,7 +20,6 @@ import {
   OperationalRestriction,
   OperationalRestrictionSeeds,
 } from "../data/models";
-import { ObjectId } from "mongodb";
 
 import { ExpressHandlebars } from "express-handlebars";
 export const formARouter = express.Router();
@@ -180,7 +179,7 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
     department_descr,
     create_date: new Date(),
     created_by: "",
-    created_by_id: ObjectId.createFromTime(123),
+    created_by_id: 0,
     status: "Preview",
     program,
     activity,
@@ -232,7 +231,7 @@ formARouter.get("/temp-pdf-preview", async (req: Request, res: Response) => {
 
 formARouter.get(
   "/:id",
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -466,13 +465,7 @@ formARouter.put(
         let creator: User[];
 
         if (item.created_by_id)
-          creator = await userDb.getAll({
-            $or: [
-              { _id: item.created_by_id },
-              { _id: item.created_by_id.toString() },
-              { _id: new ObjectId(item.created_by_id) },
-            ],
-          });
+          creator = await userDb.getAll({ id: item.created_by_id });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -515,13 +508,7 @@ formARouter.put(
         let creator: User[];
 
         if (item.created_by_id)
-          creator = await userDb.getAll({
-            $or: [
-              { _id: item.created_by_id },
-              { _id: item.created_by_id.toString() },
-              { _id: new ObjectId(item.created_by_id) },
-            ],
-          });
+          creator = await userDb.getAll({ id: item.created_by_id });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -549,13 +536,7 @@ formARouter.put(
         let creator: User[];
 
         if (item.created_by_id)
-          creator = await userDb.getAll({
-            $or: [
-              { _id: item.created_by_id },
-              { _id: item.created_by_id.toString() },
-              { _id: new ObjectId(item.created_by_id) },
-            ],
-          });
+          creator = await userDb.getAll({ id: item.created_by_id });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -584,13 +565,7 @@ formARouter.put(
         let creator: User[];
 
         if (item.created_by_id)
-          creator = await userDb.getAll({
-            $or: [
-              { _id: item.created_by_id },
-              { _id: item.created_by_id.toString() },
-              { _id: new ObjectId(item.created_by_id) },
-            ],
-          });
+          creator = await userDb.getAll({ id: item.created_by_id });
         else {
           let allUsers = await userDb.getAll();
           creator = allUsers.filter((u) => `${u.first_name} ${u.last_name}` == item?.created_by);
@@ -813,7 +788,7 @@ formARouter.get("/department/:department/count", async (req: Request, res: Respo
 
 formARouter.get(
   "/:id/pdf",
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -877,7 +852,7 @@ formARouter.get(
 
 formARouter.get(
   "/:id/pdf/draft",
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -960,7 +935,7 @@ formARouter.post(
   checkJwt,
   loadUser,
   isFormAAdmin,
-  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
+  [param("id").notEmpty(), body("program_branch").trim(), body("activity").trim()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -969,10 +944,9 @@ formARouter.post(
     let existing = await db.getById(id);
 
     if (existing) {
-      let deptPositions = await db.getAll({
+      let deptPositions = (await db.getAll({
         department_code: existing?.department_code,
-        _id: { $ne: new ObjectId(id) },
-      });
+      })).filter(p => p.id !== parseInt(id, 10));
 
       for (let pos of deptPositions) {
         setPositionStatus(pos);
@@ -994,7 +968,7 @@ formARouter.put(
   checkJwt,
   loadUser,
   isSystemAdmin,
-  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
+  [param("id").notEmpty(), body("program_branch").trim(), body("activity").trim()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -1019,7 +993,7 @@ formARouter.put(
   checkJwt,
   loadUser,
   isFormAAdmin,
-  [param("id").isMongoId().notEmpty(), body("program_branch").trim(), body("activity").trim()],
+  [param("id").notEmpty(), body("program_branch").trim(), body("activity").trim()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -1040,10 +1014,9 @@ formARouter.put(
 
     if (saveAction) {
       if (saveAction == "DMLock") {
-        let deptPositions = await db.getAll({
+        let deptPositions = (await db.getAll({
           department_code: existing?.department_code,
-          _id: { $ne: new ObjectId(id) },
-        });
+        })).filter(p => p.id !== parseInt(id, 10));
 
         for (let pos of deptPositions) {
           setPositionStatus(pos);
@@ -1065,10 +1038,9 @@ formARouter.put(
 
         req.body.position_group_id = "-1";
       } else if (saveAction == "DMApprove") {
-        let deptPositions = await db.getAll({
+        let deptPositions = (await db.getAll({
           department_code: existing?.department_code,
-          _id: { $ne: new ObjectId(id) },
-        });
+        })).filter(p => p.id !== parseInt(id, 10));
 
         for (let pos of deptPositions) {
           setPositionStatus(pos);
@@ -1087,7 +1059,7 @@ formARouter.put(
           employee: req.body.employee,
           supervisor: { title: "", name: "", email: "", ynet_id: "", upn: "" },
           program_branch: "ALL",
-          form_a_id: new ObjectId(id),
+          form_a_id: parseInt(id, 10),
           authority_lines: [],
           create_date: new Date(),
           created_by_id: req.user._id,
@@ -1281,7 +1253,7 @@ formARouter.put(
     let myDMForm = myDMForms[0];
 
     //RA: this should be the ID of the person creating the FormA I think
-    if (req.body.employee_id) req.body.employee_id = new ObjectId(req.body.employee_id);
+    if (req.body.employee_id) req.body.employee_id = parseInt(req.body.employee_id, 10);
     // console.log(req.body.authority_lines[0])
 
     // check for duplicate coding/OR

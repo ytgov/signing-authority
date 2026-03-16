@@ -4,7 +4,7 @@ import axios from "axios";
 import { expressJwtSecret } from "jwks-rsa";
 import { AUTH0_DOMAIN, AUTH0_AUDIENCE } from "../config";
 import { UserService } from "../services";
-import { ObjectId } from "mongodb";
+
 
 export const checkJwt = expressjwt({
   secret: expressJwtSecret({
@@ -148,7 +148,7 @@ export async function loadUser(req: Request, res: Response, next: NextFunction) 
 
           if (eu) {
             eu.sub = sub;
-            await db.update(eu._id || new ObjectId(), eu);
+            await db.update(eu._id || eu.id || 0, eu);
 
             console.log("UPDATE USER SUB " + email, sub, u);
             req.user = { ...req.user, ...eu };

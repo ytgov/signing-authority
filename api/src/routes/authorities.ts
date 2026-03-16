@@ -9,16 +9,16 @@ import { ReturnValidationErrors } from "../middleware";
 import {
   CodeSearchService,
   EmailService,
-  GenericService,
   IntegrationService,
   LimitService,
   QuestService,
   UserService,
 } from "../services";
+import { AuthorityService } from "../services/authority-service";
+import { PositionService } from "../services/position-service";
 import {
   Authority,
   FormBAuthorityLine,
-  Position,
   ReviewResultType,
   setAuthorityStatus,
   StoredFile,
@@ -29,7 +29,6 @@ import { CleanFilename, FormatCoding } from "../utils/formatters";
 
 import { checkJwt, loadUser, isFormBAdmin, isFormBOrActingAdmin } from "../middleware/authz.middleware";
 import { API_PORT } from "../config";
-import { ObjectId } from "mongodb";
 
 const questService = new QuestService();
 const emailService = new EmailService();
@@ -41,7 +40,7 @@ export const authoritiesRouter = express.Router();
 authoritiesRouter.use("/uploads", uploadsRouter);
 
 authoritiesRouter.get("/", async (req: Request, res: Response) => {
-  let db = req.store.Authorities as GenericService<Authority>;
+  let db = req.store.Authorities as AuthorityService;
   let list = await db.getAll({});
 
   for (let item of list) {
@@ -53,7 +52,7 @@ authoritiesRouter.get("/", async (req: Request, res: Response) => {
 
 authoritiesRouter.get(
   "/:id",
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -70,7 +69,7 @@ authoritiesRouter.get(
 
 authoritiesRouter.get(
   "/:id/pdf",
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -157,7 +156,7 @@ authoritiesRouter.post("/bulk-pdf", ReturnValidationErrors, async (req: Request,
 
 authoritiesRouter.get(
   "/:id/pdf/draft",
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -212,7 +211,7 @@ authoritiesRouter.post(
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     let { term, date } = req.body;
-    let db = req.store.Authorities as GenericService<Authority>;
+    let db = req.store.Authorities as AuthorityService;
     let searchService = new CodeSearchService(db);
 
     if (!date) date = moment().startOf("day").format("YYYY-MM-DD");
@@ -228,12 +227,12 @@ authoritiesRouter.post(
   checkJwt,
   loadUser,
   isFormBOrActingAdmin,
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     let { date, expire_date, activate_reason, approve_user_email, approve_user_date } = req.body;
-    let db = req.store.Authorities as GenericService<Authority>;
+    let db = req.store.Authorities as AuthorityService;
 
     let existing = await db.getById(id);
 
@@ -317,11 +316,11 @@ authoritiesRouter.put(
   checkJwt,
   loadUser,
   isFormBAdmin,
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    let db = req.store.Authorities as GenericService<Authority>;
+    let db = req.store.Authorities as AuthorityService;
     let existing = await db.getById(id);
 
     if (existing) {
@@ -357,21 +356,19 @@ authoritiesRouter.put(
   checkJwt,
   loadUser,
   isFormBOrActingAdmin,
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const { save_action, comments } = req.body;
-    let db = req.store.Authorities as GenericService<Authority>;
+    let db = req.store.Authorities as AuthorityService;
     let userDb = req.store.Users as UserService;
     let fileStore = req.store.Files as FileStore;
-    let positionDb = req.store.FormA as GenericService<Position>;
+    let positionDb = req.store.FormA as PositionService;
 
     let existing = await db.getById(id);
 
     if (!existing) return res.status(404).send();
-    //if (req.body.department_id) req.body.department_id = new ObjectId(req.body.department_id);
-    //if (req.body.employee_id) req.body.employee_id = new ObjectId(req.body.employee_id);
 
     if (!existing.authority_type) existing.authority_type = "substantive"; // polyfill for late model change
 
@@ -400,13 +397,7 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
-        let creator = await userDb.getAll({
-          $or: [
-            { _id: existing.created_by_id },
-            { _id: existing.created_by_id.toString() },
-            { _id: new ObjectId(existing.created_by_id) },
-          ],
-        });
+        let creator = await userDb.getAll({ id: existing.created_by_id });
 
         await emailService.sendFormBUpload(
           existing,
@@ -495,13 +486,7 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
-        let creator = await userDb.getAll({
-          $or: [
-            { _id: existing.created_by_id },
-            { _id: existing.created_by_id.toString() },
-            { _id: new ObjectId(existing.created_by_id) },
-          ],
-        });
+        let creator = await userDb.getAll({ id: existing.created_by_id });
 
         await emailService.sendFormBApprove(
           existing,
@@ -524,8 +509,6 @@ authoritiesRouter.put(
           await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"), "until cancelled");
         }
 
-        //await emailService.sendFormBActiveNotice(existing, moment().format("MMMM D, YYYY"), moment().format("MMMM D, YYYY"));
-
         await db.update(id, existing);
         await integrationService.checkAuthorityChange(existing);
       } else if (save_action == "FinanceApproveReject") {
@@ -542,13 +525,7 @@ authoritiesRouter.put(
           user_name: `${req.user.first_name} ${req.user.last_name}`,
         });
 
-        let creator = await userDb.getAll({
-          $or: [
-            { _id: existing.created_by_id },
-            { _id: existing.created_by_id.toString() },
-            { _id: new ObjectId(existing.created_by_id) },
-          ],
-        });
+        let creator = await userDb.getAll({ id: existing.created_by_id });
 
         existing.reject_comments = comments;
 
@@ -586,9 +563,7 @@ authoritiesRouter.put(
           }
         }
 
-        let creator = await userDb.getAll({
-          $or: [{ _id: creatorId }, { _id: creatorId.toString() }, { _id: new ObjectId(creatorId) }],
-        });
+        let creator = await userDb.getAll({ id: parseInt(creatorId) || 0 });
 
         await emailService.sendFormBActingApproveCreatorNotice(existing, creator, effectiveDate, expireDate);
         await emailService.sendFormBActingApproveNotice(existing, effectiveDate, expireDate);
@@ -717,11 +692,11 @@ authoritiesRouter.delete(
   checkJwt,
   loadUser,
   isFormBAdmin,
-  [param("id").isMongoId().notEmpty()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    let db = req.store.Authorities as GenericService<Authority>;
+    let db = req.store.Authorities as AuthorityService;
 
     await db.delete(id);
     res.json({});
@@ -729,7 +704,7 @@ authoritiesRouter.delete(
 );
 
 authoritiesRouter.post("/", checkJwt, loadUser, isFormBAdmin, async (req: Request, res: Response) => {
-  let db = req.store.Authorities as GenericService<Authority>;
+  let db = req.store.Authorities as AuthorityService;
 
   req.body.audit_lines = [
     {
@@ -749,8 +724,8 @@ authoritiesRouter.post("/", checkJwt, loadUser, isFormBAdmin, async (req: Reques
 });
 
 async function loadSingleAuthority(req: Request, id: string): Promise<Authority | undefined> {
-  let db = req.store.Authorities as GenericService<Authority>;
-  let formADb = req.store.FormA as GenericService<Position>;
+  let db = req.store.Authorities as AuthorityService;
+  let formADb = req.store.FormA as PositionService;
 
   let item = await db.getById(id);
 
@@ -796,7 +771,7 @@ async function loadSingleAuthority(req: Request, id: string): Promise<Authority 
 
 // Department Specific FORM B Routes
 authoritiesRouter.get("/department/:department", async (req: Request, res: Response) => {
-  let db = req.store.Authorities as GenericService<Authority>;
+  let db = req.store.Authorities as AuthorityService;
   let department_code = req.params.department;
   let list = await db.getAll({ department_code: department_code });
 

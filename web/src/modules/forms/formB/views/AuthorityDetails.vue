@@ -159,8 +159,8 @@
                         <br />
                       </span>
 
-                      <strong>Effective:</strong> {{ act.date }}
-                      <span v-if="act.expire_date"> to {{ act.expire_date }}</span>
+                      <strong>Effective:</strong> {{ formatDate(act.date) }}
+                      <span v-if="act.expire_date"> to {{ formatDate(act.expire_date) }}</span>
                       <span v-else> until cancelled</span>
                     </v-col>
                     <v-col>
@@ -756,7 +756,7 @@ export default {
       "cancelFormB",
     ]),
     formatDate(input) {
-      return moment(input).format("YYYY-MM-DD");
+      return moment.utc(input).format("YYYY-MM-DD");
     },
 
     openFormA() {

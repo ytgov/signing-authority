@@ -1,10 +1,9 @@
 import moment from "moment";
-import { ObjectId } from "mongodb";
-import { Position, MongoEntity, User, Department, Employee, StoredFile } from ".";
+import { Position, BaseEntity, User, Department, Employee, StoredFile, ReviewResults } from ".";
 import { max } from "lodash";
 
-export interface Authority extends MongoEntity {
-  created_by_id: ObjectId;
+export interface Authority extends BaseEntity {
+  created_by_id: number;
   created_by_name: string;
   create_date: Date;
   cancel_date?: Date;
@@ -30,7 +29,7 @@ export interface Authority extends MongoEntity {
     value?: Employee;
   };
 
-  form_a_id: ObjectId;
+  form_a_id: number;
 
   department_code: string;
   department_descr: string;
@@ -59,11 +58,12 @@ export interface Authority extends MongoEntity {
 }
 
 export interface ActivationRecord {
+  id?: number;
   date: Date | string;
   expire_date?: Date;
   activate_reason: string;
   archive_reason?: string;
-  activate_user_id: ObjectId;
+  activate_user_id: number;
   approve_user_email: string;
   approve_user_date?: Date;
   reject_user_date?: Date;
@@ -72,19 +72,6 @@ export interface ActivationRecord {
   file?: StoredFile;
   memo?: StoredFile;
   current_status?: string;
-}
-
-export interface ReviewResults {
-  date: Date;
-  name: string;
-  user_id: ObjectId;
-  result: ReviewResultType;
-  note?: string;
-}
-
-export enum ReviewResultType {
-  Approved = "Approved",
-  Rejected = "Rejected",
 }
 
 export interface FormBAuthorityLine {
@@ -102,6 +89,7 @@ export interface FormBAuthorityLine {
   ledger2?: string;
 
   operational_restriction?: string;
+  operational_restriction_id?: number;
   notes?: string;
 
   //**   Note: -1 means: No Limit or NL **//

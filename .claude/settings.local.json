@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/dev/signing-authority/api/src/migration -type f -name *.ts -o -name *.js -o -name *.json)"
+    ]
+  }
+}

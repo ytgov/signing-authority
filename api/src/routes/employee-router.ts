@@ -15,7 +15,6 @@ import {
   setAuthorityStatus,
 } from "../data/models";
 import { body, param } from "express-validator";
-import { ObjectId } from "mongodb";
 import moment from "moment";
 import { checkJwt, loadUser } from "../middleware/authz.middleware";
 
@@ -151,7 +150,7 @@ employeeRouter.get(
 
 employeeRouter.put(
   "/:id",
-  [param("id").isMongoId()],
+  [param("id").notEmpty()],
   ReturnValidationErrors,
   async (req: Request, res: Response) => {
     let empDb = req.store.Employees as GenericService<Employee>;
@@ -159,7 +158,7 @@ employeeRouter.put(
     let { id } = req.params;
     let { first_name, last_name, employee_id, ynet_id, primary_department } =
       req.body;
-    let item = await empDb.getOne({ _id: new ObjectId(id) });
+    let item = await empDb.getById(id);
 
     if (item) {
       let update = {

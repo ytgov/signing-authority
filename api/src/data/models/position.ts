@@ -1,7 +1,6 @@
-import { ObjectId } from "mongodb";
-import { Department, MongoEntity, Employee, StoredFile, ReviewResults, Authority } from ".";
+import { Department, BaseEntity, Employee, StoredFile, ReviewResults, Authority } from ".";
 
-export interface Position extends MongoEntity {
+export interface Position extends BaseEntity {
   department_code: string;
   department_descr: string;
   program_branch: string;
@@ -15,7 +14,7 @@ export interface Position extends MongoEntity {
   authority_lines?: PositionAuthorityLine[];
   audit_lines?: PositionAuditLine[];
 
-  position_group_id?: ObjectId;
+  position_group_id?: number | string;
   position_group_order?: number;
 
   department_reviews?: ReviewResults[];
@@ -23,10 +22,8 @@ export interface Position extends MongoEntity {
 
   activation?: {
     date: Date;
-    activate_user_id: ObjectId;
-    //recommender_name: string;
-    //approver_name: string;
-    file_id: ObjectId; //maybe this should be an array?
+    activate_user_id: number;
+    file_id: number;
   };
 
   deactivation?: {
@@ -59,6 +56,7 @@ export interface PositionAuthorityLine {
   ledger2?: string;
 
   operational_restriction?: string;
+  operational_restriction_id?: number;
   notes?: string;
 
   //**   Note: -1 means: No Limit or NL **//

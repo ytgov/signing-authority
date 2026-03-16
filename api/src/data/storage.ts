@@ -1,57 +1,72 @@
-import { MongoClient, MongoClientOptions } from "mongodb";
+import knex, { Knex } from "knex";
 import { FileStore } from "../utils/file-store";
-import { MongoFileStore } from "../utils/mongo-file-store";
-import { MONGO_URL, MONGO_DB } from "../config";
-import { GenericService, UserService } from "../services";
-import { Authority, Employee, OperationalRestriction, Position, PositionGroup } from "./models";
-
-let options: MongoClientOptions = {
-    connectTimeoutMS: 3000,
-    retryWrites: true
-};
+import { SqlFileStore } from "../utils/sql-file-store";
+import {
+  MSSQL_HOST,
+  MSSQL_USER,
+  MSSQL_PASSWORD,
+  MSSQL_DB,
+  MSSQL_PORT,
+} from "../config";
+import { UserService } from "../services/user-service";
+import { AuthorityService } from "../services/authority-service";
+import { PositionService } from "../services/position-service";
+import { PositionGroupService } from "../services/position-group-service";
+import { GenericService } from "../services/generic-service";
+import { Employee, OperationalRestriction } from "./models";
 
 export class Storage {
-    mongoConnection!: MongoClient;
-    isInitialized: boolean = false;
-    Authorities!: GenericService<Authority>;
-    Employees!: GenericService<Employee>;
-    OperationalRestrictions!: GenericService<OperationalRestriction>;
-    // Departments!: GenericService<Department>;
-    Users!: UserService;
-    Files!: FileStore;
-    FormA!: GenericService<Position>;
-    PositionGroups!: GenericService<PositionGroup>;
+  db!: Knex;
+  isInitialized: boolean = false;
+  Authorities!: AuthorityService;
+  Employees!: GenericService<Employee>;
+  OperationalRestrictions!: GenericService<OperationalRestriction>;
+  Users!: UserService;
+  Files!: FileStore;
+  FormA!: PositionService;
+  PositionGroups!: PositionGroupService;
 
-    constructor() {
+  constructor() {}
+
+  async ensureConnected(): Promise<string> {
+    if (this.isInitialized) return Promise.resolve("connected");
+
+    try {
+      this.db = knex({
+        client: "mssql",
+        connection: {
+          host: MSSQL_HOST,
+          port: MSSQL_PORT,
+          user: MSSQL_USER,
+          password: MSSQL_PASSWORD,
+          database: MSSQL_DB,
+          options: {
+            encrypt: false,
+            trustServerCertificate: true,
+          },
+        },
+      });
+
+      // Test connection
+      await this.db.raw("SELECT 1");
+
+      this.Authorities = new AuthorityService(this.db);
+      this.FormA = new PositionService(this.db);
+      this.PositionGroups = new PositionGroupService(this.db);
+      this.Employees = new GenericService(this.db, "employees");
+      this.OperationalRestrictions = new GenericService(
+        this.db,
+        "operational_restrictions",
+      );
+      this.Users = new UserService(this.db);
+      this.Files = new SqlFileStore(this.db);
+
+      this.isInitialized = true;
+      return "Connected";
+    } catch (err) {
+      console.error("Can't connect to MSSQL @", MSSQL_HOST);
+      console.error(err);
+      throw err;
     }
-
-    async ensureConnected(): Promise<string> {
-        if (this.isInitialized)
-            return Promise.resolve("connected");
-
-        return new Promise((resolve, reject) => {
-            MongoClient.connect(MONGO_URL, options)
-                .then(async resp => {
-                    this.mongoConnection = resp;
-
-                    //Subscriptions are from the old project
-                    this.Authorities = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Authorities"));
-                    this.FormA = new GenericService(this.mongoConnection.db(MONGO_DB).collection("FormA"));
-                    this.PositionGroups = new GenericService(this.mongoConnection.db(MONGO_DB).collection("PositionGroups"));
-                    this.Employees = new GenericService(this.mongoConnection.db(MONGO_DB).collection("Employees"));
-                    this.OperationalRestrictions = new GenericService(this.mongoConnection.db(MONGO_DB).collection("OperationalRestrictions"));
-                    this.Users = new UserService(this.mongoConnection.db(MONGO_DB).collection("Users"));
-                    this.Files = new MongoFileStore(this.mongoConnection.db(MONGO_DB));
-
-                    this.isInitialized = true;
-                    resolve("Connected");
-                })
-                .catch(err => {
-                    console.error("Can't connet to MongoDB @", MONGO_URL);
-                    console.error(err);
-                    reject(err);
-                });
-
-        });
-    }
+  }
 }

@@ -1,6 +1,6 @@
-import { MongoEntity } from ".";
+import { BaseEntity } from ".";
 
-export interface OperationalRestriction extends MongoEntity {
+export interface OperationalRestriction extends BaseEntity {
   description: string;
   is_active: boolean;
   sort: number;

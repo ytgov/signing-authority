@@ -1,12 +1,13 @@
-import { MongoEntity } from ".";
+import { BaseEntity } from ".";
 import { Authority } from "./authority";
 
 
-export interface Employee extends MongoEntity {
+export interface Employee extends BaseEntity {
     employee_id: number;
     first_name: string;
     last_name: string;
     ynet_id: string;
+    upn?: string;
     email: string;
     primary_department: string;
 

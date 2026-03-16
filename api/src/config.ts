@@ -41,6 +41,12 @@ export const MONGO_DB = process.env.MONGO_DB || "";
 export const MONGO_HOST = process.env.MONGO_HOST || "";
 export const MONGO_URL = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}`;
 
+export const MSSQL_HOST = process.env.MSSQL_HOST || "localhost";
+export const MSSQL_USER = process.env.MSSQL_USER || "";
+export const MSSQL_PASSWORD = process.env.MSSQL_PASSWORD || "";
+export const MSSQL_DB = process.env.MSSQL_DB || "signing_authority";
+export const MSSQL_PORT = parseInt(process.env.MSSQL_PORT || "1433");
+
 export const AD_CLIENT_ID = process.env.AD_CLIENT_ID || "";
 export const AD_CLIENT_SECRET = process.env.AD_CLIENT_SECRET || "";
 export const AD_TENANT_ID = process.env.AD_TENANT_ID || "";

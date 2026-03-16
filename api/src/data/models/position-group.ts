@@ -1,7 +1,6 @@
-import { ObjectId } from "mongodb";
-import { MongoEntity, Position } from ".";
+import { BaseEntity, Position } from ".";
 
-export interface PositionGroup extends MongoEntity {
+export interface PositionGroup extends BaseEntity {
   department_code: string;
   department_descr: string;
   program?: string;
@@ -9,7 +8,7 @@ export interface PositionGroup extends MongoEntity {
 
   create_date: Date;
   created_by: string;
-  created_by_id: ObjectId;
+  created_by_id: number;
 
   status: string;
 
@@ -30,7 +29,7 @@ export interface PositionGroup extends MongoEntity {
 }
 
 export interface ElectronicApproval {
-  id: ObjectId;
+  id: number;
   name: string;
   comments?: string;
   date: Date;
@@ -38,12 +37,10 @@ export interface ElectronicApproval {
 }
 
 export interface SignaturesApproval {
-  id: ObjectId;
+  id: number;
   name: string;
   comments?: string;
   date: Date;
-  //deputy_minister_name: string;
-  //department_administrator_name: string;
   date_display?: string;
-  file_id: ObjectId;
+  file_id: number;
 }

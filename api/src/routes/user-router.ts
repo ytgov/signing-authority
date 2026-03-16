@@ -4,7 +4,7 @@ import { RequiresData, ReturnValidationErrors } from "../middleware";
 import { UserService } from "../services";
 import _ from "lodash";
 import { checkJwt, isSystemAdmin, loadUser } from "../middleware/authz.middleware";
-import { ObjectId } from "mongodb";
+
 
 export const userRouter = express.Router();
 userRouter.use(RequiresData);
@@ -51,7 +51,7 @@ userRouter.put(
       existing.status = status;
       existing.roles = roles;
       existing.department_admin_for = department_admin_for;
-      await db.update(existing._id || new ObjectId(), existing);
+      await db.update(existing._id || existing.id || 0, existing);
       return res.json({ messages: [{ variant: "success", text: "User saved" }] });
     }
 
@@ -72,7 +72,7 @@ userRouter.put(
 
     if (existing) {
       (existing as any).sub = undefined;
-      await db.update(existing._id || new ObjectId(), existing);
+      await db.update(existing._id || existing.id || 0, existing);
       return res.json({ messages: [{ variant: "success", text: "User saved" }] });
     }
 

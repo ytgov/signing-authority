@@ -4,6 +4,27 @@ import { Storage } from "../data";
 
 const store = new Storage();
 
+function stripNulls(obj: any): any {
+  if (obj === null) return "";
+  if (Array.isArray(obj)) return obj.map(stripNulls);
+  if (obj !== null && typeof obj === "object" && !(obj instanceof Date)) {
+    const result: any = {};
+    for (const key of Object.keys(obj)) {
+      result[key] = stripNulls(obj[key]);
+    }
+    return result;
+  }
+  return obj;
+}
+
+export function SanitizeNulls(req: Request, res: Response, next: NextFunction) {
+  const originalJson = res.json.bind(res);
+  res.json = (body: any) => {
+    return originalJson(stripNulls(body));
+  };
+  next();
+}
+
 export async function ReturnValidationErrors(req: Request, res: Response, next: NextFunction) {
   const errors = validationResult(req);
 

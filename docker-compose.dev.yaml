@@ -1,33 +1,12 @@
 version: "3"
 
 services:
-  #web:
-  #  image: ghcr.io/ryanjagar/signing-authority:latest
-  #  restart: unless-stopped
-  #  ports:
-  #    - 3000:3000
-  #  environment:
-  #    - AUTH_REDIRECT=${AUTH_REDIRECT}
-  #    - FRONTEND_URL=${FRONTEND_URL}
-  #    - BASE_URL=${BASE_URL}
-  #    - CLIENT_ID=${CLIENT_ID}
-  #    - CLIENT_SECRET=${CLIENT_SECRET}
-  #    - ISSUER_BASE_URL=${ISSUER_BASE_URL}
-  #    - SECRET=${SECRET}
-  #    - MONGO_HOST=${MONGO_HOST}
-  #    - MONGO_DB=${MONGO_DB}
-  #    - MONGO_FILEBUCKET=${MONGO_FILEBUCKET}
-  #    - MONGO_USERNAME=${MONGO_USERNAME}
-  #    - MONGO_PASSWORD=${MONGO_PASSWORD}
-  #    - NODE_ENV=${NODE_ENV}
-
-
   mongodb:
     image: mongo:8.0
     restart: unless-stopped
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
       - TZ=America/Whitehorse
     volumes:
       - mongo-data:/data/db
@@ -35,5 +14,28 @@ services:
     ports:
       - 27017:27017
 
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
+    user: root
+    environment:
+      DB_HOST: "localhost"
+      MSSQL_SA_PASSWORD: YourStrong!Passw0rd
+      TZ: "America/Whitehorse"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - db_data:/var/opt/mssql/data
+
+  mail:
+    image: maildev/maildev:2.2.1
+    environment:
+      MAILDEV_INCOMING_USER: dev
+      MAILDEV_INCOMING_PASS: dev123
+    ports:
+      - "1080:1080" # Web UI
+      - "1025:1025" # SMTP
+
 volumes:
   mongo-data:
+  db_data:
