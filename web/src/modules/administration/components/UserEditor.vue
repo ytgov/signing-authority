@@ -14,7 +14,7 @@
           readonly
           append-icon="mdi-lock"
         ></v-text-field>
-        <v-text-field v-model="item.email" label="Email" dense outlined readonly append-icon="mdi-lock"></v-text-field>
+        <v-text-field v-model="item.email" label="Email" dense outlined></v-text-field>
         <v-select label="Status" v-model="item.status" dense outlined :items="['Active', 'Inactive']"></v-select>
         <v-select
           label="Role"
@@ -57,6 +57,7 @@ export default {
   data: () => ({
     showDialog: false,
     item: {},
+    originalEmail: "",
   }),
   computed: {
     ...mapState("administration", ["roleOptions"]),
@@ -77,10 +78,11 @@ export default {
     ...mapActions("administration", ["saveUser", "unlinkUser"]),
     show(item) {
       this.item = item;
+      this.originalEmail = item.email;
       this.showDialog = true;
     },
     async save() {
-      let resp = await this.saveUser(this.item);
+      let resp = await this.saveUser({ ...this.item, originalEmail: this.originalEmail });
       this.onSave(resp);
       this.showDialog = false;
     },
