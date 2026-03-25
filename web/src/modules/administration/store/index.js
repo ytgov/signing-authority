@@ -52,8 +52,8 @@ const actions = {
   },
   async saveUser({ dispatch }, item) {
     const auth = getInstance();
-    let body = { roles: item.roles, status: item.status, department_admin_for: item.department_admin_for };
-    const result = await auth.put(`${USER_URL}/${item.email}`, body);
+    let body = { roles: item.roles, status: item.status, department_admin_for: item.department_admin_for, email: item.email };
+    const result = await auth.put(`${USER_URL}/${item.originalEmail || item.email}`, body);
     if (result.status === 200) {
       dispatch("loadUsers");
     }

@@ -43,7 +43,7 @@ userRouter.put(
   async (req: Request, res: Response) => {
     const db = req.store.Users as UserService;
     let { email } = req.params;
-    let { roles, status, department_admin_for } = req.body;
+    let { roles, status, department_admin_for, email: newEmail } = req.body;
 
     let existing = await db.getByEmail(email);
 
@@ -51,6 +51,7 @@ userRouter.put(
       existing.status = status;
       existing.roles = roles;
       existing.department_admin_for = department_admin_for;
+      if (newEmail) existing.email = newEmail;
       await db.update(existing._id || new ObjectId(), existing);
       return res.json({ messages: [{ variant: "success", text: "User saved" }] });
     }
