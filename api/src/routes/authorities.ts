@@ -629,6 +629,19 @@ authoritiesRouter.put(
 
         await db.update(id, req.body);
         await integrationService.checkAuthorityChange({ ...req.body, employee: existing.employee });
+      } else if (save_action == "UpdateDepartmentName") {
+        existing.audit_lines = existing.audit_lines || [];
+
+        existing.audit_lines.push({
+          action: "Updated Department Name",
+          date: new Date(),
+          previous_value: {},
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+        });
+
+        existing.department_descr = req.body.department_descr;
+
+        await db.update(id, existing);
       }
 
       return res.send("WORKING");

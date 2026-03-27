@@ -1216,6 +1216,17 @@ formARouter.put(
 
         let item = await loadSinglePosition(req, id);
         return res.json({ data: item });
+      } else if (saveAction == "UpdateDepartmentName") {
+        req.body.audit_lines.push({
+          date: new Date(),
+          user_name: `${req.user.first_name} ${req.user.last_name}`,
+          action: "Updated Department Name",
+          previous_value: existing,
+        });
+
+        await db.update(id, req.body);
+        let item = await loadSinglePosition(req, id);
+        return res.json({ data: item });
       } else if (saveAction == "DMReject") {
         req.body.audit_lines.push({
           date: new Date(),

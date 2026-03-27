@@ -100,6 +100,26 @@ Authentication information is available anywhere in the Vue frontend via a call 
 User can authenticate using their corporate account.  This is handed via federation in the backend authentication configuration.
 
 
+## Backup and Restore MongoDB
+
+The dev docker-compose file mounts `./dump` into the container at `/dump`, so backup files are accessible from your host machine.
+
+### Backup
+
+```
+docker compose --env-file ./.env.development --file docker-compose.dev.yaml exec mongodb mongodump --username admin --authenticationDatabase admin --db authorities --out /dump
+```
+
+This writes the backup to `./dump/authorities/` on the host.
+
+### Restore
+
+```
+docker compose --env-file ./.env.development --file docker-compose.dev.yaml exec mongodb mongorestore --username admin --authenticationDatabase admin --db authorities --drop /dump/authorities
+```
+
+The `--drop` flag drops existing collections before restoring. Remove it if you want to merge instead.
+
 ## Clearing out the MongoDB collecions from a command line
 
 ```

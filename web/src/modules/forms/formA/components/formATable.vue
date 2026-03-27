@@ -1,34 +1,26 @@
 <template>
-    <table
-        border="0"
-        cellspacing="0"
-        cellpadding="0"
-        class="table"
-        style="background-color: white; width: 100%; text-align: left"
-    >
+    <table border="0" cellspacing="0" cellpadding="0" class="table"
+        style="background-color: white; width: 100%; text-align: left">
         <thead>
             <tr>
-                <th
-                    :colspan="branchColSpan"
-                    rowspan="3"
-                    style="
+                <th :colspan="branchColSpan" rowspan="3" style="
                         text-align: left;
                         padding: 10px;
                         vertical-align: top;
                         font-weight: 400;
                         width: 60%;
-                    "
-                >
+                    ">
                     <div v-if="branchBundle" style="margin-bottom: 10px">
                         Department:<br />
-                        <strong
-                            >Department Holder {{ branchBundle.data }}
+                        <strong>Department Holder {{ branchBundle.data }}
                         </strong>
                     </div>
                     <div v-else style="margin-bottom: 10px">
                         Department:<br />
                         <strong>{{ formA.department_descr }}</strong>
                     </div>
+                    <v-btn v-if="formA.department_descr === 'TOURISM AND CULTURE' && canAdminister" class="mt-0 mb-5" color="error" small
+                        style="margin-bottom: 10px" @click="$emit('update-department-name')">Update Dept Name</v-btn>
                     <div v-if="branchBundle" style="margin-bottom: 10px">
                         Program:<br />
                         <strong>{{ $route.params.branchName }}</strong>
@@ -60,30 +52,20 @@
                 <th colspan="6" style="height: 20px">
                     SECTION 23 and SECTION 24 ($000)
                 </th>
-                <th
-                    :rowspan="
-                        formA.authority_lines &&
+                <th :rowspan="formA.authority_lines &&
+                    formA.authority_lines.length > 0
+                    ? '2'
+                    : '3'
+                    " class="rotate" :style="formA.authority_lines &&
                         formA.authority_lines.length > 0
-                            ? '2'
-                            : '3'
-                    "
-                    class="rotate"
-                    :style="
-                        formA.authority_lines &&
+                        ? 'border-bottom: none !important;'
+                        : ''
+                        ">
+                    <div class="ml-2 mr-1" :style="formA.authority_lines &&
                         formA.authority_lines.length > 0
-                            ? 'border-bottom: none !important;'
-                            : ''
-                    "
-                >
-                    <div
-                        class="ml-2 mr-1"
-                        :style="
-                            formA.authority_lines &&
-                            formA.authority_lines.length > 0
-                                ? 'margin-bottom: -36px !important'
-                                : ''
-                        "
-                    >
+                        ? 'margin-bottom: -36px !important'
+                        : ''
+                        ">
                         (SECTION 29) <br />
                         CERTIFICATE OF <br />PERFORMANCE
                     </div>
@@ -251,7 +233,7 @@
     </table>
 </template>
 <script>
-// import { mapState} from "vuex";
+import { mapState } from "vuex";
 export default {
     name: "formATable",
     props: {
@@ -278,12 +260,27 @@ export default {
         },
     },
     computed: {
+        ...mapState("home", ["profile"]),
         branchColSpan: function () {
             if (this.branchBundle) {
                 return 3;
             } else {
                 return 2;
             }
+        },
+
+        canAdminister() {
+            if (this.profile && this.profile.roles && this.profile.roles.length > 0) {
+                if (this.profile.roles.includes("System Admin")) return true;
+
+                if (
+                    this.profile.roles.includes("Form A Administrator") &&
+                    this.profile.department_admin_for.includes(this.formA.department_code)
+                )
+                    return true;
+            }
+
+            return false;
         },
     },
     async mounted() {
@@ -297,12 +294,15 @@ export default {
 .table {
     border-collapse: collapse;
 }
+
 .table th {
     text-align: center;
 }
+
 .table thead {
     text-transform: uppercase;
 }
+
 .table th,
 .table td {
     border: 1px black solid;
@@ -315,6 +315,7 @@ export default {
     padding-bottom: 5px;
     max-width: 85px;
 }
+
 table th.bottom {
     white-space: nowrap;
     vertical-align: bottom;
@@ -322,10 +323,11 @@ table th.bottom {
     text-align: left;
 }
 
-.table th.rotate > div {
+.table th.rotate>div {
     transform: rotate(270deg);
     width: 58px;
 }
+
 .table .fb-value {
     width: 80px;
     text-align: center;
