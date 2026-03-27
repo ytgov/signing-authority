@@ -4,9 +4,8 @@
 
     <BaseCard :showHeader="true" heading="Delegation of Financial Signing Authority">
       <template slot="right">
-        <v-chip color="#f2a900" v-if="formA.is_deputy_minister || formA.is_deputy_duplicate" class="mr-4" dark
-          >Deputy Minister or Equivalent</v-chip
-        >
+        <v-chip color="#f2a900" v-if="formA.is_deputy_minister || formA.is_deputy_duplicate" class="mr-4" dark>Deputy
+          Minister or Equivalent</v-chip>
         <form-a-status :isLocked="isLocked" :status="status"> </form-a-status>
 
         <actions-menu :showPreview="showPreview" :showDMApprove="showDMApprove" :showDMLock="showDMLock"></actions-menu>
@@ -15,7 +14,7 @@
 
       <v-card class="default">
         <v-card-text>
-          <formATable :formA="formA"></formATable>
+          <formATable :formA="formA" @update-department-name="updateDepartmentName"></formATable>
         </v-card-text>
       </v-card>
 
@@ -24,17 +23,11 @@
           <v-card class="default">
             <v-card-title>Related Form B Authorizations</v-card-title>
             <v-card-text>
-              <v-data-table
-                dense
-                :headers="[
-                  { text: 'Name', value: 'employee.name' },
-                  { text: 'Title', value: 'employee.title' },
-                  { text: 'Status', value: 'status' },
-                ]"
-                :items="formA.active_authorities"
-                @click:row="openFormB"
-                class="row-clickable"
-              />
+              <v-data-table dense :headers="[
+                { text: 'Name', value: 'employee.name' },
+                { text: 'Title', value: 'employee.title' },
+                { text: 'Status', value: 'status' },
+              ]" :items="formA.active_authorities" @click:row="openFormB" class="row-clickable" />
             </v-card-text>
           </v-card>
         </v-col>
@@ -42,17 +35,11 @@
           <v-card class="default">
             <v-card-title>Audit History</v-card-title>
             <v-card-text>
-              <v-data-table
-                dense
-                :headers="[
-                  { text: 'Date', value: 'date_display' },
-                  { text: 'User', value: 'user_name' },
-                  { text: 'Action', value: 'action' },
-                ]"
-                :items="formA.audit_lines"
-                :sort-by="['date']"
-                :sort-desc="[true]"
-              />
+              <v-data-table dense :headers="[
+                { text: 'Date', value: 'date_display' },
+                { text: 'User', value: 'user_name' },
+                { text: 'Action', value: 'action' },
+              ]" :items="formA.audit_lines" :sort-by="['date']" :sort-desc="[true]" />
             </v-card-text>
           </v-card>
         </v-col>
@@ -67,30 +54,19 @@
       </v-app-bar>
       <v-card tile>
         <v-card-text class="pt-3">
-          <p>When this position is approved, a Form B is automatically generated. Please select the person to assign to this position.</p>
-          <employee-lookup
-            actionName="Select"
-            label="Deputy Minister or Equivalent for new Form B: "
-            :select="pickEmployee"
-            v-if="!activateEmployee.email"
-          ></employee-lookup>
+          <p>When this position is approved, a Form B is automatically generated. Please select the person to assign to
+            this
+            position.</p>
+          <employee-lookup actionName="Select" label="Deputy Minister or Equivalent for new Form B: "
+            :select="pickEmployee" v-if="!activateEmployee.email"></employee-lookup>
 
-          <v-text-field
-            v-model="activateEmployee.display_name"
-            readonly
-            dense
-            outlined
-            label="Deputy Minister or Equivalent for new Form B"
-            append-icon="mdi-lock"
-            v-if="activateEmployee.email"
-            append-outer-icon="mdi-close-circle"
-            @click:append-outer="unselectEmployee"
-          ></v-text-field>
+          <v-text-field v-model="activateEmployee.display_name" readonly dense outlined
+            label="Deputy Minister or Equivalent for new Form B" append-icon="mdi-lock" v-if="activateEmployee.email"
+            append-outer-icon="mdi-close-circle" @click:append-outer="unselectEmployee"></v-text-field>
           <p>Department of Finance Administrators will receive an email notification when you complete this step.</p>
 
-          <v-btn @click="dmLockClick" :disabled="!activateEmployee.display_name" color="primary" class="mb-0 mr-5"
-            >Lock</v-btn
-          >
+          <v-btn @click="dmLockClick" :disabled="!activateEmployee.display_name" color="primary"
+            class="mb-0 mr-5">Lock</v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -254,6 +230,12 @@ export default {
     },
     pickEmployee(item) {
       this.activateEmployee = item;
+    },
+    async updateDepartmentName() {
+      if (!confirm('This will update this Position\'s Department from "TOURISM AND CULTURE" to "ECONOMIC DEVELOPMENT, TOURISM AND CULTURE". This action cannot be undone. Would you like to continue?')) return;
+      this.formA.department_descr = "ECONOMIC DEVELOPMENT, TOURISM AND CULTURE";
+      this.formA.save_action = "UpdateDepartmentName";
+      await this.saveFormA(this.formA);
     },
   },
 };
